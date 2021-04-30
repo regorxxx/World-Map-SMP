@@ -20,7 +20,7 @@ An UI [SMP panel](https://theqwertiest.github.io/foo_spider_monkey_panel) which 
 * Tool-tip shows multiple info about the points and tracks selected.
 * AutoPlaylist creation:
    * On click over a point, an autoplaylist is created with any artist on your library from the selected country.
-   * Ctrl modifier: forces an autoplaylist  with artist from selected country AND same tags (2 ,configurable). Currently set to style and genre.
+   * Ctrl modifier: forces an autoplaylist  with artist from selected country AND same tags (2 configurable). Currently set to style and genre.
 
 ![Animation6](https://user-images.githubusercontent.com/83307074/116752378-03c11800-a9f5-11eb-9971-b3eff6e8d0fa.gif)
 
