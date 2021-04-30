@@ -1,0 +1,17 @@
+﻿UI panel which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along WilB's Biography Scritp.
+
+The map uses locale tag (*) from the tracks currently playing or on selection (*). 
+It may be a tag name or a TF expression, and may contain ISO values (ARG) or full names (Argentina). 
+Capitalization doesn't matter. Full names are converted to ISO values before coordinates lookup.
+Tag may be fetched using any of these 3 method (on this order):
+-Tags from tracks.
+-Tags from JSON data file (if available).
+-Tags from WilB's Biography Script (if enabled). (*) (**)
+
+When tags are not available on the tracks, they can be written on the files theirselves or on the JSON data file (*), using the info shared by Biography Script.
+Note that once the JSON file contains some artist's data, internet connection -and thus Biography Script too- is no longer needed... acting as a local database for the tags related to those artists.
+
+Panel is updated when playback changes, switching playlists, selecting tracks, ... and requires a full world map using Mercator projection to work. One is given for convenience, but can be changed if desired at properties.
+
+(*) Configurable.
+(**) Requires a modified version of the script. It may be installed manually or using the appropiate menu, which automatically adds some required code to the original script.
