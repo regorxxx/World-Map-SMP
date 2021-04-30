@@ -1,5 +1,5 @@
 # World-Map-SMP
-An UI [SMP panel](https://theqwertiest.github.io/foo_spider_monkey_panel) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://hydrogenaud.io/index.php?topic=112914.0). 
+A [foobar200](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://hydrogenaud.io/index.php?topic=112914.0). 
 
 ![Animation4](https://user-images.githubusercontent.com/83307074/116752367-002d9100-a9f5-11eb-8a03-0ee323634742.gif)
 
