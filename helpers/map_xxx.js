@@ -40,13 +40,13 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				else if (sel.Count == 1) {
 					const currentMatch =  sel[0] ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel[0]) : '';
 					const id = sel[0] ? this.findTag(sel[0], currentMatch) : '';
-					if (id.length) {toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});}
+					if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 				} else {
 					sel.Convert().forEach( (handle, index) => {
 						const currentMatch = handle ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(handle) : '';
 						const id = handle ? this.findTag(handle, currentMatch) : '';
 						if (id.length) {
-							const idx = toPaintArr.findIndex((point) => {return point.id == id});
+							const idx = toPaintArr.findIndex((point) => {return point.id === id});
 							if (idx == -1) {
 								toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});
 							}
@@ -64,7 +64,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				if (id.length) {toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});}
 			}
 		}
-		 // Clear the lists
+		// Clear the lists
 		this.clearLastPoint();
 		this.clearTagValue();
 		// Paint
@@ -123,7 +123,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
 				const id =  fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel);
-				const data = id.length ? this.jsonData.find((obj) => {return obj[this.jsonId] == id}) : undefined;
+				const data = id.length ? this.jsonData.find((obj) => {return obj[this.jsonId] == id}) : null;
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];
 				}
@@ -136,7 +136,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 		}
 		return mapTagValue;
 	}
-	this.setTag = (tagValue, byKey) => {if (byKey.length && tagValue !== undefined) {this.tagValue[byKey] = tagValue;}}
+	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}}
 	this.findCoordinates = () => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
 	// Selection
 	this.selPoint = (point, mask) => {return null;}; // Could be overwritten, arbitrary return

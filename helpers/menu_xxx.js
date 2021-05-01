@@ -139,13 +139,13 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 	}
 	
 	this.newCondEntry = ({entryText = '', condFunc}) => {
-		entryArr.push({entryText: entryText, condFunc: condFunc});
+		entryArr.push({entryText, condFunc});
 		return entryArr[condEntryArr.length -1];
 	}
 
 	this.getNumEntries = () => {return entryArr.length;}
 	this.getMainMenuName = () => {return menuArr[0].menuName;}
-	this.hasMenu = (menuName) => {return menuArr.indexOf(menuName) != -1;}
+	this.hasMenu = (menuName) => {return (menuArr.indexOf(menuName) != -1);}
 	
 	// Internal
 	this.getMenu = (menuName) => {return (!menuName) ? menuMap : menuMap.get(menuName);}

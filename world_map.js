@@ -97,15 +97,14 @@ const worldMap = new imageMap({
 	Map helpers
 */
 
-{ // Info Popup
-	if (!worldMap.properties['firstPopup'][1]) {
-		worldMap.properties['firstPopup'][1] = true;
-		overwriteProperties(worldMap.properties); // Updates panel
-		const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt'
-		if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
-			const readme = utils.ReadTextFile(readmePath, 65001);
-			if (readme.length) {fb.ShowPopupMessage(readme, 'World Map');}
-		}
+// Info Popup
+if (!worldMap.properties['firstPopup'][1]) {
+	worldMap.properties['firstPopup'][1] = true;
+	overwriteProperties(worldMap.properties); // Updates panel
+	const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt'
+	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
+		const readme = utils.ReadTextFile(readmePath, 65001);
+		if (readme.length) {fb.ShowPopupMessage(readme, 'World Map');}
 	}
 }
 
@@ -125,7 +124,7 @@ function selPoint(point, mask ) {
 	// What about JSON data? -> List of artists with same value
 	let jsonQuery = [];
 	worldMap.getData().forEach( (item) => {
-		if (item.val[item.val.length - 1] == point.id) {jsonQuery.push(item[dataId]);}
+		if (item.val[item.val.length - 1] === point.id) {jsonQuery.push(item[dataId]);}
 	});
 	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, dataId, 'OR'));}
 	// What about current tracks (from selected point)? -> Always a match

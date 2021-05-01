@@ -167,7 +167,7 @@ const throttle = (func, delay, immediate) => {
 var doOnceCache = [];
 const doOnce = (task, fn) => {
 	return (...args) => {
-		if(doOnceCache.indexOf(task) == -1) {
+		if(doOnceCache.indexOf(task) === -1) {
 			doOnceCache.push(task);
 			return fn(...args);
 		}
