@@ -76,7 +76,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height);
 					if (xPos != -1 && yPos != -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
-						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.pos_x, yScaled: yPos * this.scale + this.pos_y, id: id}; 
+						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.pos_x, yScaled: yPos * this.scale + this.pos_y, id}; 
 					}
 				}
 				// Draw points
@@ -124,7 +124,6 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
 				const id =  fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel);
 				const data = id.length ? this.jsonData.find((obj) => {return obj[this.jsonId] == id}) : undefined;
-				console.log(data);
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];
 				}

@@ -130,7 +130,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 	this.newMenu(); // Default menu
 	
 	this.newEntry = ({entryText = null, func = null, menuName = menuArr[0].menuName, flags = MF_STRING}) => {
-		entryArr.push({entryText: entryText, func: func, menuName: menuName, flags: flags, bIsMenu: false});
+		entryArr.push({entryText, func, menuName, flags, bIsMenu: false});
 		return entryArr[entryArr.length -1];
 	}
 	
@@ -248,4 +248,4 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 // Helper
 function _isFunc(obj) {
   return !!(obj && obj.constructor && obj.call && obj.apply);
-};
+}

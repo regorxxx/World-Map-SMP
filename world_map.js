@@ -152,8 +152,8 @@ function selPoint(point, mask ) {
 					const ctrlSecondTag = worldMap.properties.ctrlSecondTag[1].split(',').filter(Boolean);
 					const genreStyleFilter = worldMap.properties.genreStyleFilter[1].length ? new Set(worldMap.properties.genreStyleFilter[1].split(',').concat('')) : null;
 					const bTagFilter = genreStyleFilter ? true : false; // Only use filter when required
-					const firstTag = (ctrlFirstTag.length != 0) ? getTagsValuesV3(selPoint, ctrlFirstTag, true).filter(Boolean) : [];
-					const secondTag = (ctrlSecondTag.length != 0) ? getTagsValuesV3(selPoint, ctrlSecondTag, true).filter(Boolean) : [];
+					const firstTag = (ctrlFirstTag.length !== 0) ? getTagsValuesV3(selPoint, ctrlFirstTag, true).filter(Boolean) : [];
+					const secondTag = (ctrlSecondTag.length !== 0) ? getTagsValuesV3(selPoint, ctrlSecondTag, true).filter(Boolean) : [];
 					let valSet = new Set(); // Don't add the same thing multiple times to the query, just for readability
 					if (firstTag.length) {
 						for (let i = 0; i < selPoint.Count; i++) {
@@ -190,7 +190,7 @@ function selPoint(point, mask ) {
 		console.log('World Map: playlist created '+ query)
 		const name = capitalize(dataId) + ' from '+ point.id + (mask == MK_CONTROL ? ' (+tags)' : '');
 		const duplicPl = getPlaylistIndexArray(name);
-		if (duplicPl.length == 1) {
+		if (duplicPl.length === 1) {
 			plman.ActivePlaylist = duplicPl[0]
 		} else {
 			if (duplicPl.length > 1) {removePlaylistByName(name)}

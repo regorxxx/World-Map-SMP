@@ -38,11 +38,12 @@ if (bLoadTags) {
 					];
 
 	for (let i = 0; i < externalPath.length; i++) {
-		if ((isCompatible('1.4.0') ? utils.IsFile(externalPath[i]) : utils.FileTest(externalPath[i], "e"))) { //TODO: Deprecated
-			console.log('cyclicTagsDescriptor - File loaded: ' + externalPath[i]);
-			include(externalPath[i], {always_evaluate: false});
+		const path = externalPath[i];
+		if ((isCompatible('1.4.0') ? utils.IsFile(path) : utils.FileTest(path, "e"))) { //TODO: Deprecated
+			console.log('cyclicTagsDescriptor - File loaded: ' + path);
+			include(path, {always_evaluate: false});
 		} else {
-			console.log('cyclicTagsDescriptor - WARNING missing: ' + externalPath[i]);
+			console.log('cyclicTagsDescriptor - WARNING missing: ' + path);
 		}
 	}
 }
@@ -65,7 +66,7 @@ const ONE_DAY = 86400000;
 const ONE_WEEK = 604800000;
 
 const LM = _scale(5);
-const TM = _scale(15)
+const TM = _scale(15);
 
 const chars = {
 	up : '\uF077',
@@ -108,13 +109,13 @@ const hiddenChars = ['\u200b','\u200c','\u200d','\u200e']
 */
 
 // Useful for comparing properties...
-const zeroOrGreaterThan = (value, limit) => {return (value == 0) ? 0 : ((value < limit) ? limit : value)};
+const zeroOrGreaterThan = (value, limit) => {return (value === 0) ? 0 : ((value < limit) ? limit : value);};
 
 // Repeat execution indefinitely according to interval (ms). Ex:
 // const repeatedFunction = repeatFn(function, ms);
 // repeatedFunction(arguments);
 const repeatFn = (func, ms) => {
-	return (...args) => {setInterval(func.bind(this, ...args), ms);}
+	return (...args) => {setInterval(func.bind(this, ...args), ms);};
 }
 
 // Delay execution according to interval (ms). Ex:
@@ -175,7 +176,7 @@ const doOnce = (task, fn) => {
 
 function _isFunction(obj) {
   return !!(obj && obj.constructor && obj.call && obj.apply);
-};
+}
 
 /* 
 	File manipulation 
