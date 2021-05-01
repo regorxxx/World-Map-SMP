@@ -1,7 +1,7 @@
 'use strict';
 
 /* 
-	World Map v 0.3 21/04/21 REQUIRES WilB's Biography Mod script for online tags!!!
+	World Map v 1.0 01/05/21 REQUIRES WilB's Biography Mod script for online tags!!!
 	Show artist's country drawing a circle over the world map. To get the country,
 	'mapTag' set on properties is used. It may be a tag name or a TF expression.
 	Therefore data must be previously on tracks or the database.
@@ -89,8 +89,8 @@ const worldMap = new imageMap({
 	properties:				getPropertiesPairs(worldMap_properties, 'wm_'),
 	jsonId:					'artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
-	selPointFunc:			selPointFunc, // What happens when clicking on a point, set below
-	tooltipFunc: 			tooltipFunc, // What happens when mouse is over point, set below
+	selPointFunc:			selPoint, // What happens when clicking on a point, set below
+	tooltipFunc: 			tooltip, // What happens when mouse is over point, set below
 });
 
 /* 
@@ -110,12 +110,13 @@ const worldMap = new imageMap({
 }
 
 // When clicking on a point
-function selPointFunc(point, mask ) {
+function selPoint(point, mask ) {
+	let bDone = false;
 	// The entire function is tag agnostic, it may be used for anything. 
 	// When jsonId is set as 'artist' so it looks for artists with same map value
 	// The ctrl modifier is set to force 'genre' and 'style' tags but can be used with anything
-	if (!point.id.length) {return;}
-	if (!worldMap.jsonId.length) {return;}
+	if (!point.id.length) {return bDone;}
+	if (!worldMap.jsonId.length) {return bDone;}
 	let query = [];
 	const dataId = worldMap.jsonId; // Set before. The tag used to match data
 	// Any track with same locale tag
@@ -189,19 +190,21 @@ function selPointFunc(point, mask ) {
 		console.log('World Map: playlist created '+ query)
 		const name = capitalize(dataId) + ' from '+ point.id + (mask == MK_CONTROL ? ' (+tags)' : '');
 		const duplicPl = getPlaylistIndexArray(name);
-		if (duplicPl.length == 1) {plman.ActivePlaylist = duplicPl[0]}
-		else {
+		if (duplicPl.length == 1) {
+			plman.ActivePlaylist = duplicPl[0]
+		} else {
 			if (duplicPl.length > 1) {removePlaylistByName(name)}
 			plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
 			plman.ActivePlaylist = plman.PlaylistCount - 1;
-			return true;
 		}
+		bDone = true;
+		return bDone;
 	} else {fb.ShowPopupMessage('Query not valid: ' + query, window.Name)}
-	return false;
+	return bDone;
 }
 
 // When mouse is over point
-function tooltipFunc(point) { 
+function tooltip(point) { 
 	const count = worldMap.lastPoint.find( (last) => {return last.id == point.id;}).val;
 	const tags = capitalize(worldMap.properties.ctrlFirstTag[1]) + '/' + capitalize(worldMap.properties.ctrlSecondTag[1]);
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\n(L. Click to create Autoplaylist from same zone)\n(Ctrl + L. Click forces same ' + tags + ' too)';
@@ -210,11 +213,11 @@ function tooltipFunc(point) {
 
 /* 
 	Callbacks for painting 
-*/		
+*/
 function repaint(bPlayback = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!bPlayback && worldMap.properties.selection[1] == selMode[1] && fb.IsPlaying) {return;}
-	const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+	if (bPlayback && worldMap.properties.selection[1] == selMode[0] && fb.IsPlaying) {return;}
 	window.Repaint();
 }
 
@@ -236,7 +239,7 @@ function on_playback_new_track(metadb) {
 }
 
 function on_selection_changed() {
-	repaint(true);
+	repaint();
 }
 
 function on_item_focus_change() {
@@ -250,6 +253,15 @@ function on_playlist_switch() {
 
 function on_playback_stop(reason) {
 	if (reason != 2) { // Invoked by user or Starting another track
+		repaint();
+	}
+}
+
+function on_playlist_items_removed(playlistIndex, new_count) {
+	if (playlistIndex == plman.ActivePlaylist && new_count == 0) {
+		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
+		if (worldMap.properties.selection[1] == selMode[1] && fb.IsPlaying) {return;}
+		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
 		repaint();
 	}
 }
@@ -321,9 +333,9 @@ function on_notify_data(name, info) {
 						} else if (worldMap.properties.iWriteTags[1] == 2) {
 							const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 							const locale = [...info.tags.find( (tag) => {return tag.name == 'locale';}).val]; // Find the tag with name == locale in the array of tags
-							const newData = {artist: jsonId, val: locale};
-							if (jsonId.length && !worldMap.hasData(newData)) { // uses worldMap.jsonId
-								worldMap.saveData(newData); // use path at properties
+							if (jsonId.length && locale.length) { // uses worldMap.jsonId
+								const newData = {artist: jsonId, val: locale};
+								if (!!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
 							}
 						}
 					}
@@ -468,7 +480,9 @@ const menu = new _menu();
 				worldMap.properties['selection'][1] = mode; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel
 				// When ppt.focus is true, then selmode is selMode[0]
-				window.NotifyOthers(window.Name + ' notifySelectionProperty', mode == selMode[0] ? true : false); // synchronize selection property
+				if (worldMap.properties.bEnabledBiography[1]) {
+					window.NotifyOthers(window.Name + ' notifySelectionProperty', mode == selMode[0] ? true : false); // synchronize selection property
+				}
 				window.Repaint();
 			}});
 		});
