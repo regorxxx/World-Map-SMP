@@ -46,7 +46,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 						const currentMatch = handle ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(handle) : '';
 						const id = handle ? this.findTag(handle, currentMatch) : '';
 						if (id.length) {
-							const idx = toPaintArr.findIndex((point) => {return point.id === id});
+							const idx = toPaintArr.findIndex((point) => {return (point.id === id);});
 							if (idx === -1) {
 								toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});
 							}
@@ -61,7 +61,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			} else {
 				const currentMatch = sel ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel) : '';
 				const id = this.idSelected.length ? this.lastPoint[0] : (sel ? this.findTag(sel, currentMatch) : '');
-				if (id.length) {toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});}
+				if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 			}
 		}
 		// Clear the lists
@@ -76,7 +76,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height);
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
-						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.pos_x, yScaled: yPos * this.scale + this.pos_y, id}; 
+						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id}; 
 					}
 				}
 				// Draw points
@@ -95,23 +95,23 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	// Tags and coordinates
 	this.calcScale = (ww = window.Width, wh = window.Height) => { // on_size
 		// Scale window
-		this.scale_w = ww / this.imageMap.Width;
-		this.scale_h = wh / this.imageMap.Height;
-		this.scale = Math.min(this.scale_w, this.scale_h);
-		this.pos_x = 0, this.pos_y = 0;
-		if (this.scale_w < this.scale_h) {
-			this.pos_y = (wh - this.imageMap.Height * this.scale) / 2;
+		this.scaleW = ww / this.imageMap.Width;
+		this.scaleH = wh / this.imageMap.Height;
+		this.scale = Math.min(this.scaleW, this.scaleH);
+		this.posX = 0, this.posY = 0;
+		if (this.scaleW < this.scaleH) {
+			this.posY = (wh - this.imageMap.Height * this.scale) / 2;
 		}
-		else if (this.scale_w > this.scale_h) {
-			this.pos_x = (ww - this.imageMap.Width * this.scale) / 2;
+		else if (this.scaleW > this.scaleH) {
+			this.posX = (ww - this.imageMap.Width * this.scale) / 2;
 		}
 		// Scale font
 		if (this.scale) {this.gFont = _gdiFont('Segoe UI', 60 * this.scale);} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
 			const point = this.point[id];
-			point.xScaled = point.x * this.scale + this.pos_x;
-			point.yScaled = point.y * this.scale + this.pos_y;
+			point.xScaled = point.x * this.scale + this.posX;
+			point.yScaled = point.y * this.scale + this.posY;
 		});
 	}
 	this.findTag = (sel, byKey = '') => {
@@ -143,15 +143,15 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	this.getLastPoint = () => {return this.lastPoint;}; 
 	// Move and click
 	this.trace = (x, y) => {
-		return x > this.pos_x && x < this.pos_x + this.imageMap.Width * this.scale && y > this.pos_y && y < this.pos_y + this.imageMap.Height * this.scale;
+		return x > this.posX && x < this.posX + this.imageMap.Width * this.scale && y > this.posY && y < this.posY + this.imageMap.Height * this.scale;
 	}
 	this.tracePoint = (x, y) => {
 		let foundId = '';
 		this.lastPoint.forEach( (last) => {
 			if (foundId.length) {return;}
 			const point = this.point[last.id];
-			if (point.xScaled == -1 || point.yScaled == -1) {return;}
-			const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h)
+			if (point.xScaled === -1 || point.yScaled === -1) {return;}
+			const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h);
 			const rx = pointSize * this.scale * Math.cos(tetha), ry = pointSize * this.scale * Math.sin(tetha);
 			const xMax = point.xScaled + rx + pointLineSize * this.scale, xMin = point.xScaled - rx - pointLineSize * this.scale;
 			const yMax = point.yScaled + rx + pointLineSize * this.scale, yMin = point.yScaled - ry - pointLineSize * this.scale;
@@ -160,9 +160,9 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 		return foundId;
 	}
 	this.move = (x, y) => { // on_mouse_move & on_mouse_leave
-		if (this.mx == x && this.my == y) {return;}
-		this.mx = x;
-		this.my = y;
+		if (this.mX === x && this.mY === y) {return;}
+		this.mX = x;
+		this.mY = y;
 		window.SetCursor(IDC_ARROW);
 		if (this.trace(x, y)) { // Over the map
 			const foundId = this.tracePoint(x,y);
@@ -181,12 +181,12 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				} 
 			}
 		} 
-		else if (this.idSelected.length && this.idSelected != 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
+		else if (this.idSelected.length && this.idSelected !== 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
 		else {this.clearIdSelected(); this.tooltip.SetValue(null);}
 	}
 	this.btn_up = (x, y, mask) => { // on_mouse_lbtn_up
-		this.mx = x;
-		this.my = y;
+		this.mX = x;
+		this.mY = y;
 		const foundPoint = this.point[this.tracePoint(x,y)];
 		if (foundPoint) { // Over a point
 			return this.selPoint(foundPoint, mask);
@@ -213,7 +213,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 		_save(path, JSON.stringify(this.jsonData));
 	}
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
-		return (this.jsonData.length ? this.jsonData.some((obj) => {return obj[byKey] == data[byKey]}) : false);
+		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === data[byKey]);}) : false);
 	}
 	this.getData = () => {
 		return (this.jsonData.length ? [...this.jsonData] : []);
@@ -221,7 +221,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	this.getDataKeys = (byKey = this.jsonId) => {
 		let keysArr = [];
 		if (this.jsonData.length) {
-			this.jsonData.forEach( (data) => {keysArr.push(data[byKey])});
+			this.jsonData.forEach( (data) => {keysArr.push(data[byKey]);});
 		}
 		return keysArr;
 	}
@@ -278,7 +278,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.Name);
 		}
 		if (!this.mapTag.length) {
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.Name)
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.Name);
 		}
 		if (!this.imageMapPath.length) {
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.Name);
@@ -295,24 +295,24 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
 	this.tagValue = {};
-	this.mapTag = ''
+	this.mapTag = '';
 	this.imageMap = null;
 	this.imageMapPath = '';
 	this.jsonData = [];
 	this.jsonId = ''; // UUID key for the data
 	this.jsonPath = '';
-	this.scale_w = 0;
-	this.scale_h = 0;
+	this.scaleW = 0;
+	this.scaleH = 0;
 	this.scale = 0;
-	this.pos_x = 0;
-	this.pos_y = 0;
+	this.posX = 0;
+	this.posY = 0;
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
 	this.gFont = _gdiFont('Segoe UI', 12);
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
 	this.idSelected = '';
-	this.mx = -1;
-	this.my = -1;
+	this.mX = -1;
+	this.mY = -1;
 	this.init();
 }

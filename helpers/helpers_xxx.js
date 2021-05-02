@@ -552,7 +552,7 @@ function getPlaylistIndexArray(name) {
 	let i = 0;
 	let index = [];
 	while (i < plman.PlaylistCount) {
-		if (plman.GetPlaylistName(i) == name) {
+		if (plman.GetPlaylistName(i) === name) {
 			index.push(i);
 		}
 		i++;
@@ -605,12 +605,12 @@ function findPlaylistNamesDuplicated() {
 	const namesArrayNoDuplicates = [...new Set(namesArray)];
 	namesArrayNoDuplicates.forEach((item) => {
 		const i = namesArray.indexOf(item);
-		namesArray = namesArray.slice(0, i).concat(namesArray.slice(i + 1, namesArray.length))
-	})
+		namesArray = namesArray.slice(0, i).concat(namesArray.slice(i + 1, namesArray.length));
+	});
 	return namesArray;
 }
 
-function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlistName = undefined, useUUID = null, bLocked = false, category = '', tags = []) {
+function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlistName = '', useUUID = null, bLocked = false, category = '', tags = []) {
 	if (!writablePlaylistFormats.has(extension)){
 		console.log('savePlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '));
 		return false;
@@ -618,7 +618,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 	if (!_isFile(playlistPath)) {
 		const arr = isCompatible('1.4.0') ? utils.SplitFilePath(playlistPath) : utils.FileTest(playlistPath, "split"); //TODO: Deprecated
 		playlistPath = playlistPath.replaceLast(arr[2], extension);
-		if (!playlistName) {playlistName = (arr[1].endsWith(arr[2])) ? arr[1] : arr[1] + arr[2];} // <1.4.0 Bug: [directory, filename + filename_extension, filename_extension]
+		if (!playlistName.length) {playlistName = (arr[1].endsWith(arr[2])) ? arr[1] : arr[1] + arr[2];} // <1.4.0 Bug: [directory, filename + filename_extension, filename_extension]
 		let playlistText = [];
 		// -------------- m3u
 		if (extension === '.m3u8' || extension === '.m3u') {
@@ -633,7 +633,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 			playlistText.push('#TAGS:' + (isArrayStrings(tags) ? tags.join(';') : ''));
 			playlistText.push('#PLAYLISTSIZE:');
 			// Tracks text
-			if (playlistIndex != -1) { // Tracks from playlist
+			if (playlistIndex !== -1) { // Tracks from playlist
 				let trackText = [];
 				// let tfo = fb.TitleFormat('%path%');
 				let tfo = fb.TitleFormat('#EXTINF:%_length_seconds%,%artist% - %title%$crlf()' + '%path%');
@@ -658,7 +658,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 				let trackTextLength = trackText.length;
 				for (let i = 0; i < trackTextLength; i++) { // It appears 3 times...
 					trackText[i] = trackText[i].replace('#placeholder#', i + 1).replace('#placeholder#', i + 1).replace('#placeholder#', i + 1);
-					trackText[i] += '\r\n' // EoL after every track info group... just for readability
+					trackText[i] += '\r\n'; // EoL after every track info group... just for readability
 				}
 				playlistText = playlistText.concat(trackText);
 				playlistText.push('NumberOfEntries=' + items.Count); // Add number of tracks to size footer
@@ -693,7 +693,7 @@ function addHandleToPlaylist(handleList, playlistPath) {
 		// -------------- m3u
 		if (extension === '.m3u8' || extension === '.m3u') {
 			// Tracks text
-			if (addSize != 0) {
+			if (addSize !== 0) {
 				let tfo = fb.TitleFormat('#EXTINF:%_length_seconds%,%artist% - %title%$crlf()' + '%path%');
 				trackText = tfo.EvalWithMetadbs(handleList);
 			} else { //  Else empty handle
@@ -738,7 +738,7 @@ function addHandleToPlaylist(handleList, playlistPath) {
 					bFound = true;
 					// End of Footer
 					size = Number(originalText[lines - 2].split('=')[1]);
-					let newSize = size + addSize
+					let newSize = size + addSize;
 					trackText.push('NumberOfEntries=' + newSize);
 					trackText.push('Version=2');
 					originalText.pop(); //Removes old NumberOfEntries=..
@@ -766,15 +766,15 @@ function getFilePathsFromPlaylist(playlistPath) {
 	let paths = [];
 	const extension = isCompatible('1.4.0') ? utils.SplitFilePath(playlistPath)[2] : utils.FileTest(playlistPath, "split")[2]; //TODO: Deprecated
 	if (!writablePlaylistFormats.has(extension)){
-		console.log('getFilePathsFromPlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '))
+		console.log('getFilePathsFromPlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '));
 		return paths;
 	}
 	if (_isFile(playlistPath)) {
 		// Read original file
 		let originalText = utils.ReadTextFile(playlistPath).split('\r\n');
 		if (typeof originalText !== 'undefined' && originalText.length) {
-			let lines = originalText.length
-			if (extension === '.m3u8' || extension === '.m3u') {;
+			let lines = originalText.length;
+			if (extension === '.m3u8' || extension === '.m3u') {
 				for (let j = 0; j < lines; j++) {
 					if (!originalText[j].startsWith('#')) {paths.push(originalText[j]);}
 				}
@@ -861,7 +861,7 @@ function queryReplaceWithCurrent(query, handle) {
 			let tfo = '', tfoVal = '';
 			for (let i = 0; i < count; i += 2) {
 				tfo = query.slice(idx[i] + 1, idx[i + 1]);
-				tfo = tfo.indexOf('$') == -1 ? "[%" + tfo + "%]" : "[" + tfo + "]";
+				tfo = tfo.indexOf('$') === -1 ? "[%" + tfo + "%]" : "[" + tfo + "]";
 				tfo = fb.TitleFormat(tfo);
 				tfoVal = tfo.EvalWithMetadb(handle);
 				tempQuery = tempQuery + query.slice((i > 0 ? idx[i - 1] + 1 : 0), idx[i]) + tfoVal;
@@ -875,7 +875,7 @@ function queryReplaceWithCurrent(query, handle) {
 // Joins an array of queries with 'SetLogic' between them: AND (NOT) / OR (NOT)
 function query_join(queryArray, setLogic) {
 		const logicDic = ["and", "or", "and not", "or not", "AND", "OR", "AND NOT", "OR NOT"];
-		if (logicDic.indexOf(setLogic) == -1) {
+		if (logicDic.indexOf(setLogic) === -1) {
 			console.log("query_join(): setLogic (" + setLogic + ") is wrong");
 			return;
 		}
@@ -890,7 +890,7 @@ function query_join(queryArray, setLogic) {
 		let query = "";
 		let i = 0;
 		while (i < arrayLength) {
-			if (i == 0) {
+			if (i === 0) {
 				query += (arrayLength > 1 ? "(" : "") + queryArray[i] + (arrayLength > 1 ? ")" : "");
 			} else {
 				query += " " + setLogic + " (" + queryArray[i] + ")";
@@ -908,7 +908,7 @@ function query_join(queryArray, setLogic) {
 // For 1D arrays, only 'tagsArrayLogic' is used. i.e. "STYLE IS style1 OR STYLE IS style2 ..."
 function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLogic) {
 		// Wrong tagsArray
-		if (tagsArray === null || Object.prototype.toString.call(tagsArray) !== '[object Array]' || tagsArray.length === null || tagsArray.length == 0) {
+		if (tagsArray === null || Object.prototype.toString.call(tagsArray) !== '[object Array]' || tagsArray.length === null || tagsArray.length === 0) {
 			console.log("query_combinations(): tagsArray [" + tagsArray + "] was null, empty or not an array");
 			return; //Array was null or not an array
 		}
@@ -922,7 +922,7 @@ function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLog
 			let queryArray = [];
 			while (i < queryKeyLength) {
 				queryArray.push(query_combinations(tagsArray, queryKey[i], tagsArrayLogic, subtagsArrayLogic));
-				i++
+				i++;
 			}
 			return queryArray;
 		}
@@ -930,13 +930,13 @@ function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLog
 		let query = "";
 		let isArray = Object.prototype.toString.call(tagsArray[0]) === '[object Array]' ? 1 : 0; //subtagsArray
 		if (!isArray) { //no subtagsArrays
-			if (logicDic.indexOf(tagsArrayLogic) == -1) {
+			if (logicDic.indexOf(tagsArrayLogic) === -1) {
 				console.log("query_combinations(): tagsArrayLogic (" + tagsArrayLogic + ") is wrong");
 				return;
 			}
 			let i = 0;
 			while (i < tagsArrayLength) {
-				if (i == 0) {
+				if (i === 0) {
 					query += queryKey + " IS " + tagsArray[0];
 				} else {
 					query += " " + tagsArrayLogic + " " + queryKey + " IS " + tagsArray[i];
@@ -944,7 +944,7 @@ function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLog
 				i++;
 			}
 		} else {
-			if (logicDic.indexOf(tagsArrayLogic) == -1 || !logicDic.indexOf(subtagsArrayLogic) == -1) {
+			if (logicDic.indexOf(tagsArrayLogic) === -1 || !logicDic.indexOf(subtagsArrayLogic) === -1) {
 				console.log("query_combinations(): tagsArrayLogic (" + tagsArrayLogic + ") or subtagsArrayLogic (" + subtagsArrayLogic + ") are wrong");
 				return;
 			}
@@ -956,7 +956,7 @@ function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLog
 				}
 				let j = 0;
 				while (j < k) {
-					if (j == 0) {
+					if (j === 0) {
 						query += (k > 1 ? "(" : "") + queryKey + " IS " + tagsArray[i][0]; // only adds pharentesis when more than one subtag! Estetic fix...
 					} else {
 						query += " " + subtagsArrayLogic + " " + queryKey + " IS " + tagsArray[i][j];
@@ -982,19 +982,19 @@ function getTagsValues(handle, tagsArray, bMerged = false) {
 	if (!isArrayStrings (tagsArray)) {return null;}
 	if (!handle) {return null;}
 	
-	const sel_info = sel.GetFileInfo();
+	const selInfo = sel.GetFileInfo();
 	const tagArray_length = tagsArray.length;
 	let outputArray = [];
 	let i = 0;
 	
 	while (i < tagArray_length) {
 		let tagValues = [];
-		const tagIdx = sel_info.MetaFind(tagsArray[i]);
-        const tagNumber = (tagIdx != -1) ? sel_info.MetaValueCount(tagIdx) : 0;
+		const tagIdx = selInfo.MetaFind(tagsArray[i]);
+        const tagNumber = (tagIdx != -1) ? selInfo.MetaValueCount(tagIdx) : 0;
 		if (tagNumber != 0) {
 			let j = 0;
 			while (j < tagNumber) {
-				tagValues[j] = sel_info.MetaValue(tagIdx,j);
+				tagValues[j] = selInfo.MetaValue(tagIdx,j);
 				j++;
 			}
 		}
