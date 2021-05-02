@@ -1,7 +1,7 @@
 'use strict';
 
 /* 
-	World Map v 1.0 01/05/21 REQUIRES WilB's Biography Mod script for online tags!!!
+	World Map v 1.0.0 01/05/21 REQUIRES WilB's Biography Mod script for online tags!!!
 	Show artist's country drawing a circle over the world map. To get the country,
 	'mapTag' set on properties is used. It may be a tag name or a TF expression.
 	Therefore data must be previously on tracks or the database.
