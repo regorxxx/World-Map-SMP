@@ -8,7 +8,7 @@
 	TODO: Add version comparison ?
 */
 
-if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB') { // Safety check to avoid using it alone
+if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') { // Safety check to avoid using it alone
 	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name);
 } else { // Where t = new Text, tag = new Tagger
 	// Rewrite entire function
@@ -26,7 +26,7 @@ if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB')
 		const artist = tags[0].val.toUpperCase(), album = tags[1].val.toUpperCase();
 		if (!name.alb_strip) l = l.replace(/CD(\s*\d|\.0\d)|CD\s*(One|Two|Three)|Disc\s*\d|Disc\s*(III|II|I|One|Two|Three)\b/gi,"").replace(/\(\s*\)|\[\s*\]/g, " ").replace(/\s\s+/g, " ").replace(/-\s*$/g, " ").trim();
 		else l = l.replace(/CD(\s*\d|\.0\d)|CD\s*(One|Two|Three)|Disc\s*\d|Disc\s*(III|II|I|One|Two|Three)\b|(Bonus\s*Track|Collector's|(Digital\s*|Super\s*|)Deluxe|Digital|Expanded|Limited|Platinum|Reissue|Special)\s*(Edition|Version)|(Bonus\s*(CD|Disc))|\d\d\w\w\s*Anniversary\s*(Expanded\s*|Re(-|)master\s*|)(Edition|Re(-|)master|Version)|((19|20)\d\d(\s*|\s*-\s*)|)(Digital(ly|)\s*|)(Re(-|)master(ed|)|Re(-|)recorded)(\s*Edition|\s*Version|)|\(Deluxe\)|\(Mono\)|\(Reissue\)|\(Revisited\)|\(Stereo\)|\(Web\)|\[Deluxe\]|\[Mono\]|\[Reissue\]|\[Revisited\]|\[Stereo\]|\[Web\]/gi,"").replace(/\(\s*\)|\[\s*\]/g, " ").replace(/\s\s+/g, " ").replace(/-\s*$/g, " ").trim();
-		if (artist != a_o) {
+		if (artist !== a_o) {
 			a_o = artist;
 			if (p.tag[6].enabled || p.tag[7].enabled || p.tag[8].enabled && p.tag[8].enabled < 7) {
 				const lfmBio = p.cleanPth(p.pth.lfmBio, handles, 'tag') + artist.clean() + ".txt";
@@ -37,7 +37,7 @@ if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB')
 						let loc = lfm_a.match(RegExp(kww, "i")); if (loc) {
 							loc = loc.toString();
 							ix = lfm_a.lastIndexOf(loc);
-							if (ix != -1) {
+							if (ix !== -1) {
 								locale = lfm_a.substring(ix + loc.length);
 								locale = locale.split('\n')[0].trim().split(", ");
 							}
@@ -47,7 +47,7 @@ if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB')
 			}
 		}
 		tags.push({name: 'locale', val: locale});
-		window.NotifyOthers(window.Name + ' notifyCountry', {handle: handles, tags: tags}); // tags
+		window.NotifyOthers(window.Name + ' notifyCountry', {handle: handles, tags}); // tags
 	}
 	// Just rewrap
 	const old_t_draw = t.draw;
@@ -60,8 +60,8 @@ if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB')
 
 // Retrieve data from other panels
 function on_notify_data(name, info) {
-	if (window.ScriptInfo.Name != 'Biography' || window.ScriptInfo.Author != 'WilB') {return;}
-	if (name == 'World Map' + ' notifySelectionProperty') {
+	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
+	if (name === 'World Map' + ' notifySelectionProperty') {
 		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track();
 	}
 	// Original

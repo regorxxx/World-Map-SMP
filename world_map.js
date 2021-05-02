@@ -119,7 +119,7 @@ function selPoint(point, mask ) {
 	let query = [];
 	const dataId = worldMap.jsonId; // Set before. The tag used to match data
 	// Any track with same locale tag
-	const tag = worldMap.properties.mapTag[1].indexOf('$') != -1 ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
+	const tag = worldMap.properties.mapTag[1].indexOf('$') !== -1 ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
 	if (tag.length) {query.push(tag + ' IS ' + point.id);}
 	// What about JSON data? -> List of artists with same value
 	let jsonQuery = [];
@@ -128,7 +128,7 @@ function selPoint(point, mask ) {
 	});
 	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, dataId, 'OR'));}
 	// What about current tracks (from selected point)? -> Always a match
-	const selPointData = worldMap.getLastPoint().find( (last) => {return last.id == point.id}); // Has list of artist on every paint
+	const selPointData = worldMap.getLastPoint().find( (last) => {return (last.id === point.id);}); // Has list of artist on every paint
 	if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 		const currentMatchData = [...selPointData.jsonId];
 		query.push(query_combinations(currentMatchData, dataId, 'OR'));
@@ -136,7 +136,7 @@ function selPoint(point, mask ) {
 	// Merges all queries with OR
 	query = [query_join(query,'OR')];
 	// Add query with ctrl modifier
-	if (mask == MK_CONTROL) { // When using ctrl + click
+	if (mask === MK_CONTROL) { // When using ctrl + click
 		const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (sel && sel.Count) { 
 			if (selPointData.jsonId.size) { // Data is a set, so no duplicates
@@ -156,21 +156,21 @@ function selPoint(point, mask ) {
 					let valSet = new Set(); // Don't add the same thing multiple times to the query, just for readability
 					if (firstTag.length) {
 						for (let i = 0; i < selPoint.Count; i++) {
-							const firstTag_i = firstTag[i].filter(tag => !genreStyleFilter.has(tag));
-							const firstTag_i_id = firstTag_i.join(',');
-							if (firstTag_i.length && !valSet.has(firstTag_i_id)) {
+							const firstTag_i = firstTag[i].filter((tag) => {return !genreStyleFilter.has(tag);});
+							const firstTagId_i = firstTag_i.join(',');
+							if (firstTag_i.length && !valSet.has(firstTagId_i)) {
 								ctrlQuery.push(query_combinations(firstTag_i, ctrlFirstTag, "AND"));
-								valSet.add(firstTag_i_id);
+								valSet.add(firstTagId_i);
 							}
 						}
 					}
 					if (secondTag.length) {
 						for (let i = 0; i < selPoint.Count; i++) {
 							const secondTag_i = secondTag[i].filter(tag => !genreStyleFilter.has(tag));
-							const secondTag_i_id = secondTag_i.join(',');
-							if (secondTag_i.length && !valSet.has(secondTag_i_id)) {
+							const secondTagId_i = secondTag_i.join(',');
+							if (secondTag_i.length && !valSet.has(secondTagId_i)) {
 								ctrlQuery.push(query_combinations(secondTag_i, ctrlSecondTag, "AND"));
-								valSet.add(secondTag_i_id);
+								valSet.add(secondTagId_i);
 							}
 						}
 					}

@@ -28,8 +28,8 @@ const cyclicTags = new Set(["dynamic_genre"]); // These are numeric tags with li
 // Object keys must match the tag names at cyclicTags... 
 const cyclicTagsDescriptor =	{	
 									//dyngenre_map_xxx.js
-									dynamic_genre: function(tagValue, valueRange, bReturnLimits) {return dyn_genre_range(tagValue, valueRange, bReturnLimits);}
-								} 
+									dynamic_genre(tagValue, valueRange, bReturnLimits) {return dyn_genre_range(tagValue, valueRange, bReturnLimits);},
+								};
 // Add here the external files required for cyclic tags
 var bLoadTags; // This tells the helper to load tags descriptors extra files. False by default
 if (bLoadTags) {
@@ -102,7 +102,7 @@ const popup = {
 };
 
 // Combinations of invisible chars may be used on UI elements to assign IDs...
-const hiddenChars = ['\u200b','\u200c','\u200d','\u200e']
+const hiddenChars = ['\u200b','\u200c','\u200d','\u200e'];
 
 /* 
 	Functions
@@ -122,7 +122,7 @@ const repeatFn = (func, ms) => {
 // const delayedFunction = delayFn(function, ms);
 // delayedFunction(arguments);
 const delayFn = (func, ms) => {
-	return (...args) => {return setTimeout(func.bind(this, ...args), ms);}
+	return (...args) => {return setTimeout(func.bind(this, ...args), ms);};
 }
 
 // Halt execution if trigger rate is greater than delay (ms), so it fires only once after successive calls. Ex:
@@ -136,7 +136,7 @@ const debounce = (func, delay, immediate) => {
 		if (immediate && !timerId) {
 			boundFunc();
 		}
-		const calleeFunc = immediate ? () => { timerId = null } : boundFunc;
+		const calleeFunc = immediate ? () => {timerId = null;} : boundFunc;
 		timerId = setTimeout(calleeFunc, delay);
 	}
 };
@@ -274,7 +274,7 @@ function _restoreFile(file) {
 		const items = app.NameSpace(10).Items();
 		const numItems = items.Count;
 		for (let i = 0; i < numItems; i++) {
-			if (items.Item(i).Name == OriginalFileName) {
+			if (items.Item(i).Name === OriginalFileName) {
 				_renameFile(items.Item(i).Path, file);
 				break;
 			}
@@ -350,6 +350,7 @@ function _runCmd(command, wait) {
 	try {
 		WshShell.Run(command, 0, wait);
 	} catch (e) {
+		console.log('_runCmd(): failed to run command ' + command);
 	}
 }
 
@@ -358,11 +359,11 @@ function editTextFile(filePath, originalString, newString) {
 	let bDone = false;
 	if (_isFile(filePath)){
 		let fileText = utils.ReadTextFile(filePath);
-		if (fileText !== undefined && fileText.length >= 1) {
+		if (typeof fileText !== 'undefined' && fileText.length >= 1) {
 			let fileTextNew = fileText;
-			if (isArray(originalString) && isArray(newString) && originalString.length == newString.length) {
+			if (isArray(originalString) && isArray(newString) && originalString.length === newString.length) {
 				originalString = originalString.filter(Boolean); // '' values makes no sense to be replaced
-				if (isArrayStrings(originalString) && isArrayStrings(newString, true) && originalString.length == newString.length) { //newString may have blank values but both arrays must have same length
+				if (isArrayStrings(originalString) && isArrayStrings(newString, true) && originalString.length === newString.length) { //newString may have blank values but both arrays must have same length
 					let replacements = newString.length;
 					for (let i = 0; i < replacements; i++) {
 						fileTextNew = fileTextNew.replace(originalString[i], newString[i]);
@@ -371,12 +372,12 @@ function editTextFile(filePath, originalString, newString) {
 			} else if (isString(originalString) && isString(newString)) {
 				fileTextNew = fileTextNew.replace(originalString, newString);
 			}
-			if (fileTextNew != fileText) {
+			if (fileTextNew !== fileText) {
 				bDone = utils.WriteTextFile(filePath, fileTextNew, true);
 				// Check
 				if (_isFile(filePath) && bDone) {
 					let check = utils.ReadTextFile(filePath, convertCharsetToCodepage("UTF-8"));
-					bDone = (check == fileTextNew);
+					bDone = (check === fileTextNew);
 				}
 			}
 		}
@@ -388,8 +389,8 @@ function findRecursivePaths(path = fb.ProfilePath){
 	let arr = [], pathArr = [];
 	arr = utils.Glob(path + '*.*', 0x00000020); // Directory
 	arr.forEach( (subPath) => {
-		if (subPath.indexOf('\\..') != -1 || subPath.indexOf('\\.') != -1) {return;}
-		if (subPath == path) {return;}
+		if (subPath.indexOf('\\..') != -1 || subPath.indexOf('\\.') !== -1) {return;}
+		if (subPath === path) {return;}
 		pathArr.push(subPath);
 		pathArr = pathArr.concat(findRecursivePaths(subPath + '\\'));
 	});
@@ -401,7 +402,7 @@ function findRecursivefile(fileMask, inPaths = [fb.ProfilePath, fb.ComponentPath
 	if (isArrayStrings(inPaths)) {
 		let pathArr = [];
 		inPaths.forEach( (path) => {pathArr = pathArr.concat(findRecursivePaths(path));});
-		pathArr.forEach( (path) => {fileArr = fileArr.concat(utils.Glob(path + '\\' +  fileMask))});
+		pathArr.forEach( (path) => {fileArr = fileArr.concat(utils.Glob(path + '\\' +  fileMask));});
 	}
 	return fileArr;
 }
@@ -420,12 +421,12 @@ function _q(value) {
 }
 
 function capitalize(s) {
-  if (typeof s !== 'string') return '';
-  return s.charAt(0).toUpperCase() + s.slice(1)
+  if (typeof s !== 'string') {return '';}
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function capitalizeAll(s, sep = ' ') {
-  if (typeof s !== 'string') return '';
+  if (typeof s !== 'string') {return '';}
   return s.split(sep).map( (subS) => {return subS.charAt(0).toUpperCase() + subS.slice(1);}).join(sep); // Split, capitalize each subString and join
 }
 
@@ -437,19 +438,15 @@ function isString(str){
 
 function nextId(method, bNext = true, bCharsForced = true) {
 	switch (true) {
-		case method == 'invisible':
+		case method === 'invisible':
 			return nextIdInvisible(bNext, bCharsForced);
-			break;
-		case method == 'letters':
+		case method === 'letters':
 			return nextIdLetters(bNext, bCharsForced);
-			break;
-		case method == 'indicator':
+		case method === 'indicator':
 			return nextIdIndicator(bNext);
-			break;
 		default:
 			return null;
 	}
-
 }
 
 const nextIdInvisible = (function() {
