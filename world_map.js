@@ -101,7 +101,7 @@ const worldMap = new imageMap({
 if (!worldMap.properties['firstPopup'][1]) {
 	worldMap.properties['firstPopup'][1] = true;
 	overwriteProperties(worldMap.properties); // Updates panel
-	const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt'
+	const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt';
 	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
 		const readme = utils.ReadTextFile(readmePath, 65001);
 		if (readme.length) {fb.ShowPopupMessage(readme, 'World Map');}
@@ -137,7 +137,7 @@ function selPoint(point, mask ) {
 	query = [query_join(query,'OR')];
 	// Add query with ctrl modifier
 	if (mask === MK_CONTROL) { // When using ctrl + click
-		const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (sel && sel.Count) { 
 			if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 				let selPoint = new FbMetadbHandleList();
@@ -165,7 +165,7 @@ function selPoint(point, mask ) {
 					}
 					if (secondTag.length) {
 						for (let i = 0; i < selPoint.Count; i++) {
-							const secondTag_i = secondTag[i].filter(tag => !genreStyleFilter.has(tag));
+							const secondTag_i = secondTag[i].filter((tag) => !genreStyleFilter.has(tag));
 							const secondTagId_i = secondTag_i.join(',');
 							if (secondTag_i.length && !valSet.has(secondTagId_i)) {
 								ctrlQuery.push(query_combinations(secondTag_i, ctrlSecondTag, "AND"));
@@ -185,11 +185,11 @@ function selPoint(point, mask ) {
 	query = query_join(query,'AND')
 	// Create autoplaylist
 	if (checkQuery(query)) {
-		console.log('World Map: playlist created '+ query)
-		const name = capitalize(dataId) + ' from '+ point.id + (mask == MK_CONTROL ? ' (+tags)' : '');
+		console.log('World Map: playlist created '+ query);
+		const name = capitalize(dataId) + ' from '+ point.id + (mask === MK_CONTROL ? ' (+tags)' : '');
 		const duplicPl = getPlaylistIndexArray(name);
 		if (duplicPl.length === 1) {
-			plman.ActivePlaylist = duplicPl[0]
+			plman.ActivePlaylist = duplicPl[0];
 		} else {
 			if (duplicPl.length > 1) {removePlaylistByName(name)}
 			plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
@@ -203,7 +203,7 @@ function selPoint(point, mask ) {
 
 // When mouse is over point
 function tooltip(point) { 
-	const count = worldMap.lastPoint.find( (last) => {return last.id == point.id;}).val;
+	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
 	const tags = capitalize(worldMap.properties.ctrlFirstTag[1]) + '/' + capitalize(worldMap.properties.ctrlSecondTag[1]);
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\n(L. Click to create Autoplaylist from same zone)\n(Ctrl + L. Click forces same ' + tags + ' too)';
 	return (point && point.hasOwnProperty('id') ? text : null);
@@ -214,8 +214,8 @@ function tooltip(point) {
 */
 function repaint(bPlayback = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	if (!bPlayback && worldMap.properties.selection[1] == selMode[1] && fb.IsPlaying) {return;}
-	if (bPlayback && worldMap.properties.selection[1] == selMode[0] && fb.IsPlaying) {return;}
+	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
+	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
 	window.Repaint();
 }
 
@@ -226,7 +226,7 @@ function on_size(width, height) {
 function on_paint(gr) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	// Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
-	const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 	worldMap.paint(gr, sel);
 }
@@ -250,13 +250,13 @@ function on_playlist_switch() {
 }
 
 function on_playback_stop(reason) {
-	if (reason != 2) { // Invoked by user or Starting another track
+	if (reason !== 2) { // Invoked by user or Starting another track
 		repaint();
 	}
 }
 
 function on_playlist_items_removed(playlistIndex, new_count) {
-	if (playlistIndex == plman.ActivePlaylist && new_count == 0) {
+	if (playlistIndex === plman.ActivePlaylist && new_count === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] == selMode[1] && fb.IsPlaying) {return;}
 		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
@@ -266,14 +266,14 @@ function on_playlist_items_removed(playlistIndex, new_count) {
 
 function on_metadb_changed(handle_list) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	sel.Sort();
 	const handle_listClone = handle_list.Clone();
-	handle_listClone.Sort()
-	sel.MakeIntersection(handle_listClone)
+	handle_listClone.Sort();
+	sel.MakeIntersection(handle_listClone);
 	if (sel && sel.Count) {
 		const tags = fb.TitleFormat('[%' + worldMap.properties.mapTag[1] + '%]').EvalWithMetadbs(sel);
-		if (tags.some((value) => {value != worldMap.tagValue})) {
+		if (tags.some((value) => {value !== worldMap.tagValue})) {
 			repaint();
 		}
 	}
@@ -307,13 +307,13 @@ function on_notify_data(name, info) {
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
-	if (name == 'Biography notifyCountry') {
+	if (name === 'Biography notifyCountry') {
 		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags')) {
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
-			const sel = (worldMap.properties.selection[1] == selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 			// Set tag on map for drawing if found
-			if (sel && sel.Count && sel.Find(info.handle) != -1) {
-				const locale = [...info.tags.find( (tag) => {return tag.name == 'locale';}).val]; // Find the tag with name == locale in the array of tags
+			if (sel && sel.Count && sel.Find(info.handle) !== -1) {
+				const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name == locale in the array of tags
 				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 				if (locale.length) {
 					worldMap.setTag(locale[locale.length - 1], jsonId);
@@ -326,11 +326,11 @@ function on_notify_data(name, info) {
 				if (tagName.length) { // Check there is a track and tag is valid
 					const tfo = '[%' + tagName + '%]';
 					if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
-						if (worldMap.properties.iWriteTags[1] == 1) {
+						if (worldMap.properties.iWriteTags[1] === 1) {
 							new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
-						} else if (worldMap.properties.iWriteTags[1] == 2) {
+						} else if (worldMap.properties.iWriteTags[1] === 2) {
 							const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-							const locale = [...info.tags.find( (tag) => {return tag.name == 'locale';}).val]; // Find the tag with name == locale in the array of tags
+							const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name == locale in the array of tags
 							if (jsonId.length && locale.length) { // uses worldMap.jsonId
 								const newData = {artist: jsonId, val: locale};
 								if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
@@ -342,10 +342,10 @@ function on_notify_data(name, info) {
 		}
 	}
 	// Follow WilB's Biography script selection mode
-	if (name == 'Biography notifySelectionProperty') {
+	if (name === 'Biography notifySelectionProperty') {
 		if (info.hasOwnProperty('property') && info.hasOwnProperty('val')) {
 			// When ppt.focus is true, then selmode is selMode[0]
-			if ((info.val && worldMap.properties.selection[1] == selMode[1]) || (!info.val && worldMap.properties.selection[1] == selMode[0])) {
+			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 				worldMap.properties['selection'][1] = selMode[(info.val ? 0 : 1)]; // Invert value
 				fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
 				overwriteProperties(worldMap.properties); // Updates panel
@@ -368,8 +368,8 @@ const menu = new _menu();
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
-				if (worldMap.properties['bEnabled'][1] == mode.val) {return;}
-				worldMap.properties['bEnabled'][1] = mode.val; // And update property with new value
+				if (worldMap.properties['bEnabled'][1] === mode.val) {return;}
+				worldMap.properties['bEnabled'][1] == mode.val; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel
 				window.Repaint();
 			}});
@@ -387,14 +387,14 @@ const menu = new _menu();
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
-				if (worldMap.properties['bEnabledBiography'][1] == mode.val) {return;}
+				if (worldMap.properties['bEnabledBiography'][1] === mode.val) {return;}
 				if (mode.val) { // Warning check
 					let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
-					if (answer == popup.no) {return;}
+					if (answer === popup.no) {return;}
 				}
 				worldMap.properties['bEnabledBiography'][1] = mode.val; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel
-				window.NotifyOthers(window.Name + ' notifySelectionProperty', mode == selMode[0] ? true : false); // synchronize selection property
+				window.NotifyOthers(window.Name + ' notifySelectionProperty', mode === selMode[0] ? true : false); // synchronize selection property
 				window.Repaint();
 			}, flags: () => {return (worldMap.properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 		});
@@ -411,11 +411,11 @@ const menu = new _menu();
 			let text = '', foundArr = [];
 			fileArr.forEach( (file) => {
 				text = utils.ReadTextFile(file);
-				if (text.indexOf(idText) != -1 && text.indexOf('omit this same script') == -1) { // Omit this one from the list!
+				if (text.indexOf(idText) !== -1 && text.indexOf('omit this same script') === -1) { // Omit this one from the list!
 					if (!worldMap.properties.bInstalledBiography[1]) {
-						if (text.indexOf(modText) == -1) {foundArr.push(file);} // When installing, look for not modified script
+						if (text.indexOf(modText) === -1) {foundArr.push(file);} // When installing, look for not modified script
 					} else {
-						if (text.indexOf(modText) != -1) {foundArr.push(file);} // Otherwise, look for the mod string
+						if (text.indexOf(modText) !== -1) {foundArr.push(file);} // Otherwise, look for the mod string
 					}
 				}
 			});
@@ -470,16 +470,16 @@ const menu = new _menu();
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
-				if (worldMap.properties['selection'][1] == mode) {return;}
+				if (worldMap.properties['selection'][1] === mode) {return;}
 				if (worldMap.properties['bEnabledBiography'][1]) { // Warning check
 					let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
-					if (answer == popup.no) {return;}
+					if (answer === popup.no) {return;}
 				}
 				worldMap.properties['selection'][1] = mode; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel
 				// When ppt.focus is true, then selmode is selMode[0]
 				if (worldMap.properties.bEnabledBiography[1]) {
-					window.NotifyOthers(window.Name + ' notifySelectionProperty', mode == selMode[0] ? true : false); // synchronize selection property
+					window.NotifyOthers(window.Name + ' notifySelectionProperty', mode === selMode[0] ? true : false); // synchronize selection property
 				}
 				window.Repaint();
 			}});
@@ -497,10 +497,10 @@ const menu = new _menu();
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
-				if (worldMap.properties['iWriteTags'][1] == mode.val) {return;}
+				if (worldMap.properties['iWriteTags'][1] === mode.val) {return;}
 				if (mode.val) { // Warning check
 					let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography script installed on another panel.\n- Both configured with the same selection mode (otherwise, the script will try to add tags from one track to another track).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
-					if (answer == popup.no) {return;}
+					if (answer === popup.no) {return;}
 				}
 				worldMap.properties['iWriteTags'][1] = mode.val; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel

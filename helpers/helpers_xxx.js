@@ -649,7 +649,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 			// Header text
 			playlistText.push('[playlist]');
 			// Tracks text
-			if (playlistIndex != -1) { // Tracks from playlist
+			if (playlistIndex !== -1) { // Tracks from playlist
 				let trackText = [];
 				let tfo = fb.TitleFormat('File#placeholder#=%path%' + '$crlf()Title#placeholder#=%title%' + '$crlf()Length#placeholder#=%_length_seconds%');
 				let items = plman.GetPlaylistItems(playlistIndex);
@@ -882,7 +882,7 @@ function query_join(queryArray, setLogic) {
 		let arrayLength = queryArray.length;
 		// Wrong array
 		let isArray = Object.prototype.toString.call(queryArray) === '[object Array]' ? 1 : 0; //queryArray
-		if (!isArray || typeof queryArray === 'undefined' || queryArray === null || arrayLength === null || arrayLength == 0) {
+		if (!isArray || typeof queryArray === 'undefined' || queryArray === null || arrayLength === null || arrayLength === 0) {
 			console.log("query_join(): queryArray [" + queryArray + "] was null, empty or not an array");
 			return; //Array was null or not an array
 		}
@@ -951,7 +951,7 @@ function query_combinations(tagsArray, queryKey, tagsArrayLogic, subtagsArrayLog
 			let k = tagsArray[0].length; //SubtagsArrays length
 			let i = 0;
 			while (i < tagsArrayLength) {
-				if (i != 0) {
+				if (i !== 0) {
 					query += " " + tagsArrayLogic + " ";
 				}
 				let j = 0;
@@ -990,8 +990,8 @@ function getTagsValues(handle, tagsArray, bMerged = false) {
 	while (i < tagArray_length) {
 		let tagValues = [];
 		const tagIdx = selInfo.MetaFind(tagsArray[i]);
-        const tagNumber = (tagIdx != -1) ? selInfo.MetaValueCount(tagIdx) : 0;
-		if (tagNumber != 0) {
+        const tagNumber = (tagIdx !== -1) ? selInfo.MetaValueCount(tagIdx) : 0;
+		if (tagNumber !== 0) {
 			let j = 0;
 			while (j < tagNumber) {
 				tagValues[j] = selInfo.MetaValue(tagIdx,j);
@@ -1016,8 +1016,8 @@ function getTagsValuesV3(handle, tagsArray, bMerged = false) {
 	let tagString = "";
 	const outputArray_length = handle.Count;
 	while (i < tagArray_length) {
-		if (bMerged) {tagString += i == 0 ? "[%" + tagsArray[i] + "%]" : "[, " + "%" + tagsArray[i] + "%]";} // We have all values separated by comma
-		else {tagString += i == 0 ? "[%" + tagsArray[i] + "%]" : "| " + "[%" + tagsArray[i] + "%]";} // We have tag values separated by comma and different tags by |
+		if (bMerged) {tagString += i === 0 ? "[%" + tagsArray[i] + "%]" : "[, " + "%" + tagsArray[i] + "%]";} // We have all values separated by comma
+		else {tagString += i === 0 ? "[%" + tagsArray[i] + "%]" : "| " + "[%" + tagsArray[i] + "%]";} // We have tag values separated by comma and different tags by |
 		i++;
 	}
 	let tfo = fb.TitleFormat(tagString);
@@ -1048,12 +1048,12 @@ function getTagsValuesV4(handle, tagsArray, bMerged = false, bEmptyVal = false) 
 	let outputArray = [];
 	let i = 0;
 	while (i < tagArray_length) {
-		if (tagsArray[i].toLowerCase() == "skip") {
+		if (tagsArray[i].toLowerCase() === "skip") {
 			outputArray[i] = [[]];
 			i++;
 			continue;
 		}
-		let tagString = ((tagsArray[i].indexOf('$') == -1) ? (bEmptyVal ? "%" + tagsArray[i] + "%" : "[%" + tagsArray[i] + "%]") : (bEmptyVal ? tagsArray[i]: "[" + tagsArray[i] + "]")); // Tagname or TF expression, with or without empty values
+		let tagString = ((tagsArray[i].indexOf('$') === -1) ? (bEmptyVal ? "%" + tagsArray[i] + "%" : "[%" + tagsArray[i] + "%]") : (bEmptyVal ? tagsArray[i]: "[" + tagsArray[i] + "]")); // Tagname or TF expression, with or without empty values
 		let tfo = fb.TitleFormat(tagString);
 		outputArray[i] = tfo.EvalWithMetadbs(handle);
 		for (let j = 0; j < outputArrayi_length; j++) {
@@ -1085,7 +1085,7 @@ function compareTagsValues(handle, tagsArray, bMerged = false) {
 	Array and objects manipulation 
 */
 function isArray(checkKeys) {
-	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length == 0){
+	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length === 0){
 		return false; //Array was null or not an array
 	}
 	return true;
@@ -1093,7 +1093,7 @@ function isArray(checkKeys) {
 
 
 function isArrayStrings(checkKeys, bAllowEmpty = false) {
-	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length == 0) {
+	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length === 0) {
 		return false; //Array was null or not an array
 	} else {
 		let i = checkKeys.length;
@@ -1110,7 +1110,7 @@ function isArrayStrings(checkKeys, bAllowEmpty = false) {
 }
 
 function isArrayNumbers(checkKeys) {
-	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length == 0) {
+	if ( checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length === 0) {
 		return false; //Array was null or not an array
 	} else {
 		let i = checkKeys.length;
@@ -1128,7 +1128,7 @@ function isArrayNumbers(checkKeys) {
 // Outputs {key: value, key: value, ...}
 // or  {key: [value, ...], key: [value, ...]}
 function convertStringToObject(string, valueType, separator = ',', secondSeparator) {
-	if (string === null || string == '') {
+	if (string === null || string === '') {
 		return null;
 	} else {
 		let output = {};
@@ -1140,9 +1140,9 @@ function convertStringToObject(string, valueType, separator = ',', secondSeparat
 				if (subArray.length >= 2) {
 					output[subArray[0]] = []; // First value is always the key
 					for (let i = 1; i < subArray.length; i++) {
-						if (valueType == 'string') {
+						if (valueType === 'string') {
 							output[subArray[0]].push(subArray[i]);
-						} else if (valueType == 'number') {
+						} else if (valueType === 'number') {
 							output[subArray[0]].push(Number(subArray[i]));
 						}
 					}
@@ -1151,9 +1151,9 @@ function convertStringToObject(string, valueType, separator = ',', secondSeparat
 		} else { // Only once
 			array = string.split(separator);
 			for (let i = 0; i < array.length; i += 2) {
-				if (valueType == 'string') {
+				if (valueType === 'string') {
 					output[array[i]] = array[i + 1];
-				} else if (valueType == 'number') {
+				} else if (valueType === 'number') {
 					output[array[i]] = Number(array[i + 1]);
 				}
 			}
@@ -1275,13 +1275,13 @@ function k_combinations(aSet, k) {
 			return;
 		}
 		// K-sized set has only one K-sized subset.
-		if (k == aSetLength) {
+		if (k === aSetLength) {
 			return [aSet];
 		}
 		
 		let i, j, combs;
 		// There is N 1-sized subsets in a N-sized set.
-		if (k == 1) {
+		if (k === 1) {
 			combs = [];
 			for (i = 0; i < aSetLength; i++) {
 				combs.push([aSet[i]]);
@@ -1315,7 +1315,7 @@ function combinations(aSet) {
 			return; //Array was null or not an array
 		}
 		// 1-sized set has only one subset.
-		if (aSetLength == 1) {
+		if (aSetLength === 1) {
 			return [aSet];
 		}
 		
@@ -1346,7 +1346,7 @@ function fact(n) {
 
 // Total number of possible k-combinations
 function nk_combinations(n, k) {
-		if (k == n) {
+		if (k === n) {
 			return 1;
 		} else if (k > n){
 			return 0;
@@ -1373,7 +1373,7 @@ function _tt(value, font = 'Segoe UI', fontsize = _scale(10), width = 1200) {
 			this.Deactivate();
 			return;
 		} else {
-			if (this.tooltip.Text != value) {
+			if (this.tooltip.Text !== value) {
 				this.tooltip.Text = value;
 				this.Activate();
 			}
@@ -1495,7 +1495,7 @@ function _sb(t, x, y, w, h, v, fn) {
 }
 
 function drawDottedLine(gr, x1, y1, x2, y2, line_width, colour, dot_sep) {
-	if (y1 == y2) { // Horizontal
+	if (y1 === y2) { // Horizontal
 		const numberDots = Math.floor((x2 - x1) / dot_sep / 2);
 		let newX1 = x1;
 		let newX2 = x1 + dot_sep;
@@ -1504,7 +1504,7 @@ function drawDottedLine(gr, x1, y1, x2, y2, line_width, colour, dot_sep) {
 			newX1 += dot_sep * 2;
 			newX2 += dot_sep * 2;
 		}
-	} else if (x1 == x2) { // Vertical
+	} else if (x1 === x2) { // Vertical
 		const numberDots = Math.floor((y2 - y1) / dot_sep / 2);
 		let newY1 = y1;
 		let newY2 = y1 + dot_sep;
@@ -1515,7 +1515,7 @@ function drawDottedLine(gr, x1, y1, x2, y2, line_width, colour, dot_sep) {
 		}
 	} else { // Any angle: Would work alone, but checking coordinates first is faster...
 		const numberDots = Math.floor(((x2 - x1)**2 + (y2 - y1)**2)**(1/2) / dot_sep / 2);
-		const angle = (y2 != y1) ? Math.atan((x2 - x1)/(y2 - y1)) : 0;
+		const angle = (y2 !== y1) ? Math.atan((x2 - x1)/(y2 - y1)) : 0;
 		const xStep = dot_sep * Math.cos(angle);
 		const yStep = dot_sep * Math.sin(angle);
 		let newX1 = x1;
@@ -1587,7 +1587,7 @@ function getPropertyByKey(propertiesDescriptor, key, prefix = "", count = 1, bPa
 	let bNumber = count > 0 ? true : false;
 	let output = null;
 	for (let k in propertiesDescriptor){
-		if (k == key) {
+		if (k === key) {
 			output = window.GetProperty(prefix + (bNumber ? (bPadding ? ("00" + count).slice(-2) : count) : '') + ((prefix || bNumber) ? '.' : '') + propertiesDescriptor[k][0]);
 			break;
 		}
@@ -1617,7 +1617,7 @@ function getPropertiesPairs(propertiesDescriptor, prefix = "", count = 1, bPaddi
 			output[k] = [null,null];
 			output[k][0] =  prefix + (bNumber ? (bPadding ? ("00" + count).slice(-2) : count) : '') + ((prefix || bNumber) ? '.' : '') + propertiesDescriptor[k][0];
 			output[k][1] = window.GetProperty(output[k][0]);
-			if (propertiesDescriptor[k].length == 4) {
+			if (propertiesDescriptor[k].length === 4) {
 				if (!checkProperty(propertiesDescriptor[k], output[k][1])) {
 					output[k][1] = propertiesDescriptor[k][3];
 				}
@@ -1634,7 +1634,7 @@ function getPropertiesPairs(propertiesDescriptor, prefix = "", count = 1, bPaddi
 function getPropertiesValues(propertiesDescriptor, prefix = "", count = 1, skip = -1, bPadding = true) {
 	let properties = getProperties(propertiesDescriptor, prefix, count, bPadding);
 	let propertiesValues = [];
-	if (skip == -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
+	if (skip === -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
 	let i = 0;
 	for (let k in properties){
 		i++;
@@ -1650,7 +1650,7 @@ function getPropertiesValues(propertiesDescriptor, prefix = "", count = 1, skip 
 function getPropertiesKeys(propertiesDescriptor, prefix = "", count = 1, skip = -1, bPadding = true) {
 	let bNumber = count > 0 ? true : false;
 	let propertiesKeys = [];
-	if (skip == -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
+	if (skip === -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
 	let i = 0;
 	for (let k in propertiesDescriptor){
 		i++;
@@ -1667,13 +1667,13 @@ function getPropertiesKeys(propertiesDescriptor, prefix = "", count = 1, skip = 
 function enumeratePropertiesValues(propertiesDescriptor, prefix = "", count = 1, sep = "|", skip = -1, bPadding = true) {
 	let bNumber = count > 0 ? true : false;
 	let output = "";
-	if (skip == -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
+	if (skip === -1) {skip = Object.keys(propertiesDescriptor).length + 1;}
 	let i = 0;
 	for (let k in propertiesDescriptor){
 		i++;
 		if (i < skip) {
 			let value = String(window.GetProperty(prefix + (bNumber ? (bPadding ? ("00" + count).slice(-2) : count) : '') + ((prefix || bNumber) ? '.' : '') + propertiesDescriptor[k][0])); // TODO: toString();
-			output += (output == "") ? value : sep + value ;
+			output += (output === "") ? value : sep + value ;
 			if (bNumber) {count++};
 		}
 	}
@@ -1689,7 +1689,7 @@ function enumeratePropertiesValues(propertiesDescriptor, prefix = "", count = 1,
 function checkProperty(property, withValue) {
 	let bPass = true;
 	let report = '';
-	if (property.length != 4) {return true;}  // No checks needed (?)
+	if (property.length !== 4) {return true;}  // No checks needed (?)
 	const valToCheck = (withValue !== undefined ? withValue : property[1]);
 	const checks = property[2];
 	if (checks.hasOwnProperty('lower') && valToCheck >= checks['lower']) {
@@ -1704,7 +1704,7 @@ function checkProperty(property, withValue) {
 	if (checks.hasOwnProperty('greaterEq') && valToCheck < checks['greaterEq']) {
 		bPass = false; report += 'Value must be greater than or equal to' + checks['greaterEQ'] + '\n';
 	}
-	if (checks.hasOwnProperty('eq') && checks['eq'].indexOf(valToCheck) == -1) {
+	if (checks.hasOwnProperty('eq') && checks['eq'].indexOf(valToCheck) === -1) {
 		bPass = false; report += 'Value must be equal to (any) ' + checks['eq'].join(', ') + '\n';
 	}
 	if (checks.hasOwnProperty('range') && !checks['range'].some( (pair) => {return (valToCheck >= pair[0] && valToCheck <= pair[1]);})) {
@@ -1728,7 +1728,7 @@ const range = (start, stop, step) => Array.from({ length: (stop - start) / step 
 function round(floatnum, decimals){
 	let result;
 	if (decimals > 0) {
-		if (decimals == 15) {result = floatnum;}
+		if (decimals === 15) {result = floatnum;}
 		else {result = Math.round(floatnum * Math.pow(10, decimals)) / Math.pow(10, decimals);}
 	} else {result =  Math.round(floatnum);}
 	return result;
@@ -1765,7 +1765,7 @@ function isCompatible(requiredVersionStr = '1.4.0') {
     }
 
     for(let i = 0; i< currentVersion.length; ++i) {
-      if (currentVersion[i] != requiredVersion[i]) {
+      if (currentVersion[i] !== requiredVersion[i]) {
           return currentVersion[i] > requiredVersion[i];
       }
     }
