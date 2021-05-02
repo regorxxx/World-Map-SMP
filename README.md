@@ -1,4 +1,8 @@
 # World-Map-SMP
+[![version][version_badge]][changelog]
+[![CodeFactor][codefactor_badge]](https://www.codefactor.io/repository/github/regorxxx/world-map-smp/overview/main)
+[![Codacy Badge][codacy_badge]](https://app.codacy.com/app/regorxxx/World-Map-SMP?utm_source=github.com&utm_medium=referral&utm_content=regorxxx/World-Map-SMP&utm_campaign=Badge_Grade_Dashboard) 
+
 A [foobar200](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://hydrogenaud.io/index.php?topic=112914.0). 
 
 ![Animation4](https://user-images.githubusercontent.com/83307074/116752367-002d9100-a9f5-11eb-8a03-0ee323634742.gif)
@@ -30,3 +34,8 @@ Any other path WILL NOT work without editing the scripts.
 For ex: mine is c:\Users\xxx\AppData\Roaming\foobar2000\scripts\SMP\xxx-scripts...
 For portable installations: .\foobar2000\profile\scripts\SMP\xxx-scripts...
 Then load 'world_map.js' into a SMP panel within foobar.
+
+[changelog]: CHANGELOG.md
+[version_badge]: https://img.shields.io/github/release/regorxxx/World-Map-SMP.svg
+[codacy_badge]: https://api.codacy.com/project/badge/Grade/d68ef528f77646bca546fd206d28e8a1
+[codefactor_badge]: https://www.codefactor.io/repository/github/regorxxx/world-map-smp/badge/main
