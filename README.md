@@ -29,10 +29,10 @@ A [foobar200](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqw
 ![Animation6](https://user-images.githubusercontent.com/83307074/116752378-03c11800-a9f5-11eb-9971-b3eff6e8d0fa.gif)
 
 # Installation
-Copy all files from the zip into YOUR_FOOBAR_PROFILE_PATH\scripts\SMP\xxx-scripts
-Any other path WILL NOT work without editing the scripts.
-For ex: mine is c:\Users\xxx\AppData\Roaming\foobar2000\scripts\SMP\xxx-scripts...
-For portable installations: .\foobar2000\profile\scripts\SMP\xxx-scripts...
+Copy all files from the zip into YOUR_FOOBAR_PROFILE_PATH\scripts\SMP\xxx-scripts  
+Any other path WILL NOT work without editing the scripts.  
+For ex: mine is c:\Users\xxx\AppData\Roaming\foobar2000\scripts\SMP\xxx-scripts...  
+For portable installations: .\foobar2000\profile\scripts\SMP\xxx-scripts...  
 Then load 'world_map.js' into a SMP panel within foobar.
 
 [changelog]: CHANGELOG.md
