@@ -18,14 +18,12 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 		let ix = -1;
 		// Up to here
 		if (!handles) return;
-		let a = "", a_o = "####",  aa = "", aa_o = "####", l = "", l_o = "####";
-		let locale = [], tags = [], artTags = [];
+		let a_o = "####", l = "";
+		let locale = [], tags = [];
 		const tf_a = FbTitleFormat(p.tf.a), tf_aa = FbTitleFormat(p.tf.aa), tf_cue = FbTitleFormat("$ext(%path%)"), tf_l = FbTitleFormat(p.tf.l);
 		tags.push({name: 'artist', val: tf_a.EvalWithMetadb(handles)});
 		tags.push({name: 'album', val: tf_l.EvalWithMetadb(handles)});
 		const artist = tags[0].val.toUpperCase(), album = tags[1].val.toUpperCase();
-		if (!name.alb_strip) l = l.replace(/CD(\s*\d|\.0\d)|CD\s*(One|Two|Three)|Disc\s*\d|Disc\s*(III|II|I|One|Two|Three)\b/gi,"").replace(/\(\s*\)|\[\s*\]/g, " ").replace(/\s\s+/g, " ").replace(/-\s*$/g, " ").trim();
-		else l = l.replace(/CD(\s*\d|\.0\d)|CD\s*(One|Two|Three)|Disc\s*\d|Disc\s*(III|II|I|One|Two|Three)\b|(Bonus\s*Track|Collector's|(Digital\s*|Super\s*|)Deluxe|Digital|Expanded|Limited|Platinum|Reissue|Special)\s*(Edition|Version)|(Bonus\s*(CD|Disc))|\d\d\w\w\s*Anniversary\s*(Expanded\s*|Re(-|)master\s*|)(Edition|Re(-|)master|Version)|((19|20)\d\d(\s*|\s*-\s*)|)(Digital(ly|)\s*|)(Re(-|)master(ed|)|Re(-|)recorded)(\s*Edition|\s*Version|)|\(Deluxe\)|\(Mono\)|\(Reissue\)|\(Revisited\)|\(Stereo\)|\(Web\)|\[Deluxe\]|\[Mono\]|\[Reissue\]|\[Revisited\]|\[Stereo\]|\[Web\]/gi,"").replace(/\(\s*\)|\[\s*\]/g, " ").replace(/\s\s+/g, " ").replace(/-\s*$/g, " ").trim();
 		if (artist !== a_o) {
 			a_o = artist;
 			if (p.tag[6].enabled || p.tag[7].enabled || p.tag[8].enabled && p.tag[8].enabled < 7) {

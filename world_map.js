@@ -150,7 +150,6 @@ function selPoint(point, mask ) {
 					const ctrlFirstTag = worldMap.properties.ctrlFirstTag[1].split(',').filter(Boolean);
 					const ctrlSecondTag = worldMap.properties.ctrlSecondTag[1].split(',').filter(Boolean);
 					const genreStyleFilter = worldMap.properties.genreStyleFilter[1].length ? new Set(worldMap.properties.genreStyleFilter[1].split(',').concat('')) : null;
-					const bTagFilter = genreStyleFilter ? true : false; // Only use filter when required
 					const firstTag = (ctrlFirstTag.length !== 0) ? getTagsValuesV3(selPoint, ctrlFirstTag, true).filter(Boolean) : [];
 					const secondTag = (ctrlSecondTag.length !== 0) ? getTagsValuesV3(selPoint, ctrlSecondTag, true).filter(Boolean) : [];
 					let valSet = new Set(); // Don't add the same thing multiple times to the query, just for readability
@@ -334,7 +333,7 @@ function on_notify_data(name, info) {
 							const locale = [...info.tags.find( (tag) => {return tag.name == 'locale';}).val]; // Find the tag with name == locale in the array of tags
 							if (jsonId.length && locale.length) { // uses worldMap.jsonId
 								const newData = {artist: jsonId, val: locale};
-								if (!!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
+								if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
 							}
 						}
 					}
@@ -460,7 +459,7 @@ const menu = new _menu();
 			if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.join('\n') + '\nPlease reload the Biography panel.', window.Name);}
 			else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
 			worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
-			if (!worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = false};
+			if (!worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = false;}
 			overwriteProperties(worldMap.properties); // Updates panel
 		}});
 	}
