@@ -30,14 +30,14 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 		// When moving mouse, retrieve last points
 		if (this.idSelected.length) {
 			this.lastPoint.forEach( (point) => {
-				toPaintArr.push({...point})
+				toPaintArr.push({...point});
 			});
 		// Otherwise, use selection
 		} else {
 			// Handle list
 			if (sel && sel.Count >= 0) {
-				if (sel.Count == 0) {return;}
-				else if (sel.Count == 1) {
+				if (sel.Count === 0) {return;}
+				else if (sel.Count === 1) {
 					const currentMatch =  sel[0] ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel[0]) : '';
 					const id = sel[0] ? this.findTag(sel[0], currentMatch) : '';
 					if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
@@ -47,8 +47,8 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 						const id = handle ? this.findTag(handle, currentMatch) : '';
 						if (id.length) {
 							const idx = toPaintArr.findIndex((point) => {return point.id === id});
-							if (idx == -1) {
-								toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});
+							if (idx === -1) {
+								toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});
 							}
 							else {
 								toPaintArr[idx].val++;
@@ -59,7 +59,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				}
 			// Handle
 			} else {
-				const currentMatch =  sel ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel) : '';
+				const currentMatch = sel ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel) : '';
 				const id = this.idSelected.length ? this.lastPoint[0] : (sel ? this.findTag(sel, currentMatch) : '');
 				if (id.length) {toPaintArr.push({id: id, val: 1, jsonId: new Set([currentMatch])});}
 			}
@@ -74,7 +74,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				// Is a new point? Calculate it
 				if (!this.point.hasOwnProperty(id)) {
 					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height);
-					if (xPos != -1 && yPos != -1) {
+					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
 						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.pos_x, yScaled: yPos * this.scale + this.pos_y, id}; 
 					}
@@ -82,11 +82,11 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				// Draw points
 				const point = this.point[id];
 				if (point) {
-					gr.DrawEllipse(point.xScaled, point.yScaled, pointSize * this.scale, pointSize * this.scale, pointLineSize * this.scale, (this.idSelected == id ? selectionColor : color));
+					gr.DrawEllipse(point.xScaled, point.yScaled, pointSize * this.scale, pointSize * this.scale, pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
 					if (bShowSize && toPaint.val > 1) { // Show count on map?
-						gr.GdiDrawText(toPaint.val, this.gFont, 0xFF000000, point.xScaled - pointSize * this.scale, point.yScaled + pointLineSize * this.scale / 2, 40, 40)
+						gr.GdiDrawText(toPaint.val, this.gFont, 0xFF000000, point.xScaled - pointSize * this.scale, point.yScaled + pointLineSize * this.scale / 2, 40, 40);
 					}
-					this.lastPoint.push({...toPaint}) // Add to list
+					this.lastPoint.push({...toPaint}); // Add to list
 				}
 			}
 		});
@@ -118,12 +118,12 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 		var mapTagValue = '';
 		if (sel) {
 			// Get from tags
-			const tfo = (this.mapTag.indexOf('$') == -1) ? '[%' + this.mapTag + '%]' : '[' + this.mapTag + ']'; // It's a function?
+			const tfo = (this.mapTag.indexOf('$') === -1) ? '[%' + this.mapTag + '%]' : '[' + this.mapTag + ']'; // It's a function?
 			mapTagValue = fb.TitleFormat(tfo).EvalWithMetadb(sel);
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
 				const id =  fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel);
-				const data = id.length ? this.jsonData.find((obj) => {return obj[this.jsonId] == id}) : null;
+				const data = id.length ? this.jsonData.find((obj) => {return (obj[this.jsonId] === id);}) : null;
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];
 				}
@@ -131,7 +131,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			// Or external
 			if (byKey.length && this.tagValue.hasOwnProperty(byKey)) {
 				// Set by other script or forced by other panel
-				if (!mapTagValue.length || this.mapTag == 'External Script') {mapTagValue = this.tagValue[byKey];}
+				if (!mapTagValue.length || this.mapTag === 'External Script') {mapTagValue = this.tagValue[byKey];}
 			}
 		}
 		return mapTagValue;

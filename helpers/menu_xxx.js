@@ -122,9 +122,9 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 	
 	// To create new elements
 	this.newMenu = (menuName = 'main', subMenuFrom = 'main') => {
-		if (menuName == subMenuFrom) {subMenuFrom = '';}
-		menuArr.push({menuName: menuName, subMenuFrom: subMenuFrom});
-		if (menuArr.length > 1) {entryArr.push({menuName: menuName, subMenuFrom: subMenuFrom, bIsMenu: true});}
+		if (menuName === subMenuFrom) {subMenuFrom = '';}
+		menuArr.push({menuName, subMenuFrom});
+		if (menuArr.length > 1) {entryArr.push({menuName, subMenuFrom, bIsMenu: true});}
 		return menuName;
 	}
 	this.newMenu(); // Default menu
@@ -135,7 +135,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 	}
 	
 	this.newCheckMenu = (menuName, entryTextA, entryTextB, idxFun) => {
-		checkMenuArr.push({menuName: menuName, entryTextA: entryTextA, entryTextB: entryTextB, idxFun: idxFun});
+		checkMenuArr.push({menuName, entryTextA, entryTextB, idxFun});
 	}
 	
 	this.newCondEntry = ({entryText = '', condFunc}) => {
@@ -145,7 +145,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 
 	this.getNumEntries = () => {return entryArr.length;}
 	this.getMainMenuName = () => {return menuArr[0].menuName;}
-	this.hasMenu = (menuName) => {return (menuArr.indexOf(menuName) != -1);}
+	this.hasMenu = (menuName) => {return (menuArr.indexOf(menuName) !== -1);}
 	
 	// Internal
 	this.getMenu = (menuName) => {return (!menuName) ? menuMap : menuMap.get(menuName);}
@@ -160,7 +160,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 	}
 	
 	this.addToMenu = ({entryText = null, func = null, menuName = menuArr[0].menuName, flags = MF_STRING}) => {
-		if (entryText == 'sep' || entryText == 'separator') {menuMap.get(menuName).AppendMenuSeparator();}
+		if (entryText === 'sep' || entryText === 'separator') {menuMap.get(menuName).AppendMenuSeparator();}
 		else {
 			idx++;
 			if (_isFunc(menuName)) {menuName = menuName();}
@@ -200,7 +200,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 				this.addToMenu({entryText: entry.entryText, func: entry.func, menuName: entry.menuName, flags: entry.flags});
 			} else { // Append sub-menus
 				const subMenuName = _isFunc(entry.menuName) ? entry.menuName() : entry.menuName;
-				if (subMenuName != menuArr[0].menuName) {
+				if (subMenuName !== menuArr[0].menuName) {
 					const subMenuFrom = _isFunc(entry.subMenuFrom) ? entry.subMenuFrom() : entry.subMenuFrom;
 					this.getMenu(subMenuName).AppendTo(this.getMenu(entry.subMenuFrom), MF_STRING, subMenuName);
 				}
@@ -221,7 +221,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 		const currIdx = this.getMenu(menuArr[0].menuName).TrackPopupMenu(x, y);
 		let bDone;
 		this.getEntry().forEach( (func, entryIdx) => {
-			if (entryIdx == currIdx) {
+			if (entryIdx === currIdx) {
 				func();
 				return bDone = true;
 			}
