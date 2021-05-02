@@ -22,7 +22,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	this.tooltip = new _tt(null);  
 	// Paint
 	this.paintBg = (gr) => {
-		gr.DrawImage(this.imageMap, this.pos_x, this.pos_y, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
+		gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 	}
 	this.paint = (gr, sel, color = this.defaultColor, selectionColor = this.selectionColor) => { // on_paint
 		this.paintBg(gr);

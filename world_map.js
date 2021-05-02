@@ -191,13 +191,13 @@ function selPoint(point, mask ) {
 		if (duplicPl.length === 1) {
 			plman.ActivePlaylist = duplicPl[0];
 		} else {
-			if (duplicPl.length > 1) {removePlaylistByName(name)}
+			if (duplicPl.length > 1) {removePlaylistByName(name);}
 			plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
 			plman.ActivePlaylist = plman.PlaylistCount - 1;
 		}
 		bDone = true;
 		return bDone;
-	} else {fb.ShowPopupMessage('Query not valid: ' + query, window.Name)}
+	} else {fb.ShowPopupMessage('Query not valid: ' + query, window.Name);}
 	return bDone;
 }
 
@@ -258,7 +258,7 @@ function on_playback_stop(reason) {
 function on_playlist_items_removed(playlistIndex, new_count) {
 	if (playlistIndex === plman.ActivePlaylist && new_count === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
-		if (worldMap.properties.selection[1] == selMode[1] && fb.IsPlaying) {return;}
+		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
 		repaint();
 	}
@@ -273,7 +273,7 @@ function on_metadb_changed(handle_list) {
 	sel.MakeIntersection(handle_listClone);
 	if (sel && sel.Count) {
 		const tags = fb.TitleFormat('[%' + worldMap.properties.mapTag[1] + '%]').EvalWithMetadbs(sel);
-		if (tags.some((value) => {value !== worldMap.tagValue})) {
+		if (tags.some((value) => {value !== worldMap.tagValue;})) {
 			repaint();
 		}
 	}
@@ -363,13 +363,13 @@ const menu = new _menu();
 	{	// Enabled?
 		const menuName = menu.newMenu('Map panel functionality');
 		const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
-		menu.newEntry({menuName: menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED});
-		menu.newEntry({menuName: menuName, entryText: 'sep'});
+		menu.newEntry({menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED});
+		menu.newEntry({menuName, entryText: 'sep'});
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
 				if (worldMap.properties['bEnabled'][1] === mode.val) {return;}
-				worldMap.properties['bEnabled'][1] == mode.val; // And update property with new value
+				worldMap.properties['bEnabled'][1] = mode.val; // And update property with new value
 				overwriteProperties(worldMap.properties); // Updates panel
 				window.Repaint();
 			}});
@@ -382,8 +382,8 @@ const menu = new _menu();
 	{	// Enabled Biography?
 		const menuName = menu.newMenu('WilB\'s Biography integration');
 		const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
-		menu.newEntry({menuName: menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
-		menu.newEntry({menuName: menuName, entryText: 'sep'});
+		menu.newEntry({menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
+		menu.newEntry({menuName, entryText: 'sep'});
 		options.forEach( (mode) => {
 			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
@@ -402,8 +402,8 @@ const menu = new _menu();
 			args = getPropertiesPairs(args, '', 0); // Update properties from the panel
 			return (args['bEnabledBiography'][1] ? 0 : 1);
 		});
-		menu.newEntry({menuName: menuName, entryText: 'sep'});
-		menu.newEntry({menuName: menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)')}, func: () => {
+		menu.newEntry({menuName, entryText: 'sep'});
+		menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)');}, func: () => {
 			let fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
 			const modText = "\ninclude(fb.ProfilePath + 'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_xxx.js');";
 			const idText = "window.DefinePanel('Biography', {author:'WilB'";
@@ -427,7 +427,7 @@ const menu = new _menu();
 			catch (e) {return;}
 			if (!input.trim().length) {return;}
 			input = input.trim().split(',');
-			if (input.some((idx) => {return idx > foundArr.length})) {return;}
+			if (input.some((idx) => {return idx > foundArr.length;})) {return;}
 			let selectFound = [];
 			input.forEach( (idx) => {selectFound.push(foundArr[idx - 1]);});
 			let bDone = true;
@@ -468,7 +468,7 @@ const menu = new _menu();
 		const menuName = menu.newMenu('Selection mode');
 		const options = selMode;
 		options.forEach( (mode) => {
-			menu.newEntry({menuName: menuName, entryText: mode, func: () => {
+			menu.newEntry({menuName, entryText: mode, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
 				if (worldMap.properties['selection'][1] === mode) {return;}
 				if (worldMap.properties['bEnabledBiography'][1]) { // Warning check
@@ -491,11 +491,11 @@ const menu = new _menu();
 	}
 	{	// Write tags?
 		const menuName = menu.newMenu('Write tags on playback');
-		menu.newEntry({menuName: menuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
-		menu.newEntry({menuName: menuName, entryText: 'sep'});
+		menu.newEntry({menuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
+		menu.newEntry({menuName, entryText: 'sep'});
 		const options = [{text: 'No (read only from tags, online or json)', val: 0}, {text: 'Yes, when tag has not been already set on track', val: 1}, {text: 'Yes, as json (for internal use on the script)', val: 2}];
 		options.forEach( (mode) => {
-			menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
+			menu.newEntry({menuName, entryText: mode.text, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
 				if (worldMap.properties['iWriteTags'][1] === mode.val) {return;}
 				if (mode.val) { // Warning check
@@ -510,14 +510,14 @@ const menu = new _menu();
 			args = getPropertiesPairs(args, '', 0); // Update properties from the panel
 			return (args['iWriteTags'][1]);
 		});
-		menu.newEntry({menuName: menuName, entryText: 'sep', func: null});
-		menu.newEntry({menuName: menuName, entryText: 'Show data folder', func: () => {
-			_explorer(worldMap.properties.fileName[1])
+		menu.newEntry({menuName, entryText: 'sep', func: null});
+		menu.newEntry({menuName, entryText: 'Show data folder', func: () => {
+			_explorer(worldMap.properties.fileName[1]);
 		}, flags: () => {return _isFile(worldMap.properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
 	}
 }
 
 function on_mouse_rbtn_up(x, y) {
-	menu.btn_up(x, y)
+	menu.btn_up(x, y);
 	return true; // Disable right button menu
 }
