@@ -313,7 +313,7 @@ function on_notify_data(name, info) {
 			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 			// Set tag on map for drawing if found
 			if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-				const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name == locale in the array of tags
+				const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
 				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 				if (locale.length) {
 					worldMap.setTag(locale[locale.length - 1], jsonId);
@@ -330,7 +330,7 @@ function on_notify_data(name, info) {
 							new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
 						} else if (worldMap.properties.iWriteTags[1] === 2) {
 							const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-							const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name == locale in the array of tags
+							const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
 							if (jsonId.length && locale.length) { // uses worldMap.jsonId
 								const newData = {artist: jsonId, val: locale};
 								if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
