@@ -15,4 +15,4 @@
 ### Removed
 
 [Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v0.0.0...v1.0.0
+[1.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/8df8206...v1.0.0
