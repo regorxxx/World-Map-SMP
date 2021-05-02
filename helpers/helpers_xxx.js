@@ -389,7 +389,7 @@ function findRecursivePaths(path = fb.ProfilePath){
 	let arr = [], pathArr = [];
 	arr = utils.Glob(path + '*.*', 0x00000020); // Directory
 	arr.forEach( (subPath) => {
-		if (subPath.indexOf('\\..') != -1 || subPath.indexOf('\\.') !== -1) {return;}
+		if (subPath.indexOf('\\..') !== -1 || subPath.indexOf('\\.') !== -1) {return;}
 		if (subPath === path) {return;}
 		pathArr.push(subPath);
 		pathArr = pathArr.concat(findRecursivePaths(subPath + '\\'));
@@ -563,7 +563,7 @@ function getPlaylistIndexArray(name) {
 // Removes all playlists with that name
 function removePlaylistByName(name) { 
 	let index = plman.FindPlaylist(name);
-	while (index != -1){
+	while (index !== -1){
 		plman.RemovePlaylist(index);
 		index = plman.FindPlaylist(name);
 	}
@@ -590,7 +590,7 @@ function arePlaylistNamesDuplicated() {
 		names.add(plman.GetPlaylistName(i));
 		i++;
 	}
-	return !(names.size == count);
+	return !(names.size === count);
 }
 
 // Playlists with same name
@@ -604,15 +604,15 @@ function findPlaylistNamesDuplicated() {
 	}
 	const namesArrayNoDuplicates = [...new Set(namesArray)];
 	namesArrayNoDuplicates.forEach((item) => {
-	  const i = namesArray.indexOf(item);
-	  namesArray = namesArray.slice(0, i).concat(namesArray.slice(i + 1, namesArray.length))
+		const i = namesArray.indexOf(item);
+		namesArray = namesArray.slice(0, i).concat(namesArray.slice(i + 1, namesArray.length))
 	})
 	return namesArray;
 }
 
 function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlistName = undefined, useUUID = null, bLocked = false, category = '', tags = []) {
 	if (!writablePlaylistFormats.has(extension)){
-		console.log('savePlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '))
+		console.log('savePlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '));
 		return false;
 	}
 	if (!_isFile(playlistPath)) {
@@ -621,7 +621,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 		if (!playlistName) {playlistName = (arr[1].endsWith(arr[2])) ? arr[1] : arr[1] + arr[2];} // <1.4.0 Bug: [directory, filename + filename_extension, filename_extension]
 		let playlistText = [];
 		// -------------- m3u
-		if (extension == '.m3u8' || extension == '.m3u') {
+		if (extension === '.m3u8' || extension === '.m3u') {
 			// Header text
 			playlistText.push('#EXTM3U');
 			playlistText.push('#EXTENC:UTF-8');
@@ -645,7 +645,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 				playlistText[7] += 0; // Add number of tracks to size
 			} 
 		// ---------------- PLS
-		} else if (extension == '.pls') { // The standard doesn't allow comments... so no UUID here.
+		} else if (extension === '.pls') { // The standard doesn't allow comments... so no UUID here.
 			// Header text
 			playlistText.push('[playlist]');
 			// Tracks text
@@ -674,7 +674,7 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 		// Check
 		if (_isFile(playlistPath) && bDone) {
 			let check = utils.ReadTextFile(playlistPath, convertCharsetToCodepage("UTF-8"));
-			bDone = (check == playlistText);
+			bDone = (check === playlistText);
 		}
 		return bDone ? playlistPath : false;
 	}
@@ -684,14 +684,14 @@ function savePlaylist(playlistIndex, playlistPath, extension = '.m3u8', playlist
 function addHandleToPlaylist(handleList, playlistPath) {
 	const extension = isCompatible('1.4.0') ? utils.SplitFilePath(file)[2] : utils.FileTest(file, "split")[2]; //TODO: Deprecated
 	if (!writablePlaylistFormats.has(extension)){
-		console.log('savePlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '))
+		console.log('savePlaylist(): Wrong extension set "' + extension + '", only allowed ' + Array.from(writablePlaylistFormats).join(', '));
 		return false;
 	}
 	if (!_isFile(playlistPath)) {
 		let trackText = [];
 		let addSize = handleList.Count;
 		// -------------- m3u
-		if (extension == '.m3u8' || extension == '.m3u') {
+		if (extension === '.m3u8' || extension === '.m3u') {
 			// Tracks text
 			if (addSize != 0) {
 				let tfo = fb.TitleFormat('#EXTINF:%_length_seconds%,%artist% - %title%$crlf()' + '%path%');
@@ -700,8 +700,8 @@ function addHandleToPlaylist(handleList, playlistPath) {
 				return false;
 			} 
 		// ---------------- PLS
-		} else if (extension == '.pls') { // The standard doesn't allow comments... so no UUID here.
-			if (addSize != 0) { // Tracks from playlist
+		} else if (extension === '.pls') { // The standard doesn't allow comments... so no UUID here.
+			if (addSize !== 0) { // Tracks from playlist
 				// Tracks text
 				let tfo = fb.TitleFormat('File#placeholder#=%path%' + '$crlf()Title#placeholder#=%title%' + '$crlf()Length#placeholder#=%_length_seconds%');
 				trackText = tfo.EvalWithMetadbs(handleList);
@@ -718,21 +718,21 @@ function addHandleToPlaylist(handleList, playlistPath) {
 		// Read original file
 		let originalText = utils.ReadTextFile(playlistPath).split('\r\n');
 		let bFound = false;
-		if (originalText !== undefined && originalText.length) { // We don't check if it's a playlist by its content! Can break things if used wrong...
-			let lines = originalText.length
-			if (extension == '.m3u8' || extension == '.m3u') {;
+		if (typeof originalText !== 'undefined' && originalText.length) { // We don't check if it's a playlist by its content! Can break things if used wrong...
+			let lines = originalText.length;
+			if (extension === '.m3u8' || extension === '.m3u') {
 				let j = 0;
 				while (j < lines) { // Changes size Line
 					if (originalText[j].startsWith('#PLAYLISTSIZE:')) {
 						size = Number(originalText[j].split(':')[1]);
-						let newSize = size + addSize
+						let newSize = size + addSize;
 						originalText[j] = '#PLAYLISTSIZE:' + newSize;
 						bFound = true;
 						break;
 					}
 					j++;
 				}
-			} else if (extension == '.pls') {
+			} else if (extension === '.pls') {
 				let j = 0;
 				if (originalText[lines - 2].startsWith('NumberOfEntries=')) {
 					bFound = true;
@@ -755,7 +755,7 @@ function addHandleToPlaylist(handleList, playlistPath) {
 		// Check
 		if (_isFile(playlistPath) && bDone) {
 			let check = utils.ReadTextFile(playlistPath, convertCharsetToCodepage("UTF-8"));
-			bDone = (check == playlistText);
+			bDone = (check === playlistText);
 		}
 		return bDone ? playlistPath : false;
 	}
@@ -772,13 +772,13 @@ function getFilePathsFromPlaylist(playlistPath) {
 	if (_isFile(playlistPath)) {
 		// Read original file
 		let originalText = utils.ReadTextFile(playlistPath).split('\r\n');
-		if (originalText !== undefined && originalText.length) {
+		if (typeof originalText !== 'undefined' && originalText.length) {
 			let lines = originalText.length
-			if (extension == '.m3u8' || extension == '.m3u') {;
+			if (extension === '.m3u8' || extension === '.m3u') {;
 				for (let j = 0; j < lines; j++) {
 					if (!originalText[j].startsWith('#')) {paths.push(originalText[j]);}
 				}
-			} else if (extension == '.pls') {
+			} else if (extension === '.pls') {
 				for (let j = 0; j < lines; j++) {
 					if (originalText[j].startsWith('File')) {
 						// Path may contain '=' so get anything past first '='
@@ -797,7 +797,7 @@ function getFilePathsFromPlaylist(playlistPath) {
 function loadTracksFromPlaylist(playlistPath, playlistIndex) {
 	let test = new FbProfiler('Group #1');
 	let bDone = false;
-	const filePaths = getFilePathsFromPlaylist(playlistPath).map((path) => {return path.toLowerCase()});
+	const filePaths = getFilePathsFromPlaylist(playlistPath).map((path) => {return path.toLowerCase();});
 	const playlistLength = filePaths.length;
 	let handlePlaylist = [...Array(playlistLength)];
 	let poolItems = fb.GetLibraryItems().Convert();
@@ -815,7 +815,7 @@ function loadTracksFromPlaylist(playlistPath, playlistIndex) {
 			count++;
 		}
 	}
-	if (count == filePaths.length) {
+	if (count === filePaths.length) {
 		handlePlaylist = new FbMetadbHandleList(handlePlaylist);
 		plman.InsertPlaylistItems(playlistIndex, 0, handlePlaylist);
 		bDone = true;
@@ -825,9 +825,9 @@ function loadTracksFromPlaylist(playlistPath, playlistIndex) {
 }
 
 function loadPlaylists(playlistArray) {
-	let playlistArray_length = playlistArray.length;
+	let playlistArrayLength = playlistArray.length;
 	let i = 0;
-	while (i < playlistArray_length) {
+	while (i < playlistArrayLength) {
 		let playlist = playlistArray[i];
 		let newIndex = plman.CreatePlaylist(plman.PlaylistCount, playlist.name);
 		plman.AddLocations(newIndex, [playlist.path], true);
@@ -845,18 +845,18 @@ function loadPlaylists(playlistArray) {
 function queryReplaceWithCurrent(query, handle) {
 	if (!query.length) {console.log('queryReplaceWithCurrent(): query is empty'); return;}
 	if (!handle) {console.log('queryReplaceWithCurrent(): handle is null'); return;}
-	if (query.indexOf('#') != -1) {
+	if (query.indexOf('#') !== -1) {
 		let idx = [query.indexOf('#')];
 		let curr = idx[idx.length - 1];
 		let next = -1;
-		while (curr != next) {
+		while (curr !== next) {
 			curr = idx[idx.length - 1];
 			next = query.indexOf('#', curr + 1);
-			if (next != -1 && curr != next) {idx.push(next);}
+			if (next !== -1 && curr !== next) {idx.push(next);}
 			else {break;}
 		}
 		let count = idx.length;
-		if (count % 2 == 0) { // Must be on pairs of 2
+		if (count % 2 === 0) { // Must be on pairs of 2
 			let tempQuery = '';
 			let tfo = '', tfoVal = '';
 			for (let i = 0; i < count; i += 2) {

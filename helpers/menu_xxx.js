@@ -108,7 +108,7 @@
 include(fb.ComponentPath + 'docs\\Flags.js');
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
 
-function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0} = {}) {
+function _menu({bSupressDefaultMenu = true, idxInitial = 0} = {}) {
 	var menuArr = [];
 	var menuMap = new Map();
 	var entryArrTemp = [];
@@ -202,7 +202,7 @@ function _menu({bSupressDefaultMenu = true, idxInitial = 0, xMenu = 0, yMenu = 0
 				const subMenuName = _isFunc(entry.menuName) ? entry.menuName() : entry.menuName;
 				if (subMenuName !== menuArr[0].menuName) {
 					const subMenuFrom = _isFunc(entry.subMenuFrom) ? entry.subMenuFrom() : entry.subMenuFrom;
-					this.getMenu(subMenuName).AppendTo(this.getMenu(entry.subMenuFrom), MF_STRING, subMenuName);
+					this.getMenu(subMenuName).AppendTo(this.getMenu(subMenuFrom), MF_STRING, subMenuName);
 				}
 			}
 		});

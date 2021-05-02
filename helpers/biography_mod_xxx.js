@@ -18,12 +18,12 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 		let ix = -1;
 		// Up to here
 		if (!handles) return;
-		let a_o = "####", l = "";
+		let a_o = "####";
 		let locale = [], tags = [];
-		const tf_a = FbTitleFormat(p.tf.a), tf_aa = FbTitleFormat(p.tf.aa), tf_cue = FbTitleFormat("$ext(%path%)"), tf_l = FbTitleFormat(p.tf.l);
+		const tf_a = FbTitleFormat(p.tf.a), tf_l = FbTitleFormat(p.tf.l);
 		tags.push({name: 'artist', val: tf_a.EvalWithMetadb(handles)});
 		tags.push({name: 'album', val: tf_l.EvalWithMetadb(handles)});
-		const artist = tags[0].val.toUpperCase(), album = tags[1].val.toUpperCase();
+		const artist = tags[0].val.toUpperCase();
 		if (artist !== a_o) {
 			a_o = artist;
 			if (p.tag[6].enabled || p.tag[7].enabled || p.tag[8].enabled && p.tag[8].enabled < 7) {
