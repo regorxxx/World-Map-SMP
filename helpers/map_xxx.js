@@ -13,7 +13,13 @@
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
 
 // Map object
-function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinatesFunc = null, selPointFunc = null, tooltipFunc = null, jsonPath = '', jsonId = ''} = {}) {
+function imageMap({
+	imagePath = '', mapTag = '', properties = {}, 
+	findCoordinatesFunc = null, selPointFunc = null, tooltipFunc = null, 
+	jsonPath = '', jsonId = '', 
+	bStaticCoord = true,
+	pointShape = 'circle' // string, circle
+	} = {}) {
 	// Constants
 	const pointSize = 10;
 	const pointLineSize = 25;
@@ -24,7 +30,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	this.paintBg = (gr) => {
 		gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 	}
-	this.paint = (gr, sel, color = this.defaultColor, selectionColor = this.selectionColor) => { // on_paint
+	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor}) => { // on_paint
 		this.paintBg(gr);
 		var toPaintArr = [];
 		// When moving mouse, retrieve last points
@@ -33,9 +39,35 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				toPaintArr.push({...point});
 			});
 		// Otherwise, use selection
-		} else {
+		} else if (selMulti) { // multiple points per handle id and tag value are the same... just enumerate them: handle -> [...id] -> [...id]
 			// Handle list
-			if (sel && sel.Count >= 0) {
+			if (selMulti.Count >= 0) {
+				if (selMulti.Count === 0) {return;}
+				let added = new Set();
+				const currentMatch = getTagsValuesV3(selMulti, [this.jsonId], true);
+				currentMatch.forEach( (tagArr, idx) => {
+					tagArr.forEach( (tag) => {
+						const id = tag;
+						if (id.length) {
+							if (added.has(id)) {
+								const idx = toPaintArr.findIndex((point) => {return (point.id === id);});
+								toPaintArr[idx].val++;
+							} else {
+								added.add(id);
+								toPaintArr.push({id, val: 1, jsonId: id});
+							}
+						}
+					});
+				});
+			// Handle
+			} else {
+				const currentMatch = selMulti ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(selMulti) : '';
+				const id = this.idSelected.length ? this.lastPoint[0] : (selMulti ? this.findTag(selMulti, currentMatch) : '');
+				if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
+			}
+		} else if (sel) { // 1 point per handle, id and tag value are different: handle -> id -> tag Value
+			// Handle list
+			if (sel.Count >= 0) {
 				if (sel.Count === 0) {return;}
 				else if (sel.Count === 1) {
 					const currentMatch =  sel[0] ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel[0]) : '';
@@ -72,7 +104,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			const id = toPaint.id;
 			if (id.length) {
 				// Is a new point? Calculate it
-				if (!this.point.hasOwnProperty(id)) {
+				if (!this.bStaticCoord || !this.point.hasOwnProperty(id)) {
 					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height);
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
@@ -82,9 +114,19 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 				// Draw points
 				const point = this.point[id];
 				if (point) {
-					gr.DrawEllipse(point.xScaled, point.yScaled, pointSize * this.scale, pointSize * this.scale, pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
-					if (bShowSize && toPaint.val > 1) { // Show count on map?
-						gr.GdiDrawText(toPaint.val, this.gFont, 0xFF000000, point.xScaled - pointSize * this.scale, point.yScaled + pointLineSize * this.scale / 2, 40, 40);
+					switch (this.pointShape) {
+						case 'string' : {
+							gr.GdiDrawText(toPaint.id, this.gFont, this.idSelected === id ? selectionColor : color, point.xScaled, point.yScaled, gr.CalcTextWidth(toPaint.id, this.gFont), gr.CalcTextHeight(toPaint.id, this.gFont));
+							break;
+						}
+						case 'circle':
+						default : {
+							gr.DrawEllipse(point.xScaled, point.yScaled, pointSize * this.scale, pointSize * this.scale, pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
+							if (bShowSize && toPaint.val > 1) { // Show count on map?
+								gr.GdiDrawText(toPaint.val, this.gFont, 0xFF000000, point.xScaled - pointSize * this.scale, point.yScaled + pointLineSize * this.scale / 2, 40, 40);
+							}
+							break;
+						}
 					}
 					this.lastPoint.push({...toPaint}); // Add to list
 				}
@@ -147,16 +189,33 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	}
 	this.tracePoint = (x, y) => {
 		let foundId = '';
-		this.lastPoint.forEach( (last) => {
-			if (foundId.length) {return;}
-			const point = this.point[last.id];
-			if (point.xScaled === -1 || point.yScaled === -1) {return;}
-			const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h);
-			const rx = pointSize * this.scale * Math.cos(tetha), ry = pointSize * this.scale * Math.sin(tetha);
-			const xMax = point.xScaled + rx + pointLineSize * this.scale, xMin = point.xScaled - rx - pointLineSize * this.scale;
-			const yMax = point.yScaled + rx + pointLineSize * this.scale, yMin = point.yScaled - ry - pointLineSize * this.scale;
-			if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {foundId = last.id;}  // On circle?
-		});
+		switch (this.pointShape) {
+			case 'string': {
+				this.lastPoint.forEach( (last) => {
+					if (foundId.length) {return;}
+					const point = this.point[last.id];
+					if (point.xScaled === -1 || point.yScaled === -1) {return;}
+					const xMax = point.xScaled + _gr.CalcTextWidth(point.id, this.gFont), xMin = point.xScaled;
+					const yMax = point.yScaled + _gr.CalcTextHeight(point.id, this.gFont), yMin = point.yScaled;
+					if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {foundId = last.id;}  // On circle?
+				});
+				break;
+			}
+			case 'circle':
+			default : {
+				this.lastPoint.forEach( (last) => {
+					if (foundId.length) {return;}
+					const point = this.point[last.id];
+					if (point.xScaled === -1 || point.yScaled === -1) {return;}
+					const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h);
+					const rx = pointSize * this.scale * Math.cos(tetha), ry = pointSize * this.scale * Math.sin(tetha);
+					const xMax = point.xScaled + rx + pointLineSize * this.scale, xMin = point.xScaled - rx - pointLineSize * this.scale;
+					const yMax = point.yScaled + rx + pointLineSize * this.scale, yMin = point.yScaled - ry - pointLineSize * this.scale;
+					if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {foundId = last.id;}  // On circle?
+				});
+				break;
+			}
+		}
 		return foundId;
 	}
 	this.move = (x, y) => { // on_mouse_move & on_mouse_leave
@@ -287,9 +346,10 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 			this.paintBg = () => {};
 		} else { // Avoids crash
 			this.imageMap = gdi.Image(this.imageMapPath);
-			// this.calcScale(0, 0);
 			this.calcScale(window.Width, window.Height);
 		}
+		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(jsonPath) : utils.FileTest(jsonPath, 'split'); //TODO: Deprecated
+		_createFolder(jsonFolder);
 		this.loadData();
 	}
 	
@@ -314,5 +374,7 @@ function imageMap({imagePath = '', mapTag = '', properties = {}, findCoordinates
 	this.idSelected = '';
 	this.mX = -1;
 	this.mY = -1;
+	this.bStaticCoord = bStaticCoord;
+	this.pointShape = pointShape;
 	this.init();
 }

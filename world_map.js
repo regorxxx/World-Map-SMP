@@ -75,7 +75,11 @@ const worldMap_properties = {
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
 worldMap_properties['iWriteTags'].push({range: [[0,2]]}, worldMap_properties['iWriteTags'][1]);
 worldMap_properties['selection'].push({eq: selMode}, worldMap_properties['selection'][1]);
+worldMap_properties['bEnabledBiography'].push({func: () => {
+	return (window.hasOwnProperty('worldMap') ? !worldMap.properties['bInstalledBiography'][1] : !worldMap_properties['bInstalledBiography'][1]);}
+	}, worldMap_properties['bInstalledBiography'][1]);
 worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true)}}, worldMap_properties['forcedQuery'][1]);
+worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['ctrlFirstTag'].push({func: isString}, worldMap_properties['ctrlFirstTag'][1]);
 worldMap_properties['ctrlSecondTag'].push({func: isString}, worldMap_properties['ctrlSecondTag'][1]);
 worldMap_properties['iLimitSelection'].push({func: Number.isSafeInteger}, worldMap_properties['iLimitSelection'][1]);
@@ -101,6 +105,7 @@ const worldMap = new imageMap({
 if (!worldMap.properties['firstPopup'][1]) {
 	worldMap.properties['firstPopup'][1] = true;
 	overwriteProperties(worldMap.properties); // Updates panel
+	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt';
 	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
 		const readme = utils.ReadTextFile(readmePath, 65001);
@@ -228,7 +233,7 @@ function on_paint(gr) {
 	// Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
-	worldMap.paint(gr, sel);
+	worldMap.paint({gr, sel});
 }
 
 function on_playback_new_track(metadb) {
@@ -237,10 +242,12 @@ function on_playback_new_track(metadb) {
 }
 
 function on_selection_changed() {
+	worldMap.clearIdSelected();
 	repaint();
 }
 
 function on_item_focus_change() {
+	worldMap.clearIdSelected();
 	repaint();
 }
 
@@ -471,7 +478,7 @@ const menu = new _menu();
 			menu.newEntry({menuName, entryText: mode, func: () => {
 				worldMap.properties = getPropertiesPairs(worldMap.properties, '', 0); // Update properties from the panel
 				if (worldMap.properties['selection'][1] === mode) {return;}
-				if (worldMap.properties['bEnabledBiography'][1]) { // Warning check
+				if (worldMap.properties['bInstalledBiography'][1] && worldMap.properties['bEnabledBiography'][1]) { // Warning check
 					let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 					if (answer === popup.no) {return;}
 				}
