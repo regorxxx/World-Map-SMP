@@ -80,7 +80,7 @@ modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
 worldMap_properties['iWriteTags'].push({range: [[0,2]]}, worldMap_properties['iWriteTags'][1]);
 worldMap_properties['selection'].push({eq: selMode}, worldMap_properties['selection'][1]);
-worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true)}}, worldMap_properties['forcedQuery'][1]);
+worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true);}}, worldMap_properties['forcedQuery'][1]);
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['tagFilter'].push({func: isStringWeak}, worldMap_properties['tagFilter'][1]);
 worldMap_properties['iLimitSelection'].push({func: Number.isSafeInteger}, worldMap_properties['iLimitSelection'][1]);
