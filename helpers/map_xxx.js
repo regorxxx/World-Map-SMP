@@ -163,7 +163,7 @@ function imageMap({
 			this.posX = (ww - this.imageMap.Width * this.scale) / 2;
 		}
 		// Scale font
-		if (this.scale) {this.gFont = _gdiFont('Segoe UI', Math.floor(12 * this.scale));} // When = 0, crashes
+		if (this.scale) {this.gFont = _gdiFont('Segoe UI', Math.ceil(12 * this.scale));} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
 			const point = this.point[id];
