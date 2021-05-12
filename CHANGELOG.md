@@ -24,6 +24,8 @@
 - Menu: added entries to edit tags related to playlist creation when using key modifiers + left click.
 - Helpers: moved all code to helpers\world_map_helpers.js.
 - Breaks properties from previous versions!
+- Modifer tags allow multiple tags set for the same key.
+- Some minor changes on tooltip.
 
 ### Removed
 
