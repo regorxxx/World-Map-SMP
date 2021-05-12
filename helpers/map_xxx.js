@@ -28,7 +28,11 @@ function imageMap({
 	this.tooltip = new _tt(null);  
 	// Paint
 	this.paintBg = (gr) => {
-		gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
+		if (this.imageMapPath === 'background') {
+			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor)
+		} else {
+			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
+		}
 	}
 	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor}) => { // on_paint
 		this.paintBg(gr);
@@ -116,7 +120,13 @@ function imageMap({
 				if (point) {
 					switch (this.pointShape) {
 						case 'string' : {
-							gr.GdiDrawText(toPaint.id, this.gFont, this.idSelected === id ? selectionColor : color, point.xScaled, point.yScaled, gr.CalcTextWidth(toPaint.id, this.gFont), gr.CalcTextHeight(toPaint.id, this.gFont));
+							const textW = gr.CalcTextWidth(toPaint.id, this.gFont);
+							const textH = gr.CalcTextHeight(toPaint.id, this.gFont);
+							const offsetX = 7 * this.scale;
+							const offsetY = 7 * this.scale;
+							gr.FillGradRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 90, this.backgroundTagColor1, this.backgroundTagColor2);
+							gr.DrawRoundRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 2 * this.scale, 2 * this.scale, 2, 0xAAA9A9A9);
+							gr.GdiDrawText(toPaint.id, this.gFont, this.idSelected === id ? selectionColor : color, point.xScaled, point.yScaled + offsetY, textW, textH, DT_NOPREFIX);
 							break;
 						}
 						case 'circle':
@@ -136,6 +146,11 @@ function imageMap({
 	}
 	// Tags and coordinates
 	this.calcScale = (ww = window.Width, wh = window.Height) => { // on_size
+		if (this.pointShape === 'string') { // maintains proportions
+			const maxSize = Math.min(window.Width, window.Height);
+			const maxWidth = Math.floor(maxSize * 1.25);
+			this.imageMap = {Width: maxWidth, Height: maxSize};
+		}
 		// Scale window
 		this.scaleW = ww / this.imageMap.Width;
 		this.scaleH = wh / this.imageMap.Height;
@@ -148,7 +163,7 @@ function imageMap({
 			this.posX = (ww - this.imageMap.Width * this.scale) / 2;
 		}
 		// Scale font
-		if (this.scale) {this.gFont = _gdiFont('Segoe UI', 60 * this.scale);} // When = 0, crashes
+		if (this.scale) {this.gFont = _gdiFont('Segoe UI', Math.floor(12 * this.scale));} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
 			const point = this.point[id];
@@ -341,11 +356,28 @@ function imageMap({
 		}
 		if (!this.imageMapPath.length) {
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.Name);
+			this.trace = (x, y) => {};
 			this.calcScale = () => {};
 			this.paint = () => {};
 			this.paintBg = () => {};
 		} else { // Avoids crash
-			this.imageMap = gdi.Image(this.imageMapPath);
+			const maxSize = Math.min(window.Width, window.Height);
+			const maxWidth = Math.floor(maxSize * 1.25);
+			if (this.imageMapPath === 'background') {
+				this.imageMap = {Width: maxWidth, Height: maxSize};
+			} else if (!_isFile(this.imageMapPath)) {
+				fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' file does not exists:\n' + this.imageMapPath, window.Name);
+				this.imageMapPath = 'background';
+				this.imageMap = {Width: maxWidth, Height: maxSize};
+			} else {
+				try {
+					this.imageMap = gdi.Image(this.imageMapPath);
+				} catch (e) {
+					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath, window.Name);
+					this.imageMapPath = 'background';
+					this.imageMap = {Width: maxWidth, Height: maxSize};
+				}
+			}
 			this.calcScale(window.Width, window.Height);
 		}
 		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(jsonPath) : utils.FileTest(jsonPath, 'split'); //TODO: Deprecated
@@ -371,6 +403,9 @@ function imageMap({
 	this.gFont = _gdiFont('Segoe UI', 12);
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
+	this.backgroundColor = 0xFFF0F8FF;
+	this.backgroundTagColor1 = 0xFFF5F5F5;
+	this.backgroundTagColor2 = 0xFFA9A9A9;
 	this.idSelected = '';
 	this.mX = -1;
 	this.mY = -1;
