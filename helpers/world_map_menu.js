@@ -13,7 +13,7 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
-				menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
+				menu.newEntry({menuName, entryText: mode.text, func: () => {
 					if (worldMap.properties['bEnabled'][1] === mode.val) {return;}
 					worldMap.properties['bEnabled'][1] = mode.val; // And update property with new value
 					overwriteProperties(worldMap.properties); // Updates panel
@@ -28,7 +28,7 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
-				menu.newEntry({menuName: menuName, entryText: mode.text, func: () => {
+				menu.newEntry({menuName, entryText: mode.text, func: () => {
 					if (worldMap.properties['bEnabledBiography'][1] === mode.val) {return;}
 					if (mode.val) { // Warning check
 						let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);

@@ -72,7 +72,7 @@ function selPoint(point, mask) {
 	const forcedQuery = worldMap.properties.forcedQuery[1];
 	if (forcedQuery.length) {query.push(forcedQuery);}
 	// Merge all with AND
-	query = query_join(query,'AND')
+	query = query_join(query,'AND');
 	// Create autoplaylist
 	if (checkQuery(query)) {
 		console.log('World Map: playlist created '+ query);

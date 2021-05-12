@@ -29,7 +29,7 @@ function imageMap({
 	// Paint
 	this.paintBg = (gr) => {
 		if (this.imageMapPath === 'background') {
-			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor)
+			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
 		} else {
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 		}
