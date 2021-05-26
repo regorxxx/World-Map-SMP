@@ -5,7 +5,7 @@ include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\menu_xxx.js');
 const menu = new _menu();
 
 function createMenu() {
-	menu.clear(); // Reset on every call
+	menu.clear(true); // Reset on every call
 	{	
 		{	// Enabled?
 			const menuName = menu.newMenu('Map panel functionality');
@@ -20,7 +20,66 @@ function createMenu() {
 					window.Repaint();
 				}});
 			});
-			menu.checkMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabled'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabled'][1] ? 0 : 1);});
+		}
+		{	// Map image
+			const menuName = menu.newMenu('Map image');
+			menu.newEntry({menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED});
+			menu.newEntry({menuName, entryText: 'sep'});
+			const options = [
+				{text: 'Full', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap.jpg', factorX: 100, factorY: 100}, 
+				{text: 'No Antarctica', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133.jpg', factorX: 100, factorY: 133},
+				{text: 'Custom...'}
+			];
+			options.forEach( (map, index) => {
+				menu.newEntry({menuName, entryText: map.text,  func: () => {
+					if (index === options.length - 1) {
+						let input = '';
+						try {input = utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, worldMap.imageMapPath, true);} 
+						catch (e) {return;}
+						if (!input.length) {return;}
+						worldMap.imageMapPath = input;
+						worldMap.properties.imageMapPath[1] = input; // And update property with new value
+						overwriteProperties(worldMap.properties); // Updates panel
+						menu.btn_up(void(0), void(0), void(0), 'X factor'); // Call factor input
+						menu.btn_up(void(0), void(0), void(0), 'Y factor');
+						window.Repaint();
+					} else {
+						worldMap.imageMapPath = map.path;
+						worldMap.factorX = map.factorX;
+						worldMap.factorY = map.factorY;
+						worldMap.properties.imageMapPath[1] = map.path; // And update property with new value
+						worldMap.properties.factorX[1] = map.factorX;
+						worldMap.properties.factorY[1] = map.factorY;
+						overwriteProperties(worldMap.properties); // Updates panel
+						worldMap.init();
+						window.Repaint();
+					}
+				}});
+			});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {
+				let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;});
+				return (idx != -1) ? idx : options.length - 1;
+			});
+		}
+		{	// Coordinates factor
+			const menuName = menu.newMenu('Coordinates transformation');
+			menu.newEntry({menuName, entryText: 'Apply a factor to any axis:', func: null, flags: MF_GRAYED});
+			menu.newEntry({menuName, entryText: 'sep'});
+			const options = [{text: 'X factor', val: 'factorX'}, {text: 'Y factor', val: 'factorY'}];
+			options.forEach( (coord) => {
+				menu.newEntry({menuName, entryText: coord.text,  func: () => {
+					let input = -1;
+					try {input = Number(utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, worldMap.properties[coord.val][1], true));} 
+					catch (e) {return;}
+					if (!Number.isSafeInteger(input)) {return;}
+					worldMap[coord.val] = input;
+					worldMap.properties[coord.val][1] = input; // And update property with new value
+					overwriteProperties(worldMap.properties); // Updates panel
+					worldMap.clearPointCache();
+					window.Repaint();
+				}});
+			});
 		}
 		{	// Enabled Biography?
 			const menuName = menu.newMenu('WilB\'s Biography integration');
@@ -40,7 +99,7 @@ function createMenu() {
 					window.Repaint();
 				}, flags: () => {return (worldMap.properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
-			menu.checkMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabledBiography'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabledBiography'][1] ? 0 : 1);});
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)');}, func: () => {
 				let fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
@@ -122,7 +181,7 @@ function createMenu() {
 					window.Repaint();
 				}});
 			});
-			menu.checkMenu(menuName, options[0], options[options.length - 1],  (args = worldMap.properties) => {return options.indexOf(worldMap.properties['selection'][1]);});
+			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  (args = worldMap.properties) => {return options.indexOf(worldMap.properties['selection'][1]);});
 		}
 		{	// Write tags?
 			const menuName = menu.newMenu('Write tags on playback');
@@ -140,7 +199,7 @@ function createMenu() {
 					overwriteProperties(worldMap.properties); // Updates panel
 				}});
 			});
-			menu.checkMenu(menuName, options[0].text, options[options.length - 1].text, () => {return worldMap.properties['iWriteTags'][1];});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return worldMap.properties['iWriteTags'][1];});
 			menu.newEntry({menuName, entryText: 'sep', func: null});
 			menu.newEntry({menuName, entryText: 'Show data folder', func: () => {
 				_explorer(worldMap.properties.fileName[1]);

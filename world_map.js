@@ -74,6 +74,8 @@ const worldMap_properties = {
 	firstPopup			:	['World Map: Fired once', false],
 	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental'],
 	iLimitSelection		:	['Repaint panel only if selecting less than...', 5000],
+	factorX				:	['Percentage applied to X coordinates', 100],
+	factorY				:	['Percentage applied to Y coordinates', 100],
 	bInstalledBiography	:	['Is installed biography mod?', false],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});

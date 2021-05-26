@@ -23,13 +23,15 @@ function imageMap({
 	// Constants
 	const pointSize = 10;
 	const pointLineSize = 25;
-	const bShowSize = false;
+	const bShowSize = true;
 	// Global tooltip
-	this.tooltip = new _tt(null);  
+	this.tooltip = new _tt(null);
+	
 	// Paint
 	this.paintBg = (gr) => {
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
+			// fillWithPattern(gr, this.posX, this.posY, this.posX + this.imageMap.Width * this.scale, this.posY + this.imageMap.Height * this.scale, this.defaultColor, 2, this.imageMap.Width / 5, 'verticalDotted');
 		} else {
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 		}
@@ -109,7 +111,7 @@ function imageMap({
 			if (id.length) {
 				// Is a new point? Calculate it
 				if (!this.bStaticCoord || !this.point.hasOwnProperty(id)) {
-					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height);
+					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height, this.factorX, this.factorY);
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
 						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id}; 
@@ -146,15 +148,16 @@ function imageMap({
 	}
 	// Tags and coordinates
 	this.calcScale = (ww = window.Width, wh = window.Height) => { // on_size
+		this.scaleW = ww / this.imageMap.Width;
+		this.scaleH = wh / this.imageMap.Height;
 		if (this.pointShape === 'string') { // maintains proportions
 			const maxSize = Math.min(window.Width, window.Height);
 			const maxWidth = Math.floor(maxSize * 1.25);
 			this.imageMap = {Width: maxWidth, Height: maxSize};
+			this.scale = 1;
+		} else { // Scale window
+			this.scale = Math.min(this.scaleW, this.scaleH);
 		}
-		// Scale window
-		this.scaleW = ww / this.imageMap.Width;
-		this.scaleH = wh / this.imageMap.Height;
-		this.scale = Math.min(this.scaleW, this.scaleH);
 		this.posX = 0, this.posY = 0;
 		if (this.scaleW < this.scaleH) {
 			this.posY = (wh - this.imageMap.Height * this.scale) / 2;
@@ -163,7 +166,9 @@ function imageMap({
 			this.posX = (ww - this.imageMap.Width * this.scale) / 2;
 		}
 		// Scale font
-		if (this.scale) {this.gFont = _gdiFont('Segoe UI', Math.ceil(12 * this.scale));} // When = 0, crashes
+		if (this.scale !== 0 && this.scale !== 1) {
+			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 500));
+		} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
 			const point = this.point[id];
@@ -268,6 +273,7 @@ function imageMap({
 	}
 	this.tooltipText = (point) => {return '';}; // Could be overwritten, return a string
 	// Clear
+	this.clearPointCache = () => {this.point = {};};
 	this.clearLastPoint = () => {this.lastPoint = [];};
 	this.clearIdSelected = () => {this.idSelected = '';};
 	this.clearTagValue = () => {this.tagValue = {};};
@@ -344,6 +350,12 @@ function imageMap({
 				if (this.properties.hasOwnProperty('fileName') && this.properties['fileName'][1].length) {
 					this.jsonPath = this.properties['fileName'][1];
 				}
+				if (this.properties.hasOwnProperty('factorX') && this.properties['factorX'][1] !== 100) {
+					this.factorX = this.properties['factorX'][1];
+				}
+				if (this.properties.hasOwnProperty('factorY') && this.properties['factorY'][1] !== 100) {
+					this.factorY = this.properties['factorY'][1];
+				}
 			}
 		}
 		// Sanity checks
@@ -383,6 +395,7 @@ function imageMap({
 		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(jsonPath) : utils.FileTest(jsonPath, 'split'); //TODO: Deprecated
 		_createFolder(jsonFolder);
 		this.loadData();
+		this.clearPointCache();
 	}
 	
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
@@ -398,9 +411,12 @@ function imageMap({
 	this.scale = 0;
 	this.posX = 0;
 	this.posY = 0;
+	this.factorX = 100;
+	this.factorY = 100;
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
-	this.gFont = _gdiFont('Segoe UI', 12);
+	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : _scale(10);
+	this.gFont = _gdiFont('Segoe UI', this.fontSize);
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
 	this.backgroundColor = 0xFFF0F8FF;

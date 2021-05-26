@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [1.1.0](#101---2021-05-26)
 - [1.0.1](#101---2021-05-12)
 - [1.0.0](#100---2021-05-01)
 
@@ -9,6 +10,19 @@
 ### Added
 ### Changed
 ### Removed
+### Fixed
+
+## [1.1.0] - 2021-05-26
+### Added
+- Menu: Map image can be set via menus.
+- Menu: 2 different map images are not offered by default, full and No Antarctica. Coordinates are re-scaled according to the crop when choosing the later.
+- Map framework: Coordinates transformation has been added, allowing to use custom map images while using the default coordinates (plus a factor).
+### Changed
+- Map framework: updated with last changes.
+- Menu framework: updated with last changes.
+- Readme: updated some tips.
+### Removed
+### Fixed
 
 ## [1.0.1] - 2021-05-12
 ### Added
@@ -16,7 +30,6 @@
 - Additional check for biography enabled property to avoid conflicts when manually editing properties.
 - Files: helpers\world_map_menu.js and helpers\world_map_helpers.js.
 - 3 key modifiers for playlist creation supported.
-
 ### Changed
 - Bug fix: refresh points after showing the tooltip on one and changing the selected tracks.
 - Map framework: updated with last changes.
@@ -26,18 +39,17 @@
 - Breaks properties from previous versions!
 - Modifer tags allow multiple tags set for the same key.
 - Some minor changes on tooltip.
-
 ### Removed
-
+### Fixed
 
 ## [1.0.0] - 2021-05-01
 ### Added
 - First release.
-
 ### Changed
-
 ### Removed
+### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/8df8206...v1.0.0

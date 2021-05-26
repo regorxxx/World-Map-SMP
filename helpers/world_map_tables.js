@@ -8,7 +8,7 @@
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
 
 // Helper
-function findCountryCoords(country, mapWidth, mapHeight) { // Mercator projection
+function findCountryCoords(country, mapWidth, mapHeight, factorX, factorY) { // Mercator projection
 	let xy = [-1, -1];
 	if(country && country.length) {
 		let isoCode = '';
@@ -20,10 +20,10 @@ function findCountryCoords(country, mapWidth, mapHeight) { // Mercator projectio
 		if (isoCode.length) {
 			let [latitude , longitude] = isoCoordinates.get(isoCode);
 			if (latitude != null) {
-				const x = round((longitude + 180) * (mapWidth / 360), 0);
+				const x = round((longitude + 180) * (mapWidth * factorX / 100 / 360), 0);
 				const latRad = latitude * Math.PI /180; // convert from degrees to radians
 				const mercN = Math.log(Math.tan((Math.PI / 4) + (latRad / 2)));
-				const y = round((mapHeight / 2) - (mapWidth * mercN / (2 * Math.PI)), 0);
+				const y = round((mapHeight * factorY / 100  / 2) - (mapWidth * factorX / 100 * mercN / (2 * Math.PI)), 0);
 				xy = [x, y];
 			}
 		}
