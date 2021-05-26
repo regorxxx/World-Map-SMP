@@ -11,6 +11,10 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 
 ![Animation5](https://user-images.githubusercontent.com/83307074/116752374-01f75480-a9f5-11eb-9d30-a9958079b1ee.gif)
 
+* Map image configurable:
+  * Full.
+  * No Antarctica.
+  * Custom. (coordinates may need a transformation to work)
 * Follow now playing track or selection.
 * Works with multiple selected tracks (draws all points on the map), allowing to show statistics of an entire playlist or library.
 * On playback the panel fetches tags from (by order of preference):
