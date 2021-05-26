@@ -15,6 +15,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
   * Full.
   * No Antarctica.
   * Custom. (coordinates may need a transformation to work)
+* Configurable X and Y factors for transformation (along custom image maps).
 * Follow now playing track or selection.
 * Works with multiple selected tracks (draws all points on the map), allowing to show statistics of an entire playlist or library.
 * On playback the panel fetches tags from (by order of preference):
