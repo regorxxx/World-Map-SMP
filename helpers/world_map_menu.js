@@ -41,8 +41,8 @@ function createMenu() {
 						worldMap.imageMapPath = input;
 						worldMap.properties.imageMapPath[1] = input; // And update property with new value
 						overwriteProperties(worldMap.properties); // Updates panel
-						menu.btn_up(void(0), void(0), void(0), 'X factor'); // Call factor input
-						menu.btn_up(void(0), void(0), void(0), 'Y factor');
+						menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
+						menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
 						window.Repaint();
 					} else {
 						worldMap.imageMapPath = map.path;
