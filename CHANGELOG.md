@@ -10,6 +10,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Helpers: Split 'helpers_xxx.js' file into multiple ones for easier future maintenance.
 ### Removed
 ### Fixed
 
