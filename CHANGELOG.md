@@ -2,12 +2,13 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [1.2.0](#120---2021-06-07)
 - [1.1.1](#111---2021-05-28)
 - [1.1.0](#110---2021-05-26)
 - [1.0.1](#101---2021-05-12)
 - [1.0.0](#100---2021-05-01)
 
-## [Unreleased][]
+## [1.2.0] - 2021-06-07
 ### Added
 ### Changed
 - Helpers: Split 'helpers_xxx.js' file into multiple ones for easier future maintenance.
@@ -59,7 +60,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...HEAD
+[1.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.0...v1.0.1

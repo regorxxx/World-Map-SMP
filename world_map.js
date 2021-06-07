@@ -46,6 +46,9 @@
 
 window.DefinePanel('World Map', {author:'xxx'});
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
+include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_prototypes.js');
+include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_properties.js');
+include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_tags.js');
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\map_xxx.js');
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_tables.js');
 include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_menu.js');
