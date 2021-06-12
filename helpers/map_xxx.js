@@ -292,7 +292,7 @@ function imageMap({
 		} else {
 			this.jsonData.push(data);
 		}
-		_save(path, JSON.stringify(this.jsonData));
+		_save(path, JSON.stringify(this.jsonData, null, '\t'));
 	}
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === data[byKey]);}) : false);

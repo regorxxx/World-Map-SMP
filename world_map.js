@@ -68,12 +68,12 @@ const worldMap_properties = {
 	mapTag				: 	['Tag name or TF expression for artist\'s country', '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
 	imageMapPath		: 	['Path to your own world map (mercator projection)', ''],
 	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0],
-	writeToTag			:	['Where to write tag values (should be related to 1st property)', 'locale last.fm'],
+	writeToTag			:	['Where to write tag values (should be related to 1st property)', 'Locale Last.fm'],
 	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0]],
 	bEnabled			:	['Enable panel', true],
 	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false],
 	forcedQuery			:	['Global forced query', 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad'],
-	fileName			:	['JSON filename (for tags)', folders.data + 'worldMap.json'],
+	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\js_data\\' : folders.data) + 'worldMap.json'],
 	firstPopup			:	['World Map: Fired once', false],
 	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental'],
 	iLimitSelection		:	['Repaint panel only if selecting less than...', 5000],
@@ -224,31 +224,33 @@ function on_notify_data(name, info) {
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
-	if (name === 'Biography notifyCountry') {
+	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
 		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags')) {
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
 			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-			// Set tag on map for drawing if found
-			if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-				const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
-				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-				if (locale.length) {
-					worldMap.setTag(locale[locale.length - 1], jsonId);
-					window.Repaint();
+			// Get Tags
+			const tagName = worldMap.properties.writeToTag[1];
+			if (tagName.length) {
+				let locale = '';
+				if (isArray(info.tags)) { // Biography 1.1.3
+					locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
+				} else if (info.tags.hasOwnProperty(tagName)) { // Biography 1.2.0
+					locale = [...info.tags[tagName]]; // or  object key
 				}
-			}
-			// Update tags or json if needed (even if the handle was not within the selection)
-			if (worldMap.properties.iWriteTags[1] > 0){
-				const tagName = worldMap.properties.writeToTag[1];
-				if (tagName.length) { // Check there is a track and tag is valid
-					const tfo = '[%' + tagName + '%]';
-					if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
-						if (worldMap.properties.iWriteTags[1] === 1) {
-							new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
-						} else if (worldMap.properties.iWriteTags[1] === 2) {
-							const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-							const locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
-							if (jsonId.length && locale.length) { // uses worldMap.jsonId
+				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
+				if (jsonId.length && locale.length) {
+					// Set tag on map for drawing if found
+					if (sel && sel.Count && sel.Find(info.handle) !== -1) {
+						worldMap.setTag(locale[locale.length - 1], jsonId);
+						window.Repaint();
+					}
+					// Update tags or json if needed (even if the handle was not within the selection)
+					if (worldMap.properties.iWriteTags[1] > 0){
+						const tfo = '[%' + tagName + '%]';
+						if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
+							if (worldMap.properties.iWriteTags[1] === 1) {
+								new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
+							} else if (worldMap.properties.iWriteTags[1] === 2) {
 								const newData = {artist: jsonId, val: locale};
 								if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
 							}
@@ -259,11 +261,31 @@ function on_notify_data(name, info) {
 		}
 	}
 	// Follow WilB's Biography script selection mode
-	if (name === 'Biography notifySelectionProperty') {
+	if (name === 'Biography notifySelectionProperty') { // Biography 1.1.3
 		if (info.hasOwnProperty('property') && info.hasOwnProperty('val')) {
 			// When ppt.focus is true, then selmode is selMode[0]
 			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 				worldMap.properties['selection'][1] = selMode[(info.val ? 0 : 1)]; // Invert value
+				fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+				overwriteProperties(worldMap.properties); // Updates panel
+				window.Repaint();
+			}
+		}
+	}// Follow WilB's Biography script selection mode
+	if (name === 'biographyTags') { // Biography 1.2.0
+		if (info.hasOwnProperty('selectionMode')) {
+			let bDone = false;
+			switch (info.selectionMode) {
+				case 'Prefer nowplaying': {
+					if (worldMap.properties.selection[1] !== selMode[1]) {worldMap.properties['selection'][1] = selMode[1]; bDone = true;}
+					break;
+				}
+				case 'Follow selected track (playlist)': {
+					if (worldMap.properties.selection[1] !== selMode[0]) {worldMap.properties['selection'][1] = selMode[0]; bDone = true;}
+					break;
+				}
+			}
+			if (bDone) {
 				fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
 				overwriteProperties(worldMap.properties); // Updates panel
 				window.Repaint();

@@ -95,31 +95,45 @@ function createMenu() {
 					}
 					worldMap.properties['bEnabledBiography'][1] = mode.val; // And update property with new value
 					overwriteProperties(worldMap.properties); // Updates panel
-					window.NotifyOthers(window.Name + ' notifySelectionProperty', mode === selMode[0] ? true : false); // synchronize selection property
+					syncBio(true); // Sync selection and enable notify tags
 					window.Repaint();
 				}, flags: () => {return (worldMap.properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabledBiography'][1] ? 0 : 1);});
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)');}, func: () => {
-				let fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
-				const modText = "\ninclude(fb.ProfilePath + 'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_xxx.js');";
-				const idText = "window.DefinePanel('Biography', {author:'WilB'";
-				const backupExt = '.back';
-				let text = '', foundArr = [];
+				let  foundArr = [];
+				// Biography 1.1.X
+				const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
+				const modText = '\ninclude(fb.ProfilePath + \'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_1_1_X_xxx.js\');';
+				const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
 				fileArr.forEach( (file) => {
-					text = utils.ReadTextFile(file);
-					if (text.indexOf(idText) !== -1 && text.indexOf('omit this same script') === -1) { // Omit this one from the list!
+					const fileText = utils.ReadTextFile(file);
+					if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
 						if (!worldMap.properties.bInstalledBiography[1]) {
-							if (text.indexOf(modText) === -1) {foundArr.push(file);} // When installing, look for not modified script
+							if (fileText.indexOf(modText) === -1) {foundArr.push({path: file, ver: '1.1.X'});} // When installing, look for not modified script
 						} else {
-							if (text.indexOf(modText) !== -1) {foundArr.push(file);} // Otherwise, look for the mod string
+							if (fileText.indexOf(modText) !== -1) {foundArr.push({path: file, ver: '1.1.X'});} // Otherwise, look for the mod string
 						}
 					}
 				});
-				let i = 1;
+				// Biography 1.2.X
+				const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
+				const packagePath = utils.GetPackagePath(idFolder);
+				const packageFile = packagePath + '\\scripts\\callbacks.js';
+				const modPackageText = '\ninclude(fb.ProfilePath + \'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_1_2_X_xxx.js\');';
+				if (_isFile(packageFile)) {
+					const packageText = _jsonParseFile(packagePath + '\\package.json');
+					const fileText = utils.ReadTextFile(packageFile);
+					if (!worldMap.properties.bInstalledBiography[1]) {
+						if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
+					} else {
+						if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
+					}
+				}
+				// Select files to edit
 				let input = '';
-				if (foundArr.length) {fb.ShowPopupMessage('Found these files:\n' + i + ': ' + foundArr.join('\n' + ++i + ': '), window.Name);}
+				if (foundArr.length) {fb.ShowPopupMessage('Found these files:\n' + foundArr.map((_, idx) => {return '\n' + (idx + 1) + ': ' + _.path + '  (' + _.ver + ')';}).join(''), window.Name);}
 				else {fb.ShowPopupMessage('WilB\'s ' + (worldMap.properties.bInstalledBiography[1] ? 'modified ' : '') +'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n"' + worldMap.properties.bInstalledBiography[0] + '"', window.Name); return;}
 				try {input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, window.Name);}
 				catch (e) {return;}
@@ -128,37 +142,68 @@ function createMenu() {
 				if (input.some((idx) => {return idx > foundArr.length;})) {return;}
 				let selectFound = [];
 				input.forEach( (idx) => {selectFound.push(foundArr[idx - 1]);});
+				// Install
 				let bDone = true;
-				selectFound.forEach( (file) => {
+				const backupExt = '.back';
+				selectFound.forEach( (selected) => {
 					if (!bDone) {return;}
+					const file = selected.path;
 					console.log('World Map: Editing file ' + file);
-					text = utils.ReadTextFile(file);
-					if (!worldMap.properties.bInstalledBiography[1]) {
-						text += modText;
-						if (!_isFile(file + backupExt)) {
-							bDone = _copyFile(file, file + backupExt);
-						} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
-						if (bDone) {
-							bDone = utils.WriteTextFile(file, text);
-						} else {fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return;}
-						if (!bDone) {fb.ShowPopupMessage('Error editing the file.\n' + file, window.Name); return;}
-					} else {
-						let bDone = false;
-						if (_isFile(file + backupExt)) {
-							bDone = _recycleFile(file);
-						} else {bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.Name); return;}
-						if (bDone) {
-							bDone = _renameFile(file + backupExt, file);
-						} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.Name); return;}
-						if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return;}
-						// TODO: Revert changes editing file if not backup is found?
+					if (selected.ver  === '1.1.X') { // Biography 1.1.X
+						if (!worldMap.properties.bInstalledBiography[1]) {
+							if (!_isFile(file + backupExt)) {
+								bDone = _copyFile(file, file + backupExt);
+							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
+							if (bDone) {
+								let fileText = utils.ReadTextFile(file);
+								fileText += modText;
+								bDone = _save(file, fileText);
+							} else {fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return;}
+							if (!bDone) {fb.ShowPopupMessage('Error editing the file.\n' + file, window.Name); return;}
+						} else {
+							let bDone = false;
+							if (_isFile(file + backupExt)) {
+								bDone = _recycleFile(file);
+							} else {bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.Name); return;}
+							if (bDone) {
+								bDone = _renameFile(file + backupExt, file);
+							} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.Name); return;}
+							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return;}
+							// TODO: Revert changes editing file if not backup is found?
+						}
+					} else { // Biography 1.2.X
+						if (!worldMap.properties.bInstalledBiography[1]) {
+							if (!_isFile(packageFile + backupExt)) {
+								bDone = _copyFile(packageFile, packageFile + backupExt);
+							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + packageFile, window.Name); return;}
+							if (bDone) {
+								let fileText = utils.ReadTextFile(packageFile);
+								fileText += modPackageText;
+								bDone = _save(packageFile, fileText);
+							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
+						} else {
+							if (_isFile(packageFile + backupExt)) {
+								bDone = _recycleFile(packageFile);
+							} else {bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + packageFile, window.Name); return;}
+							if (bDone) {
+								bDone = _renameFile(packageFile + backupExt, packageFile);
+							} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + packageFile, window.Name); return;}
+							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + packageFilez, window.Name); return;}
+							// TODO: Revert changes editing file if not backup is found?
+						}
 					}
 				});
-				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.join('\n') + '\nPlease reload the Biography panel.', window.Name);}
+				// Report
+				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.map((_) => {return _.path + '  (' + _.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
 				else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
+				// Change config
 				worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
 				if (!worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = false;}
+				if (worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = true;}
 				overwriteProperties(worldMap.properties); // Updates panel
+				syncBio(false); // Sync selection and enable notify tags
+				window.NotifyOthers('refresh_bio', null);  // Reload panel Biograpy 1.2.1
+				window.NotifyOthers('bio_refresh', null);  // Reload panel  Biograpy 1.2.X
 			}});
 		}
 		menu.newEntry({entryText: 'sep'});
@@ -175,8 +220,8 @@ function createMenu() {
 					worldMap.properties['selection'][1] = mode; // And update property with new value
 					overwriteProperties(worldMap.properties); // Updates panel
 					// When ppt.focus is true, then selmode is selMode[0]
-					if (worldMap.properties.bEnabledBiography[1]) {
-						window.NotifyOthers(window.Name + ' notifySelectionProperty', mode === selMode[0] ? true : false); // synchronize selection property
+					if (worldMap.properties.bEnabledBiography[1]) { // synchronize selection property
+						syncBio(true); // Sync selection and enable notify tags
 					}
 					window.Repaint();
 				}});
@@ -221,6 +266,36 @@ function createMenu() {
 				}});
 			});
 		}
+		menu.newEntry({entryText: 'sep'});
+		{	// Readmes
+			const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt';
+			menu.newEntry({entryText: 'Open readme...', func: () => {
+				if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, 'e'))) { 
+					const readme = utils.ReadTextFile(readmePath, 65001); // Executed on script load
+					if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
+					else {console.log('Readme not found: ' + value);}
+				}
+			}});
+		}
+		
 	}
 	return menu;
+}
+
+function syncBio (bReload = false) {
+	console.log(worldMap.properties['selection'][1]);
+	// Biograpy 1.1.X
+	window.NotifyOthers(window.Name + ' notifySelectionProperty', worldMap.properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
+	// Biograpy 1.2.X
+	window.NotifyOthers('bio_focusPpt', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property
+	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
+	if (_isFile(configPath)) { // activate notify tags
+		const config = _jsonParseFile(configPath);
+		if (!config.notifyTags) {
+			config.notifyTags = true;
+			_save(configPath, JSON.stringify(config, null, 3));
+			if (bReload) {window.NotifyOthers('bio_refresh', null);}  // Reload Biograpy panel
+		}
+	}
+	// window.NotifyOthers('bio_newCfg', {notifyTags_internal: true}); // notify tags
 }

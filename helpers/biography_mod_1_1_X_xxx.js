@@ -1,7 +1,7 @@
 ﻿'use strict';
 
 /* 
-	Biography Mod v 1.1.3 22/04/21
+	Biography Mod v 1.1.X 08/06/21
 	-----------------------------------
 	Redefines some methods found on WilB's Biography Script to enable integration with other panels.
 	
