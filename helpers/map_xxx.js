@@ -31,6 +31,7 @@ function imageMap({
 	
 	// Paint
 	this.paintBg = (gr) => {
+		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);};
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
 			// fillWithPattern(gr, this.posX, this.posY, this.posX + this.imageMap.Width * this.scale, this.posY + this.imageMap.Height * this.scale, this.defaultColor, 2, this.imageMap.Width / 5, 'verticalDotted');
@@ -283,7 +284,9 @@ function imageMap({
 	this.loadData = (path = this.jsonPath) => {
 		if (utils.IsFile(path)) {
 			this.jsonData = [];
-			_jsonParseFile(path).forEach((item) => {this.jsonData.push(item);});
+			const data = _jsonParseFile(path);
+			if (!data && utils.GetFileSize(path)) {fb.ShowPopupMessage('Tags json file is probably corrupt: ' + path, window.Name); return;}
+			data.forEach((item) => {this.jsonData.push(item);});
 		}
 	}
 	this.saveData = (data, path = this.jsonPath) => { // Does not check for duplication!
@@ -307,13 +310,17 @@ function imageMap({
 		}
 		return keysArr;
 	}
+	
+	this.coloursChanged = () => {
+		this.panelColor = this.customPanelColorMode === 2 ? this.properties.customPanelColor[1] : (window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3));
+	}
 	// Init
 	this.init = () => {
 		let bfuncSet = false;
 		// When no properties are given and no args, then use a world map as default
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length ) {
 			include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_tables.js');
-			this.imageMapPath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap.jpg'; // Default is world map
+			this.imageMapPath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_B.jpg'; // Default is world map
 			this.mapTag = '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
 			this.findCoordinates = findCountryCoords; // Default is country coordinates
 			bfuncSet = true;
@@ -398,6 +405,7 @@ function imageMap({
 		_createFolder(jsonFolder);
 		this.loadData();
 		this.clearPointCache();
+		this.coloursChanged();
 	}
 	
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
@@ -424,6 +432,8 @@ function imageMap({
 	this.backgroundColor = 0xFFF0F8FF;
 	this.backgroundTagColor1 = 0xFFF5F5F5;
 	this.backgroundTagColor2 = 0xFFA9A9A9;
+	this.customPanelColorMode = typeof this.properties.customPanelColorMode !== 'undefined' ? this.properties.customPanelColorMode[1] : 1;
+	this.panelColor = null;
 	this.idSelected = '';
 	this.mX = -1;
 	this.mY = -1;

@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [1.2.1](#120---2021-06-13)
 - [1.2.0](#120---2021-06-07)
 - [1.1.1](#111---2021-05-28)
 - [1.1.0](#110---2021-05-26)
@@ -10,13 +11,24 @@
 
 ## [Unreleased][]
 ### Added
-- Biography Integration: now works with Biograpy 1.2.X version too. 'Notify tags' must be enabled on Bio's config panel, the script will do it automatically when installing the mod. Appart from that, installation and selection mode sync works the same than 1.1.X series.
 ### Changed
-- Portable: first time properties are set use now relative paths on profile folder for portable installations (>= 1.6).
-- Data: json file for tags is now formatted to be readable.
-- Biography Integration: manually reloading Biography panel after installing the mod is no longer required, since it's done auttomatically after installing the mod.
 ### Removed
 ### Fixed
+
+## [1.2.1] - 2021-06-13
+### Added
+- Biography Integration: Now works with Biograpy 1.2.X version too. 'Notify tags' must be enabled on Bio's config panel, the script will do it automatically when installing the mod. Appart from that, installation and selection mode sync works the same than 1.1.X series.
+- Image: Added 2 map versions with black border (now the default ones).
+- Colors: Option to change background color.
+### Changed
+- Portable: When properties are set for the first time, now use relative paths on profile folder for portable installations (>= 1.6).
+- Data: json file for tags is now formatted to be readable.
+- Biography Integration: Manually reloading Biography panel after installing the mod is no longer required, since it's done auttomatically after installing the mod.
+- Image: 'No Antarctica map' (black border) is now the default one.
+### Removed
+### Fixed
+- Menu: After setting a custom map image, panel was not being redrawn (requiring a manual update).
+- Avoid possible crashes when tags json file get corrupted. Warns about it whit a popup.
 
 ## [1.2.0] - 2021-06-07
 ### Added
@@ -70,7 +82,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.0.1...v1.1.0

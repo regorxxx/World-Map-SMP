@@ -27,8 +27,8 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			const options = [
-				{text: 'Full', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap.jpg', factorX: 100, factorY: 100}, 
-				{text: 'No Antarctica', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133.jpg', factorX: 100, factorY: 133},
+				{text: 'Full', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_B.jpg', factorX: 100, factorY: 100}, 
+				{text: 'No Antarctica', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133_B.jpg', factorX: 100, factorY: 133},
 				{text: 'Custom...'}
 			];
 			options.forEach( (map, index) => {
@@ -43,6 +43,7 @@ function createMenu() {
 						overwriteProperties(worldMap.properties); // Updates panel
 						menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
 						menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
+						worldMap.init();
 						window.Repaint();
 					} else {
 						worldMap.imageMapPath = map.path;
@@ -67,6 +68,8 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Apply a factor to any axis:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			const options = [{text: 'X factor', val: 'factorX'}, {text: 'Y factor', val: 'factorY'}];
+			if (worldMap.factorX !== 100) {options[0].text += '\t (not 100)'}
+			if (worldMap.factorY !== 100) {options[1].text += '\t (not 100)'}
 			options.forEach( (coord) => {
 				menu.newEntry({menuName, entryText: coord.text,  func: () => {
 					let input = -1;
@@ -265,6 +268,35 @@ function createMenu() {
 					overwriteProperties(worldMap.properties); // Updates panel
 				}});
 			});
+		}
+		menu.newEntry({entryText: 'sep'});
+		{
+			const menuName = menu.newMenu('Colours...');
+			{	// Background color
+				const subMenuName = menu.newMenu('Panel background', menuName);
+				const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom'];
+				const optionsLength = options.length;
+				options.forEach((item, i) => {
+					menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+						worldMap.customPanelColorMode = i;
+						// Update property to save between reloads
+						worldMap.properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
+						overwriteProperties(worldMap.properties);
+						worldMap.coloursChanged();
+						window.Repaint();
+					}});
+				});
+				menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode});
+				menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+				menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
+					worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
+					// Update property to save between reloads
+					worldMap.properties['customPanelColor'][1] = worldMap.panelColor;
+					overwriteProperties(worldMap.properties);
+					worldMap.coloursChanged();
+					window.Repaint();
+				}, flags: worldMap.properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
+			}
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Readmes

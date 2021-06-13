@@ -80,6 +80,8 @@ const worldMap_properties = {
 	factorX				:	['Percentage applied to X coordinates', 100],
 	factorY				:	['Percentage applied to Y coordinates', 100],
 	bInstalledBiography	:	['Is installed biography mod?', false],
+	customPanelColorMode:	['Custom background colour mode', 0],
+	customPanelColor	:	['Custom background colour for the panel', window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3)],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -95,7 +97,7 @@ setProperties(worldMap_properties, worldMap_prefix);
 	Map 
 */
 const worldMap = new imageMap({
-	imagePath:				fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap.jpg',
+	imagePath:				fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133_B.jpg',
 	properties:				getPropertiesPairs(worldMap_properties, 'wm_'),
 	jsonId:					'artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
@@ -131,6 +133,11 @@ function repaint(bPlayback = false) {
 
 function on_size(width, height) {
 	worldMap.calcScale(width, height);
+}
+
+function on_colours_changed() {
+	worldMap.coloursChanged();
+	window.Repaint();
 }
 
 function on_paint(gr) {
