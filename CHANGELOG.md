@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [1.2.1](#130---2021-06-13)
+- [1.2.1](#130---2021-06-15)
 - [1.2.0](#120---2021-06-07)
 - [1.1.1](#111---2021-05-28)
 - [1.1.0](#110---2021-05-26)
@@ -15,7 +15,7 @@
 ### Removed
 ### Fixed
 
-## [1.2.1] - 2021-06-13
+## [1.2.1] - 2021-06-15
 ### Added
 - Biography Integration: Now works with Biograpy 1.2.X version too. 'Notify tags' must be enabled on Bio's config panel, the script will do it automatically when installing the mod. Appart from that, installation and selection mode sync works the same than 1.1.X series.
 - Image: Added 2 map versions with black border (now the default ones).
