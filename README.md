@@ -22,7 +22,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
   * Track's tags.
   * Json database.
   * WilB's Biography panel.
-* Biography integration:
+* Biography integration (1.1.X or 1.2.X):
   * Done via script. There is a menu option to install the mod (it looks for the original file, edits the relevant lines and creates a backup). Is done step by step and can be reverted back.
   * Selection mode changes automatically when changing it on Biography panel, therefore syncing the changes.
   * Biography lets you write tags on demand, this lets you write tags as soon as the panel gets refreshed with new data.
