@@ -2,7 +2,8 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [1.2.1](#130---2021-06-15)
+- [1.2.2](#122---2021-06-21)
+- [1.2.1](#121---2021-06-15)
 - [1.2.0](#120---2021-06-07)
 - [1.1.1](#111---2021-05-28)
 - [1.1.0](#110---2021-05-26)
@@ -15,20 +16,27 @@
 ### Removed
 ### Fixed
 
+## [1.2.2] - 2021-06-21
+### Added
+### Changed
+### Removed
+### Fixed
+- Biography Integration: crash when trying to install mod and 1.2.X  package was not present.
+
 ## [1.2.1] - 2021-06-15
 ### Added
-- Biography Integration: Now works with Biograpy 1.2.X version too. 'Notify tags' must be enabled on Bio's config panel, the script will do it automatically when installing the mod. Appart from that, installation and selection mode sync works the same than 1.1.X series.
+- Biography Integration: Now works with Biography 1.2.X version too. 'Notify tags' must be enabled on Bio's config panel, the script will do it automatically when installing the mod. Apart from that, installation and selection mode sync works the same than 1.1.X series.
 - Image: Added 2 map versions with black border (now the default ones).
 - Colors: Option to change background color.
 ### Changed
 - Portable: When properties are set for the first time, now use relative paths on profile folder for portable installations (>= 1.6).
 - Data: json file for tags is now formatted to be readable.
-- Biography Integration: Manually reloading Biography panel after installing the mod is no longer required, since it's done auttomatically after installing the mod.
+- Biography Integration: Manually reloading Biography panel after installing the mod is no longer required, since it's done automatically after installing the mod.
 - Image: 'No Antarctica map' (black border) is now the default one.
 ### Removed
 ### Fixed
 - Menu: After setting a custom map image, panel was not being redrawn (requiring a manual update).
-- Avoid possible crashes when tags json file get corrupted. Warns about it whit a popup.
+- Avoid possible crashes when tags json file get corrupted. Warns about it with a popup.
 
 ## [1.2.0] - 2021-06-07
 ### Added
@@ -82,7 +90,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...HEAD
+[1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.0...v1.1.1

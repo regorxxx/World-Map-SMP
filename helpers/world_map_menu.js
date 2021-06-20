@@ -122,8 +122,10 @@ function createMenu() {
 				});
 				// Biography 1.2.X
 				const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
-				const packagePath = utils.GetPackagePath(idFolder);
-				const packageFile = packagePath + '\\scripts\\callbacks.js';
+				let packagePath;
+				try {packagePath = utils.GetPackagePath(idFolder);} // Exception when not found
+				catch(e) {packagePath = '';}
+				const packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
 				const modPackageText = '\ninclude(fb.ProfilePath + \'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_1_2_X_xxx.js\');';
 				if (_isFile(packageFile)) {
 					const packageText = _jsonParseFile(packagePath + '\\package.json');
