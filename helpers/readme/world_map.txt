@@ -9,15 +9,15 @@ Tag may be fetched using any of these 3 method (on this order):
 - Tags from WilB's Biography Script (if enabled). (*) (**) (***)
 
 When tags are not available on the tracks, they can be written on the files theirselves or on the JSON data file (*), using the info shared by Biography Script.
-Note that once the JSON file contains some artist's data, internet connection -and thus Biography Script too- is no longer needed... acting as a local database for the tags related to those artists.
+Note that once the JSON file contains some artist's data, Internet connection -and thus Biography Script too- is no longer needed... acting as a local database for the tags related to those artists.
 
 Panel is updated when playback changes, switching playlists, selecting tracks, ... and requires a full world map using Mercator projection to work. One is given for convenience, but can be changed if desired at properties.
 
 (*) Configurable.
-(**) Requires a modified version of the script. It may be installed manually or using the appropiate menu, which automatically adds the required code to the original script.
+(**) Requires a modified version of the script. It may be installed manually or using the appropriate menu, which automatically adds the required code to the original script.
 - 1.2.X: 'Notify tags' must be enabled on Bio's config panel too. When doing an automatic installation, it will be automatically enabled too.
-(***) Manual installation requires adding this line at THE END of WilB's Biography Script (or the panel where it's loaded):
-- 1.1.X: (there is only one file)
-	include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\biography_mod_1_1_X_xxx.js');
-- 1.2.X: (to '.\scripts\callbacks.js') (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-7B4B-4E0E-9373-99F511E81252}')
-	include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\biography_mod_1_2_X_xxx.js');
+(***) Manual installation requires adding this line at THE END of WilB's Biography Script (or the panel where it's loaded) and copying the mod file to the same path where bio script resides:
+- 1.1.X: (add line to the main -and only- file)
+	include('biography_mod_1_1_X_xxx.js');
+- 1.2.X: (add line to '.\scripts\callbacks.js') (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-7B4B-4E0E-9373-99F511E81252}')
+	include('biography_mod_1_2_X_xxx.js');

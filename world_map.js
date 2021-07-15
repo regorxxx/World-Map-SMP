@@ -45,14 +45,14 @@
  */
 
 window.DefinePanel('World Map', {author:'xxx'});
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_prototypes.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_properties.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_tags.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\map_xxx.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_tables.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_menu.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_helpers.js');
+include('helpers\\helpers_xxx.js');
+include('helpers\\helpers_xxx_prototypes.js');
+include('helpers\\helpers_xxx_properties.js');
+include('helpers\\helpers_xxx_tags.js');
+include('helpers\\map_xxx.js');
+include('helpers\\world_map_tables.js');
+include('helpers\\world_map_menu.js');
+include('helpers\\world_map_helpers.js');
 
 /* 
 	Properties 
@@ -73,15 +73,21 @@ const worldMap_properties = {
 	bEnabled			:	['Enable panel', true],
 	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false],
 	forcedQuery			:	['Global forced query', 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad'],
-	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\js_data\\' : folders.data) + 'worldMap.json'],
+	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
 	firstPopup			:	['World Map: Fired once', false],
 	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental'],
 	iLimitSelection		:	['Repaint panel only if selecting less than...', 5000],
 	factorX				:	['Percentage applied to X coordinates', 100],
 	factorY				:	['Percentage applied to Y coordinates', 100],
 	bInstalledBiography	:	['Is installed biography mod?', false],
-	customPanelColorMode:	['Custom background colour mode', 0],
-	customPanelColor	:	['Custom background colour for the panel', window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3)],
+	customPanelColorMode:	['Custom background color mode', 0],
+	customPanelColor	:	['Custom background color for the panel', window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3)],
+	customPointSize		:	['Custom point size for the panel', 10],
+	customPointColorMode:	['Custom point color mode', 0],
+	customPointColor	:	['Custom point color for the panel', 0xFF00FFFF],
+	bPointFill			:	['Draw a point or a circular corona?', false],
+	customLocaleColor	:	['Custom text color', 0xFF000000],
+	bShowLocale			:	['Show current locale tag', true],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -97,20 +103,30 @@ setProperties(worldMap_properties, worldMap_prefix);
 	Map 
 */
 const worldMap = new imageMap({
-	imagePath:				fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133_B.jpg',
+	imagePath:				folders.xxx + 'images\\MC_WorldMap_Y133_B.jpg',
 	properties:				getPropertiesPairs(worldMap_properties, 'wm_'),
 	jsonId:					'artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
-	selPointFunc:			selPoint, // What happens when clicking on a point, set below
-	tooltipFunc: 			tooltip, // What happens when mouse is over point, set below
+	findPointFunc:			findCountry, // Function at helpers\world_map_tables.js
+	selPointFunc:			selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
+	selFindPointFunc:		selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
+	tooltipFunc: 			tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
+	tooltipFindPointFunc: 	tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
 });
+
+// Additional config
+worldMap.pointSize = worldMap.properties.customPointSize[1];
+worldMap.pointLineSize = worldMap.pointSize * 2 + 5;
+if (worldMap.properties.customPointColorMode[1] === 1) {worldMap.defaultColor = worldMap.properties.customPointColor[1];}
+worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+worldMap.textColor = worldMap.properties.customLocaleColor[1];
 
 // Info Popup
 if (!worldMap.properties['firstPopup'][1]) {
 	worldMap.properties['firstPopup'][1] = true;
 	overwriteProperties(worldMap.properties); // Updates panel
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
-	const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt';
+	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
 		const readme = utils.ReadTextFile(readmePath, 65001);
 		if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
@@ -146,6 +162,16 @@ function on_paint(gr) {
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 	worldMap.paint({gr, sel});
+	if (worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
+		const posX = worldMap.posX;
+		const posY = worldMap.posY;
+		const w = worldMap.imageMap.Width * worldMap.scale;
+		const h = worldMap.imageMap.Height * worldMap.scale;
+		const textW = gr.CalcTextWidth(worldMap.lastPoint[0].id, worldMap.gFont);
+		const textH = gr.CalcTextHeight(worldMap.lastPoint[0].id, worldMap.gFont);
+		gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
+		gr.GdiDrawText(worldMap.lastPoint[0].id, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);
+	}
 }
 
 function on_playback_new_track(metadb) {

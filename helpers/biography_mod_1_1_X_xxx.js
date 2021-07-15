@@ -57,11 +57,16 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 }
 
 // Retrieve data from other panels
-function on_notify_data(name, info) {
+function onNotifyData(name, info) {
 	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
 	if (name === 'World Map' + ' notifySelectionProperty') {
 		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track();
 	}
-	// Original
-	let clone; if (ui.local) {clone = typeof info === 'string' ? String(info) : info; on_cui_notify(name, clone);} switch (name) {case "chkTrackRev_bio": if (!p.server && p.inclTrackRev) {clone = JSON.parse(JSON.stringify(info)); clone.inclTrackRev = true; window.NotifyOthers("isTrackRev_bio", clone);} break; case "isTrackRev_bio": if (p.server && info.inclTrackRev === true) {clone = JSON.parse(JSON.stringify(info)); serv.get_track(clone);} break; case "img_chg_bio": img.fresh(); men.fresh(); break; case "chk_arr_bio": clone = JSON.parse(JSON.stringify(info)); img.chk_arr(clone); break; case "custom_style_bio": clone = String(info); p.on_notify(clone); break; case "force_update_bio": if (p.server) {clone = JSON.parse(JSON.stringify(info)); serv.fetch(1, clone[0], clone[1]);} break; case "get_multi_bio": p.get_multi(); break; case "get_rev_img_bio": if (p.server) {clone = JSON.parse(JSON.stringify(info)); serv.get_rev_img(clone[0], clone[1], clone[2], clone[3], false);} break; case "get_img_bio": img.grab(info ? true : false); break; case "get_txt_bio": t.grab(); break; case "multi_tag_bio": if (p.server) {clone = JSON.parse(JSON.stringify(info)); serv.fetch(false, clone[0], clone[1]);} break; case "not_server_bio": p.server = false; timer.clear(timer.img); timer.clear(timer.zSearch); break; case "blacklist_bio": img.blkArtist = ""; img.chkArtImg(); break; case "script_unload_bio": p.server = true; window.NotifyOthers("not_server_bio", 0); break; case "refresh_bio": window.Reload(); break; case "reload_bio": if (!p.art_ix && ppt.artistView || !p.alb_ix && !ppt.artistView) window.Reload(); else {t.artistFlush(); t.albumFlush(); t.grab(); if (ppt.text_only) t.paint();} break; case "status_bio": ppt.panelActive = info; window.Reload(); break;}
 }
+if (typeof on_notify_data !== 'undefined') {
+	const oldFunc = on_notify_data;
+	on_notify_data = function(name, info) {
+		oldFunc(name, info);
+		onNotifyData(name, info);
+	}
+} else {var on_notify_data = onNotifyData;}

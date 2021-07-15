@@ -12,9 +12,17 @@
 
 ## [Unreleased][]
 ### Added
+- Tagging: locale tag (country) can be set for tracks missing the tag by clicking directly on the map. A menu will appear showing a list of countries near the clicked zone. Tags are saved directly to files or to the Json database according to the config. (It applies the same country to all selected tracks, don't use it for different artists unless all are from there!)
+- UI: point's color and size can be customized on menus.
+- UI: Configurable header with current country for selected tracks (only active if entire selection has the same country tag). Text color is also configurable on menus.
 ### Changed
+- Biography integration: mod installation has changed. Mod is now copied to the root of the Biography script path, and loaded from there. Should now work with portable installations too even if the drive letter changes. Due to this change, it's recommended to uninstall integration before updating this update, and reinstall afterwards. Otherwise, automatic uninstall will fail on the future (since it will try to revert the new changes instead of the old ones).
+- Installation: Installation path may now be changed by editing 'folders.xxxName' variable at '.\helpers\helpers_xxx.js'. This is a workaround for some SMP limitations when working with relative paths and text files, images or dynamic file loading.
 ### Removed
 ### Fixed
+- Biography Integration: Bio mods rewritten (less size) wrapping callbacks, instead of rewriting them entirely.
+- Multiple minor improvements and fixes on path handling for portable installations.
+- Multiple minor improvements and fixes when saving files on non existing folders.
 
 ## [1.2.2] - 2021-06-21
 ### Added

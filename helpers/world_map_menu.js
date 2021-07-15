@@ -1,6 +1,7 @@
 'use strict';
 
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\menu_xxx.js');
+include('menu_xxx.js');
+include('helpers_xxx.js');
 
 const menu = new _menu();
 
@@ -27,8 +28,8 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			const options = [
-				{text: 'Full', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_B.jpg', factorX: 100, factorY: 100}, 
-				{text: 'No Antarctica', path: fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_Y133_B.jpg', factorX: 100, factorY: 133},
+				{text: 'Full', path: folders.xxx + 'images\\MC_WorldMap_B.jpg', factorX: 100, factorY: 100}, 
+				{text: 'No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_Y133_B.jpg', factorX: 100, factorY: 133},
 				{text: 'Custom...'}
 			];
 			options.forEach( (map, index) => {
@@ -108,7 +109,9 @@ function createMenu() {
 				let  foundArr = [];
 				// Biography 1.1.X
 				const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
-				const modText = '\ninclude(fb.ProfilePath + \'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_1_1_X_xxx.js\');';
+				const file1_1_X = 'biography_mod_1_1_X_xxx.js';
+				const modText = '\ninclude(\'' + file1_1_X + '\');';
+				folders.xxx.replace(fb.ProfilePath, '');
 				const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
 				fileArr.forEach( (file) => {
 					const fileText = utils.ReadTextFile(file);
@@ -126,7 +129,8 @@ function createMenu() {
 				try {packagePath = utils.GetPackagePath(idFolder);} // Exception when not found
 				catch(e) {packagePath = '';}
 				const packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
-				const modPackageText = '\ninclude(fb.ProfilePath + \'scripts\\\\SMP\\\\xxx-scripts\\\\helpers\\\\biography_mod_1_2_X_xxx.js\');';
+				const file1_2_X = 'biography_mod_1_2_X_xxx.js';
+				const modPackageText = '\ninclude(\'' + file1_2_X + '\');';
 				if (_isFile(packageFile)) {
 					const packageText = _jsonParseFile(packagePath + '\\package.json');
 					const fileText = utils.ReadTextFile(packageFile);
@@ -153,6 +157,7 @@ function createMenu() {
 				selectFound.forEach( (selected) => {
 					if (!bDone) {return;}
 					const file = selected.path;
+					const folderPath = utils.SplitFilePath(file)[0];
 					console.log('World Map: Editing file ' + file);
 					if (selected.ver  === '1.1.X') { // Biography 1.1.X
 						if (!worldMap.properties.bInstalledBiography[1]) {
@@ -160,10 +165,13 @@ function createMenu() {
 								bDone = _copyFile(file, file + backupExt);
 							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
 							if (bDone) {
+								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_1_X, folderPath + file1_1_X);
+							} else {fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return;}
+							if (bDone) {
 								let fileText = utils.ReadTextFile(file);
 								fileText += modText;
 								bDone = _save(file, fileText);
-							} else {fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return;}
+							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_1_X, window.Name); return;}
 							if (!bDone) {fb.ShowPopupMessage('Error editing the file.\n' + file, window.Name); return;}
 						} else {
 							let bDone = false;
@@ -178,14 +186,17 @@ function createMenu() {
 						}
 					} else { // Biography 1.2.X
 						if (!worldMap.properties.bInstalledBiography[1]) {
-							if (!_isFile(packageFile + backupExt)) {
-								bDone = _copyFile(packageFile, packageFile + backupExt);
-							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + packageFile, window.Name); return;}
+							if (!_isFile(file + backupExt)) {
+								bDone = _copyFile(file, file + backupExt);
+							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
+							if (bDone) {
+								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_2_X, folderPath + file1_2_X);
+							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
 							if (bDone) {
 								let fileText = utils.ReadTextFile(packageFile);
 								fileText += modPackageText;
 								bDone = _save(packageFile, fileText);
-							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
+							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_X, window.Name); return;}
 						} else {
 							if (_isFile(packageFile + backupExt)) {
 								bDone = _recycleFile(packageFile);
@@ -273,36 +284,113 @@ function createMenu() {
 		}
 		menu.newEntry({entryText: 'sep'});
 		{
-			const menuName = menu.newMenu('Colours...');
-			{	// Background color
-				const subMenuName = menu.newMenu('Panel background', menuName);
-				const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom'];
-				const optionsLength = options.length;
-				options.forEach((item, i) => {
-					menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
-						worldMap.customPanelColorMode = i;
+			const menuUI = menu.newMenu('UI');
+			{
+				const menuName = menu.newMenu('Colours...', menuUI);
+				{	// Background color
+					const subMenuName = menu.newMenu('Panel background', menuName);
+					const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom'];
+					const optionsLength = options.length;
+					options.forEach((item, i) => {
+						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+							worldMap.customPanelColorMode = i;
+							// Update property to save between reloads
+							worldMap.properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
+							overwriteProperties(worldMap.properties);
+							worldMap.coloursChanged();
+							window.Repaint();
+						}});
+					});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode});
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
+						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
 						// Update property to save between reloads
-						worldMap.properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
+						worldMap.properties['customPanelColor'][1] = worldMap.panelColor;
 						overwriteProperties(worldMap.properties);
 						worldMap.coloursChanged();
 						window.Repaint();
+					}, flags: worldMap.properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
+				}
+				{	// Point color
+					const subMenuName = menu.newMenu('Points', menuName);
+					const options = ['Default', 'Custom'];
+					const optionsLength = options.length;
+					options.forEach((item, i) => {
+						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+							worldMap.defaultColor = i === 1 ? worldMap.properties.customPointColor[1] : 0xFF00FFFF;
+							// Update property to save between reloads
+							worldMap.properties.customPointColorMode[1] = i;
+							overwriteProperties(worldMap.properties);
+							window.Repaint();
+						}});
+					});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.properties.customPointColorMode[1]});
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
+						worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
+						// Update property to save between reloads
+						worldMap.properties['customPointColor'][1] = worldMap.defaultColor;
+						overwriteProperties(worldMap.properties);
+						window.Repaint();
+					}, flags: worldMap.properties['customPointColorMode'][1] === 1 ? MF_STRING : MF_GRAYED,});
+				}
+				{	// Text color
+					menu.newEntry({menuName, entryText: 'Text...', func: () => {
+						worldMap.textColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
+						// Update property to save between reloads
+						worldMap.properties.customLocaleColor[1] = worldMap.textColor;
+						overwriteProperties(worldMap.properties);
+						window.Repaint();
 					}});
-				});
-				menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode});
-				menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-				menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
-					worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
-					// Update property to save between reloads
-					worldMap.properties['customPanelColor'][1] = worldMap.panelColor;
-					overwriteProperties(worldMap.properties);
-					worldMap.coloursChanged();
-					window.Repaint();
-				}, flags: worldMap.properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
+				}
 			}
+			{
+				const menuName = menu.newMenu('Points size...', menuUI);
+				{	// Point size
+					const options = [7, 10, 12, 14, 16, 20, 30, 'Custom...'];
+					const optionsLength = options.length;
+					options.forEach((item, i) => {
+						menu.newEntry({menuName, entryText: item, func: () => {
+							if (i === optionsLength - 1) {
+								let input = '';
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, worldMap.properties.customPointSize[1], true));} 
+								catch(e) {return;}
+								if (Number.isNaN(input)) {return;}
+								worldMap.properties.customPointSize[1] = input;
+							} else {worldMap.properties.customPointSize[1] = item;}
+							if (worldMap.properties.customPointSize[1] === worldMap.pointSize) {return;}
+							worldMap.pointSize = worldMap.properties.customPointSize[1];
+							worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+							window.Repaint();
+							overwriteProperties(worldMap.properties);
+						}});
+					});
+					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
+						const idx = options.indexOf(worldMap.pointSize);
+						return (idx !== -1 ? idx : optionsLength - 1);
+					});
+					menu.newEntry({menuName, entryText: 'sep'});
+					menu.newEntry({menuName, entryText: 'Fill the circle? (point shape)', func: () => {
+						worldMap.properties.bPointFill[1] = !worldMap.properties.bPointFill[1];
+						worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+						window.Repaint();
+						overwriteProperties(worldMap.properties);
+					}});
+					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return worldMap.properties.bPointFill[1]});
+				}
+			}
+			menu.newEntry({menuName: menuUI, entryText: 'sep'});
+			menu.newEntry({menuName: menuUI, entryText: 'Show current country header?', func: () => {
+				worldMap.properties.bShowLocale[1] = !worldMap.properties.bShowLocale[1];
+				window.Repaint();
+				overwriteProperties(worldMap.properties);
+			}});
+			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return worldMap.properties.bShowLocale[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Readmes
-			const readmePath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\readme\\world_map.txt';
+			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {
 				if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, 'e'))) { 
 					const readme = utils.ReadTextFile(readmePath, 65001); // Executed on script load
@@ -310,14 +398,12 @@ function createMenu() {
 					else {console.log('Readme not found: ' + value);}
 				}
 			}});
-		}
-		
+		}	
 	}
 	return menu;
 }
 
 function syncBio (bReload = false) {
-	console.log(worldMap.properties['selection'][1]);
 	// Biograpy 1.1.X
 	window.NotifyOthers(window.Name + ' notifySelectionProperty', worldMap.properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
 	// Biograpy 1.2.X

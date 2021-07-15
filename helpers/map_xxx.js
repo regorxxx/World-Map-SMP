@@ -10,22 +10,23 @@
 			- Merge near enough locations into "zones", to draw the points for multiple artists.
  */
 
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_foobar.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_prototypes.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_UI.js');
+include('helpers_xxx.js');
+include('helpers_xxx_foobar.js');
+include('helpers_xxx_prototypes.js');
+include('helpers_xxx_UI.js');
 
 // Map object
 function imageMap({
 	imagePath = '', mapTag = '', properties = {}, 
-	findCoordinatesFunc = null, selPointFunc = null, tooltipFunc = null, 
+	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, tooltipFindPointFunc = null,
 	jsonPath = '', jsonId = '', 
 	bStaticCoord = true,
-	pointShape = 'circle' // string, circle
+	pointShape = 'circle', // string, circle
+	pointSize = 10,
+	pointLineSize = 25
 	} = {}) {
 	// Constants
-	const pointSize = 10;
-	const pointLineSize = 25;
-	const bShowSize = true;
+	const bShowSize = false;
 	// Global tooltip
 	this.tooltip = new _tt(null);
 	
@@ -136,9 +137,9 @@ function imageMap({
 						}
 						case 'circle':
 						default : {
-							gr.DrawEllipse(point.xScaled, point.yScaled, pointSize * this.scale, pointSize * this.scale, pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
+							gr.DrawEllipse(point.xScaled, point.yScaled, this.pointSize * this.scale, this.pointSize * this.scale, this.pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
 							if (bShowSize && toPaint.val > 1) { // Show count on map?
-								gr.GdiDrawText(toPaint.val, this.gFont, 0xFF000000, point.xScaled - pointSize * this.scale, point.yScaled + pointLineSize * this.scale / 2, 40, 40);
+								gr.GdiDrawText(toPaint.val, this.gFont, this.textColor, point.xScaled - this.pointSize * this.scale, point.yScaled + this.pointLineSize * this.scale / 2, 40, 40);
 							}
 							break;
 						}
@@ -170,7 +171,7 @@ function imageMap({
 		}
 		// Scale font
 		if (this.scale !== 0 && this.scale !== 1) {
-			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 500));
+			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300));
 		} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
@@ -202,9 +203,11 @@ function imageMap({
 		return mapTagValue;
 	}
 	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}}
-	this.findCoordinates = () => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
+	this.findCoordinates = (value, mapWidth, mapHeight, factorX, factorY) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
+	this.findPointFunc = (x, y, mapWidth, mapHeight, factorX, factorY) => {return [];}; // [{key, simil}] Could be overwritten
 	// Selection
-	this.selPoint = (point, mask) => {return null;}; // Could be overwritten, arbitrary return
+	this.selPoint = (point, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
+	this.selFindPoint = (foundPoints, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
 	this.getLastPoint = () => {return this.lastPoint;}; 
 	// Move and click
 	this.trace = (x, y) => {
@@ -231,9 +234,9 @@ function imageMap({
 					const point = this.point[last.id];
 					if (point.xScaled === -1 || point.yScaled === -1) {return;}
 					const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h);
-					const rx = pointSize * this.scale * Math.cos(tetha), ry = pointSize * this.scale * Math.sin(tetha);
-					const xMax = point.xScaled + rx + pointLineSize * this.scale, xMin = point.xScaled - rx - pointLineSize * this.scale;
-					const yMax = point.yScaled + rx + pointLineSize * this.scale, yMin = point.yScaled - ry - pointLineSize * this.scale;
+					const rx = this.pointSize * this.scale * Math.cos(tetha), ry = this.pointSize * this.scale * Math.sin(tetha);
+					const xMax = point.xScaled + rx + this.pointLineSize * this.scale, xMin = point.xScaled - rx - this.pointLineSize * this.scale;
+					const yMax = point.yScaled + rx + this.pointLineSize * this.scale, yMin = point.yScaled - ry - this.pointLineSize * this.scale;
 					if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {foundId = last.id;}  // On circle?
 				});
 				break;
@@ -260,7 +263,16 @@ function imageMap({
 					this.idSelected = 'none';
 					window.Repaint();
 					this.tooltip.SetValue(null);
-				} 
+				}
+				if (!this.lastPoint.length) {
+					const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
+					if (found && found.length) {
+						const ttText = this.tooltipFindPointText(found);
+						if (ttText && ttText.length) {
+							this.tooltip.SetValue(ttText, true);
+						}
+					} else {this.tooltip.SetValue(null);}
+				}
 			}
 		} 
 		else if (this.idSelected.length && this.idSelected !== 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
@@ -271,10 +283,16 @@ function imageMap({
 		this.mY = y;
 		const foundPoint = this.point[this.tracePoint(x,y)];
 		if (foundPoint) { // Over a point
-			return this.selPoint(foundPoint, mask);
+			return this.selPoint(foundPoint, mask, x, y);
+		} else if (this.trace(x, y) && !this.lastPoint.length) {
+			const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
+			if (found && found.length) {
+				return this.selFindPoint(found, mask, x, y);
+			}
 		}
 	}
 	this.tooltipText = (point) => {return '';}; // Could be overwritten, return a string
+	this.tooltipFindPointText = (foundPoints) => {return '';}; // Could be overwritten, return a string
 	// Clear
 	this.clearPointCache = () => {this.point = {};};
 	this.clearLastPoint = () => {this.lastPoint = [];};
@@ -319,8 +337,8 @@ function imageMap({
 		let bfuncSet = false;
 		// When no properties are given and no args, then use a world map as default
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length ) {
-			include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\world_map_tables.js');
-			this.imageMapPath = fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\images\\MC_WorldMap_B.jpg'; // Default is world map
+			include(folders.xxx + 'helpers\\world_map_tables.js');
+			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap_B.jpg'; // Default is world map
 			this.mapTag = '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
 			this.findCoordinates = findCountryCoords; // Default is country coordinates
 			bfuncSet = true;
@@ -330,11 +348,20 @@ function imageMap({
 				this.findCoordinates = findCoordinatesFunc;
 				bfuncSet = true;
 			}
+			if (typeof findPointFunc !== 'undefined' && findPointFunc) { // Not always required
+				this.findPointFunc = findPointFunc;
+			}
 			if (typeof selPointFunc !== 'undefined' && selPointFunc) { // Not always required
 				this.selPoint = selPointFunc;
 			}
+			if (typeof selFindPointFunc !== 'undefined' && selFindPointFunc) { // Not always required
+				this.selFindPoint = selFindPointFunc;
+			}
 			if (typeof tooltipFunc !== 'undefined' && tooltipFunc) { // Not always required
 				this.tooltipText = tooltipFunc;
+			}
+			if (typeof tooltipFindPointFunc !== 'undefined' && tooltipFindPointFunc) { // Not always required
+				this.tooltipFindPointText = tooltipFindPointFunc;
 			}
 			if (imagePath.length) {
 				this.imageMapPath = imagePath;
@@ -432,6 +459,7 @@ function imageMap({
 	this.backgroundColor = 0xFFF0F8FF;
 	this.backgroundTagColor1 = 0xFFF5F5F5;
 	this.backgroundTagColor2 = 0xFFA9A9A9;
+	this.textColor = 0xFF000000;
 	this.customPanelColorMode = typeof this.properties.customPanelColorMode !== 'undefined' ? this.properties.customPanelColorMode[1] : 1;
 	this.panelColor = null;
 	this.idSelected = '';
@@ -439,5 +467,7 @@ function imageMap({
 	this.mY = -1;
 	this.bStaticCoord = bStaticCoord;
 	this.pointShape = pointShape;
+	this.pointSize = pointSize;
+	this.pointLineSize = pointLineSize;
 	this.init();
 }

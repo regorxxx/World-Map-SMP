@@ -1,7 +1,9 @@
 'use strict';
 
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx.js');
-include(fb.ProfilePath + 'scripts\\SMP\\xxx-scripts\\helpers\\helpers_xxx_playlists.js');
+include('helpers_xxx.js');
+include('helpers_xxx_playlists.js');
+include('helpers_xxx_prototypes.js');
+include('menu_xxx.js');
 
 /* 
 	Map helpers
@@ -92,6 +94,62 @@ function selPoint(point, mask) {
 	return bDone;
 }
 
+// When clicking on a the map with tracks without tags
+function selFindPoint(foundPoints, mask, x, y) {
+	let bDone = false;
+	// The entire function is tag agnostic, it may be used for anything. 
+	// When jsonId is set as 'artist' so it looks for artists with same map value
+	// The ctrl modifier is set to force 'genre' and 'style' tags but can be used with anything
+	if (!foundPoints.length) {return bDone;}
+	if (!worldMap.jsonId.length) {return bDone;}
+	// Any track with same locale tag
+	const tagName = worldMap.properties.writeToTag[1];
+	if (tagName.length) {
+		let locale = [];
+		// Menu to select country from list
+		const menu = new _menu();
+		menu.newEntry({entryText: 'Countries near clicked point:', func: null, flags: MF_GRAYED});
+		menu.newEntry({entryText: 'sep'});
+		foundPoints.forEach((point) => {
+			let country = formatCountry(point.key);
+			menu.newEntry({entryText: country, func: () => {
+				locale = [country];
+			}});
+		});
+		menu.btn_up(x, y);
+		if (!locale.length) {return;}
+		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		if (sel && sel.Count) {
+			const jsonIdDone = new Set();
+			sel.Convert().forEach( (handle) => {
+				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(handle); // worldMap.jsonId = artist
+				if (jsonId && jsonId.length) {
+					// Set tag on map for drawing
+					worldMap.setTag(locale[locale.length - 1], jsonId);
+					window.Repaint();
+					// Update tags or json if needed (even if the handle was not within the selection)
+					if (worldMap.properties.iWriteTags[1] > 0){
+						const tfo = '[%' + tagName + '%]';
+						if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) { // Check if tag already exists
+							if (worldMap.properties.iWriteTags[1] === 1) {
+								new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
+							} else if (worldMap.properties.iWriteTags[1] === 2) {
+								if (!jsonIdDone.has(jsonId)) {
+									jsonIdDone.add(jsonId);
+									console.log('save');
+									const newData = {artist: jsonId, val: locale};
+									if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+	}
+	return bDone;
+}
+
 // When mouse is over point
 function tooltip(point) { 
 	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
@@ -103,8 +161,19 @@ function tooltip(point) {
 	return (point && point.hasOwnProperty('id') ? text : null);
 }
 
+// When mouse is over point
+function tooltipFindPoint(foundPoints) { 
+	let text = foundPoints.map((_) => {return  formatCountry(_.key) + '(' + _.prox + '%)';}).join(', ');
+	text += '\n(L. Click to add locale tag to current track(s))'
+	return text;
+}
+
 // Property check
 function biographyCheck(prop) {
 	if (worldMap.properties['bEnabledBiography'][1] && !worldMap.properties['bInstalledBiography'][1]) {return false;}
 	else {return true;}
 }	
+
+function formatCountry(country) {
+return capitalizeAll(country, ' ').replace(' And ', ' and ').replace(' Of ', ' of ');
+}
