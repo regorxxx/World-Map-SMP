@@ -321,10 +321,13 @@ function imageMap({
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === data[byKey]);}) : false);
 	}
+	this.hasDataById = (Id, byKey = this.jsonId) => { // Duplicates by key
+		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === Id);}) : false);
+	}
 	this.getData = () => {
 		return (this.jsonData.length ? [...this.jsonData] : []);
 	}
-	this.deleteData = (Id, byKey = this.jsonId) => { // Delete by key
+	this.deleteDataById = (Id, byKey = this.jsonId) => { // Delete by key
 		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === Id);})
 		if (idx !== -1) {
 			this.jsonData.splice(idx, 1);

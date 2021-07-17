@@ -285,7 +285,7 @@ function on_notify_data(name, info) {
 								new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
 							} else if (worldMap.properties.iWriteTags[1] === 2) {
 								const newData = {artist: jsonId, val: locale};
-								if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
+								if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
 							}
 						}
 					}

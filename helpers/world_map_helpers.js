@@ -137,9 +137,9 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 								if (!jsonIdDone.has(jsonId)) {
 									jsonIdDone.add(jsonId);
 									const newData = {artist: jsonId, val: locale};
-									if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
+									if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
 									else if (bForce) { // Force rewrite
-										worldMap.deleteData(jsonId);
+										worldMap.deleteDataById(jsonId);
 										worldMap.saveData(newData);
 									}
 								}
