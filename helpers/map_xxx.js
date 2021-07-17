@@ -244,7 +244,7 @@ function imageMap({
 		}
 		return foundId;
 	}
-	this.move = (x, y) => { // on_mouse_move & on_mouse_leave
+	this.move = (x, y, mask) => { // on_mouse_move & on_mouse_leave
 		if (this.mX === x && this.mY === y) {return;}
 		this.mX = x;
 		this.mY = y;
@@ -258,13 +258,13 @@ function imageMap({
 				if (ttText && ttText.length) {
 					this.tooltip.SetValue(ttText, true);
 				}
-			} else {
+			} else {  // No point
 				if (this.idSelected.length) {
 					this.idSelected = 'none';
 					window.Repaint();
 					this.tooltip.SetValue(null);
 				}
-				if (!this.lastPoint.length) {
+				if (!this.lastPoint.length || mask === MK_SHIFT) {  // Add tag selecting directly from map (can be forced with shift)
 					const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
 					if (found && found.length) {
 						const ttText = this.tooltipFindPointText(found);
@@ -284,10 +284,10 @@ function imageMap({
 		const foundPoint = this.point[this.tracePoint(x,y)];
 		if (foundPoint) { // Over a point
 			return this.selPoint(foundPoint, mask, x, y);
-		} else if (this.trace(x, y) && !this.lastPoint.length) {
+		} else if (this.trace(x, y) && (!this.lastPoint.length || mask === MK_SHIFT)) {  // Add tag selecting directly from map (can be forced with shift)
 			const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
 			if (found && found.length) {
-				return this.selFindPoint(found, mask, x, y);
+				return this.selFindPoint(found, mask, x, y, mask === MK_SHIFT);
 			}
 		}
 	}
@@ -313,6 +313,9 @@ function imageMap({
 		} else {
 			this.jsonData.push(data);
 		}
+		this.save(path);
+	}
+	this.save = (path = this.jsonPath) => {
 		_save(path, JSON.stringify(this.jsonData, null, '\t'));
 	}
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
@@ -320,6 +323,15 @@ function imageMap({
 	}
 	this.getData = () => {
 		return (this.jsonData.length ? [...this.jsonData] : []);
+	}
+	this.deleteData = (Id, byKey = this.jsonId) => { // Delete by key
+		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === Id);})
+		if (idx !== -1) {
+			this.jsonData.splice(idx, 1);
+			this.save();
+			return true;
+		}
+		return false;
 	}
 	this.getDataKeys = (byKey = this.jsonId) => {
 		let keysArr = [];

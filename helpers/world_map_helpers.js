@@ -95,7 +95,7 @@ function selPoint(point, mask) {
 }
 
 // When clicking on a the map with tracks without tags
-function selFindPoint(foundPoints, mask, x, y) {
+function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 	let bDone = false;
 	// The entire function is tag agnostic, it may be used for anything. 
 	// When jsonId is set as 'artist' so it looks for artists with same map value
@@ -130,15 +130,18 @@ function selFindPoint(foundPoints, mask, x, y) {
 					// Update tags or json if needed (even if the handle was not within the selection)
 					if (worldMap.properties.iWriteTags[1] > 0){
 						const tfo = '[%' + tagName + '%]';
-						if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) { // Check if tag already exists
+						if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length || bForce) { // Check if tag already exists
 							if (worldMap.properties.iWriteTags[1] === 1) {
 								new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
 							} else if (worldMap.properties.iWriteTags[1] === 2) {
 								if (!jsonIdDone.has(jsonId)) {
 									jsonIdDone.add(jsonId);
-									console.log('save');
 									const newData = {artist: jsonId, val: locale};
 									if (!worldMap.hasData(newData)) {worldMap.saveData(newData);} // use path at properties
+									else if (bForce) { // Force rewrite
+										worldMap.deleteData(jsonId);
+										worldMap.saveData(newData);
+									}
 								}
 							}
 						}
@@ -158,6 +161,7 @@ function tooltip(point) {
 		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
 		text += '(' + mod.description + ' + L. Click forces same ' + tags + ' too)\n';
 	});
+	text += '(Shift + L. Click on map rewrites locale tag)\n';
 	return (point && point.hasOwnProperty('id') ? text : null);
 }
 

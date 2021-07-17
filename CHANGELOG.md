@@ -13,6 +13,7 @@
 ## [Unreleased][]
 ### Added
 - Tagging: locale tag (country) can be set for tracks missing the tag by clicking directly on the map. A menu will appear showing a list of countries near the clicked zone. Tags are saved directly to files or to the Json database according to the config. (It applies the same country to all selected tracks, don't use it for different artists unless all are from there!)
+- Tagging: locale tag (country) may be rewritten by Shift + L. Clicking on the map (when a point is already being drawn). The old tag will be deleted and the new selected country will be used instead.
 - UI: point's color and size can be customized on menus.
 - UI: Configurable header with current country for selected tracks (only active if entire selection has the same country tag). Text color is also configurable on menus.
 ### Changed

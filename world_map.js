@@ -234,7 +234,7 @@ function on_mouse_lbtn_up(x, y, mask) {
 
 function on_mouse_move(x, y, mask) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	worldMap.move(x, y);
+	worldMap.move(x, y, mask);
 }
 
 function on_mouse_leave() {
