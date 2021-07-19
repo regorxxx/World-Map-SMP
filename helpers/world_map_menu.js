@@ -2,6 +2,7 @@
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
+include('helpers_xxx_tags.js');
 
 const menu = new _menu();
 
@@ -283,7 +284,7 @@ function createMenu() {
 			});
 		}
 		menu.newEntry({entryText: 'sep'});
-		{
+		{	// UI
 			const menuUI = menu.newMenu('UI');
 			{
 				const menuName = menu.newMenu('Colours...', menuUI);
@@ -346,8 +347,8 @@ function createMenu() {
 				}
 			}
 			{
-				const menuName = menu.newMenu('Points size...', menuUI);
 				{	// Point size
+					const menuName = menu.newMenu('Points size...', menuUI);
 					const options = [7, 10, 12, 14, 16, 20, 30, 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
@@ -379,6 +380,32 @@ function createMenu() {
 					}});
 					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return worldMap.properties.bPointFill[1]});
 				}
+				
+				{	// Text size
+					const menuName = menu.newMenu('Text size...', menuUI);
+					const options = [7, 8, 9, 10, 11, 12, 'Custom...'];
+					const optionsLength = options.length;
+					options.forEach((item, i) => {
+						menu.newEntry({menuName, entryText: item, func: () => {
+							if (i === optionsLength - 1) {
+								let input = '';
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, worldMap.properties.customPointSize[1], true));} 
+								catch(e) {return;}
+								if (Number.isNaN(input)) {return;}
+								worldMap.properties.fontSize[1] = input;
+							} else {worldMap.properties.fontSize[1] = item;}
+							if (worldMap.properties.fontSize[1] === worldMap.fontSize) {return;}
+							worldMap.fontSize = worldMap.properties.fontSize[1];
+							worldMap.calcScale(window.Width, window.Height);
+							window.Repaint();
+							overwriteProperties(worldMap.properties);
+						}});
+					});
+					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
+						const idx = options.indexOf(worldMap.properties.fontSize[1]);
+						return (idx !== -1 ? idx : optionsLength - 1);
+					});
+				}
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			menu.newEntry({menuName: menuUI, entryText: 'Show current country header?', func: () => {
@@ -389,6 +416,119 @@ function createMenu() {
 			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return worldMap.properties.bShowLocale[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
+		{	// Database
+			const menuDatabase = menu.newMenu('Database', void(0), () => {return (worldMap.properties['iWriteTags'][1] >= 1 ? MF_STRING : MF_GRAYED)});
+			{
+				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (worldMap.properties['iWriteTags'][1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
+				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Find artists without locale tags...', func: () => {
+					const notFoundList = new FbMetadbHandleList();
+					const jsonIdList = new Set(); // only one track per artist
+					const handleList = fb.GetLibraryItems();
+					handleList.Convert().forEach((handle) => {
+						const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(handle); // worldMap.jsonId = artist
+						if (jsonId.length && !jsonIdList.has(jsonId)) {
+							if (worldMap.properties['iWriteTags'][1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
+								notFoundList.Add(handle);
+								jsonIdList.add(jsonId);
+							} else if (worldMap.properties['iWriteTags'][1] === 1) { // Check if tag exists on file
+								const tagName = worldMap.properties.writeToTag[1];
+								const tfo = '[%' + tagName + '%]';
+								if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
+									notFoundList.Add(handle);
+									jsonIdList.add(jsonId);
+								}
+							}
+						}
+					});
+					if (notFoundList.Count) {
+						const idx = plman.FindOrCreatePlaylist('World Map missing tags', true);
+						plman.InsertPlaylistItems(idx, 0, notFoundList);
+						plman.ActivePlaylist = idx;
+					}
+				}});
+				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Merge databases...', func: () => {
+					let input = '';
+					try {input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.Name, folders.data + 'worldMap.json', true);} 
+					catch(e) {return;}
+					if (!input.length) {return;}
+					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+					let countN = 0;
+					let countO = 0;
+					const newData = _jsonParseFile(input);
+					if (newData) {
+						newData.forEach((data) => {
+							if (!worldMap.hasDataById(data[worldMap.jsonId])) {
+								worldMap.saveData(data);
+								countN++;
+							} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(data[worldMap.jsonId]).val, data.val)) {
+								worldMap.deleteDataById(data[worldMap.jsonId]);
+								worldMap.saveData(data);
+								countO++;
+							}
+						});
+					}
+					if (countN || countO) {window.Repaint();}
+					console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
+					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+					let countN = 0;
+					let countO = 0;
+					const handleList = fb.GetLibraryItems();
+					const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
+					handleList.Convert().forEach((handle, i) => {
+						if (jsonId[i] && jsonId[i].length) {
+							if (tag[i] && tag[i].length && tag[i].filter(Boolean).length) { // Only merge if not empty
+								const data = {[worldMap.jsonId]: jsonId[i], val: tag[i]};
+								if (!worldMap.hasDataById(jsonId[i])) {
+									worldMap.saveData(data);
+									countN++;
+								} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(jsonId[i]).val, tag[i])) {
+									worldMap.deleteDataById(jsonId[i]);
+									worldMap.saveData(data);
+									countO++;
+								}
+							}
+						}
+					});
+					if (countN || countO) {window.Repaint();}
+					console.log('World Map: writing file tags to database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+				}});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Write JSON tags to files...', func: () => {
+					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+					let countN = 0;
+					let countO = 0;
+					const handleList = fb.GetLibraryItems();
+					const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
+					const newData = worldMap.getData();
+					if (newData && newData.length) {
+						handleList.Convert().forEach((handle, i) => {
+							if (jsonId[i] && jsonId[i].length) {
+								newData.forEach((data) => {
+									if (data[worldMap.jsonId] === jsonId[i] && data.val && data.val.length && data.val.filter(Boolean).length) {
+										if (!tag[i] || !tag[i].length || !tag[i].filter(Boolean).length) {
+											console.log(tag[i])
+											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[worldMap.properties.writeToTag[1]]: data.val}]));
+											countN++;
+										} else if (answer === popup.yes && !isArrayEqual(data.val, tag[i])) {
+											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[worldMap.properties.writeToTag[1]]: data.val}]));
+											countO++;
+										}
+									}
+								});
+							}
+						});
+					}
+					if (countN || countO) {repaint();}
+					console.log('World Map: writing back database tags to files done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+				}});
+				menu.newEntry({entryText: 'sep'});
+			}
+		}
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {

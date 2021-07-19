@@ -88,6 +88,7 @@ const worldMap_properties = {
 	bPointFill			:	['Draw a point or a circular corona?', false],
 	customLocaleColor	:	['Custom text color', 0xFF000000],
 	bShowLocale			:	['Show current locale tag', true],
+	fontSize			:	['Size of header text', 10]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -162,7 +163,7 @@ function on_paint(gr) {
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 	worldMap.paint({gr, sel});
-	if (worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
+	if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
 		const posX = worldMap.posX;
 		const posY = worldMap.posY;
 		const w = worldMap.imageMap.Width * worldMap.scale;
@@ -217,8 +218,9 @@ function on_metadb_changed(handle_list) {
 	handle_listClone.Sort();
 	sel.MakeIntersection(handle_listClone);
 	if (sel && sel.Count) {
-		const tags = fb.TitleFormat('[%' + worldMap.properties.mapTag[1] + '%]').EvalWithMetadbs(sel);
-		if (tags.some((value) => {value !== worldMap.tagValue;})) {
+		const mapTag = worldMap.properties.mapTag[1].indexOf('$') === -1 && worldMap.properties.mapTag[1].indexOf('%') === -1 ? '%' + worldMap.properties.mapTag[1] + '%' : worldMap.properties.mapTag[1];
+		const tags = fb.TitleFormat('[' + mapTag + ']').EvalWithMetadbs(sel);
+		if (tags.some((value) => {return worldMap.getLastPoint().some((last) => {return last.val !== value;});})) {
 			repaint();
 		}
 	}
@@ -284,7 +286,7 @@ function on_notify_data(name, info) {
 							if (worldMap.properties.iWriteTags[1] === 1) {
 								new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
 							} else if (worldMap.properties.iWriteTags[1] === 2) {
-								const newData = {artist: jsonId, val: locale};
+								const newData = {[worldMap.jsonId]: jsonId, val: locale};
 								if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
 							}
 						}

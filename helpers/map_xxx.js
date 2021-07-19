@@ -171,7 +171,7 @@ function imageMap({
 		}
 		// Scale font
 		if (this.scale !== 0 && this.scale !== 1) {
-			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300));
+			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300)); // TODO
 		} // When = 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
@@ -189,7 +189,7 @@ function imageMap({
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
 				const id =  fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel);
-				const data = id.length ? this.jsonData.find((obj) => {return (obj[this.jsonId] === id);}) : null;
+				const data = this.getDataById(id);
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];
 				}
@@ -321,14 +321,17 @@ function imageMap({
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === data[byKey]);}) : false);
 	}
-	this.hasDataById = (Id, byKey = this.jsonId) => { // Duplicates by key
-		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === Id);}) : false);
+	this.hasDataById = (id, byKey = this.jsonId) => { // Duplicates by key
+		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === id);}) : false);
 	}
 	this.getData = () => {
 		return (this.jsonData.length ? [...this.jsonData] : []);
 	}
-	this.deleteDataById = (Id, byKey = this.jsonId) => { // Delete by key
-		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === Id);})
+	this.getDataById = (id) => {
+		return 	id.length ? this.jsonData.find((obj) => {return (obj[this.jsonId] === id);}) : null;
+	}
+	this.deleteDataById = (id, byKey = this.jsonId) => { // Delete by key
+		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === id);})
 		if (idx !== -1) {
 			this.jsonData.splice(idx, 1);
 			this.save();
@@ -467,8 +470,8 @@ function imageMap({
 	this.factorY = 100;
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
-	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : _scale(10);
-	this.gFont = _gdiFont('Segoe UI', this.fontSize);
+	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : 10;
+	this.gFont = _gdiFont('Segoe UI', _scale(this.fontSize));
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
 	this.backgroundColor = 0xFFF0F8FF;

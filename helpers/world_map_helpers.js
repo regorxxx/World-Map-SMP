@@ -136,7 +136,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 							} else if (worldMap.properties.iWriteTags[1] === 2) {
 								if (!jsonIdDone.has(jsonId)) {
 									jsonIdDone.add(jsonId);
-									const newData = {artist: jsonId, val: locale};
+									const newData = {[worldMap.jsonId]: jsonId, val: locale};
 									if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
 									else if (bForce) { // Force rewrite
 										worldMap.deleteDataById(jsonId);
