@@ -3,6 +3,7 @@
 include('menu_xxx.js');
 include('helpers_xxx.js');
 include('helpers_xxx_tags.js');
+include('helpers_xxx_playlists.js');
 
 const menu = new _menu();
 
@@ -442,9 +443,7 @@ function createMenu() {
 						}
 					});
 					if (notFoundList.Count) {
-						const idx = plman.FindOrCreatePlaylist('World Map missing tags', true);
-						plman.InsertPlaylistItems(idx, 0, notFoundList);
-						plman.ActivePlaylist = idx;
+						sendToPlaylist(notFoundList, 'World Map missing tags');
 					}
 				}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});

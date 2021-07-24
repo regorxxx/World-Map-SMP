@@ -6441,14 +6441,6 @@
 		]
 	},
 	{
-		"artist": "100 Flowers",
-		"val": [
-			"Halifax",
-			"Nova Scotia",
-			"Canada"
-		]
-	},
-	{
 		"artist": "AC-DC",
 		"val": [
 			"Sydney",
@@ -6950,12 +6942,6 @@
 			"Hoboken",
 			"Hudson County",
 			"New Jersey",
-			"United States"
-		]
-	},
-	{
-		"artist": "X",
-		"val": [
 			"United States"
 		]
 	},
@@ -13987,19 +13973,7 @@
 		]
 	},
 	{
-		"artist": "The Oscar Peterson Trio",
-		"val": [
-			"United States"
-		]
-	},
-	{
 		"artist": "The Oscar Peterson Quartet",
-		"val": [
-			"United States"
-		]
-	},
-	{
-		"artist": "The Oscar Peterson Trio & Clark Terry",
 		"val": [
 			"United States"
 		]
@@ -15042,6 +15016,5677 @@
 		"artist": "Idrissa Soumaoro",
 		"val": [
 			"Mali"
+		]
+	},
+	{
+		"artist": "Sammy Davis Jr.",
+		"val": [
+			"Harlem",
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lauryn Hill",
+		"val": [
+			"South Orange",
+			"Essex County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sula Bassana",
+		"val": [
+			"Berlin",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rosemary Clooney",
+		"val": [
+			"Maysville",
+			"Mason County",
+			"Kentucky",
+			"United States"
+		]
+	},
+	{
+		"artist": "Stomu Yamash'ta's Red Buddha Theatre",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Rabi Nakayama",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "J.A. Caesar & Shirubu",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Harry Hosono & The Yellow Magic Band",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Sadistic Mika Band",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "The Apryl Fool",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Karuna Khyal",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Les Rallizes Denudes",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Osamu Kitajima",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Kuni Kawachi & His Group",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Voivod",
+		"val": [
+			"Jonquière",
+			"Saguenay",
+			"Saguenay–Lac-Saint-Jean",
+			"Quebec",
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Michael Schenker Group",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Les Claypool Frog Brigade",
+		"val": [
+			"San Francisco",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Last",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Jelly Beans",
+		"val": [
+			"Jersey City",
+			"Hudson County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Jeff Beck Group",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Jeevas",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Jackson 5",
+		"val": [
+			"Gary",
+			"Lake County",
+			"Indiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Isley Brothers, Jimi Hendrix",
+		"val": [
+			"Cincinnati",
+			"Hamilton County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Isley Brothers",
+		"val": [
+			"Cincinnati",
+			"Hamilton County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Hypstrz",
+		"val": [
+			"Minneapolis",
+			"Hennepin County",
+			"Minnesota",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Holy Modal Rounders",
+		"val": [
+			"Lower East Side",
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Hold Steady",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The hives",
+		"val": [
+			"Fagersta",
+			"Fagersta Municipality",
+			"Västmanland",
+			"Sweden"
+		]
+	},
+	{
+		"artist": "The Get-Up Kids",
+		"val": [
+			"Kansas City",
+			"Jackson County",
+			"Missouri",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Frame",
+		"val": [
+			"Birmingham",
+			"West Midlands",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Fleetwoods",
+		"val": [
+			"Olympia",
+			"Thurston County",
+			"Washington",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Flaming Lips",
+		"val": [
+			"Oklahoma City",
+			"Oklahoma County",
+			"Oklahoma",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Five Satins",
+		"val": [
+			"New Haven",
+			"New Haven County",
+			"Connecticut",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Five Keys",
+		"val": [
+			"Newport News",
+			"Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Fiestas",
+		"val": [
+			"Newark",
+			"Essex County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Fall",
+		"val": [
+			"Prestwich",
+			"Bury",
+			"Greater Manchester",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Everly Brothers",
+		"val": [
+			"Knoxville",
+			"Knox County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Drifters",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Dream Is Dead",
+		"val": [
+			"Indianapolis",
+			"Marion County",
+			"Indiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Dead Boys",
+		"val": [
+			"Cleveland",
+			"Cuyahoga County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Cure",
+		"val": [
+			"Crawley",
+			"West Sussex",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Crew Cuts",
+		"val": [
+			"Toronto",
+			"Ontario",
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Crests",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Crawdaddys",
+		"val": [
+			"San Diego",
+			"San Diego County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Cosmic Jokers",
+		"val": [
+			"Nordrhein-Westfalen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "The Cookies",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Coasters",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Clash",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Chordettes",
+		"val": [
+			"Sheboygan",
+			"Sheboygan County",
+			"Wisconsin",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Chiffons",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Chantels",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Chainsmokers, Coldplay",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Chainsmokers",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Builders and The Butchers",
+		"val": [
+			"Portland",
+			"Multnomah County",
+			"Oregon",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Broken Family Band",
+		"val": [
+			"Cambridge",
+			"Cambridgeshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Bob Seger System",
+		"val": [
+			"Detroit",
+			"Wayne County",
+			"Michigan",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Black Crowes",
+		"val": [
+			"Atlanta",
+			"Fulton County",
+			"Georgia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Texas",
+		"val": [
+			"Glasgow",
+			"Scotland",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Terry & The Pirates",
+		"val": [
+			"San Francisco",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Temple of The Dog",
+		"val": [
+			"Seattle",
+			"King County",
+			"Washington",
+			"United States"
+		]
+	},
+	{
+		"artist": "Teen Heroes",
+		"val": [
+			"Orange County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Tedeschi Trucks Band",
+		"val": [
+			"Jacksonville",
+			"Duval County",
+			"Florida",
+			"United States"
+		]
+	},
+	{
+		"artist": "Talk Talk",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Talib Kweli, Norah Jones",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Syl Johnson",
+		"val": [
+			"Holly Springs",
+			"Marshall County",
+			"Mississippi",
+			"United States"
+		]
+	},
+	{
+		"artist": "Suzanne Vega",
+		"val": [
+			"Santa Monica",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Susan Tedeschi",
+		"val": [
+			"Boston",
+			"Suffolk County",
+			"Massachusetts",
+			"United States"
+		]
+	},
+	{
+		"artist": "Superdrag",
+		"val": [
+			"Knoxville",
+			"Knox County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sungrazer",
+		"val": [
+			"Maastricht",
+			"Limburg",
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Stuart Hamblen",
+		"val": [
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Streetmark",
+		"val": [
+			"Düsseldorf",
+			"Nordrhein-Westfalen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Stiv Bators",
+		"val": [
+			"Youngstown",
+			"Mahoning County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "Steven Wilson",
+		"val": [
+			"Kingston upon Thames",
+			"Kingston upon Thames",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stephen Malkmus & The Million Dollar Bashers",
+		"val": [
+			"Santa Monica",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Stephen Malkmus & Lee Ranaldo",
+		"val": [
+			"Santa Monica",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Stephen Hough",
+		"val": [
+			"Heswall",
+			"Wirral",
+			"Merseyside",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stealers Wheel",
+		"val": [
+			"Paisley",
+			"Renfrewshire",
+			"Scotland",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stanley Clarke",
+		"val": [
+			"Philadelphia",
+			"Philadelphia County",
+			"Pennsylvania",
+			"United States"
+		]
+	},
+	{
+		"artist": "Soul Asylum",
+		"val": [
+			"Minneapolis",
+			"Hennepin County",
+			"Minnesota",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sophie Hunger",
+		"val": [
+			"Bern",
+			"Bern",
+			"Switzerland"
+		]
+	},
+	{
+		"artist": "Sonny James",
+		"val": [
+			"Hackleburg",
+			"Marion County",
+			"Alabama",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sonny Hennig",
+		"val": [
+			"Mühlhausen",
+			"Thüringen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Sólstafir",
+		"val": [
+			"Reykjavík",
+			"Höfuðborgarsvæðið",
+			"Iceland"
+		]
+	},
+	{
+		"artist": "Snowgoons",
+		"val": [
+			"Karlsruhe",
+			"Baden-Württemberg",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Sloche",
+		"val": [
+			"Quebec City",
+			"Capitale-Nationale",
+			"Quebec",
+			"Canada"
+		]
+	},
+	{
+		"artist": "Slim Whitman",
+		"val": [
+			"Tampa",
+			"Hillsborough County",
+			"Florida",
+			"United States"
+		]
+	},
+	{
+		"artist": "Skeeter Davis",
+		"val": [
+			"Dry Ridge",
+			"Grant County",
+			"Kentucky",
+			"United States"
+		]
+	},
+	{
+		"artist": "Simply Red",
+		"val": [
+			"Manchester",
+			"Greater Manchester",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Siena Root",
+		"val": [
+			"Stockholm",
+			"Stockholm municipality",
+			"Stockholms län",
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Shy Limbs",
+		"val": [
+			"Bournemouth",
+			"Dorset",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Shuggie Otis",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Shonen Knife",
+		"val": [
+			"Osaka",
+			"Osaka",
+			"Japan"
+		]
+	},
+	{
+		"artist": "Shirley Ellis",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Shirley & Lee",
+		"val": [
+			"New Orleans",
+			"Louisiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sheryl Crow",
+		"val": [
+			"Kennett",
+			"Dunklin County",
+			"Missouri",
+			"United States"
+		]
+	},
+	{
+		"artist": "Shelby Lynne",
+		"val": [
+			"Quantico",
+			"Virginia",
+			"Prince William County",
+			"Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sheb Wooley",
+		"val": [
+			"Erick",
+			"Beckham County",
+			"Oklahoma",
+			"United States"
+		]
+	},
+	{
+		"artist": "Shaun Cassidy",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sha-Na-Na",
+		"val": [
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Shalamar",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sex Pistols",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Seu Jorge",
+		"val": [
+			"Belford Roxo",
+			"Rio de Janeiro",
+			"Brazil"
+		]
+	},
+	{
+		"artist": "Sergeant Thunderhoof",
+		"val": [
+			"Bath",
+			"Somerset",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Serenes",
+		"val": [
+			"Fryslân",
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Sense Field",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Selim Palmgren",
+		"val": [
+			"Pori",
+			"Satakunta",
+			"Finland"
+		]
+	},
+	{
+		"artist": "Scarlett Johansson",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Say Anything",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Saxon",
+		"val": [
+			"Barnsley",
+			"South Yorkshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Sasha Dobson, Norah Jones",
+		"val": [
+			"Santa Cruz",
+			"Santa Cruz County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sasha Dobson",
+		"val": [
+			"Santa Cruz",
+			"Santa Cruz County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sarasate",
+		"val": [
+			"Pamplona",
+			"Navarra",
+			"Spain"
+		]
+	},
+	{
+		"artist": "Santana & John McLaughlin, Santana, John McLaughlin",
+		"val": [
+			"Autlán de Navarro",
+			"Jalisco",
+			"Mexico"
+		]
+	},
+	{
+		"artist": "Santana & Alice Coltrane, Santana, Alice Coltrane",
+		"val": [
+			"Autlán de Navarro",
+			"Jalisco",
+			"Mexico"
+		]
+	},
+	{
+		"artist": "Sandy Nelson",
+		"val": [
+			"Santa Monica",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Sandrose",
+		"val": [
+			"Paris",
+			"Île-de-France",
+			"France"
+		]
+	},
+	{
+		"artist": "Samantha Fox",
+		"val": [
+			"Tower Hamlets",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Saint-Saens",
+		"val": [
+			"Paris",
+			"Île-de-France",
+			"France"
+		]
+	},
+	{
+		"artist": "Saint Vitus",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Rukhsana Merrise",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Royal Bangs",
+		"val": [
+			"Knoxville",
+			"Knox County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roy Harper & Jimmy Page, Roy Harper, Jimmy Page",
+		"val": [
+			"Rusholme",
+			"Manchester",
+			"Greater Manchester",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Roy Clark",
+		"val": [
+			"Meherrin",
+			"Prince Edward County",
+			"Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roy Buchanan",
+		"val": [
+			"Ozark",
+			"Franklin County",
+			"Arkansas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roy Acuff",
+		"val": [
+			"Maynardville",
+			"Union County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roxette",
+		"val": [
+			"Halmstad",
+			"Halmstad Municipality",
+			"Halland",
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Roslavets",
+		"val": [
+			"Surazh",
+			"Bryanskaya oblast'",
+			"Russian Federation"
+		]
+	},
+	{
+		"artist": "Rosanne Cash",
+		"val": [
+			"Memphis",
+			"Shelby County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roots Manuuva",
+		"val": [
+			"Stockwell",
+			"Lambeth",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ronnie Lane",
+		"val": [
+			"Plaistow",
+			"Newham",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Rollins Band",
+		"val": [
+			"Van Nuys",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roger Waters",
+		"val": [
+			"Great Bookham",
+			"Surrey",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Roger Quilter",
+		"val": [
+			"Hove",
+			"Brighton and Hove",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Roger McGuinn & Calexico, Roger McGuinn, Calexico",
+		"val": [
+			"Chicago",
+			"Cook County",
+			"Illinois",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roger McGuinn",
+		"val": [
+			"Chicago",
+			"Cook County",
+			"Illinois",
+			"United States"
+		]
+	},
+	{
+		"artist": "Roger Daltrey",
+		"val": [
+			"East Acton",
+			"Ealing",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Robin Williamson",
+		"val": [
+			"Edinburgh",
+			"Scotland",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Robin Trower",
+		"val": [
+			"Catford",
+			"Lewisham",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Robert Plant & Tori Amos, Robert Plant, Tori Amos",
+		"val": [
+			"Newton",
+			"Catawba County",
+			"North Carolina",
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Pete Williams",
+		"val": [
+			"Zachary",
+			"East Baton Rouge Parish",
+			"Louisiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Lucas",
+		"val": [
+			"Long Beach",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert & Johnny",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Rob Thomas",
+		"val": [
+			"Landstuhl",
+			"Kaiserslautern",
+			"Rheinland-Pfalz",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rival Sons",
+		"val": [
+			"Long Beach",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Riot",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Ricky Van Shelton",
+		"val": [
+			"Danville",
+			"Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Richard Rodgers",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Reverend Horton Heat",
+		"val": [
+			"Dallas",
+			"Dallas County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Rejjie Snow, Alt-J",
+		"val": [
+			"Dublin",
+			"County Dublin",
+			"Leinster",
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Reel Big Fish",
+		"val": [
+			"Huntington Beach",
+			"Orange County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Redd Kross",
+		"val": [
+			"Hawthorne",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Red Sovine",
+		"val": [
+			"Charleston",
+			"Kanawha County",
+			"West Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Ray Sharpe, Jimi Hendrix",
+		"val": [
+			"Fort Worth",
+			"Tarrant County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Raspberries",
+		"val": [
+			"Cleveland",
+			"Cuyahoga County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "Ramses",
+		"val": [
+			"Hanover",
+			"Niedersachsen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rammstein",
+		"val": [
+			"Berlin",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Ramblin' Jack Elliott",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Ralph McTell",
+		"val": [
+			"Farnborough",
+			"Hampshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Raekwon, Phoniks",
+		"val": [
+			"Staten Island",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Quiet Riot",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Puss N Boots",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Pusha T, Alt-J",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Purson",
+		"val": [
+			"Southend-on-Sea",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Promise Ring",
+		"val": [
+			"Milwaukee",
+			"Milwaukee County",
+			"Wisconsin",
+			"United States"
+		]
+	},
+	{
+		"artist": "Porter Wagoner",
+		"val": [
+			"West Plains",
+			"Howell County",
+			"Missouri",
+			"United States"
+		]
+	},
+	{
+		"artist": "Porcupine Tree",
+		"val": [
+			"Hemel Hempstead",
+			"Hertfordshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Poets Of The Fall",
+		"val": [
+			"Helsinki",
+			"Uusimaa",
+			"Finland"
+		]
+	},
+	{
+		"artist": "Pleyel",
+		"val": [
+			"Großweikersdorf",
+			"Niederösterreich",
+			"Austria"
+		]
+	},
+	{
+		"artist": "Plain White T's",
+		"val": [
+			"Chicago",
+			"Cook County",
+			"Illinois",
+			"United States"
+		]
+	},
+	{
+		"artist": "Pixies",
+		"val": [
+			"Boston",
+			"Suffolk County",
+			"Massachusetts",
+			"United States"
+		]
+	},
+	{
+		"artist": "Phil Phillips",
+		"val": [
+			"Lake Charles",
+			"Calcasieu Parish",
+			"Louisiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "Phil Lynott",
+		"val": [
+			"West Bromwich",
+			"Sandwell",
+			"West Midlands",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Phil Collins",
+		"val": [
+			"Hounslow",
+			"Hounslow",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Peter Gabriel",
+		"val": [
+			"Cobham",
+			"Surrey",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Peter Frampton",
+		"val": [
+			"Bromley",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Peggy March",
+		"val": [
+			"Lansdale",
+			"Montgomery County",
+			"Pennsylvania",
+			"United States"
+		]
+	},
+	{
+		"artist": "Paul McCartney",
+		"val": [
+			"Walton",
+			"Liverpool",
+			"Merseyside",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Paul Mauriat",
+		"val": [
+			"Marseille",
+			"Bouches-du-Rhône",
+			"Provence-Alpes-Côte-d'Azur",
+			"France"
+		]
+	},
+	{
+		"artist": "Paul Kantner, Grace Slick, David Freiberg",
+		"val": [
+			"San Francisco",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Paul Collins",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Paul Brady",
+		"val": [
+			"Strabane",
+			"Strabane",
+			"County Tyrone",
+			"Northern Ireland",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Paul Anka",
+		"val": [
+			"Ottawa",
+			"Ontario",
+			"Canada"
+		]
+	},
+	{
+		"artist": "Patty Griffin",
+		"val": [
+			"Old Town",
+			"Penobscot County",
+			"Maine",
+			"United States"
+		]
+	},
+	{
+		"artist": "Patti Smith",
+		"val": [
+			"Chicago",
+			"Cook County",
+			"Illinois",
+			"United States"
+		]
+	},
+	{
+		"artist": "Patti Page",
+		"val": [
+			"Claremore",
+			"Rogers County",
+			"Oklahoma",
+			"United States"
+		]
+	},
+	{
+		"artist": "Patti Loveless, Tim Malchak, Hank Williams Jr.",
+		"val": [
+			"Pikeville",
+			"Pike County",
+			"Kentucky",
+			"United States"
+		]
+	},
+	{
+		"artist": "Patsy Cline",
+		"val": [
+			"Winchester",
+			"Virginia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Patra",
+		"val": [
+			"Kingston",
+			"Jamaica"
+		]
+	},
+	{
+		"artist": "Pat Travers",
+		"val": [
+			"Toronto",
+			"Ontario",
+			"Canada"
+		]
+	},
+	{
+		"artist": "Pat Boone",
+		"val": [
+			"Jacksonville",
+			"Duval County",
+			"Florida",
+			"United States"
+		]
+	},
+	{
+		"artist": "Parliament",
+		"val": [
+			"Plainfield",
+			"Union County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "Paramore",
+		"val": [
+			"Franklin",
+			"Williamson County",
+			"Tennessee",
+			"United States"
+		]
+	},
+	{
+		"artist": "Pantera",
+		"val": [
+			"Arlington",
+			"Tarrant County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Paderewski",
+		"val": [
+			"Kuryłówka",
+			"Podkarpackie",
+			"Poland"
+		]
+	},
+	{
+		"artist": "Pacific Gas And Electric",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Osanna",
+		"val": [
+			"Napoli",
+			"Napoli",
+			"Campania",
+			"Italy"
+		]
+	},
+	{
+		"artist": "Omara Portuondo",
+		"val": [
+			"La Habana",
+			"Cuba"
+		]
+	},
+	{
+		"artist": "Old 97's",
+		"val": [
+			"Dallas",
+			"Dallas County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Ohio Players",
+		"val": [
+			"Dayton",
+			"Montgomery County",
+			"Ohio",
+			"United States"
+		]
+	},
+	{
+		"artist": "ODB, Phoniks",
+		"val": [
+			"Fort Greene",
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "OBK",
+		"val": [
+			"Barcelona",
+			"Barcelona",
+			"Catalunya",
+			"Spain"
+		]
+	},
+	{
+		"artist": "Nuru Kane",
+		"val": [
+			"Dakar",
+			"Dakar",
+			"Senegal"
+		]
+	},
+	{
+		"artist": "Norman Greenbaum",
+		"val": [
+			"Malden",
+			"Middlesex County",
+			"Massachusetts",
+			"United States"
+		]
+	},
+	{
+		"artist": "Norma Jean",
+		"val": [
+			"Douglasville",
+			"Douglas County",
+			"Georgia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Little Richard, Jimi Hendrix",
+		"val": [
+			"Macon",
+			"Bibb County",
+			"Georgia",
+			"United States"
+		]
+	},
+	{
+		"artist": "Linkin Park",
+		"val": [
+			"Agoura Hills",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lindsey Buckingham & Christine McVie, Lindsey Buckingham, Christine McVie",
+		"val": [
+			"Palo Alto",
+			"Santa Clara County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Linda Ronstadt",
+		"val": [
+			"Tucson",
+			"Pima County",
+			"Arizona",
+			"United States"
+		]
+	},
+	{
+		"artist": "Linda Hoyle",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Lily Allen",
+		"val": [
+			"Hammersmith",
+			"Hammersmith and Fulham",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Lila Downs",
+		"val": [
+			"Tlaxiaco",
+			"Oaxaca",
+			"Mexico"
+		]
+	},
+	{
+		"artist": "Lifehouse",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Liam Gallagher",
+		"val": [
+			"Burnage",
+			"Manchester",
+			"Greater Manchester",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Lettuce",
+		"val": [
+			"Boston",
+			"Suffolk County",
+			"Massachusetts",
+			"United States"
+		]
+	},
+	{
+		"artist": "Leslie Gore",
+		"val": [
+			"Brooklyn",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Leroy Van Dyke",
+		"val": [
+			"Missouri",
+			"United States"
+		]
+	},
+	{
+		"artist": "Leopold Godowsky",
+		"val": [
+			"Žasliai",
+			"Kauno Apskritis",
+			"Lithuania"
+		]
+	},
+	{
+		"artist": "Leonard Cohen",
+		"val": [
+			"Westmount",
+			"Montreal",
+			"Quebec",
+			"Canada"
+		]
+	},
+	{
+		"artist": "Leon Russell",
+		"val": [
+			"Lawton",
+			"Comanche County",
+			"Oklahoma",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lenny Welch",
+		"val": [
+			"Asbury Park",
+			"Monmouth County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lenny Kaye",
+		"val": [
+			"Washington Heights",
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Legs Diamond",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lee Morgan",
+		"val": [
+			"Philadelphia",
+			"Philadelphia County",
+			"Pennsylvania",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lee Dorsey",
+		"val": [
+			"New Orleans",
+			"Louisiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "Le Orme",
+		"val": [
+			"Marghera",
+			"Venice",
+			"Venezia",
+			"Veneto",
+			"Italy"
+		]
+	},
+	{
+		"artist": "LaVern Baker",
+		"val": [
+			"Chicago",
+			"Cook County",
+			"Illinois",
+			"United States"
+		]
+	},
+	{
+		"artist": "Laura Nyro",
+		"val": [
+			"The Bronx",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Laura branigan",
+		"val": [
+			"Mount Kisco",
+			"Westchester County",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Lady Gaga & Bradley Cooper, Lady Gaga, Bradley Cooper",
+		"val": [
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "John Fogerty",
+		"val": [
+			"Berkeley",
+			"Alameda County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Jim Reeves",
+		"val": [
+			"Galloway",
+			"Panola County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "The Sundays",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Trick Daddy",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vinegar Joe",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "HaBanot Nechama",
+		"val": [
+			"Israel"
+		]
+	},
+	{
+		"artist": "Isobel Campbell & Mark Lanegan, Isobel Campbell, Mark Lanegan",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "John Lyons Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mud Morganfield",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Truth and Janey",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "White Lightning",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Yael Deckelbaum",
+		"val": [
+			"Israel"
+		]
+	},
+	{
+		"artist": "The Johnny Otis Show",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Johnny Otis & His Orchestra",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lindisfarne",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Metamorfosi",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Minuit Guibolles",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Rebecca Ferguson",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Sophie Madeleine",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Renaissance",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Vicky Moscholiou",
+		"val": [
+			"Greece"
+		]
+	},
+	{
+		"artist": "Jamestown Revival",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sílvia Pérez Cruz & Ravid Goldschmidt, Sílvia Pérez Cruz",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Logan Dwight",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Noura Mint Seymali",
+		"val": [
+			"Mauritania"
+		]
+	},
+	{
+		"artist": "Olivia Newton-John",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Vieux Farka Touré",
+		"val": [
+			"Mali"
+		]
+	},
+	{
+		"artist": "Vieux Farka Touré & Julia Easterlin, Vieux Farka Touré, Julia Easterlin",
+		"val": [
+			"Mali"
+		]
+	},
+	{
+		"artist": "Le Sextet à Claques",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Le Quintet à Claques",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "The Edgar Winter Group",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Crusaders",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Scorpions",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Searchers",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "UFO",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Moondog",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Johann Strauss Jr.",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Rachmaninoff",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Tchaikovsky",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Nucleus",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Orchestra",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pietro Baldassari",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Giovanni Pittoni",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Gian Paolo Cima",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Giorgio Maineiro",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Rare Earth",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Oscar Peterson Trio & Milt Jackson",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Oscar Peterson Trio, Ben Webster, Ben Webster & The Oscar Peterson Trio",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Oscar Peterson Trio, Ralph Moore & Roy Hargrove",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Funset",
+		"val": [
+			"Israel"
+		]
+	},
+	{
+		"artist": "Gabor Szabo",
+		"val": [
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Gadalzen",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Gamma",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Garybaldi",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Gebrüder Engel",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Genesis",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Gillan",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Gomez",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Il Bacio Della Medusa",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Il Rovescio Della Medaglia",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Eddie Albert",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Eric Clapton & Steve Winwood, Eric Clapton, Steve Winwood",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Eric Clapton & King Curtis, Eric Clapton",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Fen",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Foster & Lloyd",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Framing Hanley",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Free Fall",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Gary Charlson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Glenn Jones",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Glory, Damnation of Adam Blessing",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Goat",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Goblin",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "God Help The Girl",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Gong",
+		"val": [
+			"Australia"
+		]
+	},
+	{
+		"artist": "Graveyard",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Gwendal",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Gypsy Sun & Rainbows, Jimi Hendrix",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Habelas hainas",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Hannah Murray",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Hard Stuff",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Harlis",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "FZ-Zz",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Hatfield and The North",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Heart",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Heather Nova",
+		"val": [
+			"Bermuda"
+		]
+	},
+	{
+		"artist": "Heaven and Hell",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Helium",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Heron",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Hypnos",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Illusion",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Incubus",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Irish Coffee",
+		"val": [
+			"Belgium"
+		]
+	},
+	{
+		"artist": "Iron Maiden",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Isis",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "J.T. Coldfire",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "James Taylor",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jamey Johnson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jay-Z",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jazzmeia Horn",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jenny and Johnny",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jerry Garcia",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jerry Garcia Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jet",
+		"val": [
+			"Australia"
+		]
+	},
+	{
+		"artist": "Jim Sturgess",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Jim Sturgess & Joe Anderson",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Jimmie Raye",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jimmy \"Duck\" Holmes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Joan Shelley",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jon Cleary and the absolute monster gentlemen",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jon Wayne",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Josie and The Pussycats",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Journey",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Juicy Lucy",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Junior Kimbrough",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Junipher Greene",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "Jyukai",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Kaleidoscope",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Kaunan",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Keith Christmas",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Kenny Burrell & John Coltrane, Kenny Burrell, John Coltrane",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Khalifa Ould Eide & Dimi Mint Abba, Khalifa Ould Eide, Dimi Mint Abba",
+		"val": [
+			"Mauritania"
+		]
+	},
+	{
+		"artist": "Kim Lenz",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Kingdom Come",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "King's X",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Kozmic Blues Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Omar Herrera",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Tutankamon y Las Toallas",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Mama Zaza",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Ruina fe Moda",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "S.O.S.",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Los Vampiros",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "La Chancha Francisca",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Jet (Uruguay)",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "La Union",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Los Ronaldos",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Tam Tam Go",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Pino D'Angio",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "The Pretenders",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Rick Astley",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Communards",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Snow",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lankum",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Laser",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Legal Weapon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Les Menestriers",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Lilitz",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Little Steven and The Disciples of Soul",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Live",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Loggins and Messina",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lone Star",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Loop",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Lord Dying",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Los Coast",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Los Compadres",
+		"val": [
+			"Cuba"
+		]
+	},
+	{
+		"artist": "Love",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "LP",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lou Monte & The Mary Kaye Trio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Louis Armstong & Oscar Peterson, Louis Armstrong, Oscar Peterson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lulu",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Magic Slim & The Teardrops",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Magic Slim, Billie Branch & James Cotton, Magic Slim",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Magna Carta",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Mahogany Rush",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Mamar Kassey",
+		"val": [
+			"Niger"
+		]
+	},
+	{
+		"artist": "Maná",
+		"val": [
+			"Mexico"
+		]
+	},
+	{
+		"artist": "Manassas",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Manfred Mann's Earthband",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Marillion",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Marquise Knox",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Weird Totem",
+		"val": [
+			"Greece"
+		]
+	},
+	{
+		"artist": "Warrant",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Warhorse",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "War",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Joshua",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Junior Wells & Earl Hooker, Junior Wells, Earl Hooker",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Kaleema",
+		"val": [
+			"Argentina"
+		]
+	},
+	{
+		"artist": "Karen kamon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Keith Jarrett, Gary Peacock & Jack DeJohnette",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Kent ''Lobo'' LaVoie",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Crowning Glory",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Dawnbringer",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Dubugnon",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Earl Hines & Billy Taylor",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Earl Hines, Willie \"The Lion\" Smith, Billy Taylor, George Wein & Mary Lou Williams",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Charlie Bell",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Szymanowska",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Dobrzynsk",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Kalkbernner",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Lefebure-Wely",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Edmond Weber",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Emanuel Bach",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Ernö von Dohnanyi",
+		"val": [
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Faces",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Far Corporation",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Faris Amine Bottazzi",
+		"val": [
+			"Algeria"
+		]
+	},
+	{
+		"artist": "Fast Forward",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Trio Nordestino",
+		"val": [
+			"Brazil"
+		]
+	},
+	{
+		"artist": "Traffic",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Tony Bennett & Lady Gaga, Tony Bennett, Lady Gaga",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tony Benett & Count Basie, Tony Benett, Count Basie",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tomorrow",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Toad the Wet Sprocket",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Titanic",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "Tiff The Gift",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tia Blake and Her Folk-Group",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Them",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Thelonious Monk Quartet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Thelonious Monk Quartet & John Coltrane, Thelonious Monk, John Coltrane",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Thelonious Monk Quintet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Zantees",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Vaughan brothers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Upsetters",
+		"val": [
+			"Jamaica"
+		]
+	},
+	{
+		"artist": "Fatbeat!",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "The United States of America",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Teddy Bears",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Sword",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Supremes & The Temptations, The Supremes, The Temptations",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Stills-Young Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Stills",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Spinners",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Soul Clan, Solomon Burke",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Smoke",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Silhouettes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Shadows",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Section",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Sallyangie",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Runaways",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Royal Teens",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Romantics",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Regents",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Rainmakers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Outlaws",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Monks",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Nuns",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Notting Hillbillies",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Nerves",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Mumbles",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Monotones",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Melvins",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The McGuire Sisters",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Martians",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Lipstick Killers",
+		"val": [
+			"Australia"
+		]
+	},
+	{
+		"artist": "The John Renbourn Group, John Renbourn",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Iveys, Badfinger",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Human Experience",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Hi-Lo's",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The French Revolution",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Fraternity of Man",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Fluid",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Firm",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Factory",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Essex",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Enid",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Dubs",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Dixie Dregs",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Diamonds",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Cult",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Clovers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Chords",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Choir",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Champs",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "New Grass Revival",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Olympics",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Link Wray & The Wraymen",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Harvey and Moonglows",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mickey and Sylvia",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tune Weavers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "New Fast Automatic Daffodils",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Northside",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Venus & The Razorblades",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Shoes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rubicon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Roscoe Holcomb",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Our Friend, Surrender",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pray For Sound",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rodney & The Brunettes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Olly Alexander",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ryan Bingham",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Oîma",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Mounqup",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Trópico de Grelos",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Shandi",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Phoniks",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rainbow",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Nirvana",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Wu-Tang Clan, Phoniks",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Ray Charles & The Count Basie Orchestra, Ray Charles, Count Basie",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Joe ''Fingers'' Carr & Pee Wee Hunt",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Gerry Mulligan & Thelonious Monk, Gerry Mulligan, Thelonious Monk",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Miles Davis & Milt Jackson, Miles Davis, Milt Jackson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Milt Jackson & Ray Charles, Milt Jackson, Ray Charles",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Oscar Peterson & Count Basie",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Oscar Peterson Trio & Clark Terry",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "The Oscar Peterson Trio",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Stan Getz & João Gilberto",
+		"val": [
+			"Brazil"
+		]
+	},
+	{
+		"artist": "The Prestige All Stars, John Coltrane",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Dave Brubeck Octet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Wes Montgomery Trio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vince Guaraldi Trio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Martial Solal Trio",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Wigwam",
+		"val": [
+			"Finland"
+		]
+	},
+	{
+		"artist": "Stuveu",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Wo Fat",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vardis",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Spirit",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Saraya",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Orchid",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nelson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nebula",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "McFly",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Taste",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Stray",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ocean",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Oasis",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "New Navy, Flume",
+		"val": [
+			"Australia"
+		]
+	},
+	{
+		"artist": "Tuka, Alt-J",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "Lomepal, Alt-J",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Paigey Cakey, Alt-J",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Miles Davis Quintet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Soko",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Nico",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Neon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Moss",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "RED",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "OPA",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Paul McCartney & Wings",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Heat",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rimsky-Korsakov",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Strauss",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "TNT",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "John Doe",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "X",
+		"val": [
+			"Australia"
+		]
+	},
+	{
+		"artist": "Stan Getz Quartet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Schonherz & Scott",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Shadowfax",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nightnoise",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Sharon Jones & The Dap-Kings",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Plant & Alison Krauss, Robert Plant",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Mark Knopfler & Evelyn Glennie, Mark Knopfler, Evelyn Glennie",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Pogues & The Dubliners",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Neko Case & Her Boyfriends",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mighty Sparrow & Byron Lee",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "George ''Harmonica'' Smith",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Gordon & Link Wray, Robert Gordon, Link Wray",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Reale Accademia Di Musica",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Richard & Linda Thompson",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "J.J. Cale & Eric Clapton, J.J. Cale, Eric Clapton",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nitty Gritty Dirt Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pete Brown & Piblokto!",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Resortes Reflexivos",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "The Chicken Chokers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Turnpike Troubadours",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "PJ Harvey & John Parish, PJ Harvey, John Parish",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Johnny Prophet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Phyllis McGuire",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Haydn",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Santana",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Spiders",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Santana, Jeff Beck, Steve Lukather",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Stepson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Joan Baez & Jeffrey Shurtleff, Joan Baez, Jeffrey Shurtleff",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tainaka Sachi",
+		"val": [
+			"Japan"
+		]
+	},
+	{
+		"artist": "Nancy Wilson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Snatch",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Poppees",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sons Of The Pioneers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Homer & Jethro",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Roger Miller",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Carlisles",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Browns",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Snowy White",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "T-Bone Walker",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Stravinsky",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Glen Hansard & Marketa Irglova",
+		"val": [
+			"Ireland"
+		]
+	},
+	{
+		"artist": "Willie Mae ''Big Mama'' Thornton",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Touch",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Percewood's Onagram",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Tritonus",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rhino 39",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Super Heroines",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Outer Circle",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Secret Hate",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "T.V. Carpio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nimrod",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Vamp",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Eyes",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Syndicats",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Sands",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Birds",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Game",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Lightning",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rock City",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Gomorrha",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Ron Pope",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sea Lion",
+		"val": [
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Terakaft",
+		"val": [
+			"Mali"
+		]
+	},
+	{
+		"artist": "Mudcrutch",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Max Roach Quintet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Cars",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Call",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Naragonia Quartet, Naragonia",
+		"val": [
+			"Belgium"
+		]
+	},
+	{
+		"artist": "Wild Flag",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nitzinger",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Plainsong",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Quasimoto",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Marcus Marr & Chet Faker, Marcus Marr, Chet Faker",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Dawn Silva",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Run-D.M.C.",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Metropolin",
+		"val": [
+			"Israel"
+		]
+	},
+	{
+		"artist": "New Trolls",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Panopticon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Who Cares",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Method actor, Eva Cassidy",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Free Kitten",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "John Mayer Trio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mariem Hassan",
+		"val": [
+			"Western Sahara"
+		]
+	},
+	{
+		"artist": "Mariem Hassan & Leyoad, Mariem Hassan, Leyoad",
+		"val": [
+			"Western Sahara"
+		]
+	},
+	{
+		"artist": "Salt 'N' Pepa",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Songhoy Blues",
+		"val": [
+			"Mali"
+		]
+	},
+	{
+		"artist": "Sons of Blues",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Soula Birbili, Σούλα Μπιρμπίλη, Mikis Theodorakis",
+		"val": [
+			"Greece"
+		]
+	},
+	{
+		"artist": "Rory Gallagher",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Wooden Horse",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Wreckers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Heavy Blanket",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Shadowland",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sesión Vermú",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Johnny Shines",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mdou Moctar",
+		"val": [
+			"Niger"
+		]
+	},
+	{
+		"artist": "Orcus Chylde",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Phoniks & Raashan Ahmad, Phoniks, Raashan Ahmad",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jimmy Page & Robert Plant, Jimmy Page, Robert Plant",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "T. Swift & The Electric Bag",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Loren Auerbach & Bert Jansch, Loren Auerbach, Bert Jansch",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Luther ''Snake Boy'' Johnson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Ryan Bingham & The Dead Horses, Ryan Bingham",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Luther ''Guitar Junior'' Johnson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Luther ''Guitar Junior'' Johnson & The Magic Rockers, Luther ''Guitar Junior'' Johnson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vic Chesnutt & Elf Power, Vic Chesnutt, Elf Power",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vic Chesnutt & Mr. and Mrs. Kneipp, Vic Chesnutt, Mr. and Mrs. Kneipp",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Half Way Home",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Gordon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Raphael Saadiq",
+		"val": [
+			"Oakland",
+			"Alameda County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Spirit Caravan",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Boxmasters",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Screaming Trees",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pat Travers Band",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Sonny Terry & Brownie McGhee, Sonny Terry, Brownie McGhee",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sonny Terry, Brownie McGhee & Big Joe Williams, Sonny Terry, Brownie McGhee, Big Joe Williams",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "McDonald and Giles",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Various Artists",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Plant & The Sensational Space Shifters, Robert Plant",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "John McLaughlin, Al di Meola & Paco de Lucia",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tony Trischka, Bill Keith & Bela Fleck, Tony Trischka, Bill Keith, Bela Fleck",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jimmy Page & The Black Crowes, Jimmy Page, The Black Crowes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Isley Brothers & Santana, The Isley Brothers, Santana",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pete Townshend & Ronnie Lane, Pete Townshend, Ronnie Lane",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Vince Gill & Paul Franklin",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Prince and The Revolution",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Dave Mason & Cass Elliott, Dave Mason, Cass Elliott",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Roy Herrington Band",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "The Sound of Music",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Woodville Co.",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Kustom Kings",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Golden Grass",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Motor Boys Motor",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stefan Grossman & John Renbourn, Stefan Grossman, John Renbourn",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Blues Band",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Swahili Blonde",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Robert Johnson",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "London All Star",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Mountain Witch",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Paul Williams",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Kefaya & Elaha Soroor, Kefaya, Elaha Soroor",
+		"val": [
+			"Afghanistan"
+		]
+	},
+	{
+		"artist": "The Earth Harp & The Human Experience, The Earth Harp, The Human Experience",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Quixotic & The Human Experience, Quixotic, The Human Experience",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Knowa Lusion & The Human Experience, Knowa Lusion, The Human Experience",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Orange Grove",
+		"val": [
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Ivar Avenue Reunion",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Very Tall Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Milkyway Express",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Joanne Grauer Trio",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Hagalaz' Runedance",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rising Appalachia & The Human Experience, Rising Appalachia, The Human Experience",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "John Hammond",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Frank Howard & The Commanders, Jimi Hendrix",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rosa Lee Brooks, Jimi Hendrix",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Paice Ashton Lord",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Gone Gone Beyond",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Museo Rosenbach",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Vista Chino",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Hassles",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Natural Gas",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Shostakovich",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Radio Moscow",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Roy Gaines",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Patty Gurdy",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Quatermass",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Ben Webster Quintet",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Waldgeflüster",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Zakarrias",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Wildlight",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pachacamac",
+		"val": [
+			"Peru"
+		]
+	},
+	{
+		"artist": "Montrose",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Montreux",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "W.A. Mathieu",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Scott Cossu",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rubaja & Hernandez",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Darol Anger & Barbara Higbie",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Ira Stein & Russel Walder",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Nordheim",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "Rossini & Respighi, Rossini, Respighi",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Chávez",
+		"val": [
+			"Mexico"
+		]
+	},
+	{
+		"artist": "Serebrier",
+		"val": [
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "Paganini",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Luna",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jacob Moon",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "PJ Sin Suela, Alt-J",
+		"val": [
+			"Puerto Rico"
+		]
+	},
+	{
+		"artist": "Klami",
+		"val": [
+			"Finland"
+		]
+	},
+	{
+		"artist": "Mark Springer",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Popov",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Tennis",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Joe Anderson",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Joe Anderson & Salma Hayek",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Modern Warfare",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "100 Flowers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Smith",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Marcus Carl Franklin",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lindberg",
+		"val": [
+			"Finland"
+		]
+	},
+	{
+		"artist": "Franz & Karl Doppler, Franz Doppler, Karl Doppler",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Paul-Agricol Genin",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Pierce Arrow",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jimmy Lewis & The Checkers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Pete Holly & The Looks",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The ''B'' Girls",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Nikki & The Corvettes",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Professor Anonymous",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rainbow Red Oxidizer",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The MnM's",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Dadaistics",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Willie Alexander & The Boom Boom Band",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "DMZ",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Rockfield Chorale",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Hough",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Tchaikovsky, Pabst & Hough, Tchaikovsky, Pabst, Hough",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Tchaikovsky & Wild, Tchaikovsky, Wild",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Schubert & Godowsky, Schubert, Godowsky",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Kálmán & Hough, Kálmán, Hough",
+		"val": [
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Schubert & Liszt, Schubert, Liszt",
+		"val": [
+			"Austria"
+		]
+	},
+	{
+		"artist": "Marchelie",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Michael Conway Baker",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Stuart Murdoch & Isobel Campbell",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Kaleidoscope",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Never The Bride",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Kochurov",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Old 97's & Waylon Jennings, Old 97's, Waylon Jennings",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Weinberg",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "In-Graved",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jim Queen",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Spacelord",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Polovinkin",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Mz Boom Bap",
+		"val": [
+			"Portugal"
+		]
+	},
+	{
+		"artist": "Terry Stamp",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Merlin's Magic",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "The Early Mays",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Clint Ruin & Lydia Lunch",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Ferry Boat Bill",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Permanent Wave",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mitch Miller & Chorus",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tony McPhee & Friends",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "The Elvin Bishop Group",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "The Machine",
+		"val": [
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "The Chris Hinze Combination",
+		"val": [
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Roberta Flack & Donny Hathaway, Roberta Flack, Donny Hathaway",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jerry Corbitt & Charlie Daniels, Jerry Corbitt, Charlie Daniels",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Geraint Watkins & The Dominators",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stefan Diestelmann Folk Blues Band",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Stereokonzert der vogelstimmen",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "The Curtis Counce Group",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jackie McLean & Dexter Gordon, Jackie McLean, Dexter Gordon",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Knipper",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Stephane Grappelli & The Diz Disley Trio",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "George Shearing & The Montgomery Brothers, George Shearing, The Montgomery Brothers",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Max Yasgur",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Cycle V",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Helen St. john",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Ossip Gabrilovich",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "MacDowell",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Vladimir Ivanovich Rebikov",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Paul de Schlozer",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Tausig",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "William Lawes",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Stephen Nau",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Maurice Webster",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Angelo Notari",
+		"val": [
+			"Padua",
+			"Padova",
+			"Veneto",
+			"Italy"
+		]
+	},
+	{
+		"artist": "Johnson",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Alfonso Ferrabosco",
+		"val": [
+			"Bologna",
+			"Bologna",
+			"Emilia-Romagna",
+			"Italy"
+		]
+	},
+	{
+		"artist": "Juliette Lewis & Quentin Tarantino",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Johnette Napolitano & Marc Moreland",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Rodgers & Hough, Rodgers, Hough",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Tony & The Susan Alamo Christian Foundation Orchestra",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mora Billotte",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Wynonie ''Mr. Blues'' Harris",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Lauren Cohan & Emily Kinney",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Leah Siegal",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Henry Kaiserr",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Steve Morse, Michael White, Billy Sherwood & Alan White",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Jack Russell, Bob Kulick, Bruce Kulick, Tony Franklin & Doane Perry",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Dweezil Zappa, Michael White, Billy Sherwood & Vinnie Colaiuta",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "John Wetton, Geoffrey Downes, Alan White & Billy Sherwood",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Joe Lynn Turner, Jeff ''Skunk'' Baxter, Tony Franklin, Doane Perry & Bob Kulick",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Eric Bloom, Brian Robertson, Tony Franklin & Doane Perry",
+		"val": [
+			"United States"
 		]
 	}
 ]
