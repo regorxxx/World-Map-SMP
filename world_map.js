@@ -166,7 +166,7 @@ function on_paint(gr) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
-			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL'};
+			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
 			worldMap.lastPoint =  libraryPoints;
 		}
 		worldMap.paint({gr});

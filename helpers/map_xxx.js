@@ -33,7 +33,7 @@ function imageMap({
 	
 	// Paint
 	this.paintBg = (gr) => {
-		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);};
+		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);}
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
 			// fillWithPattern(gr, this.posX, this.posY, this.posX + this.imageMap.Width * this.scale, this.posY + this.imageMap.Height * this.scale, this.defaultColor, 2, this.imageMap.Width / 5, 'verticalDotted');
@@ -203,7 +203,7 @@ function imageMap({
 		}
 		return mapTagValue;
 	}
-	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}}
+	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}};
 	this.findCoordinates = (value, mapWidth, mapHeight, factorX, factorY) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
 	this.findPointFunc = (x, y, mapWidth, mapHeight, factorX, factorY) => {return [];}; // [{key, simil}] Could be overwritten
 	// Selection
@@ -332,7 +332,7 @@ function imageMap({
 		return 	id.length ? this.jsonData.find((obj) => {return (obj[this.jsonId] === id);}) : null;
 	}
 	this.deleteDataById = (id, byKey = this.jsonId) => { // Delete by key
-		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === id);})
+		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === id);});
 		if (idx !== -1) {
 			this.jsonData.splice(idx, 1);
 			this.save();

@@ -170,7 +170,7 @@ function tooltipFindPoint(foundPoints) {
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (!sel || !sel.Count) {return;}
 	let text = foundPoints.map((_) => {return  formatCountry(_.key) + '(' + _.prox + '%)';}).join(', ');
-	text += '\n(L. Click to add locale tag to current track(s))'
+	text += '\n(L. Click to add locale tag to current track(s))';
 	return text;
 }
 
@@ -197,10 +197,10 @@ function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
 			let tagVal = '';
 			if (tag.val && tag.val.length) {tagVal = tag.val[tag.val.length - 1];}
 			if (tagVal) {
-				const idx = libraryTags.findIndex((_) => {return _.id === tagVal});
+				const idx = libraryTags.findIndex((_) => {return _.id === tagVal;});
 				if (idx !== -1) {
 					libraryTags[idx].val++;
-					if (libraryTags[idx].jsonId.indexOf(jsonId) === -1) {libraryTags[idx].jsonId.push(jsonId)};
+					if (libraryTags[idx].jsonId.indexOf(jsonId) === -1) {libraryTags[idx].jsonId.push(jsonId);}
 				} else {
 					libraryTags.push({id: tagVal, val: 1, jsonId: [jsonId]});
 				}

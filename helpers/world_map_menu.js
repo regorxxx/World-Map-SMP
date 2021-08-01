@@ -36,9 +36,9 @@ function createMenu() {
 					worldMap.properties['panelMode'][1] = idx; // And update property with new value
 					overwriteProperties(worldMap.properties); // Updates panel
 					if (worldMap.properties['panelMode'][1]) {
-						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name)
+						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
 					} else {
-						fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name)
+						fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
 					}
 					worldMap.clearIdSelected();
 					worldMap.clearLastPoint(); 
@@ -263,7 +263,7 @@ function createMenu() {
 				});
 				menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {
 					let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;});
-					return (idx != -1) ? idx : options.length - 1;
+					return (idx !== -1) ? idx : options.length - 1;
 				});
 			}
 			{	// Coordinates factor
@@ -271,8 +271,8 @@ function createMenu() {
 				menu.newEntry({menuName, entryText: 'Apply a factor to any axis:', func: null, flags: MF_GRAYED});
 				menu.newEntry({menuName, entryText: 'sep'});
 				const options = [{text: 'X factor', val: 'factorX'}, {text: 'Y factor', val: 'factorY'}];
-				if (worldMap.factorX !== 100) {options[0].text += '\t (not 100)'}
-				if (worldMap.factorY !== 100) {options[1].text += '\t (not 100)'}
+				if (worldMap.factorX !== 100) {options[0].text += '\t (not 100)';}
+				if (worldMap.factorY !== 100) {options[1].text += '\t (not 100)';}
 				options.forEach( (coord) => {
 					menu.newEntry({menuName, entryText: coord.text,  func: () => {
 						let input = -1;
@@ -304,7 +304,7 @@ function createMenu() {
 							window.Repaint();
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode;});
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
 						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
@@ -328,7 +328,7 @@ function createMenu() {
 							window.Repaint();
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.properties.customPointColorMode[1]});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.properties.customPointColorMode[1];});
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
 						worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
@@ -380,7 +380,7 @@ function createMenu() {
 						window.Repaint();
 						overwriteProperties(worldMap.properties);
 					}});
-					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return worldMap.properties.bPointFill[1]});
+					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return worldMap.properties.bPointFill[1];});
 				}
 				
 				{	// Text size
@@ -496,7 +496,7 @@ function createMenu() {
 						window.Repaint();
 					}
 					console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
-				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
+				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED);}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
@@ -539,7 +539,6 @@ function createMenu() {
 								newData.forEach((data) => {
 									if (data[worldMap.jsonId] === jsonId[i] && data.val && data.val.length && data.val.filter(Boolean).length) {
 										if (!tag[i] || !tag[i].length || !tag[i].filter(Boolean).length) {
-											console.log(tag[i])
 											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[worldMap.properties.writeToTag[1]]: data.val}]));
 											countN++;
 										} else if (answer === popup.yes && !isArrayEqual(data.val, tag[i])) {
@@ -556,7 +555,7 @@ function createMenu() {
 				}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Update library database...', func: () => {
-					fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name)
+					fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
 					saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 					console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
 				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
