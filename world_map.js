@@ -88,7 +88,9 @@ const worldMap_properties = {
 	bPointFill			:	['Draw a point or a circular corona?', false],
 	customLocaleColor	:	['Custom text color', 0xFF000000],
 	bShowLocale			:	['Show current locale tag', true],
-	fontSize			:	['Size of header text', 10]
+	fontSize			:	['Size of header text', 10],
+	panelMode			:	['Display selection (0) or current library (1)', 0],
+	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -138,11 +140,14 @@ if (!worldMap.properties['firstPopup'][1]) {
 worldMap.properties['bEnabledBiography'].push({func: biographyCheck}, worldMap.properties['bInstalledBiography'][1]);
 overwriteProperties(worldMap.properties); // Updates panel
 
+const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFile(worldMap.properties.fileNameLibrary[1]) : null;
+
 /* 
 	Callbacks for painting 
 */
 function repaint(bPlayback = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (worldMap.properties.panelMode[1]) {return;}
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
 	window.Repaint();
@@ -159,19 +164,26 @@ function on_colours_changed() {
 
 function on_paint(gr) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	// Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
-	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-	if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
-	worldMap.paint({gr, sel});
-	if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
-		const posX = worldMap.posX;
-		const posY = worldMap.posY;
-		const w = worldMap.imageMap.Width * worldMap.scale;
-		const h = worldMap.imageMap.Height * worldMap.scale;
-		const textW = gr.CalcTextWidth(worldMap.lastPoint[0].id, worldMap.gFont);
-		const textH = gr.CalcTextHeight(worldMap.lastPoint[0].id, worldMap.gFont);
-		gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
-		gr.GdiDrawText(worldMap.lastPoint[0].id, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);
+	if (worldMap.properties.panelMode[1]) { // Display entire library
+		if (libraryPoints && libraryPoints.length) {
+			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL'};
+			worldMap.lastPoint =  libraryPoints;
+		}
+		worldMap.paint({gr});
+	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
+		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
+		worldMap.paint({gr, sel});
+		if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
+			const posX = worldMap.posX;
+			const posY = worldMap.posY;
+			const w = worldMap.imageMap.Width * worldMap.scale;
+			const h = worldMap.imageMap.Height * worldMap.scale;
+			const textW = gr.CalcTextWidth(worldMap.lastPoint[0].id, worldMap.gFont);
+			const textH = gr.CalcTextHeight(worldMap.lastPoint[0].id, worldMap.gFont);
+			gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
+			gr.GdiDrawText(worldMap.lastPoint[0].id, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);
+		}
 	}
 }
 
@@ -231,12 +243,20 @@ function on_metadb_changed(handle_list) {
 */
 function on_mouse_lbtn_up(x, y, mask) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	worldMap.btn_up(x, y, mask);
+	if (!worldMap.properties.panelMode[1]) { // On track mode disable point menu without selection
+		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		if (!sel || !sel.Count) {return;}
+	}
+	worldMap.btn_up(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
 }
 
 function on_mouse_move(x, y, mask) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	worldMap.move(x, y, mask);
+	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
+		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		if (!sel || !sel.Count) {return;}
+	}
+	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
 }
 
 function on_mouse_leave() {
@@ -328,3 +348,5 @@ function on_notify_data(name, info) {
 		}
 	}
 }
+
+if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}

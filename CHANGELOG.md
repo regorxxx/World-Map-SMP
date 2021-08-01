@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.0](#200---2021-06-21)
 - [1.2.2](#122---2021-06-21)
 - [1.2.1](#121---2021-06-15)
 - [1.2.0](#120---2021-06-07)
@@ -28,6 +29,7 @@
 ### Removed
 ### Fixed
 - Biography Integration: Bio mods rewritten (less size) wrapping callbacks, instead of rewriting them entirely.
+- Last selected point was redrawn when mouse moved over it, even if no selection was present at that point.
 - Multiple minor improvements and fixes on path handling for portable installations.
 - Multiple minor improvements and fixes when saving files on non existing folders.
 - Map was not being redrawn automatically when locale tags changed.
@@ -106,8 +108,9 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...HEAD
-[1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0
+[1.2.2]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.0...v1.1.1

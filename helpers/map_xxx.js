@@ -11,6 +11,7 @@
  */
 
 include('helpers_xxx.js');
+include('helpers_xxx_file.js');
 include('helpers_xxx_foobar.js');
 include('helpers_xxx_prototypes.js');
 include('helpers_xxx_UI.js');

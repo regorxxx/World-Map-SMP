@@ -161,12 +161,14 @@ function tooltip(point) {
 		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
 		text += '(' + mod.description + ' + L. Click forces same ' + tags + ' too)\n';
 	});
-	text += '(Shift + L. Click on map rewrites locale tag)\n';
+	if (worldMap.properties.panelMode[1]) {text += '(Shift + L. Click on map rewrites locale tag)\n';}
 	return (point && point.hasOwnProperty('id') ? text : null);
 }
 
 // When mouse is over point
 function tooltipFindPoint(foundPoints) { 
+	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+	if (!sel || !sel.Count) {return;}
 	let text = foundPoints.map((_) => {return  formatCountry(_.key) + '(' + _.prox + '%)';}).join(', ');
 	text += '\n(L. Click to add locale tag to current track(s))'
 	return text;
@@ -178,6 +180,39 @@ function biographyCheck(prop) {
 	else {return true;}
 }	
 
+// Capitalize names
 function formatCountry(country) {
-return capitalizeAll(country, ' ').replace(' And ', ' and ').replace(' Of ', ' of ');
+	return capitalizeAll(country, ' ').replace(' And ', ' and ').replace(' Of ', ' of ');
+}
+
+// Retrieve all tags from database for current library
+function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
+	const handleList = fb.GetLibraryItems();
+	const jsonIdList =  [...new Set(fb.TitleFormat('[%' + jsonId + '%]').EvalWithMetadbs(handleList))]; // Removes duplicates
+	const libraryTags = [];
+	let tag;
+	jsonIdList.forEach((jsonId) => {
+		tag = dataObj.getDataById(jsonId);
+		if (tag) {
+			let tagVal = '';
+			if (tag.val && tag.val.length) {tagVal = tag.val[tag.val.length - 1];}
+			if (tagVal) {
+				const idx = libraryTags.findIndex((_) => {return _.id === tagVal});
+				if (idx !== -1) {
+					libraryTags[idx].val++;
+					if (libraryTags[idx].jsonId.indexOf(jsonId) === -1) {libraryTags[idx].jsonId.push(jsonId)};
+				} else {
+					libraryTags.push({id: tagVal, val: 1, jsonId: [jsonId]});
+				}
+			}
+		}
+	});
+	return libraryTags;
+}
+
+function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.properties.fileNameLibrary[1], jsonId = worldMap.jsonId, dataObj = worldMap
+	const libraryTags = getLibraryTags(jsonId, dataObj);
+	if (libraryTags && libraryTags.length) {
+		_save(dataPath, JSON.stringify(libraryTags, null, '\t'));
+	}
 }
