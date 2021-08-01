@@ -53,6 +53,7 @@ include('helpers\\map_xxx.js');
 include('helpers\\world_map_tables.js');
 include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
+include('helpers\\world_map_flags.js');
 
 /* 
 	Properties 
@@ -91,6 +92,7 @@ const worldMap_properties = {
 	fontSize			:	['Size of header text', 10],
 	panelMode			:	['Display selection (0) or current library (1)', 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
+	bShowFlag			:	['Show flag on header', false]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -98,8 +100,12 @@ worldMap_properties['iWriteTags'].push({range: [[0,2]]}, worldMap_properties['iW
 worldMap_properties['selection'].push({eq: selMode}, worldMap_properties['selection'][1]);
 worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true);}}, worldMap_properties['forcedQuery'][1]);
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
+worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
 worldMap_properties['tagFilter'].push({func: isStringWeak}, worldMap_properties['tagFilter'][1]);
 worldMap_properties['iLimitSelection'].push({func: Number.isSafeInteger}, worldMap_properties['iLimitSelection'][1]);
+worldMap_properties['panelMode'].push({range: [[0,1]]}, worldMap_properties['panelMode'][1]);
+worldMap_properties['customPanelColorMode'].push({range: [[0,2]]}, worldMap_properties['customPanelColorMode'][1]);
+worldMap_properties['customPointColorMode'].push({range: [[0,1]]}, worldMap_properties['customPointColorMode'][1]);
 setProperties(worldMap_properties, worldMap_prefix);
 
 /* 
@@ -140,6 +146,8 @@ if (!worldMap.properties['firstPopup'][1]) {
 worldMap.properties['bEnabledBiography'].push({func: biographyCheck}, worldMap.properties['bInstalledBiography'][1]);
 overwriteProperties(worldMap.properties); // Updates panel
 
+// Library Mode
+if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}
 const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFile(worldMap.properties.fileNameLibrary[1]) : null;
 
 /* 
@@ -174,15 +182,29 @@ function on_paint(gr) {
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 		worldMap.paint({gr, sel});
-		if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) {
+		if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) { // Header text
 			const posX = worldMap.posX;
 			const posY = worldMap.posY;
 			const w = worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
-			const textW = gr.CalcTextWidth(worldMap.lastPoint[0].id, worldMap.gFont);
-			const textH = gr.CalcTextHeight(worldMap.lastPoint[0].id, worldMap.gFont);
+			const countryName = nameReplacersRev.has(worldMap.lastPoint[0].id.toLowerCase()) ? formatCountry(nameReplacersRev.get(worldMap.lastPoint[0].id.toLowerCase())) : worldMap.lastPoint[0].id; // Prefer replacement since its usually shorter...
+			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
+			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
+			// Header
 			gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
-			gr.GdiDrawText(worldMap.lastPoint[0].id, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);
+			// Flag
+			if (worldMap.properties.bShowFlag[1]) {
+				let flag = loadFlagImage(worldMap.lastPoint[0].id);
+				const flagScale = flag.Height / textH;
+				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic) 
+				gr.DrawImage(flag, posX + 10, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
+				// Text
+				if (textW + flag.Width < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
+				else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
+			} else {
+				if (textW < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
+				else {gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
+			}
 		}
 	}
 }
@@ -292,6 +314,8 @@ function on_notify_data(name, info) {
 				} else if (info.tags.hasOwnProperty(tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
+				// Replace country name with iso standard name if it's a known variation
+				if (nameReplacers.has(locale[locale.length - 1])) {locale[locale.length - 1] = formatCountry(nameReplacers.get(locale[locale.length - 1]));}
 				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 				if (jsonId.length && locale.length) {
 					// Set tag on map for drawing if found
@@ -348,5 +372,3 @@ function on_notify_data(name, info) {
 		}
 	}
 }
-
-if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}

@@ -73,7 +73,6 @@ function createMenu() {
 				const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
 				const file1_1_X = 'biography_mod_1_1_X_xxx.js';
 				const modText = '\ninclude(\'' + file1_1_X + '\');';
-				folders.xxx.replace(fb.ProfilePath, '');
 				const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
 				fileArr.forEach( (file) => {
 					const fileText = utils.ReadTextFile(file);
@@ -416,6 +415,12 @@ function createMenu() {
 				overwriteProperties(worldMap.properties);
 			}});
 			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return worldMap.properties.bShowLocale[1];});
+			menu.newEntry({menuName: menuUI, entryText: 'Show flag on header?', func: () => {
+				worldMap.properties.bShowFlag[1] = !worldMap.properties.bShowFlag[1];
+				window.Repaint();
+				overwriteProperties(worldMap.properties);
+			}, flags: worldMap.properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
+			menu.newCheckMenu(menuUI, 'Show flag on header?', void(0), () => {return worldMap.properties.bShowFlag[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Write tags?

@@ -182,7 +182,7 @@ function biographyCheck(prop) {
 
 // Capitalize names
 function formatCountry(country) {
-	return capitalizeAll(country, ' ').replace(' And ', ' and ').replace(' Of ', ' of ');
+	return capitalizeAll(country, [' ', '.']).replace(' And ', ' and ').replace(' Of ', ' of ').replace(' Da ', ' da ').replace(' The ', ' the ').replace(' The', ' the').replace(', the', ', The');
 }
 
 // Retrieve all tags from database for current library
