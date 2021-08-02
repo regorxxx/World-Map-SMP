@@ -29,6 +29,7 @@
 - UI: All UI configuration moved to its own submenu.
 - Header: Name is shortened if it's too long for the current width and font size combination. It also takes into account flag size if it's enabled.
 - Tags: Added some common variations for a few country names to enhance matching (points and flags) even if they are not the standard iso names or have swapped prefixes. Note this "expands" [Georgia theme's](https://kbuffington.github.io/Georgia/) flag feature since it should match better country names now (for ex. 'Tanzania', 'Tanzania, United Republic of' and 'United Republic of Tanzania'). This is also used for displaying the country name at header (shorter version is preferred) and for tagging files and json (the full iso standard name is preferred).
+- Helpers: updated. Whenever a folder needs to be created to save a new file, the entire tree is now created if needed. Previously it would fail as soon as any folder did not exist. This greatly speeds up setting panels since now the final folder does not need to exists at all to work, since it will be created on the fly.
 ### Removed
 ### Fixed
 - Biography Integration: Bio mods rewritten (less size) wrapping callbacks, instead of rewriting them entirely.

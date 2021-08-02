@@ -447,7 +447,7 @@ function imageMap({
 			}
 			this.calcScale(window.Width, window.Height);
 		}
-		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(jsonPath) : utils.FileTest(jsonPath, 'split'); //TODO: Deprecated
+		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(this.jsonPath)[0] : utils.FileTest(this.jsonPath, 'split'); //TODO: Deprecated
 		_createFolder(jsonFolder);
 		this.loadData();
 		this.clearPointCache();
