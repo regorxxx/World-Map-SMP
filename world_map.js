@@ -39,9 +39,6 @@
 	See also: 
 		- helpers\world_map_tables.js (coordinates and country lookup logic)
 		- helpers\map_xxx.js  (arbitrary map object)
-		
-	TODO:
-		- Picard's Plugin does not exist yet.
  */
 
 window.DefinePanel('World Map', {author:'xxx'});
