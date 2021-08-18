@@ -1,4 +1,5 @@
 ﻿UI panel which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along WilB's Biography Scritp.
+UI is fully configurable: colors, sizes, headers, flags (like the ones found at Georgia Theme), etc.
 
 The map uses locale tag (*) from the tracks currently playing or on selection (*). 
 It may be a tag name or a TF expression, and may contain ISO values (ARG) or full names (Argentina). 
@@ -8,10 +9,18 @@ Tag may be fetched using any of these 3 method (on this order):
 - Tags from JSON data file (if available).
 - Tags from WilB's Biography Script (if enabled). (*) (**) (***)
 
-When tags are not available on the tracks, they can be written on the files theirselves or on the JSON data file (*), using the info shared by Biography Script.
+When tags are not available on the tracks, they can be written directly on the files or on the JSON data file (*), using the info shared by Biography Script.
 Note that once the JSON file contains some artist's data, Internet connection -and thus Biography Script too- is no longer needed... acting as a local database for the tags related to those artists.
+An example database is provided for that purpose, you may use it as an starting point (look at 'presets' folder).
 
-Panel is updated when playback changes, switching playlists, selecting tracks, ... and requires a full world map using Mercator projection to work. One is given for convenience, but can be changed if desired at properties.
+Panel is updated when playback changes, switching playlists, selecting tracks, ... and requires a full world map using Mercator projection to work. Two are given for convenience, but can be changed if desired at properties. Note different maps may require different coordinates factors (since h/w proportions may change), there is a configuration menu for that purpose. An example of use may be found switching from 'Full' map to 'No Antarctica' Map, where the map is simply cropped and the coordinates adjusted with an Y factor.
+
+There is a third mode to display countries (apart from selection/playing now) named 'library mode'. In this mode all the countries from the entire library artists database are shown instead of following selection/playback. Clicking on a point creates playlists from that country (+genre, styles, etc.  according to keys pressed). Tooltip shows all artist on library from that country, therefore being a way to see the current statistics for every country. Note this is not equivalent to selecting the entire library and using the 'follow selection' mode for two reasons:
+	- There is an imposed limit on point painting when selection size reaches a value (currently 5000). You may change that on the properties panel though. This is done to reduce calculation time
+	on big selections (note it takes some time to retrieve so many tags and adjusting them on the map).
+	- Library mode is not calculated on real time, but using a cache. That means it's not really retrieving the tags from all tracks but just using their last known value (much faster). This cache may be updated on demand though ('Database\Update library database').
+	
+An additional set of tools has been added to make it easier to merge different json databases, write tags to json or back from json to files, finding items in the library without the locale tags or not present on database, etc.
 
 (*) Configurable.
 (**) Requires a modified version of the script. It may be installed manually or using the appropriate menu, which automatically adds the required code to the original script.
