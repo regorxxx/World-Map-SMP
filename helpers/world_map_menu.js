@@ -483,7 +483,7 @@ function createMenu() {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
 					let countO = 0;
-					const newData = _jsonParseFile(input);
+					const newData = _jsonParseFile(input, convertCharsetToCodepage('UTF-8'));
 					if (newData) {
 						newData.forEach((data) => {
 							if (!worldMap.hasDataById(data[worldMap.jsonId])) {

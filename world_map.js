@@ -145,7 +145,7 @@ overwriteProperties(worldMap.properties); // Updates panel
 
 // Library Mode
 if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}
-const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFile(worldMap.properties.fileNameLibrary[1]) : null;
+const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFile(worldMap.properties.fileNameLibrary[1], convertCharsetToCodepage('UTF-8')) : null;
 
 /* 
 	Callbacks for painting 
