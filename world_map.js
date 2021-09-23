@@ -41,7 +41,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefinePanel('World Map', {author:'xxx'});
+window.DefinePanel('World Map', {author:'xxx', version: '2.0.0'});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
