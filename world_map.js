@@ -134,7 +134,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
-		const readme = utils.ReadTextFile(readmePath, 65001);
+		const readme = utils.ReadTextFile(readmePath, convertCharsetToCodepage('UTF-8'));
 		if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
 	}
 }
