@@ -59,7 +59,7 @@ function selPoint(point, mask) {
 								const tag_i = tagValues[i].filter((tag) => {return !tagFilter.has(tag);});
 								const tagId_i = tag_i.join(',');
 								if (tag_i.length && !valSet.has(tagId_i)) {
-									modifierQuery.push(query_combinations(tag_i, [modTag], "AND"));
+									modifierQuery.push(query_combinations(tag_i, [modTag], 'AND'));
 									valSet.add(tagId_i);
 								}
 							}

@@ -7,7 +7,7 @@
 	TODO:
 		- Create arbitrary map images using a graph or tag cloud? 
 		- Allow multiple tags to paint multiple points
-			- Merge near enough locations into "zones", to draw the points for multiple artists.
+			- Merge near enough locations into 'zones', to draw the points for multiple artists.
  */
 
 include('helpers_xxx.js');

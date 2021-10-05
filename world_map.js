@@ -93,16 +93,22 @@ const worldMap_properties = {
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
-worldMap_properties['iWriteTags'].push({range: [[0,2]]}, worldMap_properties['iWriteTags'][1]);
+worldMap_properties['iWriteTags'].push({func: isInt, range: [[0,2]]}, worldMap_properties['iWriteTags'][1]);
 worldMap_properties['selection'].push({eq: selMode}, worldMap_properties['selection'][1]);
 worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true);}}, worldMap_properties['forcedQuery'][1]);
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
 worldMap_properties['tagFilter'].push({func: isStringWeak}, worldMap_properties['tagFilter'][1]);
-worldMap_properties['iLimitSelection'].push({func: Number.isSafeInteger}, worldMap_properties['iLimitSelection'][1]);
-worldMap_properties['panelMode'].push({range: [[0,1]]}, worldMap_properties['panelMode'][1]);
-worldMap_properties['customPanelColorMode'].push({range: [[0,2]]}, worldMap_properties['customPanelColorMode'][1]);
-worldMap_properties['customPointColorMode'].push({range: [[0,1]]}, worldMap_properties['customPointColorMode'][1]);
+worldMap_properties['iLimitSelection'].push({func: isInt}, worldMap_properties['iLimitSelection'][1]);
+worldMap_properties['factorX'].push({func: isInt}, worldMap_properties['factorX'][1]);
+worldMap_properties['factorY'].push({func: isInt}, worldMap_properties['factorY'][1]);
+worldMap_properties['panelMode'].push({func: isInt, range: [[0,1]]}, worldMap_properties['panelMode'][1]);
+worldMap_properties['customPanelColorMode'].push({func: isInt, range: [[0,2]]}, worldMap_properties['customPanelColorMode'][1]);
+worldMap_properties['customPointColorMode'].push({func: isInt, range: [[0,1]]}, worldMap_properties['customPointColorMode'][1]);
+worldMap_properties['customPanelColor'].push({func: isInt}, worldMap_properties['customPanelColor'][1]);
+worldMap_properties['customPointColor'].push({func: isInt}, worldMap_properties['customPointColor'][1]);
+worldMap_properties['customPointSize'].push({func: isInt}, worldMap_properties['customPointSize'][1]);
+worldMap_properties['fontSize'].push({func: isInt}, worldMap_properties['fontSize'][1]);
 setProperties(worldMap_properties, worldMap_prefix);
 
 /* 

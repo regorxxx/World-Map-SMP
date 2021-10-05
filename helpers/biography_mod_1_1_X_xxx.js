@@ -14,11 +14,11 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 	// Rewrite entire function
 	tag.notifyCountry = function(handles) { // tags
 		// This 2 variables are private within tag object... so we need to define them again
-		const kww = "Founded In: |Born In: |Gegründet: |Formado en: |Fondé en: |Luogo di fondazione: |出身地: |Założono w: |Local de fundação: |Место основания: |Grundat år: |Kurulduğu tarih: |创建于: |Geboren in: |Lugar de nacimiento: |Né\\(e\\) en: |Luogo di nascita: |出身地: |Urodzony w: |Local de nascimento: |Место рождения: |Född: |Doğum yeri: |生于: ";
+		const kww = 'Founded In: |Born In: |Gegründet: |Formado en: |Fondé en: |Luogo di fondazione: |出身地: |Założono w: |Local de fundação: |Место основания: |Grundat år: |Kurulduğu tarih: |创建于: |Geboren in: |Lugar de nacimiento: |Né\\(e\\) en: |Luogo di nascita: |出身地: |Urodzony w: |Local de nascimento: |Место рождения: |Född: |Doğum yeri: |生于: ';
 		let ix = -1;
 		// Up to here
 		if (!handles) {return;}
-		let a_o = "####";
+		let a_o = '####';
 		let locale = [], tags = [];
 		const tf_a = FbTitleFormat(p.tf.a), tf_l = FbTitleFormat(p.tf.l);
 		tags.push({name: 'artist', val: tf_a.EvalWithMetadb(handles)});
@@ -27,17 +27,17 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 		if (artist !== a_o) {
 			a_o = artist;
 			if (p.tag[6].enabled || p.tag[7].enabled || p.tag[8].enabled && p.tag[8].enabled < 7) {
-				const lfmBio = p.cleanPth(p.pth.lfmBio, handles, 'tag') + artist.clean() + ".txt";
+				const lfmBio = p.cleanPth(p.pth.lfmBio, handles, 'tag') + artist.clean() + '.txt';
 				if (s.file(lfmBio)) {
 					const lfm_a = s.open(lfmBio);
-					if (p.tag[6].enabled) {ix = lfm_a.lastIndexOf("Top Tags: ");}
+					if (p.tag[6].enabled) {ix = lfm_a.lastIndexOf('Top Tags: ');}
 					if (p.tag[7].enabled) {
-						let loc = lfm_a.match(RegExp(kww, "i")); if (loc) {
+						let loc = lfm_a.match(RegExp(kww, 'i')); if (loc) {
 							loc = loc.toString();
 							ix = lfm_a.lastIndexOf(loc);
 							if (ix !== -1) {
 								locale = lfm_a.substring(ix + loc.length);
-								locale = locale.split('\n')[0].trim().split(", ");
+								locale = locale.split('\n')[0].trim().split(', ');
 							}
 						}
 					}
