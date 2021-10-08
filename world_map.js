@@ -1,7 +1,7 @@
 'use strict';
 
 /* 
-	World Map v 1.0.0 01/05/21 REQUIRES WilB's Biography Mod script for online tags!!!
+	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
 	Show artist's country drawing a circle over the world map. To get the country,
 	'mapTag' set on properties is used. It may be a tag name or a TF expression.
 	Therefore data must be previously on tracks or the database.
@@ -41,7 +41,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefinePanel('World Map', {author:'xxx', version: '2.0.0'});
+window.DefineScript('World Map', {author:'XXX', version: '2.0.0', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');

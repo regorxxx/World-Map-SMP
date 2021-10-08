@@ -1,7 +1,8 @@
 'use strict';
+//07/10/21
 
 /* 
-	World Map v 0.1 23/03/21
+	World Map
 	Coordinates function and country tables.
  */
 
