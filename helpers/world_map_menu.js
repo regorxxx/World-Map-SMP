@@ -1,5 +1,5 @@
 'use strict';
-//07/10/21
+//13/10/21
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -94,12 +94,14 @@ function createMenu() {
 				const file1_2_X = 'biography_mod_1_2_X_xxx.js';
 				const modPackageText = '\ninclude(\'' + file1_2_X + '\');';
 				if (_isFile(packageFile)) {
-					const packageText = _jsonParseFile(packagePath + '\\package.json');
-					const fileText = utils.ReadTextFile(packageFile);
-					if (!worldMap.properties.bInstalledBiography[1]) {
-						if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
-					} else {
-						if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
+					const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
+					if (packageText) {
+						const fileText = utils.ReadTextFile(packageFile);
+						if (!worldMap.properties.bInstalledBiography[1]) {
+							if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
+						} else {
+							if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
+						}
 					}
 				}
 				// Select files to edit
@@ -484,7 +486,7 @@ function createMenu() {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
 					let countO = 0;
-					const newData = _jsonParseFile(input, convertCharsetToCodepage('UTF-8'));
+					const newData = _jsonParseFileCheck(input, 'Database json', window.Name, convertCharsetToCodepage('UTF-8'));
 					if (newData) {
 						newData.forEach((data) => {
 							if (!worldMap.hasDataById(data[worldMap.jsonId])) {
@@ -589,8 +591,8 @@ function syncBio (bReload = false) {
 	window.NotifyOthers('bio_focusPpt', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
-		const config = _jsonParseFile(configPath);
-		if (!config.notifyTags) {
+		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
+		if (config && config.hasOwnProperty('notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
 			_save(configPath, JSON.stringify(config, null, 3));
 			if (bReload) {window.NotifyOthers('bio_refresh', null);}  // Reload Biograpy panel

@@ -1,5 +1,5 @@
 'use strict';
-//07/10/21
+//13/10/21
 
 /* 
 	Map v 0.1 23/03/21
@@ -304,8 +304,8 @@ function imageMap({
 	this.loadData = (path = this.jsonPath) => {
 		if (utils.IsFile(path)) {
 			this.jsonData = [];
-			const data = _jsonParseFile(path, convertCharsetToCodepage('UTF-8'));
-			if (!data && utils.GetFileSize(path)) {fb.ShowPopupMessage('Tags json file is probably corrupt: ' + path, window.Name); return;}
+			const data = _jsonParseFileCheck(path, 'Tags json', window.Name, convertCharsetToCodepage('UTF-8'));
+			if (!data) {return;}
 			data.forEach((item) => {this.jsonData.push(item);});
 		}
 	}
