@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [2.0.0](#200---2021-06-21)
+- [2.0.0-beta.1](#200-beta1---2021-12-23)
 - [1.2.2](#122---2021-06-21)
 - [1.2.1](#121---2021-06-15)
 - [1.2.0](#120---2021-06-07)
@@ -12,6 +12,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.0.0-beta.1] - 2021-12-23
 ### Added
 - Library Mode: added a new mode which changes the behavior of the panel, displaying all the countries from the entire library artists database instead of following selection/playback. Clicking on a point creates playlists from that country (+genre, styles, etc.  according to keys pressed). Tooltip shows artist count from that country. The library database is cached and not updated on real time, so it works without performance penalties. (may be updated on demand)
 - Tagging: locale tag (country) can be set for tracks missing the tag by clicking directly on the map. A menu will appear showing a list of countries near the clicked zone. Tags are saved directly to files or to the Json database according to the config. (It applies the same country to all selected tracks, don't use it for different artists unless all are from there!)
@@ -32,6 +38,7 @@
 - Header: Name is shortened if it's too long for the current width and font size combination. It also takes into account flag size if it's enabled.
 - Tags: Added some common variations for a few country names to enhance matching (points and flags) even if they are not the standard iso names or have swapped prefixes. Note this "expands" [Georgia theme's](https://kbuffington.github.io/Georgia/) flag feature since it should match better country names now (for ex. 'Tanzania', 'Tanzania, United Republic of' and 'United Republic of Tanzania'). This is also used for displaying the country name at header (shorter version is preferred) and for tagging files and json (the full iso standard name is preferred).
 - Helpers: updated. Whenever a folder needs to be created to save a new file, the entire tree is now created if needed. Previously it would fail as soon as any folder did not exist. This greatly speeds up setting panels since now the final folder does not need to exists at all to work, since it will be created on the fly.
+- Helpers: additional checks at json loading on all scripts. Warnings via popup when a corrupted file is found.
 - All json files are now saved as UTF-8 without BOM. All json files are now read as UTF-8 (forced).
 ### Removed
 ### Fixed
@@ -115,8 +122,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.1...HEAD
+[2.0.0-beta.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0-beta.1
 [1.2.2]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v1.1.1...v1.2.0
