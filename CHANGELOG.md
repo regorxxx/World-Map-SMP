@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.0-beta.2](#200-beta2---2021-12-30)
 - [2.0.0-beta.1](#200-beta1---2021-12-23)
 - [1.2.2](#122---2021-06-21)
 - [1.2.1](#121---2021-06-15)
@@ -130,7 +131,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.2...HEAD
+[2.0.0-beta.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0-beta.1
 [1.2.2]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.0...v1.2.1
