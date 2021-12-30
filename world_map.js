@@ -154,6 +154,15 @@ overwriteProperties(worldMap.properties); // Updates panel
 if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}
 const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, convertCharsetToCodepage('UTF-8')) : null;
 
+{ // Default database
+	const defDatabase = folders.xxx + 'presets\\World Map\\worldMap.json';
+	if (!_isFile(worldMap.properties.fileName[1]) && _isFile(defDatabase)) {
+		console.log('Using default database file: ' + defDatabase);
+		_copyFile(defDatabase, worldMap.properties.fileName[1]);
+		worldMap.init();
+	}
+}
+
 /* 
 	Callbacks for painting 
 */

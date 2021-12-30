@@ -24,9 +24,9 @@ An additional set of tools has been added to make it easier to merge different j
 
 (*) Configurable.
 (**) Requires a modified version of the script. It may be installed manually or using the appropriate menu, which automatically adds the required code to the original script.
-- 1.2.X: 'Notify tags' must be enabled on Bio's config panel too. When doing an automatic installation, it will be automatically enabled too.
+- 1.2.0-Beta.1 or 1.2.0-Beta.2: 'Notify tags' must be enabled on Bio's config panel too. When doing an automatic installation, it will be automatically enabled too.
 (***) Manual installation requires adding this line at THE END of WilB's Biography Script (or the panel where it's loaded) and copying the mod file to the same path where bio script resides:
 - 1.1.X: (add line to the main -and only- file)
 	include('biography_mod_1_1_X_xxx.js');
-- 1.2.X: (add line to '.\scripts\callbacks.js') (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-7B4B-4E0E-9373-99F511E81252}')
-	include('biography_mod_1_2_X_xxx.js');
+- 1.2.0-Beta.1 or 1.2.0-Beta.2: (add line to '.\scripts\callbacks.js') (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-7B4B-4E0E-9373-99F511E81252}')
+	include('biography_mod_1_2_0_beta_xxx.js');

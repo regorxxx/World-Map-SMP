@@ -17,6 +17,14 @@
 ### Removed
 ### Fixed
 
+## [2.0.0-beta.2] - 2021-12-30
+### Added
+- Data: database file from presets is now used as initial default file on first installation (or if the user's file gets deleted). This simplifies copying it manually on offline systems.
+### Changed
+- Biography Integration: updated Bio integration for 1.2.0 (requires no file mods now so it will work even after updating the Bio package on the future). In resume, works with 1.2.X branch (beta -with mods- or release versions) and 1.1.X -with mods-.
+### Removed
+### Fixed
+
 ## [2.0.0-beta.1] - 2021-12-23
 ### Added
 - Library Mode: added a new mode which changes the behavior of the panel, displaying all the countries from the entire library artists database instead of following selection/playback. Clicking on a point creates playlists from that country (+genre, styles, etc.  according to keys pressed). Tooltip shows artist count from that country. The library database is cached and not updated on real time, so it works without performance penalties. (may be updated on demand)

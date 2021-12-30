@@ -70,39 +70,58 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)');}, func: () => {
 				let  foundArr = [];
+				// Biography 1.2.X
+				// There are 2 paths here: beta versions require some file changes, while the 1.2.0+ releases work as is
+				let packageFile = '';
+				const file1_2_0_beta = 'biography_mod_1_2_0_beta_xxx.js';
+				{
+					const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
+					let packagePath;
+					try {packagePath = utils.GetPackagePath(idFolder);} // Exception when not found
+					catch(e) {packagePath = '';}
+					packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
+					const modPackageText = '\ninclude(\'' + file1_2_0_beta + '\');';
+					if (_isFile(packageFile)) {
+						const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
+						if (packageText) {
+							if (packageText.version === '1.2.0-Beta.1' || packageText.version === '1.2.0-Beta.2') {
+								const fileText = utils.ReadTextFile(packageFile);
+								if (!worldMap.properties.bInstalledBiography[1]) {
+									if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
+								} else {
+									if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
+								}
+							} else { // 1.2.X: requires no further changes
+								let answer = WshShell.Popup('Found WilB\'s Biography 1.2.X which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (worldMap.properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
+								if (answer === popup.yes) {
+									// Change config
+									worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
+									worldMap.properties.bEnabledBiography[1] = worldMap.properties.bInstalledBiography[1];
+									overwriteProperties(worldMap.properties); // Updates panel
+									syncBio(false); // Sync selection and enable notify tags
+									window.NotifyOthers('bio_refresh', null);  // Reload panel  Biograpy 1.2.X
+									return;
+								}
+							}
+						}
+					}
+				}
 				// Biography 1.1.X
-				const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
 				const file1_1_X = 'biography_mod_1_1_X_xxx.js';
 				const modText = '\ninclude(\'' + file1_1_X + '\');';
-				const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
-				fileArr.forEach( (file) => {
-					const fileText = utils.ReadTextFile(file);
-					if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
-						if (!worldMap.properties.bInstalledBiography[1]) {
-							if (fileText.indexOf(modText) === -1) {foundArr.push({path: file, ver: '1.1.X'});} // When installing, look for not modified script
-						} else {
-							if (fileText.indexOf(modText) !== -1) {foundArr.push({path: file, ver: '1.1.X'});} // Otherwise, look for the mod string
+				{
+					const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
+					const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
+					fileArr.forEach( (file) => {
+						const fileText = utils.ReadTextFile(file);
+						if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
+							if (!worldMap.properties.bInstalledBiography[1]) {
+								if (fileText.indexOf(modText) === -1) {foundArr.push({path: file, ver: '1.1.X'});} // When installing, look for not modified script
+							} else {
+								if (fileText.indexOf(modText) !== -1) {foundArr.push({path: file, ver: '1.1.X'});} // Otherwise, look for the mod string
+							}
 						}
-					}
-				});
-				// Biography 1.2.X
-				const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
-				let packagePath;
-				try {packagePath = utils.GetPackagePath(idFolder);} // Exception when not found
-				catch(e) {packagePath = '';}
-				const packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
-				const file1_2_X = 'biography_mod_1_2_X_xxx.js';
-				const modPackageText = '\ninclude(\'' + file1_2_X + '\');';
-				if (_isFile(packageFile)) {
-					const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
-					if (packageText) {
-						const fileText = utils.ReadTextFile(packageFile);
-						if (!worldMap.properties.bInstalledBiography[1]) {
-							if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
-						} else {
-							if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
-						}
-					}
+					});
 				}
 				// Select files to edit
 				let input = '';
@@ -148,19 +167,19 @@ function createMenu() {
 							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return;}
 							// TODO: Revert changes editing file if not backup is found?
 						}
-					} else { // Biography 1.2.X
+					} else { // Biography 1.2.0 Beta 1 & 2
 						if (!worldMap.properties.bInstalledBiography[1]) {
 							if (!_isFile(file + backupExt)) {
 								bDone = _copyFile(file, file + backupExt);
 							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
 							if (bDone) {
-								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_2_X, folderPath + file1_2_X);
+								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_2_0_beta, folderPath + file1_2_0_beta);
 							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
 							if (bDone) {
 								let fileText = utils.ReadTextFile(packageFile);
 								fileText += modPackageText;
 								bDone = _save(packageFile, fileText);
-							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_X, window.Name); return;}
+							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, window.Name); return;}
 						} else {
 							if (_isFile(packageFile + backupExt)) {
 								bDone = _recycleFile(packageFile);
@@ -178,12 +197,11 @@ function createMenu() {
 				else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
 				// Change config
 				worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
-				if (!worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = false;}
-				if (worldMap.properties.bInstalledBiography[1]) {worldMap.properties.bEnabledBiography[1] = true;}
+				worldMap.properties.bEnabledBiography[1] = worldMap.properties.bInstalledBiography[1];
 				overwriteProperties(worldMap.properties); // Updates panel
 				syncBio(false); // Sync selection and enable notify tags
-				window.NotifyOthers('refresh_bio', null);  // Reload panel Biograpy 1.2.1
-				window.NotifyOthers('bio_refresh', null);  // Reload panel  Biograpy 1.2.X
+				window.NotifyOthers('refresh_bio', null);  // Reload panel Biography 1.1.X
+				window.NotifyOthers('bio_refresh', null);  // Reload panel Biography 1.2.X
 			}});
 		}
 		menu.newEntry({entryText: 'sep'});
@@ -588,7 +606,8 @@ function syncBio (bReload = false) {
 	// Biograpy 1.1.X
 	window.NotifyOthers(window.Name + ' notifySelectionProperty', worldMap.properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
 	// Biograpy 1.2.X
-	window.NotifyOthers('bio_focusPpt', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property
+	window.NotifyOthers('bio_focusPpt', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.0 Beta
+	window.NotifyOthers('bio_followSelectedTrack', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
