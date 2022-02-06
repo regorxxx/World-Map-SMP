@@ -1,5 +1,5 @@
 'use strict';
-//13/10/21
+//04/02/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -230,9 +230,9 @@ function createMenu() {
 		{	// Modifier tags
 			const menuName = menu.newMenu('Modifier tags for playlists');
 			menu.newEntry({menuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
+			menu.newEntry({menuName, entryText: 'sep'});
 			modifiers.forEach( (mod, index) => {
-				menu.newEntry({menuName, entryText: 'sep'});
-				menu.newEntry({menuName, entryText: '(' + mod.description + ') tag(s)', func: () => {
+				menu.newEntry({menuName, entryText: '(' + mod.description + ') tag(s)' + '\t' + worldMap.properties[mod.tag][1], func: () => {
 					let input = '';
 					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, worldMap.properties[mod.tag][1], true);} 
 					catch(e) {return;}
@@ -591,7 +591,7 @@ function createMenu() {
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {
-				if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, 'e'))) { 
+				if (_isFile(readmePath)) { 
 					const readme = utils.ReadTextFile(readmePath, convertCharsetToCodepage('UTF-8')); // Executed on script load
 					if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
 					else {console.log('Readme not found: ' + value);}
@@ -613,7 +613,7 @@ function syncBio (bReload = false) {
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
 		if (config && config.hasOwnProperty('notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
-			_save(configPath, JSON.stringify(config, null, 3));
+			_save(configPath, JSON.stringify(config, null, '\t'));
 			if (bReload) {window.NotifyOthers('bio_refresh', null);}  // Reload Biograpy panel
 		}
 	}

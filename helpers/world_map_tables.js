@@ -99,3 +99,23 @@ const nameReplacers = new Map([
 	['u.s. virgin islands','virgin islands, u.s.']
 ]);
 const nameReplacersRev = new Map([...nameReplacers].map((_) => {return _.reverse();}));
+
+// Debug when music_graph_descriptors_xxx_countries.js has been included before
+if (typeof music_graph_descriptors_countries !== 'undefined' && typeof music_graph_descriptors_culture !== 'undefined') {
+	const parent = music_graph_descriptors_countries;
+	// Check all region names match
+	include('helpers_xxx_prototypes.js');
+	if (!(new Set(music_graph_descriptors_culture.getRegionNames()).isEqual(new Set(parent.getRegionNames())))) {
+		console.log('music_graph_descriptors_xxx_culture: Regions don\'t match');
+	}
+	// Check all countries are present in both places
+	include('world_map_tables.js');
+	[...isoMap.values()].forEach((isoCode) => {if (!Object.keys(parent.getNodeRegion(isoCode)).length) {console.log('music_graph_descriptors_xxx_culture: ' + isoCode + ' is missing')}});
+	parent.getMainRegions().forEach((region) => {
+		parent.getSubRegions(region).forEach((subRegion) => {
+			parent.culturalRegion[region][subRegion].forEach((isoCode) => {
+				if (!isoMapRev.has(isoCode.toUpperCase())) {console.log('music_graph_descriptors_xxx_culture: ' + isoCode + ' wrong value')}
+			});
+		});
+	});
+}

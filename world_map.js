@@ -1,5 +1,5 @@
 'use strict';
-//13/10/21
+//04/02/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -49,6 +49,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 include('helpers\\map_xxx.js');
 include('helpers\\world_map_tables.js');
+include('helpers\\music_graph_descriptors_xxx_countries.js');
 include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
 include('helpers\\world_map_flags.js');
@@ -140,7 +141,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 	overwriteProperties(worldMap.properties); // Updates panel
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
-	if ((isCompatible('1.4.0') ? utils.IsFile(readmePath) : utils.FileTest(readmePath, "e"))) {
+	if (_isFile(readmePath)) {
 		const readme = utils.ReadTextFile(readmePath, convertCharsetToCodepage('UTF-8'));
 		if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
 	}

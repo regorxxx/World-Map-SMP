@@ -1,5 +1,5 @@
 'use strict';
-//07/10/21
+//04/02/22
 
 include('helpers_xxx.js');
 include('helpers_xxx_playlists.js');
@@ -157,12 +157,17 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 // When mouse is over point
 function tooltip(point) { 
 	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
-	let text = 'From: ' + point.id + ' (' + count + ')' + '\n(L. Click to create Autoplaylist from same zone)\n';
+	const region = music_graph_descriptors_countries.getFirstNodeRegion(isoMap.get(point.id.toLowerCase()));
+	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' - ';
+	text += '\n(L. Click to create Autoplaylist from same zone)\n';
 	modifiers.forEach( (mod) => {
 		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
 		text += '(' + mod.description + ' + L. Click forces same ' + tags + ' too)\n';
 	});
-	if (worldMap.properties.panelMode[1]) {text += '(Shift + L. Click on map rewrites locale tag)\n';}
+	if (!worldMap.properties.panelMode[1]) {
+		text += '-'.repeat(60);
+		text += '\n(Shift + L. Click on map rewrites locale tag)\n';
+	}
 	return (point && point.hasOwnProperty('id') ? text : null);
 }
 

@@ -1,8 +1,8 @@
 'use strict';
-//19/12/21
+//04/02/22
 
 /* 
-	Map v 0.1 23/03/21
+	Map v 0.2 04/02/22
 	Helper to create arbitrary map objects. Defaults to world map if no properties or argument is given.
 	imageMap.findCoordinates must be specified using 'findCoordinatesFunc' if creating the map with any argument.
 	TODO:
@@ -301,7 +301,7 @@ function imageMap({
 	this.clearTagValue = () => {this.tagValue = {};};
 	// Reload data saved as json
 	this.loadData = (path = this.jsonPath) => {
-		if (utils.IsFile(path)) {
+		if (_isFile(path)) {
 			this.jsonData = [];
 			const data = _jsonParseFileCheck(path, 'Tags json', window.Name, convertCharsetToCodepage('UTF-8'));
 			if (!data) {return;}
@@ -447,7 +447,7 @@ function imageMap({
 			}
 			this.calcScale(window.Width, window.Height);
 		}
-		const jsonFolder = isCompatible('1.4.0') ? utils.SplitFilePath(this.jsonPath)[0] : utils.FileTest(this.jsonPath, 'split'); //TODO: Deprecated
+		const jsonFolder = utils.SplitFilePath(this.jsonPath)[0];
 		_createFolder(jsonFolder);
 		this.loadData();
 		this.clearPointCache();
