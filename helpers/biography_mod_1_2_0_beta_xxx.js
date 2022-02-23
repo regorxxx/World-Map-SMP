@@ -1,12 +1,10 @@
 ﻿'use strict';
-//07/10/21
+//23/02/22
 
 /* 
 	Biography Mod v 1.2.0 Beta 08/06/21
 	-----------------------------------
 	Redefines some methods found on WilB's Biography Script to enable integration with other panels.
-	
-	TODO: Add version comparison ?
 */
 
 if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') { // Safety check to avoid using it alone

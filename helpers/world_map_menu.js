@@ -165,7 +165,6 @@ function createMenu() {
 								bDone = _renameFile(file + backupExt, file);
 							} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.Name); return;}
 							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return;}
-							// TODO: Revert changes editing file if not backup is found?
 						}
 					} else { // Biography 1.2.0 Beta 1 & 2
 						if (!worldMap.properties.bInstalledBiography[1]) {
@@ -188,7 +187,6 @@ function createMenu() {
 								bDone = _renameFile(packageFile + backupExt, packageFile);
 							} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + packageFile, window.Name); return;}
 							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + packageFilez, window.Name); return;}
-							// TODO: Revert changes editing file if not backup is found?
 						}
 					}
 				});
