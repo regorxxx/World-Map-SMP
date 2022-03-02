@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.0-beta.3](#200-beta3---2020-03-02)
 - [2.0.0-beta.2](#200-beta2---2021-12-30)
 - [2.0.0-beta.1](#200-beta1---2021-12-23)
 - [1.2.2](#122---2021-06-21)
@@ -17,6 +18,20 @@
 ### Changed
 ### Removed
 ### Fixed
+
+## [2.0.0-beta.3] - 2022-03-02
+### Added
+- Cultural Regions: tooltip now shows the cultural region associated to the country point.
+### Changed
+- Tooltip: reworked text presentation.
+- Menu: tag modifiers menu entries now show the current tag value.
+- Helpers: updated helpers.
+- Removed all code and compatibility checks for SMP <1.4.0.
+### Removed
+### Fixed
+- Tooltip: tagging tip being showed on library mode instead of track mode.
+- Helpers: file deletion failed when file was read-only.
+- Helpers: file recycling has been overhauled to bypass Unix errors and shift pressing limitation (file was being deleted permanently). Now it tries 3 different methods, the last one requires an external executable and permissions may be asked by the SO.
 
 ## [2.0.0-beta.2] - 2021-12-30
 ### Added
@@ -131,7 +146,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.2...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.3...HEAD
+[2.0.0-beta.3]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.2...v2.0.0-beta.3
 [2.0.0-beta.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0-beta.1
 [1.2.2]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.1...v1.2.2
