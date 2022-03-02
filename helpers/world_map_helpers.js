@@ -1,5 +1,5 @@
 'use strict';
-//04/02/22
+//02/03/22
 
 include('helpers_xxx.js');
 include('helpers_xxx_playlists.js');
@@ -159,7 +159,7 @@ function tooltip(point) {
 	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(isoMap.get(point.id.toLowerCase()));
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' - ';
-	text += '\n(L. Click to create Autoplaylist from same zone)\n';
+	text += '\n(L. Click to create Autoplaylist from same country)\n';
 	modifiers.forEach( (mod) => {
 		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
 		text += '(' + mod.description + ' + L. Click forces same ' + tags + ' too)\n';
