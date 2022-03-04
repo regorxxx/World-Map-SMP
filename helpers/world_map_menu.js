@@ -85,7 +85,8 @@ function createMenu() {
 						const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
 						if (packageText) {
 							if (packageText.version === '1.2.0-Beta.1' || packageText.version === '1.2.0-Beta.2') {
-								const fileText = utils.ReadTextFile(packageFile);
+								const fileText = _open(packageFile);
+								if (!fileText.length) {return;}
 								if (!worldMap.properties.bInstalledBiography[1]) {
 									if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
 								} else {
@@ -113,7 +114,8 @@ function createMenu() {
 					const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
 					const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
 					fileArr.forEach( (file) => {
-						const fileText = utils.ReadTextFile(file);
+						const fileText = _open(file);
+						if (!fileText.length) {return;}
 						if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
 							if (!worldMap.properties.bInstalledBiography[1]) {
 								if (fileText.indexOf(modText) === -1) {foundArr.push({path: file, ver: '1.1.X'});} // When installing, look for not modified script
@@ -151,9 +153,9 @@ function createMenu() {
 								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_1_X, folderPath + file1_1_X);
 							} else {fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return;}
 							if (bDone) {
-								let fileText = utils.ReadTextFile(file);
+								let fileText = _open(file);
 								fileText += modText;
-								bDone = _save(file, fileText);
+								bDone = fileText.length && _save(file, fileText);
 							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_1_X, window.Name); return;}
 							if (!bDone) {fb.ShowPopupMessage('Error editing the file.\n' + file, window.Name); return;}
 						} else {
@@ -175,9 +177,9 @@ function createMenu() {
 								bDone = _copyFile(folders.xxx + 'helpers\\' + file1_2_0_beta, folderPath + file1_2_0_beta);
 							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
 							if (bDone) {
-								let fileText = utils.ReadTextFile(packageFile);
+								let fileText = _open(packageFile);
 								fileText += modPackageText;
-								bDone = _save(packageFile, fileText);
+								bDone = fileText.length && _save(packageFile, fileText);
 							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, window.Name); return;}
 						} else {
 							if (_isFile(packageFile + backupExt)) {
@@ -589,11 +591,9 @@ function createMenu() {
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {
-				if (_isFile(readmePath)) { 
-					const readme = utils.ReadTextFile(readmePath, convertCharsetToCodepage('UTF-8')); // Executed on script load
-					if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
-					else {console.log('Readme not found: ' + value);}
-				}
+				const readme = _open(readmePath, convertCharsetToCodepage('UTF-8')); // Executed on script load
+				if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
+				else {console.log('Readme not found: ' + value);}
 			}});
 		}	
 	}
