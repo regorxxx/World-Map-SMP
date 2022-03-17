@@ -16,6 +16,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Helpers: Updated helpers.
 ### Removed
 ### Fixed
 - Helpers: avoid file reading crashing in any case (even if it's locked by another process).
