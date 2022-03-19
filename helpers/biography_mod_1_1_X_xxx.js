@@ -2,7 +2,7 @@
 //23/02/22
 
 /* 
-	Biography Mod v 1.1.X 08/06/21
+	Biography Mod v 1.1.X
 	-----------------------------------
 	Redefines some methods found on WilB's Biography Script to enable integration with other panels.
 */
