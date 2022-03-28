@@ -1,5 +1,5 @@
 'use strict';
-//02/03/22
+//29/03/22
 
 include('helpers_xxx.js');
 include('helpers_xxx_playlists.js');
@@ -20,6 +20,7 @@ function selPoint(point, mask) {
 	if (!worldMap.jsonId.length) {return bDone;}
 	let query = [];
 	const dataId = worldMap.jsonId; // Set before. The tag used to match data
+	const dataIdTag = dataId.toUpperCase(); // for readability
 	// Any track with same locale tag
 	const tag = worldMap.properties.mapTag[1].indexOf('$') !== -1 ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
 	if (tag.length) {query.push(tag + ' IS ' + point.id);}
@@ -28,12 +29,12 @@ function selPoint(point, mask) {
 	worldMap.getData().forEach( (item) => {
 		if (item.val[item.val.length - 1] === point.id) {jsonQuery.push(item[dataId]);}
 	});
-	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, dataId, 'OR'));}
+	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, dataIdTag, 'OR'));}
 	// What about current tracks (from selected point)? -> Always a match
 	const selPointData = worldMap.getLastPoint().find( (last) => {return (last.id === point.id);}); // Has list of artist on every paint
 	if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 		const currentMatchData = [...selPointData.jsonId];
-		query.push(query_combinations(currentMatchData, dataId, 'OR'));
+		query.push(query_combinations(currentMatchData, dataIdTag, 'OR'));
 	}
 	// Merges all queries with OR
 	query = [query_join(query,'OR')];
@@ -44,7 +45,7 @@ function selPoint(point, mask) {
 		if (sel && sel.Count) { 
 			if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 				let selPoint = new FbMetadbHandleList();
-				const selJsonId = getTagsValuesV3(sel, [dataId], true).filter(Boolean);
+				const selJsonId = getTagsValuesV3(sel, [dataIdTag], true).filter(Boolean);
 				selJsonId.forEach( (jsonId, index) => {
 					if (selPointData.jsonId.intersectionSize(new Set(jsonId))) {selPoint.Add(sel[index]);}
 				});

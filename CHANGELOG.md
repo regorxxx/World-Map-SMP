@@ -20,6 +20,7 @@
 ### Removed
 ### Fixed
 - Helpers: avoid file reading crashing in any case (even if it's locked by another process).
+- Helpers: fixed query checking not working due to upper/lower case mixing in some cases, should now be pretty robust with RegEx.
 
 ## [2.0.0-beta.3] - 2022-03-02
 ### Added
