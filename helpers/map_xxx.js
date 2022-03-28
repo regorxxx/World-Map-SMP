@@ -72,7 +72,7 @@ function imageMap({
 				});
 			// Handle
 			} else {
-				const currentMatch = selMulti ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(selMulti) : '';
+				const currentMatch = selMulti ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(selMulti) : '';
 				const id = this.idSelected.length ? this.lastPoint[0] : (selMulti ? this.findTag(selMulti, currentMatch) : '');
 				if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 			}
@@ -81,12 +81,12 @@ function imageMap({
 			if (sel.Count >= 0) {
 				if (sel.Count === 0) {return;}
 				else if (sel.Count === 1) {
-					const currentMatch =  sel[0] ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel[0]) : '';
+					const currentMatch =  sel[0] ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel[0]) : '';
 					const id = sel[0] ? this.findTag(sel[0], currentMatch) : '';
 					if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 				} else {
 					sel.Convert().forEach( (handle, index) => {
-						const currentMatch = handle ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(handle) : '';
+						const currentMatch = handle ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(handle) : '';
 						const id = handle ? this.findTag(handle, currentMatch) : '';
 						if (id.length) {
 							const idx = toPaintArr.findIndex((point) => {return (point.id === id);});
@@ -102,7 +102,7 @@ function imageMap({
 				}
 			// Handle
 			} else {
-				const currentMatch = sel ? fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel) : '';
+				const currentMatch = sel ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel) : '';
 				const id = this.idSelected.length ? this.lastPoint[0] : (sel ? this.findTag(sel, currentMatch) : '');
 				if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 			}
@@ -185,11 +185,11 @@ function imageMap({
 		var mapTagValue = '';
 		if (sel) {
 			// Get from tags
-			const tfo = (this.mapTag.indexOf('$') === -1) ? '[%' + this.mapTag + '%]' : '[' + this.mapTag + ']'; // It's a function?
+			const tfo = (this.mapTag.indexOf('$') === -1) ? _bt(this.mapTag) : _b(this.mapTag); // It's a function?
 			mapTagValue = fb.TitleFormat(tfo).EvalWithMetadb(sel);
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
-				const id =  fb.TitleFormat('[%' + this.jsonId + '%]').EvalWithMetadb(sel);
+				const id =  fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel);
 				const data = this.getDataById(id);
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];

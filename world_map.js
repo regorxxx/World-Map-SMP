@@ -328,7 +328,7 @@ function on_notify_data(name, info) {
 				}
 				// Replace country name with iso standard name if it's a known variation
 				if (nameReplacers.has(locale[locale.length - 1])) {locale[locale.length - 1] = formatCountry(nameReplacers.get(locale[locale.length - 1]));}
-				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(info.handle); // worldMap.jsonId = artist
+				const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 				if (jsonId.length && locale.length) {
 					// Set tag on map for drawing if found
 					if (sel && sel.Count && sel.Find(info.handle) !== -1) {
@@ -337,7 +337,7 @@ function on_notify_data(name, info) {
 					}
 					// Update tags or json if needed (even if the handle was not within the selection)
 					if (worldMap.properties.iWriteTags[1] > 0){
-						const tfo = '[%' + tagName + '%]';
+						const tfo = _bt(tagName);
 						if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
 							if (worldMap.properties.iWriteTags[1] === 1) {
 								new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here

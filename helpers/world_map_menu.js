@@ -232,7 +232,7 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			modifiers.forEach( (mod, index) => {
-				menu.newEntry({menuName, entryText: '(' + mod.description + ') tag(s)' + '\t' + worldMap.properties[mod.tag][1], func: () => {
+				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + worldMap.properties[mod.tag][1], func: () => {
 					let input = '';
 					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, worldMap.properties[mod.tag][1], true);} 
 					catch(e) {return;}
@@ -476,14 +476,14 @@ function createMenu() {
 					const jsonIdList = new Set(); // only one track per artist
 					const handleList = fb.GetLibraryItems();
 					handleList.Convert().forEach((handle) => {
-						const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(handle); // worldMap.jsonId = artist
+						const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
 						if (jsonId.length && !jsonIdList.has(jsonId)) {
 							if (worldMap.properties['iWriteTags'][1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
 								notFoundList.Add(handle);
 								jsonIdList.add(jsonId);
 							} else if (worldMap.properties['iWriteTags'][1] === 1) { // Check if tag exists on file
 								const tagName = worldMap.properties.writeToTag[1];
-								const tfo = '[%' + tagName + '%]';
+								const tfo = _bt(tagName);
 								if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
 									notFoundList.Add(handle);
 									jsonIdList.add(jsonId);
@@ -528,7 +528,7 @@ function createMenu() {
 					let countN = 0;
 					let countO = 0;
 					const handleList = fb.GetLibraryItems();
-					const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
 					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
 					handleList.Convert().forEach((handle, i) => {
 						if (jsonId[i] && jsonId[i].length) {
@@ -556,7 +556,7 @@ function createMenu() {
 					let countN = 0;
 					let countO = 0;
 					const handleList = fb.GetLibraryItems();
-					const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
 					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
 					const newData = worldMap.getData();
 					if (newData && newData.length) {

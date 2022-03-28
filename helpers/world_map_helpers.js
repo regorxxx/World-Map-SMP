@@ -123,14 +123,14 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 		if (sel && sel.Count) {
 			const jsonIdDone = new Set();
 			sel.Convert().forEach( (handle) => {
-				const jsonId =  fb.TitleFormat('[%' + worldMap.jsonId + '%]').EvalWithMetadb(handle); // worldMap.jsonId = artist
+				const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
 				if (jsonId && jsonId.length) {
 					// Set tag on map for drawing
 					worldMap.setTag(locale[locale.length - 1], jsonId);
 					window.Repaint();
 					// Update tags or json if needed (even if the handle was not within the selection)
 					if (worldMap.properties.iWriteTags[1] > 0){
-						const tfo = '[%' + tagName + '%]';
+						const tfo = _bt(tagName);
 						if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length || bForce) { // Check if tag already exists
 							if (worldMap.properties.iWriteTags[1] === 1) {
 								new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
@@ -162,7 +162,7 @@ function tooltip(point) {
 	text += '\n(L. Click to create Autoplaylist from same country)\n';
 	modifiers.forEach( (mod) => {
 		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
-		text += '(' + mod.description + ' + L. Click forces same ' + tags + ' too)\n';
+		text += _p(mod.description + ' + L. Click forces same ' + tags + ' too') + '\n';
 	});
 	if (!worldMap.properties.panelMode[1]) {
 		text += '-'.repeat(60);
@@ -175,7 +175,7 @@ function tooltip(point) {
 function tooltipFindPoint(foundPoints) { 
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (!sel || !sel.Count) {return;}
-	let text = foundPoints.map((_) => {return  formatCountry(_.key) + '(' + _.prox + '%)';}).join(', ');
+	let text = foundPoints.map((_) => {return  formatCountry(_.key) + _p(_.prox + '%');}).join(', ');
 	text += '\n(L. Click to add locale tag to current track(s))';
 	return text;
 }
@@ -194,7 +194,7 @@ function formatCountry(country) {
 // Retrieve all tags from database for current library
 function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
 	const handleList = fb.GetLibraryItems();
-	const jsonIdList =  [...new Set(fb.TitleFormat('[%' + jsonId + '%]').EvalWithMetadbs(handleList))]; // Removes duplicates
+	const jsonIdList =  [...new Set(fb.TitleFormat(_bt(jsonId)).EvalWithMetadbs(handleList))]; // Removes duplicates
 	const libraryTags = [];
 	let tag;
 	jsonIdList.forEach((jsonId) => {
