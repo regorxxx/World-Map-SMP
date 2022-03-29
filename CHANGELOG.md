@@ -17,6 +17,7 @@
 ### Added
 ### Changed
 - Helpers: Updated helpers.
+- Helpers: improved sort and query expressions validity checks.
 ### Removed
 ### Fixed
 - Helpers: avoid file reading crashing in any case (even if it's locked by another process).
