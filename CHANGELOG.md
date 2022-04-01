@@ -22,6 +22,7 @@
 ### Fixed
 - Helpers: avoid file reading crashing in any case (even if it's locked by another process).
 - Helpers: fixed query checking not working due to upper/lower case mixing in some cases, should now be pretty robust with RegEx.
+- Helpers: fixed UI slowdowns when required font is not found (due to excessive console logging). Now a warning popup is shown and logging is only done once per session.
 
 ## [2.0.0-beta.3] - 2022-03-02
 ### Added
