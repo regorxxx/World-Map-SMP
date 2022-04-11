@@ -80,7 +80,7 @@ function selPoint(point, mask) {
 	query = query_join(query,'AND');
 	// Create autoplaylist
 	if (checkQuery(query)) {
-		console.log('World Map: playlist created '+ query);
+		console.log('World Map: playlist created '+ (query.length > 300 ? query.slice(0, 300) + '...' : query));
 		const name = capitalize(dataId) + ' from '+ point.id + (currentModifier ? ' (+' + capitalizeAll(currentModifier.val.split(',').filter(Boolean).join('/'),'/') + ')' : '');
 		const duplicPl = getPlaylistIndexArray(name);
 		if (duplicPl.length === 1) {
@@ -161,11 +161,11 @@ function tooltip(point) {
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(isoMap.get(point.id.toLowerCase()));
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' - ';
 	text += '\n(L. Click to create Autoplaylist from same country)\n';
-	modifiers.forEach( (mod) => {
-		const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
-		text += _p(mod.description + ' + L. Click forces same ' + tags + ' too') + '\n';
-	});
 	if (!worldMap.properties.panelMode[1]) {
+		modifiers.forEach( (mod) => {
+			const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'),'/');
+			text += _p(mod.description + ' + L. Click forces same ' + tags + ' too') + '\n';
+		});
 		text += '-'.repeat(60);
 		text += '\n(Shift + L. Click on map rewrites locale tag)\n';
 	}
