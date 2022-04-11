@@ -16,10 +16,14 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Helpers: Updated helpers.
+- Network: changed behavior of file recycling logic to check for network drives. Previously, when trying to delete a file on a network drive, a popup would appear asking to permanently delete the file. This is due to network drives not having a Recycle Bin by default on windows. In such case, now the file will be automatically deleted without popups.
+- Logging: playlist query is cut to 300 chars (to speed up UI responsiveness on console logging).
+- Helpers: updated helpers.
 - Helpers: improved sort and query expressions validity checks.
 ### Removed
 ### Fixed
+- Tooltip: playlist modifiers being showed on library mode.
+- Cultural Regions: improved capitalization logic.
 - Helpers: avoid file reading crashing in any case (even if it's locked by another process).
 - Helpers: fixed query checking not working due to upper/lower case mixing in some cases, should now be pretty robust with RegEx.
 - Helpers: fixed UI slowdowns when required font is not found (due to excessive console logging). Now a warning popup is shown and logging is only done once per session.
