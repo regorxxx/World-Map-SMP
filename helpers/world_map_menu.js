@@ -161,7 +161,7 @@ function createMenu() {
 						} else {
 							let bDone = false;
 							if (_isFile(file + backupExt)) {
-								bDone = _recycleFile(file);
+								bDone = _recycleFile(file, true);
 							} else {bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.Name); return;}
 							if (bDone) {
 								bDone = _renameFile(file + backupExt, file);
