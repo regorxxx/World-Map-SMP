@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [2.0.0-beta.3](#200-beta3---2020-03-02)
+- [2.0.1(#201---2020-04-13)
 - [2.0.0-beta.2](#200-beta2---2021-12-30)
 - [2.0.0-beta.1](#200-beta1---2021-12-23)
 - [1.2.2](#122---2021-06-21)
@@ -14,6 +14,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.0.1] - 2022-04-13
 ### Added
 ### Changed
 - Network: changed behavior of file recycling logic to check for network drives. Previously, when trying to delete a file on a network drive, a popup would appear asking to permanently delete the file. This is due to network drives not having a Recycle Bin by default on windows. In such case, now the file will be automatically deleted without popups.
@@ -155,7 +161,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.3...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.3...v2.0.1
 [2.0.0-beta.3]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.2...v2.0.0-beta.3
 [2.0.0-beta.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.1...v2.0.0-beta.2
 [2.0.0-beta.1]: https://github.com/regorxxx/World-Map-SMP/compare/v1.2.2...v2.0.0-beta.1
