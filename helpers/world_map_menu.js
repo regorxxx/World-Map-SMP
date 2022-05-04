@@ -1,5 +1,5 @@
 'use strict';
-//04/02/22
+//04/05/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -92,15 +92,15 @@ function createMenu() {
 								} else {
 									if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
 								}
-							} else { // 1.2.X: requires no further changes
-								let answer = WshShell.Popup('Found WilB\'s Biography 1.2.X which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (worldMap.properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
+							} else { // 1.2.0+: requires no further changes
+								let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (worldMap.properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
 								if (answer === popup.yes) {
 									// Change config
 									worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
 									worldMap.properties.bEnabledBiography[1] = worldMap.properties.bInstalledBiography[1];
 									overwriteProperties(worldMap.properties); // Updates panel
 									syncBio(false); // Sync selection and enable notify tags
-									window.NotifyOthers('bio_refresh', null);  // Reload panel  Biograpy 1.2.X
+									window.NotifyOthers('bio_refresh', null);  // Reload panel  Biography 1.2.0+
 									return;
 								}
 							}
@@ -201,7 +201,7 @@ function createMenu() {
 				overwriteProperties(worldMap.properties); // Updates panel
 				syncBio(false); // Sync selection and enable notify tags
 				window.NotifyOthers('refresh_bio', null);  // Reload panel Biography 1.1.X
-				window.NotifyOthers('bio_refresh', null);  // Reload panel Biography 1.2.X
+				window.NotifyOthers('bio_refresh', null);  // Reload panel Biography 1.2.0+
 			}});
 		}
 		menu.newEntry({entryText: 'sep'});
