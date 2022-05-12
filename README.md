@@ -37,7 +37,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 ![Animation6](https://user-images.githubusercontent.com/83307074/116752378-03c11800-a9f5-11eb-9971-b3eff6e8d0fa.gif)
 
 # Installation
-See [_TIPS and INSTALLATION (txt)](https://github.com/regorxxx/Playlist-Manager-SMP/blob/main/_TIPS%20and%20INSTALLATION.txt) and the [Wiki](https://github.com/regorxxx/Playlist-Manager-SMP/wiki/Installation).
+See [_TIPS and INSTALLATION (txt)](https://github.com/regorxxx/World-Map-SMP/blob/main/_TIPS%20and%20INSTALLATION.txt) and the [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki/Installation).
 Not properly following the installation instructions will result in scripts not working as intended. Please don't report errors before checking this.
 
 [changelog]: CHANGELOG.md
