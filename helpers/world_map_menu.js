@@ -1,5 +1,5 @@
 'use strict';
-//04/05/22
+//12/05/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -68,7 +68,7 @@ function createMenu() {
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabledBiography'][1] ? 0 : 1);});
 			menu.newEntry({menuName, entryText: 'sep'});
-			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall mod (reverts changes)' : 'Install mod (required to enable)');}, func: () => {
+			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)');}, func: () => {
 				let  foundArr = [];
 				// Biography 1.2.X
 				// There are 2 paths here: beta versions require some file changes, while the 1.2.0+ releases work as is
