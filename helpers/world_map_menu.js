@@ -127,7 +127,7 @@ function createMenu() {
 				}
 				// Select files to edit
 				let input = '';
-				if (foundArr.length) {fb.ShowPopupMessage('Found these files:\n' + foundArr.map((_, idx) => {return '\n' + (idx + 1) + ': ' + _.path + '  (' + _.ver + ')';}).join(''), window.Name);}
+				if (foundArr.length) {fb.ShowPopupMessage('Found these files:\n' + foundArr.map((script, idx) => {return '\n' + (idx + 1) + ': ' + script.path + '  (' + script.ver + ')';}).join(''), window.Name);}
 				else {fb.ShowPopupMessage('WilB\'s ' + (worldMap.properties.bInstalledBiography[1] ? 'modified ' : '') +'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + worldMap.properties.bInstalledBiography[0] + '\'', window.Name); return;}
 				try {input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, window.Name);}
 				catch (e) {return;}
@@ -193,7 +193,7 @@ function createMenu() {
 					}
 				});
 				// Report
-				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.map((_) => {return _.path + '  (' + _.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
+				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.map((script) => {return script.path + '  (' + script.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
 				else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
 				// Change config
 				worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
