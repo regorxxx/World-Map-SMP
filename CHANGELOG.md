@@ -16,6 +16,7 @@
 
 ## [Unreleased][]
 ### Added
+- UI: added presets to easily switch all the colors on the UI at the same time to pre-defined sets. Also added specific presets for Color Blindness (deuteranopia) and Grey Scale to improve accessibility.
 ### Changed
 - Helpers: updated helpers.
 ### Removed

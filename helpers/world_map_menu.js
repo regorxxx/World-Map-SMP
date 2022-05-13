@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/05/22
+//13/05/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -9,6 +9,7 @@ include('helpers_xxx_playlists.js');
 const menu = new _menu();
 
 function createMenu() {
+	const properties = worldMap.properties;
 	menu.clear(true); // Reset on every call
 	{	
 		{	// Enabled?
@@ -18,13 +19,13 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (worldMap.properties['bEnabled'][1] === mode.val) {return;}
-					worldMap.properties['bEnabled'][1] = mode.val; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
+					if (properties['bEnabled'][1] === mode.val) {return;}
+					properties['bEnabled'][1] = mode.val; // And update property with new value
+					overwriteProperties(properties); // Updates panel
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabled'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties['bEnabled'][1] ? 0 : 1);});
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
@@ -33,10 +34,10 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode, idx) => {
 				menu.newEntry({menuName, entryText: mode, func: () => {
-					if (worldMap.properties['panelMode'][1] === idx) {return;}
-					worldMap.properties['panelMode'][1] = idx; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
-					if (worldMap.properties['panelMode'][1]) {
+					if (properties['panelMode'][1] === idx) {return;}
+					properties['panelMode'][1] = idx; // And update property with new value
+					overwriteProperties(properties); // Updates panel
+					if (properties['panelMode'][1]) {
 						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
 					} else {
 						fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
@@ -46,29 +47,29 @@ function createMenu() {
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return worldMap.properties['panelMode'][1];});
+			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties['panelMode'][1];});
 		}
 		{	// Enabled Biography?
-			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), worldMap.properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
 			const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
 			menu.newEntry({menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (worldMap.properties['bEnabledBiography'][1] === mode.val) {return;}
+					if (properties['bEnabledBiography'][1] === mode.val) {return;}
 					if (mode.val) { // Warning check
 						let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					worldMap.properties['bEnabledBiography'][1] = mode.val; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
+					properties['bEnabledBiography'][1] = mode.val; // And update property with new value
+					overwriteProperties(properties); // Updates panel
 					syncBio(true); // Sync selection and enable notify tags
 					window.Repaint();
-				}, flags: () => {return (worldMap.properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
+				}, flags: () => {return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (worldMap.properties['bEnabledBiography'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties['bEnabledBiography'][1] ? 0 : 1);});
 			menu.newEntry({menuName, entryText: 'sep'});
-			menu.newEntry({menuName, entryText: () => {return (worldMap.properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)');}, func: () => {
+			menu.newEntry({menuName, entryText: () => {return (properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)');}, func: () => {
 				let  foundArr = [];
 				// Biography 1.2.X
 				// There are 2 paths here: beta versions require some file changes, while the 1.2.0+ releases work as is
@@ -87,18 +88,18 @@ function createMenu() {
 							if (packageText.version === '1.2.0-Beta.1' || packageText.version === '1.2.0-Beta.2') {
 								const fileText = _open(packageFile);
 								if (!fileText.length) {return;}
-								if (!worldMap.properties.bInstalledBiography[1]) {
+								if (!properties.bInstalledBiography[1]) {
 									if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
 								} else {
 									if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
 								}
 							} else { // 1.2.0+: requires no further changes
-								let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (worldMap.properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
+								let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
 								if (answer === popup.yes) {
 									// Change config
-									worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
-									worldMap.properties.bEnabledBiography[1] = worldMap.properties.bInstalledBiography[1];
-									overwriteProperties(worldMap.properties); // Updates panel
+									properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
+									properties.bEnabledBiography[1] = properties.bInstalledBiography[1];
+									overwriteProperties(properties); // Updates panel
 									syncBio(false); // Sync selection and enable notify tags
 									window.NotifyOthers('bio_refresh', null);  // Reload panel  Biography 1.2.0+
 									return;
@@ -117,7 +118,7 @@ function createMenu() {
 						const fileText = _open(file);
 						if (!fileText.length) {return;}
 						if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
-							if (!worldMap.properties.bInstalledBiography[1]) {
+							if (!properties.bInstalledBiography[1]) {
 								if (fileText.indexOf(modText) === -1) {foundArr.push({path: file, ver: '1.1.X'});} // When installing, look for not modified script
 							} else {
 								if (fileText.indexOf(modText) !== -1) {foundArr.push({path: file, ver: '1.1.X'});} // Otherwise, look for the mod string
@@ -128,7 +129,7 @@ function createMenu() {
 				// Select files to edit
 				let input = '';
 				if (foundArr.length) {fb.ShowPopupMessage('Found these files:\n' + foundArr.map((script, idx) => {return '\n' + (idx + 1) + ': ' + script.path + '  (' + script.ver + ')';}).join(''), window.Name);}
-				else {fb.ShowPopupMessage('WilB\'s ' + (worldMap.properties.bInstalledBiography[1] ? 'modified ' : '') +'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + worldMap.properties.bInstalledBiography[0] + '\'', window.Name); return;}
+				else {fb.ShowPopupMessage('WilB\'s ' + (properties.bInstalledBiography[1] ? 'modified ' : '') +'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + properties.bInstalledBiography[0] + '\'', window.Name); return;}
 				try {input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, window.Name);}
 				catch (e) {return;}
 				if (!input.trim().length) {return;}
@@ -145,7 +146,7 @@ function createMenu() {
 					const folderPath = utils.SplitFilePath(file)[0];
 					console.log('World Map: Editing file ' + file);
 					if (selected.ver  === '1.1.X') { // Biography 1.1.X
-						if (!worldMap.properties.bInstalledBiography[1]) {
+						if (!properties.bInstalledBiography[1]) {
 							if (!_isFile(file + backupExt)) {
 								bDone = _copyFile(file, file + backupExt);
 							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
@@ -169,7 +170,7 @@ function createMenu() {
 							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return;}
 						}
 					} else { // Biography 1.2.0 Beta 1 & 2
-						if (!worldMap.properties.bInstalledBiography[1]) {
+						if (!properties.bInstalledBiography[1]) {
 							if (!_isFile(file + backupExt)) {
 								bDone = _copyFile(file, file + backupExt);
 							} else {bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return;}
@@ -196,9 +197,9 @@ function createMenu() {
 				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.map((script) => {return script.path + '  (' + script.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
 				else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
 				// Change config
-				worldMap.properties.bInstalledBiography[1] = !worldMap.properties.bInstalledBiography[1];
-				worldMap.properties.bEnabledBiography[1] = worldMap.properties.bInstalledBiography[1];
-				overwriteProperties(worldMap.properties); // Updates panel
+				properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
+				properties.bEnabledBiography[1] = properties.bInstalledBiography[1];
+				overwriteProperties(properties); // Updates panel
 				syncBio(false); // Sync selection and enable notify tags
 				window.NotifyOthers('refresh_bio', null);  // Reload panel Biography 1.1.X
 				window.NotifyOthers('bio_refresh', null);  // Reload panel Biography 1.2.0+
@@ -206,25 +207,25 @@ function createMenu() {
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Selection mode
-			const menuName = menu.newMenu('Selection mode', void(0), worldMap.properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('Selection mode', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
 			const options = selMode;
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode, func: () => {
-					if (worldMap.properties['selection'][1] === mode) {return;}
-					if (worldMap.properties['bInstalledBiography'][1] && worldMap.properties['bEnabledBiography'][1]) { // Warning check
+					if (properties['selection'][1] === mode) {return;}
+					if (properties['bInstalledBiography'][1] && properties['bEnabledBiography'][1]) { // Warning check
 						let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					worldMap.properties['selection'][1] = mode; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
+					properties['selection'][1] = mode; // And update property with new value
+					overwriteProperties(properties); // Updates panel
 					// When ppt.focus is true, then selmode is selMode[0]
-					if (worldMap.properties.bEnabledBiography[1]) { // synchronize selection property
+					if (properties.bEnabledBiography[1]) { // synchronize selection property
 						syncBio(true); // Sync selection and enable notify tags
 					}
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  (args = worldMap.properties) => {return options.indexOf(worldMap.properties['selection'][1]);});
+			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  (args = properties) => {return options.indexOf(properties['selection'][1]);});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Modifier tags
@@ -232,13 +233,13 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			modifiers.forEach( (mod, index) => {
-				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + worldMap.properties[mod.tag][1], func: () => {
+				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + properties[mod.tag][1], func: () => {
 					let input = '';
-					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, worldMap.properties[mod.tag][1], true);} 
+					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
 					catch(e) {return;}
 					if (!input.length) {return;}
-					worldMap.properties[mod.tag][1] = input; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
+					properties[mod.tag][1] = input; // And update property with new value
+					overwriteProperties(properties); // Updates panel
 				}});
 			});
 		}
@@ -262,8 +263,8 @@ function createMenu() {
 							catch (e) {return;}
 							if (!input.length) {return;}
 							worldMap.imageMapPath = input;
-							worldMap.properties.imageMapPath[1] = input; // And update property with new value
-							overwriteProperties(worldMap.properties); // Updates panel
+							properties.imageMapPath[1] = input; // And update property with new value
+							overwriteProperties(properties); // Updates panel
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
 							worldMap.init();
@@ -272,10 +273,10 @@ function createMenu() {
 							worldMap.imageMapPath = map.path;
 							worldMap.factorX = map.factorX;
 							worldMap.factorY = map.factorY;
-							worldMap.properties.imageMapPath[1] = map.path; // And update property with new value
-							worldMap.properties.factorX[1] = map.factorX;
-							worldMap.properties.factorY[1] = map.factorY;
-							overwriteProperties(worldMap.properties); // Updates panel
+							properties.imageMapPath[1] = map.path; // And update property with new value
+							properties.factorX[1] = map.factorX;
+							properties.factorY[1] = map.factorY;
+							overwriteProperties(properties); // Updates panel
 							worldMap.init();
 							window.Repaint();
 						}
@@ -296,12 +297,12 @@ function createMenu() {
 				options.forEach( (coord) => {
 					menu.newEntry({menuName, entryText: coord.text,  func: () => {
 						let input = -1;
-						try {input = Number(utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, worldMap.properties[coord.val][1], true));} 
+						try {input = Number(utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, properties[coord.val][1], true));} 
 						catch (e) {return;}
 						if (!Number.isSafeInteger(input)) {return;}
 						worldMap[coord.val] = input;
-						worldMap.properties[coord.val][1] = input; // And update property with new value
-						overwriteProperties(worldMap.properties); // Updates panel
+						properties[coord.val][1] = input; // And update property with new value
+						overwriteProperties(properties); // Updates panel
 						worldMap.clearPointCache();
 						window.Repaint();
 					}});
@@ -318,8 +319,8 @@ function createMenu() {
 						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
 							worldMap.customPanelColorMode = i;
 							// Update property to save between reloads
-							worldMap.properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
-							overwriteProperties(worldMap.properties);
+							properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
+							overwriteProperties(properties);
 							worldMap.coloursChanged();
 							window.Repaint();
 						}});
@@ -329,11 +330,11 @@ function createMenu() {
 					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
 						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
 						// Update property to save between reloads
-						worldMap.properties['customPanelColor'][1] = worldMap.panelColor;
-						overwriteProperties(worldMap.properties);
+						properties['customPanelColor'][1] = worldMap.panelColor;
+						overwriteProperties(properties);
 						worldMap.coloursChanged();
 						window.Repaint();
-					}, flags: worldMap.properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
+					}, flags: properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
 				}
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
@@ -341,31 +342,66 @@ function createMenu() {
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
-							worldMap.defaultColor = i === 1 ? worldMap.properties.customPointColor[1] : 0xFF00FFFF;
+							worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : 0xFF00FFFF;
 							// Update property to save between reloads
-							worldMap.properties.customPointColorMode[1] = i;
-							overwriteProperties(worldMap.properties);
+							properties.customPointColorMode[1] = i;
+							overwriteProperties(properties);
 							window.Repaint();
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.properties.customPointColorMode[1];});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customPointColorMode[1];});
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
 						worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
 						// Update property to save between reloads
-						worldMap.properties['customPointColor'][1] = worldMap.defaultColor;
-						overwriteProperties(worldMap.properties);
+						properties.customPointColor[1] = worldMap.defaultColor;
+						overwriteProperties(properties);
 						window.Repaint();
-					}, flags: worldMap.properties['customPointColorMode'][1] === 1 ? MF_STRING : MF_GRAYED,});
+					}, flags: properties.customPointColorMode[1] === 1 ? MF_STRING : MF_GRAYED,});
 				}
 				{	// Text color
 					menu.newEntry({menuName, entryText: 'Text...', func: () => {
 						worldMap.textColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
 						// Update property to save between reloads
-						worldMap.properties.customLocaleColor[1] = worldMap.textColor;
-						overwriteProperties(worldMap.properties);
+						properties.customLocaleColor[1] = worldMap.textColor;
+						overwriteProperties(properties);
 						window.Repaint();
 					}});
+				}
+				menu.newEntry({menuName, entryText: 'sep'});
+				{	// Presets
+					const subMenuName = menu.newMenu('Presets...', menuName);
+					const presets = [ /*[text, points, background ]*/
+						{name: 'Color Blindness (light)', colors: [colorBlind.black[2], colorBlind.yellow[1], colorBlind.white[0]]},
+						{name: 'Color Blindness (dark)', colors: [colorBlind.white[0], colorBlind.yellow[1], colorBlind.black[2]]},
+						{name: 'sep'},
+						{name: 'Gray Scale (dark)', colors: [colorBlind.white[0], colorBlind.black[2], colorBlind.black[0]]},
+						{name: 'sep'},
+						{name: 'Dark theme (red)', colors: [RGB(255,255,255), RGB(236,47,47), RGB(0,0,0)]},
+						{name: 'sep'},
+						{name: 'Default', colors: [RGB(255,255,255)]}
+					];
+					presets.forEach((preset) => {
+						if (preset.name.toLowerCase() === 'sep') {menu.newEntry({menuName: subMenuName, entryText: 'sep'}); return;}
+						menu.newEntry({menuName: subMenuName, entryText: preset.name, func: () => {
+							if (preset.name.toLowerCase() === 'default') {
+								worldMap.textColor  = preset.colors[0];
+								properties.customPointColorMode[1] = 0;
+								properties.customPanelColorMode[1] = worldMap.customPanelColorMode = 0;
+							}
+							else {
+								[worldMap.textColor, worldMap.defaultColor, worldMap.panelColor]  = preset.colors;
+								properties.customPointColorMode[1] = 1;
+								properties.customPanelColorMode[1] = worldMap.customPanelColorMode = 2;
+								properties.customPointColor[1] = worldMap.defaultColor;
+								properties.customPanelColor[1] = worldMap.panelColor;
+							}
+							properties.customLocaleColor[1] =  worldMap.textColor;
+							overwriteProperties(properties);
+							worldMap.coloursChanged();
+							window.Repaint();
+						}});
+					});
 				}
 			}
 			{
@@ -377,16 +413,16 @@ function createMenu() {
 						menu.newEntry({menuName, entryText: item, func: () => {
 							if (i === optionsLength - 1) {
 								let input = '';
-								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, worldMap.properties.customPointSize[1], true));} 
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));} 
 								catch(e) {return;}
 								if (Number.isNaN(input)) {return;}
-								worldMap.properties.customPointSize[1] = input;
-							} else {worldMap.properties.customPointSize[1] = item;}
-							if (worldMap.properties.customPointSize[1] === worldMap.pointSize) {return;}
-							worldMap.pointSize = worldMap.properties.customPointSize[1];
-							worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+								properties.customPointSize[1] = input;
+							} else {properties.customPointSize[1] = item;}
+							if (properties.customPointSize[1] === worldMap.pointSize) {return;}
+							worldMap.pointSize = properties.customPointSize[1];
+							worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 							window.Repaint();
-							overwriteProperties(worldMap.properties);
+							overwriteProperties(properties);
 						}});
 					});
 					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
@@ -395,12 +431,12 @@ function createMenu() {
 					});
 					menu.newEntry({menuName, entryText: 'sep'});
 					menu.newEntry({menuName, entryText: 'Fill the circle? (point shape)', func: () => {
-						worldMap.properties.bPointFill[1] = !worldMap.properties.bPointFill[1];
-						worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+						properties.bPointFill[1] = !properties.bPointFill[1];
+						worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 						window.Repaint();
-						overwriteProperties(worldMap.properties);
+						overwriteProperties(properties);
 					}});
-					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return worldMap.properties.bPointFill[1];});
+					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return properties.bPointFill[1];});
 				}
 				
 				{	// Text size
@@ -411,65 +447,65 @@ function createMenu() {
 						menu.newEntry({menuName, entryText: item, func: () => {
 							if (i === optionsLength - 1) {
 								let input = '';
-								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, worldMap.properties.customPointSize[1], true));} 
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));} 
 								catch(e) {return;}
 								if (Number.isNaN(input)) {return;}
-								worldMap.properties.fontSize[1] = input;
-							} else {worldMap.properties.fontSize[1] = item;}
-							if (worldMap.properties.fontSize[1] === worldMap.fontSize) {return;}
-							worldMap.fontSize = worldMap.properties.fontSize[1];
+								properties.fontSize[1] = input;
+							} else {properties.fontSize[1] = item;}
+							if (properties.fontSize[1] === worldMap.fontSize) {return;}
+							worldMap.fontSize = properties.fontSize[1];
 							worldMap.calcScale(window.Width, window.Height);
 							window.Repaint();
-							overwriteProperties(worldMap.properties);
+							overwriteProperties(properties);
 						}});
 					});
 					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
-						const idx = options.indexOf(worldMap.properties.fontSize[1]);
+						const idx = options.indexOf(properties.fontSize[1]);
 						return (idx !== -1 ? idx : optionsLength - 1);
 					});
 				}
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			menu.newEntry({menuName: menuUI, entryText: 'Show current country header?', func: () => {
-				worldMap.properties.bShowLocale[1] = !worldMap.properties.bShowLocale[1];
+				properties.bShowLocale[1] = !properties.bShowLocale[1];
 				window.Repaint();
-				overwriteProperties(worldMap.properties);
+				overwriteProperties(properties);
 			}});
-			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return worldMap.properties.bShowLocale[1];});
+			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return properties.bShowLocale[1];});
 			menu.newEntry({menuName: menuUI, entryText: 'Show flag on header?', func: () => {
-				worldMap.properties.bShowFlag[1] = !worldMap.properties.bShowFlag[1];
+				properties.bShowFlag[1] = !properties.bShowFlag[1];
 				window.Repaint();
-				overwriteProperties(worldMap.properties);
-			}, flags: worldMap.properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
-			menu.newCheckMenu(menuUI, 'Show flag on header?', void(0), () => {return worldMap.properties.bShowFlag[1];});
+				overwriteProperties(properties);
+			}, flags: properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
+			menu.newCheckMenu(menuUI, 'Show flag on header?', void(0), () => {return properties.bShowFlag[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Write tags?
-			const menuName = menu.newMenu('Write tags on playback', void(0), worldMap.properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('Write tags on playback', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
 			menu.newEntry({menuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			const options = [{text: 'No (read only from tags, online or json)', val: 0}, {text: 'Yes, when tag has not been already set on track', val: 1}, {text: 'Yes, as json (for internal use on the script)', val: 2}];
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (worldMap.properties['iWriteTags'][1] === mode.val) {return;}
+					if (properties['iWriteTags'][1] === mode.val) {return;}
 					if (mode.val) { // Warning check
 						let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					worldMap.properties['iWriteTags'][1] = mode.val; // And update property with new value
-					overwriteProperties(worldMap.properties); // Updates panel
+					properties['iWriteTags'][1] = mode.val; // And update property with new value
+					overwriteProperties(properties); // Updates panel
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return worldMap.properties['iWriteTags'][1];});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return properties['iWriteTags'][1];});
 			menu.newEntry({menuName, entryText: 'sep', func: null});
 			menu.newEntry({menuName, entryText: 'Show data folder', func: () => {
-				_explorer(worldMap.properties.fileName[1]);
-			}, flags: () => {return _isFile(worldMap.properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
+				_explorer(properties.fileName[1]);
+			}, flags: () => {return _isFile(properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
 		}
 		{	// Database
-			const menuDatabase = menu.newMenu('Database', void(0), () => {return (worldMap.properties['iWriteTags'][1] >= 1 ? MF_STRING : MF_GRAYED)});
+			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties['iWriteTags'][1] >= 1 ? MF_STRING : MF_GRAYED)});
 			{
-				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (worldMap.properties['iWriteTags'][1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (properties['iWriteTags'][1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Find artists without locale tags...', func: () => {
 					const notFoundList = new FbMetadbHandleList();
@@ -478,11 +514,11 @@ function createMenu() {
 					handleList.Convert().forEach((handle) => {
 						const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
 						if (jsonId.length && !jsonIdList.has(jsonId)) {
-							if (worldMap.properties['iWriteTags'][1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
+							if (properties['iWriteTags'][1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
 								notFoundList.Add(handle);
 								jsonIdList.add(jsonId);
-							} else if (worldMap.properties['iWriteTags'][1] === 1) { // Check if tag exists on file
-								const tagName = worldMap.properties.writeToTag[1];
+							} else if (properties['iWriteTags'][1] === 1) { // Check if tag exists on file
+								const tagName = properties.writeToTag[1];
 								const tfo = _bt(tagName);
 								if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
 									notFoundList.Add(handle);
@@ -518,18 +554,18 @@ function createMenu() {
 						});
 					}
 					if (countN || countO) {
-						saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
+						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
 						window.Repaint();
 					}
 					console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
-				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED);}});
+				}, flags: () => {return (properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED);}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
 					let countO = 0;
 					const handleList = fb.GetLibraryItems();
 					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
-					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
+					const tag = getTagsValuesV3(handleList, [properties.writeToTag[1]], true); // locale
 					handleList.Convert().forEach((handle, i) => {
 						if (jsonId[i] && jsonId[i].length) {
 							if (tag[i] && tag[i].length && tag[i].filter(Boolean).length) { // Only merge if not empty
@@ -546,7 +582,7 @@ function createMenu() {
 						}
 					});
 					if (countN || countO) {
-						saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
+						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
 						window.Repaint();
 					}
 					console.log('World Map: writing file tags to database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
@@ -557,7 +593,7 @@ function createMenu() {
 					let countO = 0;
 					const handleList = fb.GetLibraryItems();
 					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
-					const tag = getTagsValuesV3(handleList, [worldMap.properties.writeToTag[1]], true); // locale
+					const tag = getTagsValuesV3(handleList, [properties.writeToTag[1]], true); // locale
 					const newData = worldMap.getData();
 					if (newData && newData.length) {
 						handleList.Convert().forEach((handle, i) => {
@@ -565,10 +601,10 @@ function createMenu() {
 								newData.forEach((data) => {
 									if (data[worldMap.jsonId] === jsonId[i] && data.val && data.val.length && data.val.filter(Boolean).length) {
 										if (!tag[i] || !tag[i].length || !tag[i].filter(Boolean).length) {
-											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[worldMap.properties.writeToTag[1]]: data.val}]));
+											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[properties.writeToTag[1]]: data.val}]));
 											countN++;
 										} else if (answer === popup.yes && !isArrayEqual(data.val, tag[i])) {
-											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[worldMap.properties.writeToTag[1]]: data.val}]));
+											new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{[properties.writeToTag[1]]: data.val}]));
 											countO++;
 										}
 									}
@@ -582,9 +618,9 @@ function createMenu() {
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Update library database...', func: () => {
 					fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
-					saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
+					saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 					console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
-				}, flags: () => {return (worldMap.properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
+				}, flags: () => {return (properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
 				menu.newEntry({entryText: 'sep'});
 			}
 		}
@@ -602,10 +638,10 @@ function createMenu() {
 
 function syncBio (bReload = false) {
 	// Biograpy 1.1.X
-	window.NotifyOthers(window.Name + ' notifySelectionProperty', worldMap.properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
+	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
 	// Biograpy 1.2.X
-	window.NotifyOthers('bio_focusPpt', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.0 Beta
-	window.NotifyOthers('bio_followSelectedTrack', worldMap.properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.X
+	window.NotifyOthers('bio_focusPpt', properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.0 Beta
+	window.NotifyOthers('bio_followSelectedTrack', properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
