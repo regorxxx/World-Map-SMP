@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.3](#203---2020-05-19)
 - [2.0.2](#202---2020-05-04)
 - [2.0.1](#201---2020-04-13)
 - [2.0.0-beta.2](#200-beta2---2021-12-30)
@@ -15,6 +16,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.0.3] - 2022-05-19
 ### Added
 - UI: added presets to easily switch all the colors on the UI at the same time to pre-defined sets. Also added specific presets for Color Blindness (deuteranopia) and Grey Scale to improve accessibility.
 ### Changed
@@ -171,7 +178,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.3...HEAD
+[2.0.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.3...v2.0.1
 [2.0.0-beta.3]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.0-beta.2...v2.0.0-beta.3
