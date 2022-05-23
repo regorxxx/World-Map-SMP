@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/02/22
+//23/05/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -221,7 +221,7 @@ function imageMap({
 				this.lastPoint.forEach( (last) => {
 					if (foundId.length) {return;}
 					const point = this.point[last.id];
-					if (point.xScaled === -1 || point.yScaled === -1) {return;}
+					if (!point || point.xScaled === -1 || point.yScaled === -1) {return;}
 					const xMax = point.xScaled + _gr.CalcTextWidth(point.id, this.gFont), xMin = point.xScaled;
 					const yMax = point.yScaled + _gr.CalcTextHeight(point.id, this.gFont), yMin = point.yScaled;
 					if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {foundId = last.id;}  // On circle?
@@ -233,7 +233,7 @@ function imageMap({
 				this.lastPoint.forEach( (last) => {
 					if (foundId.length) {return;}
 					const point = this.point[last.id];
-					if (point.xScaled === -1 || point.yScaled === -1) {return;}
+					if (!point || point.xScaled === -1 || point.yScaled === -1) {return;}
 					const o = Math.abs(y - point.yScaled), h = (o**2 + (x - point.xScaled)**2)**(1/2), tetha = Math.asin(o/h);
 					const rx = this.pointSize * this.scale * Math.cos(tetha), ry = this.pointSize * this.scale * Math.sin(tetha);
 					const xMax = point.xScaled + rx + this.pointLineSize * this.scale, xMin = point.xScaled - rx - this.pointLineSize * this.scale;

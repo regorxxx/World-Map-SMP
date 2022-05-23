@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/05/22
+//23/05/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -637,6 +637,7 @@ function createMenu() {
 }
 
 function syncBio (bReload = false) {
+	const properties = worldMap.properties;
 	// Biograpy 1.1.X
 	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
 	// Biograpy 1.2.X
