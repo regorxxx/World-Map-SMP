@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [2.0.3](#203---2020-05-19)
+- [2.0.3](#203---2020-05-23)
 - [2.0.2](#202---2020-05-04)
 - [2.0.1](#201---2020-04-13)
 - [2.0.0-beta.2](#200-beta2---2021-12-30)
@@ -21,7 +21,7 @@
 ### Removed
 ### Fixed
 
-## [2.0.3] - 2022-05-19
+## [2.0.3] - 2022-05-23
 ### Added
 - UI: added presets to easily switch all the colors on the UI at the same time to pre-defined sets. Also added specific presets for Color Blindness (deuteranopia) and Grey Scale to improve accessibility.
 ### Changed
