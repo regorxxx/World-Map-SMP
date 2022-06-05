@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/02/22
+//05/02/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefineScript('World Map', {author:'XXX', version: '2.0.0', features: {drag_n_drop: false}});
+window.DefineScript('World Map', {author:'XXX', version: '2.0.4', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -53,6 +53,8 @@ include('helpers\\music_graph_descriptors_xxx_countries.js');
 include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
 include('helpers\\world_map_flags.js');
+
+checkCompatible('1.6.1');
 
 /* 
 	Properties 
