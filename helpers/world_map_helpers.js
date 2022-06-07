@@ -176,7 +176,7 @@ function tooltip(point) {
 function tooltipFindPoint(foundPoints) { 
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (!sel || !sel.Count) {return;}
-	let text = foundPoints.map((point) => {return  formatCountry(point.key) + _p(point.prox + '%');}).join(', ');
+	let text = foundPoints.map((point) => {return  formatCountry(point.key) + ' ' + _p(point.prox + '%');}).join(', ');
 	text += '\n(L. Click to add locale tag to current track(s))';
 	return text;
 }
@@ -189,7 +189,7 @@ function biographyCheck(prop) {
 
 // Capitalize names
 function formatCountry(country) {
-	return capitalizeAll(country, [' ', '.']).replace(' And ', ' and ').replace(' Of ', ' of ').replace(' Da ', ' da ').replace(' The ', ' the ').replace(' The', ' the').replace(', the', ', The');
+	return capitalizeAll(country, /([-(),/: .])/g, false).replace(' And ', ' and ').replace(' Of ', ' of ').replace(' Of', ' of').replace(' Da ', ' da ').replace(' The ', ' the ').replace(' The', ' the').replace(', the', ', The');
 }
 
 // Retrieve all tags from database for current library

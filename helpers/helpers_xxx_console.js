@@ -79,3 +79,31 @@ if (conLog && conLog.length && conLogMaxSize && console.log) {
 	};
 	console.checkSize();
 }
+
+// Rewrap FbProfiler to expose Name variable
+if (FbProfiler.prototype) {
+	const oldProto = FbProfiler.prototype;
+	const oldFunc = FbProfiler;
+	FbProfiler = function(name) {
+		const obj = oldFunc(name);
+		obj.Name = name;
+		return obj;
+	};
+	FbProfiler.prototype = oldProto;
+}
+
+// Rewrap FbProfiler to also log to file
+if (FbProfiler.prototype.Print) {
+	FbProfiler.prototype.PrintUI = FbProfiler.prototype.Print;
+	FbProfiler.prototype.Print = function(additionalMsgopt = '', printComponentInfoopt = true) {
+		this.PrintUI(additionalMsgopt, printComponentInfoopt);
+		// Recreate the message format
+		let message = '';
+		if (printComponentInfoopt) {message += 'Spider Monkey Panel v' + utils.Version + ': ';}
+		message += 'profiler (' + this.Name + '): ';
+		if (additionalMsgopt && additionalMsgopt.length) {message += additionalMsgopt + ' ';}
+		message += this.Time + 'ms';
+		consoleLog(message);
+	};
+	console.checkSize();
+}

@@ -29,6 +29,7 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- Fixed capitalization (bug introduced on 2.0.1).
 
 ## [2.0.3] - 2022-05-23
 ### Added
