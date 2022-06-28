@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/05/22
+//09/06/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -41,7 +41,7 @@ function imageMap({
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 		}
 	}
-	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor}) => { // on_paint
+	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false}) => { // on_paint
 		this.paintBg(gr);
 		var toPaintArr = [];
 		// When moving mouse, retrieve last points
@@ -125,24 +125,26 @@ function imageMap({
 				// Draw points
 				const point = this.point[id];
 				if (point) {
-					switch (this.pointShape) {
-						case 'string' : {
-							const textW = gr.CalcTextWidth(toPaint.id, this.gFont);
-							const textH = gr.CalcTextHeight(toPaint.id, this.gFont);
-							const offsetX = 7 * this.scale;
-							const offsetY = 7 * this.scale;
-							gr.FillGradRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 90, this.backgroundTagColor1, this.backgroundTagColor2);
-							gr.DrawRoundRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 2 * this.scale, 2 * this.scale, 2, 0xAAA9A9A9);
-							gr.GdiDrawText(toPaint.id, this.gFont, this.idSelected === id ? selectionColor : color, point.xScaled, point.yScaled + offsetY, textW, textH, DT_NOPREFIX);
-							break;
-						}
-						case 'circle':
-						default : {
-							gr.DrawEllipse(point.xScaled, point.yScaled, this.pointSize * this.scale, this.pointSize * this.scale, this.pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
-							if (bShowSize && toPaint.val > 1) { // Show count on map?
-								gr.GdiDrawText(toPaint.val, this.gFont, this.textColor, point.xScaled - this.pointSize * this.scale, point.yScaled + this.pointLineSize * this.scale / 2, 40, 40);
+					if (!bOverridePaintSel) {
+						switch (this.pointShape) {
+							case 'string' : {
+								const textW = gr.CalcTextWidth(toPaint.id, this.gFont);
+								const textH = gr.CalcTextHeight(toPaint.id, this.gFont);
+								const offsetX = 7 * this.scale;
+								const offsetY = 7 * this.scale;
+								gr.FillGradRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 90, this.backgroundTagColor1, this.backgroundTagColor2);
+								gr.DrawRoundRect(point.xScaled - offsetX, point.yScaled + offsetY, textW + offsetX * 2, textH, 2 * this.scale, 2 * this.scale, 2, 0xAAA9A9A9);
+								gr.GdiDrawText(toPaint.id, this.gFont, this.idSelected === id ? selectionColor : color, point.xScaled, point.yScaled + offsetY, textW, textH, DT_NOPREFIX);
+								break;
 							}
-							break;
+							case 'circle':
+							default : {
+								gr.DrawEllipse(point.xScaled, point.yScaled, this.pointSize * this.scale, this.pointSize * this.scale, this.pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
+								if (bShowSize && toPaint.val > 1) { // Show count on map?
+									gr.GdiDrawText(toPaint.val, this.gFont, this.textColor, point.xScaled - this.pointSize * this.scale, point.yScaled + this.pointLineSize * this.scale / 2, 40, 40);
+								}
+								break;
+							}
 						}
 					}
 					this.lastPoint.push({...toPaint}); // Add to list
@@ -268,11 +270,12 @@ function imageMap({
 				if (!this.lastPoint.length || mask === MK_SHIFT) {  // Add tag selecting directly from map (can be forced with shift)
 					const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
 					if (found && found.length) {
+						this.foundPoints  = found;
 						const ttText = this.tooltipFindPointText(found);
 						if (ttText && ttText.length) {
 							this.tooltip.SetValue(ttText, true);
 						}
-					} else {this.tooltip.SetValue(null);}
+					} else {this.tooltip.SetValue(null); this.foundPoints = [];}
 				}
 			}
 		} 
@@ -471,6 +474,7 @@ function imageMap({
 	this.factorY = 100;
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
+	this.foundPoints = []; // [{id: id, val: 1, jsonId: jsonId}]
 	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : 10;
 	this.gFont = _gdiFont('Segoe UI', _scale(this.fontSize));
 	this.defaultColor = 0xFF00FFFF;
