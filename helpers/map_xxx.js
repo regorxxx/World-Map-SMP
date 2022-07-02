@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/06/22
+//01/07/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -306,7 +306,7 @@ function imageMap({
 	this.loadData = (path = this.jsonPath) => {
 		if (_isFile(path)) {
 			this.jsonData = [];
-			const data = _jsonParseFileCheck(path, 'Tags json', window.Name, convertCharsetToCodepage('UTF-8'));
+			const data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
 			if (!data) {return;}
 			data.forEach((item) => {this.jsonData.push(item);});
 		}
