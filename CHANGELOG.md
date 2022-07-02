@@ -19,6 +19,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Readmes: rewritten readmes to avoid line wrapping wen showing them within popup for a cleaner presentation.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
