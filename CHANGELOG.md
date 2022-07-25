@@ -20,6 +20,7 @@
 ### Added
 ### Changed
 - Readmes: rewritten readmes to avoid line wrapping wen showing them within popup for a cleaner presentation.
+- Helpers: temp files are now written at 'js_data\temp' instead of 'js_data'.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
