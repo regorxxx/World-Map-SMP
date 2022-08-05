@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/05/22
+//01/07/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -251,15 +251,17 @@ function createMenu() {
 				menu.newEntry({menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED});
 				menu.newEntry({menuName, entryText: 'sep'});
 				const options = [
-					{text: 'Full', path: folders.xxx + 'images\\MC_WorldMap_B.jpg', factorX: 100, factorY: 100}, 
-					{text: 'No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_Y133_B.jpg', factorX: 100, factorY: 133},
+					{text: 'Full', path: folders.xxx + 'images\\MC_WorldMap.jpg', factorX: 100, factorY: 109}, 
+					{text: 'No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_No_Ant.jpg', factorX: 100, factorY: 137},
+					{text: 'Shapes', path: folders.xxx + 'images\\MC_WorldMap_Shapes.png', factorX: 100, factorY: 109},
+					{text: 'Shapes No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_Shapes_No_Ant.png', factorX: 100, factorY: 137},
 					{text: 'Custom...'}
 				];
 				options.forEach( (map, index) => {
 					menu.newEntry({menuName, entryText: map.text,  func: () => {
 						if (index === options.length - 1) {
 							let input = '';
-							try {input = utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, worldMap.imageMapPath, true);} 
+							try {input = utils.InputBox(window.ID, 'Input path to file:', window.Name, worldMap.imageMapPath, true);} 
 							catch (e) {return;}
 							if (!input.length) {return;}
 							worldMap.imageMapPath = input;
@@ -292,12 +294,12 @@ function createMenu() {
 				menu.newEntry({menuName, entryText: 'Apply a factor to any axis:', func: null, flags: MF_GRAYED});
 				menu.newEntry({menuName, entryText: 'sep'});
 				const options = [{text: 'X factor', val: 'factorX'}, {text: 'Y factor', val: 'factorY'}];
-				if (worldMap.factorX !== 100) {options[0].text += '\t (not 100)';}
-				if (worldMap.factorY !== 100) {options[1].text += '\t (not 100)';}
+				if (worldMap.factorX !== 100) {options[0].text += '\t ' + _b(worldMap.factorX);}
+				if (worldMap.factorY !== 100) {options[1].text += '\t ' + _b(worldMap.factorY);}
 				options.forEach( (coord) => {
 					menu.newEntry({menuName, entryText: coord.text,  func: () => {
 						let input = -1;
-						try {input = Number(utils.InputBox(window.ID, 'Input a number (percentage)', window.Name, properties[coord.val][1], true));} 
+						try {input = Number(utils.InputBox(window.ID,  coord.text[0] + ' axis scale. Input a number (percentage):', window.Name, properties[coord.val][1], true));} 
 						catch (e) {return;}
 						if (!Number.isSafeInteger(input)) {return;}
 						worldMap[coord.val] = input;
@@ -406,7 +408,7 @@ function createMenu() {
 			}
 			{
 				{	// Point size
-					const menuName = menu.newMenu('Points size...', menuUI);
+					const menuName = menu.newMenu('Points size...', menuUI, properties.pointMode[1] === 1 && !worldMap.properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 					const options = [7, 10, 12, 14, 16, 20, 30, 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
@@ -438,7 +440,6 @@ function createMenu() {
 					}});
 					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return properties.bPointFill[1];});
 				}
-				
 				{	// Text size
 					const menuName = menu.newMenu('Text size...', menuUI);
 					const options = [7, 8, 9, 10, 11, 12, 'Custom...'];
@@ -466,18 +467,34 @@ function createMenu() {
 				}
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
-			menu.newEntry({menuName: menuUI, entryText: 'Show current country header?', func: () => {
-				properties.bShowLocale[1] = !properties.bShowLocale[1];
-				window.Repaint();
-				overwriteProperties(properties);
-			}});
-			menu.newCheckMenu(menuUI, 'Show current country header?', void(0), () => {return properties.bShowLocale[1];});
-			menu.newEntry({menuName: menuUI, entryText: 'Show flag on header?', func: () => {
-				properties.bShowFlag[1] = !properties.bShowFlag[1];
-				window.Repaint();
-				overwriteProperties(properties);
-			}, flags: properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
-			menu.newCheckMenu(menuUI, 'Show flag on header?', void(0), () => {return properties.bShowFlag[1];});
+			{	// Header
+				const menuName = menu.newMenu('Header...', menuUI);
+				menu.newEntry({menuName, entryText: 'Show current country header?', func: () => {
+					properties.bShowLocale[1] = !properties.bShowLocale[1];
+					window.Repaint();
+					overwriteProperties(properties);
+				}});
+				menu.newCheckMenu(menuName, 'Show current country header?', void(0), () => {return properties.bShowLocale[1];});
+				
+				menu.newEntry({menuName, entryText: 'Show flag on header?', func: () => {
+					properties.bShowFlag[1] = !properties.bShowFlag[1];
+					window.Repaint();
+					overwriteProperties(properties);
+				}, flags: properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
+				menu.newCheckMenu(menuName, 'Show flag on header?', void(0), () => {return properties.bShowFlag[1];});
+			}
+			{	// Shapes
+				const menuName = menu.newMenu('Country highlighting...', menuUI);
+				const options = ['Use points', 'Use country shapes', 'Use both'];
+				options.forEach((option, i) => {
+					menu.newEntry({menuName, entryText: option, func: () => {
+						properties.pointMode[1] = i;
+						window.Repaint();
+						overwriteProperties(properties);
+					}});
+				});
+				menu.newCheckMenu(menuName, options[0], options[options.length - 1], () => {return properties.pointMode[1];});
+			}
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Write tags?
@@ -540,7 +557,7 @@ function createMenu() {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
 					let countO = 0;
-					const newData = _jsonParseFileCheck(input, 'Database json', window.Name, convertCharsetToCodepage('UTF-8'));
+					const newData = _jsonParseFileCheck(input, 'Database json', window.Name, utf8);
 					if (newData) {
 						newData.forEach((data) => {
 							if (!worldMap.hasDataById(data[worldMap.jsonId])) {
@@ -627,7 +644,7 @@ function createMenu() {
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {
-				const readme = _open(readmePath, convertCharsetToCodepage('UTF-8')); // Executed on script load
+				const readme = _open(readmePath, utf8); // Executed on script load
 				if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
 				else {console.log('Readme not found: ' + value);}
 			}});
