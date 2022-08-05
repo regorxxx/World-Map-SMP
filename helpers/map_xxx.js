@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/07/22
+//05/08/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -36,7 +36,6 @@ function imageMap({
 		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);}
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
-			// fillWithPattern(gr, this.posX, this.posY, this.posX + this.imageMap.Width * this.scale, this.posY + this.imageMap.Height * this.scale, this.defaultColor, 2, this.imageMap.Width / 5, 'verticalDotted');
 		} else {
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 		}
@@ -173,9 +172,9 @@ function imageMap({
 			this.posX = (ww - this.imageMap.Width * this.scale) / 2;
 		}
 		// Scale font
-		if (this.scale !== 0 && this.scale !== 1) {
-			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300)); // TODO
-		} // When = 0, crashes
+		if (this.scale !== 1 && this.scale !== 0 && ww !== 0) {
+			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300));
+		} // When === 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
 			const point = this.point[id];
@@ -360,7 +359,7 @@ function imageMap({
 		// When no properties are given and no args, then use a world map as default
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length ) {
 			include(folders.xxx + 'helpers\\world_map_tables.js');
-			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap_B.jpg'; // Default is world map
+			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap.jpg'; // Default is world map
 			this.mapTag = '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
 			this.findCoordinates = findCountryCoords; // Default is country coordinates
 			bfuncSet = true;
