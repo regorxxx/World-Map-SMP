@@ -2,10 +2,11 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [2.0.4](#204---2020-06-07)
-- [2.0.3](#203---2020-05-23)
-- [2.0.2](#202---2020-05-04)
-- [2.0.1](#201---2020-04-13)
+- [2.1.0](#210---2022-08-05)
+- [2.0.4](#204---2022-06-07)
+- [2.0.3](#203---2022-05-23)
+- [2.0.2](#202---2022-05-04)
+- [2.0.1](#201---2022-04-13)
 - [2.0.0-beta.2](#200-beta2---2021-12-30)
 - [2.0.0-beta.1](#200-beta1---2021-12-23)
 - [1.2.2](#122---2021-06-21)
@@ -19,11 +20,22 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [2.1.0] - 2022-08-05
+### Added
+- UI: Configuration option to use country shapes, points (old behaviour) or both. Country shapes option highlights the entire country.
+### Changed
+- UI: changed all built-in map images by those provided by [Countries-Shapes-Generator](https://github.com/regorxxx/Countries-Shapes-Generator): natural and shapes. Full/no Antarctica versions for both. Shapes files have transparent background.
+- Tagging: On tagging mode (Shift + L. Click), country shape highlighting is used now instead of showing the point.
 - Readmes: rewritten readmes to avoid line wrapping wen showing them within popup for a cleaner presentation.
 - Helpers: temp files are now written at 'js_data\temp' instead of 'js_data'.
 - Helpers: updated helpers.
 ### Removed
+- UI: old mercator map images no longer provided.
 ### Fixed
+- UI: Crash when image was not found on init.
 
 ## [2.0.4] - 2022-06-07
 ### Added
