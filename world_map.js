@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/02/22
+//05/08/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -54,7 +54,7 @@ include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
 include('helpers\\world_map_flags.js');
 
-checkCompatible('1.6.1');
+checkCompatible('1.6.1', 'smp');
 
 /* 
 	Properties 
@@ -93,7 +93,8 @@ const worldMap_properties = {
 	fontSize			:	['Size of header text', 10],
 	panelMode			:	['Display selection (0) or current library (1)', 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
-	bShowFlag			:	['Show flag on header', false]
+	bShowFlag			:	['Show flag on header', false],
+	pointMode			:	['Points (0), shapes (1) or both (2)', 2]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
@@ -113,6 +114,7 @@ worldMap_properties['customPanelColor'].push({func: isInt}, worldMap_properties[
 worldMap_properties['customPointColor'].push({func: isInt}, worldMap_properties['customPointColor'][1]);
 worldMap_properties['customPointSize'].push({func: isInt}, worldMap_properties['customPointSize'][1]);
 worldMap_properties['fontSize'].push({func: isInt}, worldMap_properties['fontSize'][1]);
+worldMap_properties['pointMode'].push({func: isInt, range: [[0,2]]}, worldMap_properties['pointMode'][1]);
 setProperties(worldMap_properties, worldMap_prefix);
 
 /* 
@@ -143,7 +145,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 	overwriteProperties(worldMap.properties); // Updates panel
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
-	const readme = _open(readmePath, convertCharsetToCodepage('UTF-8'));
+	const readme = _open(readmePath, utf8);
 	if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
 }
 
@@ -153,7 +155,7 @@ overwriteProperties(worldMap.properties); // Updates panel
 
 // Library Mode
 if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}
-const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, convertCharsetToCodepage('UTF-8')) : null;
+const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, utf8) : null;
 
 { // Default database
 	const defDatabase = folders.xxx + 'presets\\World Map\\worldMap.json';
@@ -189,26 +191,63 @@ function on_paint(gr) {
 	if (worldMap.properties.panelMode[1]) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
-			worldMap.lastPoint =  libraryPoints;
+			worldMap.lastPoint = libraryPoints;
 		}
 		worldMap.paint({gr});
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
-		worldMap.paint({gr, sel});
+		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || utils.IsKeyPressed(VK_SHIFT)});
+		if (sel.Count) {
+			let id = '';
+			if (utils.IsKeyPressed(VK_SHIFT) && worldMap.foundPoints.length){
+				id = formatCountry(worldMap.foundPoints[0].key || '');
+			} else if (worldMap.lastPoint.length === 1 && worldMap.properties.pointMode[1] >= 1) {
+				id = worldMap.lastPoint[0].id;
+			}
+			if (worldMap.properties.pointMode[1] >= 1) {
+				const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
+				if (iso) {
+					const file = folders.xxx + 'helpers-external\\countries-mercator\\' + iso + '.png';
+					let img = _isFile(file) ? gdi.Image(file) : null;
+					if (img) {
+						// Hardcoded values comparing Mercator map with Antarctica against python generated countries
+						const bAntr = /no_ant/gi.test(worldMap.imageMapPath);
+						const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+						const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+						const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+						img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
+						gr.DrawImage(img, worldMap.posX - offsetX * worldMap.scale, worldMap.posY - offsetY * worldMap.scale, img.Width, img.Height, 0, 0, img.Width, img.Height, 0, 240);
+					}
+				}
+			}
+			if (worldMap.properties.pointMode[1] === 2 || worldMap.properties.pointMode[1] === 0) {
+				let point = worldMap.point[id];
+				if (!point) {
+					const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
+					if (xPos !== -1 && yPos !== -1) {
+						point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
+					}
+				}
+				if (point) {
+					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
+				}
+			}
+		}
 		if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) { // Header text
+			const id = worldMap.lastPoint[0].id;
 			const posX = worldMap.posX;
 			const posY = worldMap.posY;
 			const w = worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
-			const countryName = nameReplacersRev.has(worldMap.lastPoint[0].id.toLowerCase()) ? formatCountry(nameReplacersRev.get(worldMap.lastPoint[0].id.toLowerCase())) : worldMap.lastPoint[0].id; // Prefer replacement since its usually shorter...
+			const countryName = nameReplacersRev.has(id.toLowerCase()) ? formatCountry(nameReplacersRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
 			// Header
 			gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
 			// Flag
 			if (worldMap.properties.bShowFlag[1]) {
-				let flag = loadFlagImage(worldMap.lastPoint[0].id);
+				let flag = loadFlagImage(id);
 				const flagScale = flag.Height / textH;
 				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic) 
 				gr.DrawImage(flag, posX + 10, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
@@ -292,7 +331,13 @@ function on_mouse_move(x, y, mask) {
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (!sel || !sel.Count) {return;}
 	}
+	const cache = worldMap.foundPoints.length ? worldMap.foundPoints[0] : null;
 	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
+	if (cache && worldMap.foundPoints.length && worldMap.foundPoints[0] !== cache) {window.Repaint();}
+}
+
+function on_key_up(vKey) { // Repaint after pressing shift to reset
+	if (vKey = VK_SHIFT) {window.Repaint();}
 }
 
 function on_mouse_leave() {
