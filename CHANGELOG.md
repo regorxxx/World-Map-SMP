@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.2.0](#220---2022-08-12)
 - [2.1.1](#211---2022-08-09)
 - [2.1.0](#210---2022-08-05)
 - [2.0.4](#204---2022-06-07)
@@ -21,6 +22,16 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Helpers: switched all callbacks to [event listeners](https://github.com/regorxxx/Callbacks-Framework-SMP).
+- Helpers: updated helpers.
+### Removed
+### Fixed
+- Workaround for some instances where the scripts would warn about some feature not being supported by the OS (due to an OS or SMP bug).
+
+## [2.2.0] - 2022-08-12
+### Added
+### Changed
+- Helpers: switched all callbacks to [event listeners](https://github.com/regorxxx/Callbacks-Framework-SMP).
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
@@ -213,7 +224,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/regorxxx/World-Map-SMP/compare/v2.0.3...v2.0.4
