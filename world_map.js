@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/08/22
+//12/08/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefineScript('World Map', {author:'XXX', version: '2.0.4', features: {drag_n_drop: false}});
+window.DefineScript('World Map', {author:'XXX', version: '2.2.0', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -53,6 +53,7 @@ include('helpers\\music_graph_descriptors_xxx_countries.js');
 include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
 include('helpers\\world_map_flags.js');
+include('helpers\\callbacks_xxx.js');
 
 checkCompatible('1.6.1', 'smp');
 
@@ -177,16 +178,16 @@ function repaint(bPlayback = false) {
 	window.Repaint();
 }
 
-function on_size(width, height) {
+addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
-}
+});
 
-function on_colours_changed() {
+addEventListener('on_colours_changed', () => {
 	worldMap.coloursChanged();
 	window.Repaint();
-}
+});
 
-function on_paint(gr) {
+addEventListener('on_paint', (gr) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
@@ -260,44 +261,43 @@ function on_paint(gr) {
 			}
 		}
 	}
-}
+});
 
-function on_playback_new_track(metadb) {
+addEventListener('on_playback_new_track', (metadb) => {
 	if (!metadb) {return;}
 	repaint(true);
-}
+});
 
-function on_selection_changed() {
+addEventListener('on_selection_changed', () => {
 	worldMap.clearIdSelected();
 	repaint();
-}
+});
 
-function on_item_focus_change() {
+addEventListener('on_item_focus_change', () => {
 	worldMap.clearIdSelected();
 	repaint();
-}
+});
 
-
-function on_playlist_switch() {
+addEventListener('on_playlist_switch', () => {
 	repaint();
-}
+});
 
-function on_playback_stop(reason) {
+addEventListener('on_playback_stop', (reason) => {
 	if (reason !== 2) { // Invoked by user or Starting another track
 		repaint();
 	}
-}
+});
 
-function on_playlist_items_removed(playlistIndex, new_count) {
+addEventListener('on_playlist_items_removed', (playlistIndex, new_count) => {
 	if (playlistIndex === plman.ActivePlaylist && new_count === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
 		repaint();
 	}
-}
+});
 
-function on_metadb_changed(handle_list) {
+addEventListener('on_metadb_changed', (handle_list) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	sel.Sort();
@@ -311,21 +311,21 @@ function on_metadb_changed(handle_list) {
 			repaint();
 		}
 	}
-}
+});
 
 /* 
 	Callbacks for move and click
 */
-function on_mouse_lbtn_up(x, y, mask) {
+addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable point menu without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (!sel || !sel.Count) {return;}
 	}
 	worldMap.btn_up(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
-}
+});
 
-function on_mouse_move(x, y, mask) {
+addEventListener('on_mouse_move', (x, y, mask) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -334,27 +334,27 @@ function on_mouse_move(x, y, mask) {
 	const cache = worldMap.foundPoints.length ? worldMap.foundPoints[0] : null;
 	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
 	if (cache && worldMap.foundPoints.length && worldMap.foundPoints[0] !== cache) {window.Repaint();}
-}
+});
 
-function on_key_up(vKey) { // Repaint after pressing shift to reset
+addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
 	if (vKey = VK_SHIFT) {window.Repaint();}
-}
+});
 
-function on_mouse_leave() {
+addEventListener('on_mouse_leave', () => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	worldMap.move(-1, -1);
-}
+});
 
-function on_mouse_rbtn_up(x, y) {
+addEventListener('on_mouse_rbtn_up', (x, y) => {
 	createMenu().btn_up(x, y);
 	return true; // Disable right button menu
-}
+});
 
 /* 
 	Callbacks for integration with other scripts
 */
  // When used along WilB's Biography script (on other panel), data may be fetched automatically
-function on_notify_data(name, info) {
+addEventListener('on_notify_data', (name, info) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.bEnabledBiography[1]) {return;}
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
@@ -430,4 +430,4 @@ function on_notify_data(name, info) {
 			}
 		}
 	}
-}
+});
