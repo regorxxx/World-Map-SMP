@@ -22,11 +22,9 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Helpers: switched all callbacks to [event listeners](https://github.com/regorxxx/Callbacks-Framework-SMP).
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
-- Workaround for some instances where the scripts would warn about some feature not being supported by the OS (due to an OS or SMP bug).
 
 ## [2.2.0] - 2022-08-12
 ### Added
