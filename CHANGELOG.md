@@ -25,6 +25,7 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- Logging: fixed console logging to file (lines were not being split properly).
 
 ## [2.2.0] - 2022-08-12
 ### Added
