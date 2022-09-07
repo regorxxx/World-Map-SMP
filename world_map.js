@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/08/22
+//07/09/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -213,7 +213,7 @@ addEventListener('on_paint', (gr) => {
 					let img = _isFile(file) ? gdi.Image(file) : null;
 					if (img) {
 						// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-						const bAntr = /no_ant/gi.test(worldMap.imageMapPath);
+						const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 						const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
 						const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 						const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
