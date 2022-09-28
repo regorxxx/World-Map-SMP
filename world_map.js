@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/09/22
+//25/09/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -288,8 +288,8 @@ addEventListener('on_playback_stop', (reason) => {
 	}
 });
 
-addEventListener('on_playlist_items_removed', (playlistIndex, new_count) => {
-	if (playlistIndex === plman.ActivePlaylist && new_count === 0) {
+addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
+	if (playlistIndex === plman.ActivePlaylist && newCount === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
@@ -297,13 +297,14 @@ addEventListener('on_playlist_items_removed', (playlistIndex, new_count) => {
 	}
 });
 
-addEventListener('on_metadb_changed', (handle_list) => {
+addEventListener('on_metadb_changed', (handleList, fromHook) => {
+	if (fromHook) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	sel.Sort();
-	const handle_listClone = handle_list.Clone();
-	handle_listClone.Sort();
-	sel.MakeIntersection(handle_listClone);
+	const handleListClone = handleList.Clone();
+	handleListClone.Sort();
+	sel.MakeIntersection(handleListClone);
 	if (sel && sel.Count) {
 		const mapTag = worldMap.properties.mapTag[1].indexOf('$') === -1 && worldMap.properties.mapTag[1].indexOf('%') === -1 ? '%' + worldMap.properties.mapTag[1] + '%' : worldMap.properties.mapTag[1];
 		const tags = fb.TitleFormat('[' + mapTag + ']').EvalWithMetadbs(sel);
