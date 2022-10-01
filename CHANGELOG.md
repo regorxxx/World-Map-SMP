@@ -25,6 +25,7 @@
 ### Added
 ### Changed
 - Helpers: updated helpers.
+- Data: updated default database.
 ### Removed
 ### Fixed
 

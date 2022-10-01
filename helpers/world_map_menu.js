@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/07/22
+//01/10/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -194,7 +194,7 @@ function createMenu() {
 					}
 				});
 				// Report
-				if (bDone) {fb.ShowPopupMessage('Script(s) modified sucessfully:\n' + selectFound.map((script) => {return script.path + '  (' + script.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
+				if (bDone) {fb.ShowPopupMessage('Script(s) modified successfully:\n' + selectFound.map((script) => {return script.path + '  (' + script.ver + ')';}).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name);}
 				else {fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return;}
 				// Change config
 				properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
