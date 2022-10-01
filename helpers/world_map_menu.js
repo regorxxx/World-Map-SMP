@@ -226,6 +226,17 @@ function createMenu() {
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  (args = properties) => {return options.indexOf(properties['selection'][1]);});
+			menu.newEntry({menuName, entryText: 'sep'});
+			menu.newEntry({menuName, entryText: properties.iLimitSelection[0], func: () => {
+				let input = properties.iLimitSelection[1];
+				try {input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true));} 
+				catch (e) {return;}
+				if (!Number.isSafeInteger(input)) {return;}
+				if (properties.iLimitSelection[1] === input) {return;}
+				properties.iLimitSelection[1] = input;
+				overwriteProperties(properties); // Updates panel
+				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
+			}});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Modifier tags
@@ -233,7 +244,7 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			modifiers.forEach( (mod, index) => {
-				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + properties[mod.tag][1], func: () => {
+				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
 					let input = '';
 					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
 					catch(e) {return;}
@@ -488,6 +499,7 @@ function createMenu() {
 				const options = ['Use points', 'Use country shapes', 'Use both'];
 				options.forEach((option, i) => {
 					menu.newEntry({menuName, entryText: option, func: () => {
+						if (i >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
 						properties.pointMode[1] = i;
 						window.Repaint();
 						overwriteProperties(properties);
