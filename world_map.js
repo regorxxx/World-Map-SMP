@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/22
+//01/10/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -54,76 +54,61 @@ include('helpers\\world_map_menu.js');
 include('helpers\\world_map_helpers.js');
 include('helpers\\world_map_flags.js');
 include('helpers\\callbacks_xxx.js');
+include('main\\remove_duplicates.js');
 
 checkCompatible('1.6.1', 'smp');
 
 /* 
 	Properties 
 */
-var worldMap_prefix = 'wm_';
 const selMode = ['Follow selected track(s) (playlist)','Prefer now playing'];
 const modifiers = [ // Easily expandable. Used at helpers and menu too
-	{mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'genre' }, 
-	{mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'style'},
-	{mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'style,genre'}
+	{mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' }, 
+	{mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'STYLE'},
+	{mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE'}
 ];
 const worldMap_properties = {
-	mapTag				: 	['Tag name or TF expression for artist\'s country', '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
-	imageMapPath		: 	['Path to your own world map (mercator projection)', ''],
-	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0],
-	writeToTag			:	['Where to write tag values (should be related to 1st property)', 'Locale Last.fm'],
-	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0]],
-	bEnabled			:	['Enable panel', true],
-	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false],
-	forcedQuery			:	['Global forced query', 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad'],
+	mapTag				: 	['Tag name or TF expression for artist\'s country', '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))', {func: isString}, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
+	imageMapPath		: 	['Path to your own world map (mercator projection)', '', {func: isStringWeak}, ''],
+	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0, {func: isInt, range: [[0, 2]]}, 0],
+	writeToTag			:	['Where to write tag values (should be related to 1st property)', 'Locale Last.fm', {func: isString}, 'Locale Last.fm'],
+	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0], {eq: selMode}, selMode[0]],
+	bEnabled			:	['Enable panel', true, {func: isBoolean}, true],
+	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false, {func: isBoolean}, false],
+	forcedQuery			:	['Global forced query', 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad', {func: (query) => {return checkQuery(query, true);}}, 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad'],
 	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
-	firstPopup			:	['World Map: Fired once', false],
-	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental'],
-	iLimitSelection		:	['Repaint panel only if selecting less than...', 5000],
-	factorX				:	['Percentage applied to X coordinates', 100],
-	factorY				:	['Percentage applied to Y coordinates', 100],
-	bInstalledBiography	:	['Is installed biography mod?', false],
-	customPanelColorMode:	['Custom background color mode', 0],
+	firstPopup			:	['World Map: Fired once', false, {func: isBoolean}, false],
+	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', {func: isStringWeak}, 'Instrumental'],
+	iLimitSelection		:	['Repaint panel only if selecting less than...', 5, {func: isInt, range: [[2, 25000]]}, 5],
+	factorX				:	['Percentage applied to X coordinates', 100, {func: isInt, range: [[50, 200]]}, 100],
+	factorY				:	['Percentage applied to Y coordinates',137, {func: isInt, range: [[50, 200]]}, 137],
+	bInstalledBiography	:	['Is installed biography mod?', false, {func: isBoolean}, false],
+	customPanelColorMode:	['Custom background color mode', 0, {func: isInt, range: [[0, 2]]}, 0],
 	customPanelColor	:	['Custom background color for the panel', window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3)],
-	customPointSize		:	['Custom point size for the panel', 10],
-	customPointColorMode:	['Custom point color mode', 0],
-	customPointColor	:	['Custom point color for the panel', 0xFF00FFFF],
-	bPointFill			:	['Draw a point or a circular corona?', false],
-	customLocaleColor	:	['Custom text color', 0xFF000000],
-	bShowLocale			:	['Show current locale tag', true],
-	fontSize			:	['Size of header text', 10],
-	panelMode			:	['Display selection (0) or current library (1)', 0],
+	customPointSize		:	['Custom point size for the panel', 16, {func: isInt}, 16],
+	customPointColorMode:	['Custom point color mode', 0, {func: isInt, range: [[0, 1]]}, 0],
+	customPointColor	:	['Custom point color for the panel', 0xFF00FFFF, {func: isInt}, 0xFF00FFFF],
+	bPointFill			:	['Draw a point or a circular corona?', false, {func: isBoolean}, false],
+	customLocaleColor	:	['Custom text color', 0xFF000000, {func: isInt}, 0xFF000000],
+	bShowLocale			:	['Show current locale tag', true, {func: isBoolean}, true],
+	fontSize			:	['Size of header text', 10, {func: isInt}, 10],
+	panelMode			:	['Display selection (0) or current library (1)', 0, {func: isInt, range: [[0, 1]]}, 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
-	bShowFlag			:	['Show flag on header', false],
-	pointMode			:	['Points (0), shapes (1) or both (2)', 2]
+	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
+	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
-worldMap_properties['mapTag'].push({func: isString}, worldMap_properties['mapTag'][1]);
-worldMap_properties['iWriteTags'].push({func: isInt, range: [[0,2]]}, worldMap_properties['iWriteTags'][1]);
-worldMap_properties['selection'].push({eq: selMode}, worldMap_properties['selection'][1]);
-worldMap_properties['forcedQuery'].push({func: (query) => {return checkQuery(query, true);}}, worldMap_properties['forcedQuery'][1]);
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
-worldMap_properties['tagFilter'].push({func: isStringWeak}, worldMap_properties['tagFilter'][1]);
-worldMap_properties['iLimitSelection'].push({func: isInt}, worldMap_properties['iLimitSelection'][1]);
-worldMap_properties['factorX'].push({func: isInt}, worldMap_properties['factorX'][1]);
-worldMap_properties['factorY'].push({func: isInt}, worldMap_properties['factorY'][1]);
-worldMap_properties['panelMode'].push({func: isInt, range: [[0,1]]}, worldMap_properties['panelMode'][1]);
-worldMap_properties['customPanelColorMode'].push({func: isInt, range: [[0,2]]}, worldMap_properties['customPanelColorMode'][1]);
-worldMap_properties['customPointColorMode'].push({func: isInt, range: [[0,1]]}, worldMap_properties['customPointColorMode'][1]);
 worldMap_properties['customPanelColor'].push({func: isInt}, worldMap_properties['customPanelColor'][1]);
-worldMap_properties['customPointColor'].push({func: isInt}, worldMap_properties['customPointColor'][1]);
-worldMap_properties['customPointSize'].push({func: isInt}, worldMap_properties['customPointSize'][1]);
-worldMap_properties['fontSize'].push({func: isInt}, worldMap_properties['fontSize'][1]);
-worldMap_properties['pointMode'].push({func: isInt, range: [[0,2]]}, worldMap_properties['pointMode'][1]);
-setProperties(worldMap_properties, worldMap_prefix);
+setProperties(worldMap_properties, '', 0);
 
 /* 
 	Map 
 */
 const worldMap = new imageMap({
-	imagePath:				folders.xxx + 'images\\MC_WorldMap_Y133_B.jpg',
-	properties:				getPropertiesPairs(worldMap_properties, 'wm_'),
+	imagePath:				folders.xxx + 'images\\MC_WorldMap_No_Ant.jpg',
+	properties:				getPropertiesPairs(worldMap_properties, '', 0),
 	jsonId:					'artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc:			findCountry, // Function at helpers\world_map_tables.js
@@ -175,6 +160,8 @@ function repaint(bPlayback = false) {
 	if (worldMap.properties.panelMode[1]) {return;}
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
+	imgAsync.layers.imgs.length = 0;
+	imgAsync.layers.bPaint = false;
 	window.Repaint();
 }
 
@@ -186,7 +173,7 @@ addEventListener('on_colours_changed', () => {
 	worldMap.coloursChanged();
 	window.Repaint();
 });
-
+const imgAsync = {layers: {bPaint: false, imgs: []}};
 addEventListener('on_paint', (gr) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
@@ -196,33 +183,13 @@ addEventListener('on_paint', (gr) => {
 		}
 		worldMap.paint({gr});
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
-		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		sel = removeDuplicatesV2({handleList: sel, checkKeys:[worldMap.jsonId]});
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || utils.IsKeyPressed(VK_SHIFT)});
 		if (sel.Count) {
-			let id = '';
 			if (utils.IsKeyPressed(VK_SHIFT) && worldMap.foundPoints.length){
-				id = formatCountry(worldMap.foundPoints[0].key || '');
-			} else if (worldMap.lastPoint.length === 1 && worldMap.properties.pointMode[1] >= 1) {
-				id = worldMap.lastPoint[0].id;
-			}
-			if (worldMap.properties.pointMode[1] >= 1) {
-				const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
-				if (iso) {
-					const file = folders.xxx + 'helpers-external\\countries-mercator\\' + iso + '.png';
-					let img = _isFile(file) ? gdi.Image(file) : null;
-					if (img) {
-						// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-						const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-						const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
-						const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-						const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
-						img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
-						gr.DrawImage(img, worldMap.posX - offsetX * worldMap.scale, worldMap.posY - offsetY * worldMap.scale, img.Width, img.Height, 0, 0, img.Width, img.Height, 0, 240);
-					}
-				}
-			}
-			if (worldMap.properties.pointMode[1] === 2 || worldMap.properties.pointMode[1] === 0) {
+				const id = formatCountry(worldMap.foundPoints[0].key || '');
 				let point = worldMap.point[id];
 				if (!point) {
 					const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
@@ -233,21 +200,77 @@ addEventListener('on_paint', (gr) => {
 				if (point) {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
+			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
+				if (imgAsync.layers.bPaint) {
+					imgAsync.layers.imgs.forEach((imgObj) => {
+						gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, 240);
+					});
+				}
+				const promises = [];
+				worldMap.lastPoint.forEach((point, i) => {
+					let id = point.id;
+					if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
+						if (!imgAsync.layers.bPaint) {
+							const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
+							if (iso) {
+								const file = folders.xxx + 'helpers-external\\countries-mercator\\' + iso + '.png';
+								if (_isFile(file)) {
+									promises.push(new Promise((resolve) => {
+										setTimeout(() => {
+											gdi.LoadImageAsyncV2(void(0), file).then((img) => {
+												if (img) {
+													// Hardcoded values comparing Mercator map with Antarctica against python generated countries
+													const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+													const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+													const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+													const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+													img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
+													imgAsync.layers.imgs.push({img, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
+												}
+												resolve();
+											});
+										}, i * 300 + 25)
+									}));
+								}
+							}
+						}
+					}
+					if (worldMap.properties.pointMode[1] === 2) {  // Both
+						let point = worldMap.point[id];
+						if (!point) {
+							const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
+							if (xPos !== -1 && yPos !== -1) {
+								point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
+							}
+						}
+						if (point) {
+							gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
+						}
+					}
+				});
+				Promise.all(promises).then(() => {
+					imgAsync.layers.bPaint = true;
+					window.Repaint();
+				});
 			}
 		}
-		if (sel.Count && worldMap.lastPoint.length === 1 && worldMap.properties.bShowLocale[1]) { // Header text
-			const id = worldMap.lastPoint[0].id;
+		if (sel.Count && worldMap.properties.bShowLocale[1]) { // Header text
 			const posX = worldMap.posX;
 			const posY = worldMap.posY;
 			const w = worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
-			const countryName = nameReplacersRev.has(id.toLowerCase()) ? formatCountry(nameReplacersRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+			let countryName = 'Multiple countries...';
+			if (worldMap.lastPoint.length === 1) {
+				const id = worldMap.lastPoint[0].id;
+				countryName = nameReplacersRev.has(id.toLowerCase()) ? formatCountry(nameReplacersRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+			}
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
 			// Header
 			gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
 			// Flag
-			if (worldMap.properties.bShowFlag[1]) {
+			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length === 1) {
+				const id = worldMap.lastPoint[0].id;
 				let flag = loadFlagImage(id);
 				const flagScale = flag.Height / textH;
 				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic) 

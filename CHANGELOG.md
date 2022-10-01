@@ -23,9 +23,15 @@
 
 ## [Unreleased][]
 ### Added
+- UI: multiple shapes drawing now allowed.
 ### Changed
+- UI: country shapes loading is now async.
+- UI: selection limit to refresh panel can now be configured via menus.
+- UI: header now shows a predefined message when drawing multiple countries, instead of being hidden. Flag is still only showed when there is a single country drawn.
 - Helpers: updated helpers.
 - Data: updated default database.
+- Properties: additional checks to properties.
+- Properties: internal change to properties, all previous settings will be cleared. Make a backup if needed.
 ### Removed
 ### Fixed
 
