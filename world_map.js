@@ -75,7 +75,7 @@ const worldMap_properties = {
 	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0], {eq: selMode}, selMode[0]],
 	bEnabled			:	['Enable panel', true, {func: isBoolean}, true],
 	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false, {func: isBoolean}, false],
-	forcedQuery			:	['Global forced query', 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad', {func: (query) => {return checkQuery(query, true);}}, 'NOT (%rating% EQUAL 2 OR %rating% EQUAL 1) AND NOT (STYLE IS Live AND NOT STYLE IS Hi-Fi) AND %channels% LESS 3 AND NOT COMMENT HAS Quad'],
+	forcedQuery			:	['Global forced query', globQuery.filter, {func: (query) => {return checkQuery(query, true);}}, globQuery.filter],
 	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
 	firstPopup			:	['World Map: Fired once', false, {func: isBoolean}, false],
 	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', {func: isStringWeak}, 'Instrumental'],
