@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/10/22
+//05/10/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -558,6 +558,8 @@ function createMenu() {
 					});
 					if (notFoundList.Count) {
 						sendToPlaylist(notFoundList, 'World Map missing tags');
+					} else {
+						fb.ShowPopupMessage('All artists on library have a locale tag associated.', window.Name);
 					}
 				}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
