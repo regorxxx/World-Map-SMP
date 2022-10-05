@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/10/22
+//05/10/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -79,7 +79,7 @@ const worldMap_properties = {
 	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
 	firstPopup			:	['World Map: Fired once', false, {func: isBoolean}, false],
 	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', {func: isStringWeak}, 'Instrumental'],
-	iLimitSelection		:	['Repaint panel only if selecting less than...', 5, {func: isInt, range: [[2, 25000]]}, 5],
+	iLimitSelection		:	['Repaint panel only if selecting less than...', 500, {func: isInt, range: [[2, 25000]]}, 5],
 	factorX				:	['Percentage applied to X coordinates', 100, {func: isInt, range: [[50, 200]]}, 100],
 	factorY				:	['Percentage applied to Y coordinates',137, {func: isInt, range: [[50, 200]]}, 137],
 	bInstalledBiography	:	['Is installed biography mod?', false, {func: isBoolean}, false],
@@ -161,7 +161,10 @@ function repaint(bPlayback = false) {
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
 	imgAsync.layers.imgs.length = 0;
+	imgAsync.layers.iso.clear();
+	imgAsync.layers.processedIso.clear();
 	imgAsync.layers.bPaint = false;
+	imgAsync.layers.bStop = true;
 	window.Repaint();
 }
 
@@ -173,7 +176,7 @@ addEventListener('on_colours_changed', () => {
 	worldMap.coloursChanged();
 	window.Repaint();
 });
-const imgAsync = {layers: {bPaint: false, imgs: []}};
+const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], iso: new Set(), processedIso: new Set()}};
 addEventListener('on_paint', (gr) => {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
@@ -202,34 +205,40 @@ addEventListener('on_paint', (gr) => {
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
 				if (imgAsync.layers.bPaint) {
+					if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
 					imgAsync.layers.imgs.forEach((imgObj) => {
 						gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, 240);
 					});
 				}
 				const promises = [];
+				imgAsync.layers.bStop = false;
 				worldMap.lastPoint.forEach((point, i) => {
 					let id = point.id;
 					if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
-						if (!imgAsync.layers.bPaint) {
-							const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
-							if (iso) {
+						const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
+						if (iso) {
+							if (!imgAsync.layers.iso.has(iso)) {
+								imgAsync.layers.iso.add(iso);
 								const file = folders.xxx + 'helpers-external\\countries-mercator\\' + iso + '.png';
 								if (_isFile(file)) {
 									promises.push(new Promise((resolve) => {
 										setTimeout(() => {
+											if (imgAsync.layers.bStop) {resolve();}
+											if (imgAsync.layers.processedIso.has(iso)) {resolve();}
 											gdi.LoadImageAsyncV2(void(0), file).then((img) => {
-												if (img) {
+												if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
 													// Hardcoded values comparing Mercator map with Antarctica against python generated countries
 													const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 													const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
 													const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 													const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 													img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
-													imgAsync.layers.imgs.push({img, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
+													imgAsync.layers.imgs.push({img, iso, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
+													imgAsync.layers.processedIso.add(iso);
 												}
 												resolve();
 											});
-										}, i * 300 + 25)
+										}, i * 250 + 25)
 									}));
 								}
 							}
@@ -248,10 +257,13 @@ addEventListener('on_paint', (gr) => {
 						}
 					}
 				});
-				Promise.all(promises).then(() => {
-					imgAsync.layers.bPaint = true;
-					window.Repaint();
-				});
+				if (promises.length) {
+					Promise.all(promises).then(() => {
+						if (imgAsync.layers.bStop) {return;}
+						imgAsync.layers.bPaint = true;
+						window.Repaint();
+					});
+				}
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowLocale[1]) { // Header text
@@ -259,10 +271,12 @@ addEventListener('on_paint', (gr) => {
 			const posY = worldMap.posY;
 			const w = worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
-			let countryName = 'Multiple countries...';
+			let countryName = '- none -';
 			if (worldMap.lastPoint.length === 1) {
 				const id = worldMap.lastPoint[0].id;
 				countryName = nameReplacersRev.has(id.toLowerCase()) ? formatCountry(nameReplacersRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+			} else if (worldMap.lastPoint.length > 1 ) {
+				countryName = 'Multiple countries...';
 			}
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);

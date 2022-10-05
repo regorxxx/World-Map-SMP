@@ -28,6 +28,7 @@
 - UI: country shapes loading is now async.
 - UI: selection limit to refresh panel can now be configured via menus.
 - UI: header now shows a predefined message when drawing multiple countries, instead of being hidden. Flag is still only showed when there is a single country drawn.
+- UI: header now shows a -none- message when there is no locale tag found.
 - Helpers: updated helpers.
 - Data: updated default database.
 - Properties: additional checks to properties.
