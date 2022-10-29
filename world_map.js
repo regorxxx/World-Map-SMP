@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/22
+//29/10/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -189,9 +189,11 @@ addEventListener('on_paint', (gr) => {
 		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		sel = removeDuplicatesV2({handleList: sel, checkKeys:[worldMap.jsonId]});
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
-		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || utils.IsKeyPressed(VK_SHIFT)});
+		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
+		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
+		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length)});
 		if (sel.Count) {
-			if (utils.IsKeyPressed(VK_SHIFT) && worldMap.foundPoints.length){
+			if (bPressShift && !bPressWin && worldMap.foundPoints.length){
 				const id = formatCountry(worldMap.foundPoints[0].key || '');
 				let point = worldMap.point[id];
 				if (!point) {
@@ -375,7 +377,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 });
 
 addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
-	if (vKey = VK_SHIFT) {window.Repaint();}
+	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) {window.Repaint();}
 });
 
 addEventListener('on_mouse_leave', () => {

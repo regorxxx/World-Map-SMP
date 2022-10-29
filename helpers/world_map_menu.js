@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/22
+//29/10/22
 
 include('menu_xxx.js');
 include('helpers_xxx.js');
@@ -236,7 +236,7 @@ function createMenu() {
 				properties.iLimitSelection[1] = input;
 				overwriteProperties(properties); // Updates panel
 				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
-			}});
+			}, flags: properties['selection'][1] === selMode[0] ? MF_STRING : MF_GRAYED});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Modifier tags

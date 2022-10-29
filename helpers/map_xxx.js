@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/08/22
+//29/10/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -12,6 +12,7 @@
  */
 
 include('helpers_xxx.js');
+include('helpers_xxx_flags.js');
 include('helpers_xxx_file.js');
 include('helpers_xxx_prototypes.js');
 include('helpers_xxx_UI.js');
@@ -138,7 +139,9 @@ function imageMap({
 							}
 							case 'circle':
 							default : {
+								gr.SetSmoothingMode(4);
 								gr.DrawEllipse(point.xScaled, point.yScaled, this.pointSize * this.scale, this.pointSize * this.scale, this.pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
+								gr.SetSmoothingMode(0);
 								if (bShowSize && toPaint.val > 1) { // Show count on map?
 									gr.GdiDrawText(toPaint.val, this.gFont, this.textColor, point.xScaled - this.pointSize * this.scale, point.yScaled + this.pointLineSize * this.scale / 2, 40, 40);
 								}
@@ -247,7 +250,7 @@ function imageMap({
 		return foundId;
 	}
 	this.move = (x, y, mask) => { // on_mouse_move & on_mouse_leave
-		if (this.mX === x && this.mY === y) {return;}
+		if (this.mX === x && this.mY === y && !(x === -1 && y === -1)) {return;}
 		this.mX = x;
 		this.mY = y;
 		window.SetCursor(IDC_ARROW);
@@ -266,7 +269,8 @@ function imageMap({
 					window.Repaint();
 					this.tooltip.SetValue(null);
 				}
-				if (!this.lastPoint.length || mask === MK_SHIFT) {  // Add tag selecting directly from map (can be forced with shift)
+				const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
+				if (!this.lastPoint.length || (mask === MK_SHIFT && !bPressWin)) {  // Add tag selecting directly from map (can be forced with shift)
 					const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
 					if (found && found.length) {
 						this.foundPoints  = found;
@@ -277,9 +281,9 @@ function imageMap({
 					} else {this.tooltip.SetValue(null); this.foundPoints = [];}
 				}
 			}
-		} 
-		else if (this.idSelected.length && this.idSelected !== 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
-		else {this.clearIdSelected(); this.tooltip.SetValue(null);}
+		} else if (this.idSelected.length && this.idSelected !== 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
+		else {this.clearIdSelected(); this.tooltip.SetValue(null); this.foundPoints = [];}
+		if (x === -1 && y === -1 && mask === MK_SHIFT) {this.foundPoints = []; this.clearIdSelected(); window.Repaint();}
 	}
 	this.btn_up = (x, y, mask) => { // on_mouse_lbtn_up
 		this.mX = x;
