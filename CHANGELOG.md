@@ -23,8 +23,9 @@
 
 ## [Unreleased][]
 ### Added
-- UI: multiple shapes drawing now allowed.
+- UI: multiple shapes drawing now allowed, when selecting different artists on selection mode.
 ### Changed
+- UI: antialising for point shape, should look much better now.
 - UI: country shapes loading is now async.
 - UI: selection limit to refresh panel can now be configured via menus.
 - UI: header now shows a predefined message when drawing multiple countries, instead of being hidden. Flag is still only showed when there is a single country drawn.
@@ -35,6 +36,8 @@
 - Properties: internal change to properties, all previous settings will be cleared. Make a backup if needed.
 ### Removed
 ### Fixed
+- UI: (un)pressing shift to set the locale tag did not redraw the panel in some cases properly with the current country (on mouse leaving the panel, etc.).
+- UI: pressing shift and Windows key at the same time no longer actives the tagging mode (since that's only used to open the SMP panel menu).
 
 ## [2.3.0] - 2022-08-22
 ### Added
@@ -229,16 +232,16 @@
 - Files: helpers\world_map_menu.js and helpers\world_map_helpers.js.
 - 3 key modifiers for playlist creation supported.
 ### Changed
-- Bug fix: refresh points after showing the tooltip on one and changing the selected tracks.
 - Map framework: updated with last changes.
 - Menu: moved all code to helpers\world_map_menu.js.
 - Menu: added entries to edit tags related to playlist creation when using key modifiers + left click.
 - Helpers: moved all code to helpers\world_map_helpers.js.
-- Breaks properties from previous versions!
-- Modifer tags allow multiple tags set for the same key.
-- Some minor changes on tooltip.
+- UI: Modifier tags allow multiple tags set for the same key.
+- UI: Some minor changes on tooltip.
+- Properties. Breaks properties from previous versions!
 ### Removed
 ### Fixed
+- UI: refresh points after showing the tooltip on one and changing the selected tracks.
 
 ## [1.0.0] - 2021-05-01
 ### Added
