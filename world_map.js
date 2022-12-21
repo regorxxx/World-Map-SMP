@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/10/22
+//19/12/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -48,13 +48,13 @@ include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 include('helpers\\map_xxx.js');
-include('helpers\\world_map_tables.js');
-include('helpers\\music_graph_descriptors_xxx_countries.js');
-include('helpers\\world_map_menu.js');
-include('helpers\\world_map_helpers.js');
-include('helpers\\world_map_flags.js');
 include('helpers\\callbacks_xxx.js');
-include('main\\remove_duplicates.js');
+include('helpers\\music_graph_descriptors_xxx_countries.js');
+include('main\\world_map\\world_map_tables.js');
+include('main\\world_map\\world_map_menu.js');
+include('main\\world_map\\world_map_helpers.js');
+include('main\\world_map\\world_map_flags.js');
+include('main\\filter_and_query\\remove_duplicates.js');
 
 checkCompatible('1.6.1', 'smp');
 
@@ -395,6 +395,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 */
  // When used along WilB's Biography script (on other panel), data may be fetched automatically
 addEventListener('on_notify_data', (name, info) => {
+	if (name === 'bio_imgChange') {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.bEnabledBiography[1]) {return;}
 	// WilB's Biography script has a limitation, it only works with 1 track at once...

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/10/22
+//19/12/22
 
 /* 
 	Map v 0.2 04/02/22
@@ -362,10 +362,12 @@ function imageMap({
 		let bfuncSet = false;
 		// When no properties are given and no args, then use a world map as default
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length ) {
-			include(folders.xxx + 'helpers\\world_map_tables.js');
+			if (_isFile(folders.xxx + 'main\\world_map\\world_map_tables.js')) {
+				include('..\\main\\world_map\\world_map_tables.js');
+				this.findCoordinates = findCountryCoords; // Default is country coordinates
+			}
 			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap.jpg'; // Default is world map
 			this.mapTag = '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
-			this.findCoordinates = findCountryCoords; // Default is country coordinates
 			bfuncSet = true;
 		} else {
 			// Or use arguments
