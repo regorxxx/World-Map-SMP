@@ -34,6 +34,7 @@
 - Data: updated default database.
 - Properties: additional checks to properties.
 - Properties: internal change to properties, all previous settings will be cleared. Make a backup if needed.
+- Minor performance improvement (usually on subsequent calls) caching all TitleFormat expressions.
 ### Removed
 ### Fixed
 - UI: (un)pressing shift to set the locale tag did not redraw the panel in some cases properly with the current country (on mouse leaving the panel, etc.).
