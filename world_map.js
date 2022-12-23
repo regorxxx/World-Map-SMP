@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/22
+//22/12/22
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -395,7 +395,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 */
  // When used along WilB's Biography script (on other panel), data may be fetched automatically
 addEventListener('on_notify_data', (name, info) => {
-	if (name === 'bio_imgChange') {return;}
+	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev') {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.bEnabledBiography[1]) {return;}
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
