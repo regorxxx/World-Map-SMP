@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/12/22
+//18/01/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -49,7 +49,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 include('helpers\\map_xxx.js');
 include('helpers\\callbacks_xxx.js');
-include('helpers\\music_graph_descriptors_xxx_countries.js');
+include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 include('main\\world_map\\world_map_helpers.js');
