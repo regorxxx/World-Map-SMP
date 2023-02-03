@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/22
+//03/02/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -19,13 +19,13 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (properties['bEnabled'][1] === mode.val) {return;}
-					properties['bEnabled'][1] = mode.val; // And update property with new value
+					if (properties.bEnabled[1] === mode.val) {return;}
+					properties.bEnabled[1] = mode.val; // And update property with new value
 					overwriteProperties(properties); // Updates panel
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties['bEnabled'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabled[1] ? 0 : 1);});
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
@@ -34,10 +34,10 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode, idx) => {
 				menu.newEntry({menuName, entryText: mode, func: () => {
-					if (properties['panelMode'][1] === idx) {return;}
-					properties['panelMode'][1] = idx; // And update property with new value
+					if (properties.panelMode[1] === idx) {return;}
+					properties.panelMode[1] = idx; // And update property with new value
 					overwriteProperties(properties); // Updates panel
-					if (properties['panelMode'][1]) {
+					if (properties.panelMode[1]) {
 						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
 					} else {
 						fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
@@ -47,27 +47,27 @@ function createMenu() {
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties['panelMode'][1];});
+			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties.panelMode[1];});
 		}
 		{	// Enabled Biography?
-			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
 			menu.newEntry({menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (properties['bEnabledBiography'][1] === mode.val) {return;}
+					if (properties.bEnabledBiography[1] === mode.val) {return;}
 					if (mode.val) { // Warning check
 						let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties['bEnabledBiography'][1] = mode.val; // And update property with new value
+					properties.bEnabledBiography[1] = mode.val; // And update property with new value
 					overwriteProperties(properties); // Updates panel
 					syncBio(true); // Sync selection and enable notify tags
 					window.Repaint();
 				}, flags: () => {return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties['bEnabledBiography'][1] ? 0 : 1);});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabledBiography[1] ? 0 : 1);});
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: () => {return (properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)');}, func: () => {
 				let  foundArr = [];
@@ -207,16 +207,16 @@ function createMenu() {
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Selection mode
-			const menuName = menu.newMenu('Selection mode', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('Selection mode', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			const options = selMode;
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode, func: () => {
-					if (properties['selection'][1] === mode) {return;}
-					if (properties['bInstalledBiography'][1] && properties['bEnabledBiography'][1]) { // Warning check
+					if (properties.selection[1] === mode) {return;}
+					if (properties.bInstalledBiography[1] && properties.bEnabledBiography[1] && properties.bShowSelModePopup[1]) { // Warning check
 						let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties['selection'][1] = mode; // And update property with new value
+					properties.selection[1] = mode; // And update property with new value
 					overwriteProperties(properties); // Updates panel
 					// When ppt.focus is true, then selmode is selMode[0]
 					if (properties.bEnabledBiography[1]) { // synchronize selection property
@@ -225,7 +225,7 @@ function createMenu() {
 					window.Repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  (args = properties) => {return options.indexOf(properties['selection'][1]);});
+			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return options.indexOf(properties.selection[1]);});
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: properties.iLimitSelection[0], func: () => {
 				let input = properties.iLimitSelection[1];
@@ -236,7 +236,12 @@ function createMenu() {
 				properties.iLimitSelection[1] = input;
 				overwriteProperties(properties); // Updates panel
 				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
-			}, flags: properties['selection'][1] === selMode[0] ? MF_STRING : MF_GRAYED});
+			}, flags: properties.selection[1] === selMode[0] ? MF_STRING : MF_GRAYED});
+			menu.newEntry({menuName, entryText: properties.bShowSelModePopup[0], func: () => {
+				properties.bShowSelModePopup[1] = !properties.bShowSelModePopup[1];
+				overwriteProperties(properties); // Updates panel
+			}});
+			menu.newCheckMenu(menuName, properties.bShowSelModePopup[0], void(0),  () => {return properties.bShowSelModePopup[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Modifier tags
@@ -332,7 +337,7 @@ function createMenu() {
 						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
 							worldMap.customPanelColorMode = i;
 							// Update property to save between reloads
-							properties['customPanelColorMode'][1] = worldMap.customPanelColorMode;
+							properties.customPanelColorMode[1] = worldMap.customPanelColorMode;
 							overwriteProperties(properties);
 							worldMap.coloursChanged();
 							window.Repaint();
@@ -343,7 +348,7 @@ function createMenu() {
 					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
 						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
 						// Update property to save between reloads
-						properties['customPanelColor'][1] = worldMap.panelColor;
+						properties.customPanelColor[1] = worldMap.panelColor;
 						overwriteProperties(properties);
 						worldMap.coloursChanged();
 						window.Repaint();
@@ -510,31 +515,31 @@ function createMenu() {
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// Write tags?
-			const menuName = menu.newMenu('Write tags on playback', void(0), properties['panelMode'][1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('Write tags on playback', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			menu.newEntry({menuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			const options = [{text: 'No (read only from tags, online or json)', val: 0}, {text: 'Yes, when tag has not been already set on track', val: 1}, {text: 'Yes, as json (for internal use on the script)', val: 2}];
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (properties['iWriteTags'][1] === mode.val) {return;}
+					if (properties.iWriteTags[1] === mode.val) {return;}
 					if (mode.val) { // Warning check
 						let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties['iWriteTags'][1] = mode.val; // And update property with new value
+					properties.iWriteTags[1] = mode.val; // And update property with new value
 					overwriteProperties(properties); // Updates panel
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return properties['iWriteTags'][1];});
+			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return properties.iWriteTags[1];});
 			menu.newEntry({menuName, entryText: 'sep', func: null});
 			menu.newEntry({menuName, entryText: 'Show data folder', func: () => {
 				_explorer(properties.fileName[1]);
 			}, flags: () => {return _isFile(properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
 		}
 		{	// Database
-			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties['iWriteTags'][1] >= 1 ? MF_STRING : MF_GRAYED)});
+			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED)});
 			{
-				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (properties['iWriteTags'][1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
+				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (properties.iWriteTags[1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Find artists without locale tags...', func: () => {
 					const notFoundList = new FbMetadbHandleList();
@@ -543,10 +548,10 @@ function createMenu() {
 					handleList.Convert().forEach((handle) => {
 						const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
 						if (jsonId.length && !jsonIdList.has(jsonId)) {
-							if (properties['iWriteTags'][1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
+							if (properties.iWriteTags[1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
 								notFoundList.Add(handle);
 								jsonIdList.add(jsonId);
-							} else if (properties['iWriteTags'][1] === 1) { // Check if tag exists on file
+							} else if (properties.iWriteTags[1] === 1) { // Check if tag exists on file
 								const tagName = properties.writeToTag[1];
 								const tfo = _bt(tagName);
 								if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
@@ -589,7 +594,7 @@ function createMenu() {
 						window.Repaint();
 					}
 					console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
-				}, flags: () => {return (properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED);}});
+				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED);}});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 					let countN = 0;
@@ -651,7 +656,7 @@ function createMenu() {
 					fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
 					saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 					console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
-				}, flags: () => {return (properties['iWriteTags'][1] === 2 ? MF_STRING : MF_GRAYED)}});
+				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED)}});
 				menu.newEntry({entryText: 'sep'});
 			}
 		}
@@ -670,10 +675,10 @@ function createMenu() {
 function syncBio (bReload = false) {
 	const properties = worldMap.properties;
 	// Biograpy 1.1.X
-	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties['selection'][1] === selMode[0] ? true : false); // synchronize selection property
+	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties.selection[1] === selMode[0] ? true : false); // synchronize selection property
 	// Biograpy 1.2.X
-	window.NotifyOthers('bio_focusPpt', properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.0 Beta
-	window.NotifyOthers('bio_followSelectedTrack', properties['selection'][1] === selMode[0] ? true : false);  // synchronize selection property 1.2.X
+	window.NotifyOthers('bio_focusPpt', properties.selection[1] === selMode[0] ? true : false);  // synchronize selection property 1.2.0 Beta
+	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0] ? true : false);  // synchronize selection property 1.2.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);

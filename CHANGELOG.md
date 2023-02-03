@@ -25,6 +25,7 @@
 ### Added
 - UI: multiple shapes drawing now allowed, when selecting different artists on selection mode.
 ### Changed
+- UI: popups warning about selection mode changes can be hidden now (by using the appropriate setting).
 - UI: antialising for point shape, should look much better now.
 - UI: country shapes loading is now async.
 - UI: selection limit to refresh panel can now be configured via menus.

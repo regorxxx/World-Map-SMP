@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/01/23
+//03/02/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -95,7 +95,8 @@ const worldMap_properties = {
 	panelMode			:	['Display selection (0) or current library (1)', 0, {func: isInt, range: [[0, 1]]}, 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
-	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2]
+	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2],
+	bShowSelModePopup	:	['Show warning when selection mode changes', true, {func: isBoolean}, true]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -444,8 +445,10 @@ addEventListener('on_notify_data', (name, info) => {
 		if (info.hasOwnProperty('property') && info.hasOwnProperty('val')) {
 			// When ppt.focus is true, then selmode is selMode[0]
 			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
-				worldMap.properties['selection'][1] = selMode[(info.val ? 0 : 1)]; // Invert value
-				fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+				worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
+				if (worldMap.properties.bShowSelModePopup[1]) {
+					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+				}
 				overwriteProperties(worldMap.properties); // Updates panel
 				window.Repaint();
 			}
@@ -465,7 +468,9 @@ addEventListener('on_notify_data', (name, info) => {
 				}
 			}
 			if (bDone) {
-				fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+				if (worldMap.properties.bShowSelModePopup[1]) {
+					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+				}
 				overwriteProperties(worldMap.properties); // Updates panel
 				window.Repaint();
 			}
