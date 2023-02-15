@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.4.0](#240---2023-02-15)
 - [2.3.0](#230---2022-08-22)
 - [2.2.1](#221---2022-08-21)
 - [2.2.0](#220---2022-08-12)
@@ -23,7 +24,13 @@
 
 ## [Unreleased][]
 ### Added
-- UI: multiple shapes drawing now allowed, when selecting different artists on selection mode.
+### Changed
+### Removed
+### Fixed
+
+## [2.4.0] - 2023-02-15
+### Added
+- UI: allow multiple shapes drawing when selecting different artists on selection mode.
 ### Changed
 - UI: popups warning about selection mode changes can be hidden now (by using the appropriate setting).
 - UI: antialising for point shape, should look much better now.
@@ -252,7 +259,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.1.1...v2.2.0
