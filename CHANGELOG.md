@@ -33,8 +33,8 @@
 - UI: allow multiple shapes drawing when selecting different artists on selection mode.
 ### Changed
 - UI: popups warning about selection mode changes can be hidden now (by using the appropriate setting).
-- UI: antialising for point shape, should look much better now.
-- UI: country shapes loading is now async.
+- UI: antialiasing for point shape, should look much better now.
+- UI: country shapes loading is now asynchronous.
 - UI: selection limit to refresh panel can now be configured via menus.
 - UI: header now shows a predefined message when drawing multiple countries, instead of being hidden. Flag is still only showed when there is a single country drawn.
 - UI: header now shows a -none- message when there is no locale tag found.
