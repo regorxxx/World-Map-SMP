@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.4.1](#240---2023-02-19)
 - [2.4.0](#240---2023-02-15)
 - [2.3.0](#230---2022-08-22)
 - [2.2.1](#221---2022-08-21)
@@ -25,6 +26,13 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [2.4.1] - 2023-02-19
+### Added
+### Changed
+- Helpers: updated helpers
 ### Removed
 ### Fixed
 
@@ -259,7 +267,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.1...HEAD
+[2.4.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.2.0...v2.2.1
