@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/22
+//22/02/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -19,13 +19,13 @@ include('helpers_xxx_UI.js');
 
 // Map object
 function imageMap({
-	imagePath = '', mapTag = '', properties = {}, 
-	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, tooltipFindPointFunc = null,
-	jsonPath = '', jsonId = '', 
-	bStaticCoord = true,
-	pointShape = 'circle', // string, circle
-	pointSize = 10,
-	pointLineSize = 25
+		imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
+		findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, tooltipFindPointFunc = null,
+		jsonPath = '', jsonId = '', 
+		bStaticCoord = true,
+		pointShape = 'circle', // string, circle
+		pointSize = 10,
+		pointLineSize = 25
 	} = {}) {
 	// Constants
 	const bShowSize = false;
@@ -176,7 +176,7 @@ function imageMap({
 		}
 		// Scale font
 		if (this.scale !== 1 && this.scale !== 0 && ww !== 0) {
-			this.gFont = _gdiFont('Segoe UI', Math.ceil(this.fontSize * ww / 300));
+			this.gFont = _gdiFont(this.font, Math.ceil(this.fontSize * ww / 300));
 		} // When === 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach( (id) => {
@@ -480,8 +480,9 @@ function imageMap({
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
 	this.foundPoints = []; // [{id: id, val: 1, jsonId: jsonId}]
-	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : 10;
-	this.gFont = _gdiFont('Segoe UI', _scale(this.fontSize));
+	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : fontSize;
+	this.font = typeof this.properties.font !== 'undefined' ? this.properties.font[1] : font;
+	this.gFont = _gdiFont(this.font, _scale(this.fontSize));
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
 	this.backgroundColor = 0xFFF0F8FF;

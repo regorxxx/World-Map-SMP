@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/02/23
+//22/02/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefineScript('World Map', {author:'XXX', version: '2.4.1', features: {drag_n_drop: false}});
+window.DefineScript('World Map', {author:'XXX', version: '2.5.0', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -91,7 +91,7 @@ const worldMap_properties = {
 	bPointFill			:	['Draw a point or a circular corona?', false, {func: isBoolean}, false],
 	customLocaleColor	:	['Custom text color', 0xFF000000, {func: isInt}, 0xFF000000],
 	bShowLocale			:	['Show current locale tag', true, {func: isBoolean}, true],
-	fontSize			:	['Size of header text', 10, {func: isInt}, 10],
+	fontSize			:	['Size of header text', 10, {func: isInt}, globFonts.standard.size],
 	panelMode			:	['Display selection (0) or current library (1)', 0, {func: isInt, range: [[0, 1]]}, 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
@@ -117,6 +117,7 @@ const worldMap = new imageMap({
 	selFindPointFunc:		selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
 	tooltipFunc: 			tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
 	tooltipFindPointFunc: 	tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
+	font:					globFonts.standard.name
 });
 
 // Additional config
