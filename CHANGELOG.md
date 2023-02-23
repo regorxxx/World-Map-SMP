@@ -26,8 +26,11 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: disabling the panel now shows the world map background (instead of just the filling color).
+- Internal code cleanup of menus.
 ### Removed
 ### Fixed
+- Console: logging of null value not working properly (totally irrelevant except for debug purposes).
 
 ## [2.5.0] - 2023-02-22
 ### Added
