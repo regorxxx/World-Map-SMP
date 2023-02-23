@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/02/23
+//23/02/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefineScript('World Map', {author:'XXX', version: '2.5.0', features: {drag_n_drop: false}});
+window.DefineScript('World Map', {author:'XXX', version: '2.6.0', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -180,7 +180,7 @@ addEventListener('on_colours_changed', () => {
 });
 const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], iso: new Set(), processedIso: new Set()}};
 addEventListener('on_paint', (gr) => {
-	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (!worldMap.properties.bEnabled[1]) {worldMap.paintBg(gr); return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
