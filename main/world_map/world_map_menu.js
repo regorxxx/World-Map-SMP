@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/02/23
+//23/02/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -14,7 +14,7 @@ function createMenu() {
 	{	
 		{	// Enabled?
 			const menuName = menu.newMenu('Map panel functionality');
-			const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
+			const options = [{text: 'Enabled', val: true}, {text: 'Disabled', val: false}];
 			menu.newEntry({menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
@@ -51,7 +51,7 @@ function createMenu() {
 		}
 		{	// Enabled Biography?
 			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
-			const options = [{text: 'Enabled' + nextId('invisible', true, false), val: true}, {text: 'Disabled' + nextId('invisible', true, false), val: false}];
+			const options = [{text: 'Enabled', val: true}, {text: 'Disabled', val: false}];
 			menu.newEntry({menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode) => {
