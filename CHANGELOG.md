@@ -2,7 +2,8 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [2.5.0](#240---2023-02-19)
+- [2.6.0](#260---2023-03-04)
+- [2.5.0](#250---2023-02-19)
 - [2.4.0](#240---2023-02-15)
 - [2.3.0](#230---2022-08-22)
 - [2.2.1](#221---2022-08-21)
@@ -24,6 +25,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.6.0] - 2023-03-04
 ### Added
 ### Changed
 - UI: disabling the panel now shows the world map background (instead of just the filling color).
@@ -279,7 +286,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.3.0...v2.4.0
