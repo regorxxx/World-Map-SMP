@@ -1,5 +1,5 @@
 ﻿UI panel which displays current artist's country on the world map 
-and lets you generate autoplaylists based on selection and locale 
+and lets you generate AutoPlaylists based on selection and locale 
 tag saving when integrated along WilB's Biography Script.
 UI is fully configurable: colors, sizes, headers, flags (like the 
 ones found at Georgia Theme), etc.
