@@ -28,14 +28,14 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Helpers: updated helpers
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
 ## [2.7.0] - 2023-03-08
 ### Added
 ### Changed
-- Helpers: updated helpers
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
