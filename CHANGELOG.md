@@ -29,6 +29,7 @@
 ### Added
 ### Changed
 - Helpers: updated helpers.
+- Console: multiple improvements when logging to file for FbMetadbHandle, FbMetadbHandleList, Error and unknown instances (totally irrelevant except for debug purposes).
 ### Removed
 ### Fixed
 
