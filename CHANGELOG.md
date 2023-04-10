@@ -28,8 +28,9 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Helpers: updated helpers.
 - Console: multiple improvements when logging to file for FbMetadbHandle, FbMetadbHandleList, Error and unknown instances (totally irrelevant except for debug purposes).
+- Console: menu entries are no longer logged to console after clicking.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
@@ -98,7 +99,7 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
-- Logging: fixed console logging to file (lines were not being split properly).
+- Console: fixed console logging to file (lines were not being split properly).
 
 ## [2.2.0] - 2022-08-12
 ### Added
@@ -158,7 +159,7 @@
 ### Added
 ### Changed
 - Network: changed behavior of file recycling logic to check for network drives. Previously, when trying to delete a file on a network drive, a popup would appear asking to permanently delete the file. This is due to network drives not having a Recycle Bin by default on windows. In such case, now the file will be automatically deleted without popups.
-- Logging: playlist query is cut to 300 chars (to speed up UI responsiveness on console logging).
+- Console: playlist query is cut to 300 chars (to speed up UI responsiveness on console logging).
 - Helpers: updated helpers.
 - Helpers: improved sort and query expressions validity checks.
 ### Removed
