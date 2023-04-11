@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/23
+//11/04/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-window.DefineScript('World Map', {author:'XXX', version: '2.7.1', features: {drag_n_drop: false}});
+window.DefineScript('World Map', {author:'XXX', version: '2.8.0', features: {drag_n_drop: false}});
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -96,7 +96,8 @@ const worldMap_properties = {
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
 	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2],
-	bShowSelModePopup	:	['Show warning when selection mode changes', true, {func: isBoolean}, true]
+	bShowSelModePopup	:	['Show warning when selection mode changes', true, {func: isBoolean}, true],
+	iRepaintDelay		:	['Panel repaint delay (ms)', 1000, {func: isInt}, 1000]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -157,6 +158,7 @@ const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonPar
 /* 
 	Callbacks for painting 
 */
+const debouncedRepaint = {};
 function repaint(bPlayback = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) {return;}
@@ -167,7 +169,13 @@ function repaint(bPlayback = false) {
 	imgAsync.layers.processedIso.clear();
 	imgAsync.layers.bPaint = false;
 	imgAsync.layers.bStop = true;
-	window.Repaint();
+	const delay = worldMap.properties.iRepaintDelay[1];
+	if (delay > 0) {
+		if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.Repaint, delay, false, window);}
+		debouncedRepaint[delay]();
+	} else {
+		window.Repaint();
+	}
 }
 
 addEventListener('on_size', (width, height) => {
@@ -423,7 +431,7 @@ addEventListener('on_notify_data', (name, info) => {
 					// Set tag on map for drawing if found
 					if (sel && sel.Count && sel.Find(info.handle) !== -1) {
 						worldMap.setTag(locale[locale.length - 1], jsonId);
-						window.Repaint();
+						repaint();
 					}
 					// Update tags or json if needed (even if the handle was not within the selection)
 					if (worldMap.properties.iWriteTags[1] > 0){
@@ -451,7 +459,7 @@ addEventListener('on_notify_data', (name, info) => {
 					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
 				}
 				overwriteProperties(worldMap.properties); // Updates panel
-				window.Repaint();
+				repaint();
 			}
 		}
 	}// Follow WilB's Biography script selection mode
@@ -473,7 +481,7 @@ addEventListener('on_notify_data', (name, info) => {
 					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
 				}
 				overwriteProperties(worldMap.properties); // Updates panel
-				window.Repaint();
+				repaint();
 			}
 		}
 	}

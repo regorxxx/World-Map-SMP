@@ -1,10 +1,11 @@
 ﻿'use strict';
-//23/02/23
+//11/04/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
+include('..\\..\\helpers\\helpers_xxx_input.js');
 
 const menu = new _menu();
 
@@ -20,12 +21,20 @@ function createMenu() {
 			options.forEach( (mode) => {
 				menu.newEntry({menuName, entryText: mode.text, func: () => {
 					if (properties.bEnabled[1] === mode.val) {return;}
-					properties.bEnabled[1] = mode.val; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties.bEnabled[1] = mode.val;
+					overwriteProperties(properties);
 					window.Repaint();
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabled[1] ? 0 : 1);});
+			menu.newEntry({menuName, entryText: 'sep'});
+			menu.newEntry({menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
+				let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.Name, 1000);
+				if (input === null) {return;}
+				if (!Number.isFinite(input)) {input = 0;}
+				properties.iRepaintDelay[1] = input;
+				overwriteProperties(properties);
+			}});
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
@@ -35,8 +44,8 @@ function createMenu() {
 			options.forEach( (mode, idx) => {
 				menu.newEntry({menuName, entryText: mode, func: () => {
 					if (properties.panelMode[1] === idx) {return;}
-					properties.panelMode[1] = idx; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties.panelMode[1] = idx;
+					overwriteProperties(properties);
 					if (properties.panelMode[1]) {
 						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
 					} else {
@@ -61,8 +70,8 @@ function createMenu() {
 						let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties.bEnabledBiography[1] = mode.val; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties.bEnabledBiography[1] = mode.val;
+					overwriteProperties(properties);
 					syncBio(true); // Sync selection and enable notify tags
 					window.Repaint();
 				}, flags: () => {return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
@@ -99,7 +108,7 @@ function createMenu() {
 									// Change config
 									properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
 									properties.bEnabledBiography[1] = properties.bInstalledBiography[1];
-									overwriteProperties(properties); // Updates panel
+									overwriteProperties(properties);
 									syncBio(false); // Sync selection and enable notify tags
 									window.NotifyOthers('bio_refresh', null);  // Reload panel  Biography 1.2.0+
 									return;
@@ -199,7 +208,7 @@ function createMenu() {
 				// Change config
 				properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
 				properties.bEnabledBiography[1] = properties.bInstalledBiography[1];
-				overwriteProperties(properties); // Updates panel
+				overwriteProperties(properties);
 				syncBio(false); // Sync selection and enable notify tags
 				window.NotifyOthers('refresh_bio', null);  // Reload panel Biography 1.1.X
 				window.NotifyOthers('bio_refresh', null);  // Reload panel Biography 1.2.0+
@@ -216,8 +225,8 @@ function createMenu() {
 						let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties.selection[1] = mode; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties.selection[1] = mode;
+					overwriteProperties(properties);
 					// When ppt.focus is true, then selmode is selMode[0]
 					if (properties.bEnabledBiography[1]) { // synchronize selection property
 						syncBio(true); // Sync selection and enable notify tags
@@ -234,12 +243,12 @@ function createMenu() {
 				if (!Number.isSafeInteger(input)) {return;}
 				if (properties.iLimitSelection[1] === input) {return;}
 				properties.iLimitSelection[1] = input;
-				overwriteProperties(properties); // Updates panel
+				overwriteProperties(properties);
 				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
 			}, flags: properties.selection[1] === selMode[0] ? MF_STRING : MF_GRAYED});
 			menu.newEntry({menuName, entryText: properties.bShowSelModePopup[0], func: () => {
 				properties.bShowSelModePopup[1] = !properties.bShowSelModePopup[1];
-				overwriteProperties(properties); // Updates panel
+				overwriteProperties(properties);
 			}});
 			menu.newCheckMenu(menuName, properties.bShowSelModePopup[0], void(0),  () => {return properties.bShowSelModePopup[1];});
 		}
@@ -254,8 +263,8 @@ function createMenu() {
 					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
 					catch(e) {return;}
 					if (!input.length) {return;}
-					properties[mod.tag][1] = input; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties[mod.tag][1] = input;
+					overwriteProperties(properties);
 				}});
 			});
 		}
@@ -281,8 +290,8 @@ function createMenu() {
 							catch (e) {return;}
 							if (!input.length) {return;}
 							worldMap.imageMapPath = input;
-							properties.imageMapPath[1] = input; // And update property with new value
-							overwriteProperties(properties); // Updates panel
+							properties.imageMapPath[1] = input;
+							overwriteProperties(properties);
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
 							worldMap.init();
@@ -291,10 +300,10 @@ function createMenu() {
 							worldMap.imageMapPath = map.path;
 							worldMap.factorX = map.factorX;
 							worldMap.factorY = map.factorY;
-							properties.imageMapPath[1] = map.path; // And update property with new value
+							properties.imageMapPath[1] = map.path;
 							properties.factorX[1] = map.factorX;
 							properties.factorY[1] = map.factorY;
-							overwriteProperties(properties); // Updates panel
+							overwriteProperties(properties);
 							worldMap.init();
 							window.Repaint();
 						}
@@ -319,8 +328,8 @@ function createMenu() {
 						catch (e) {return;}
 						if (!Number.isSafeInteger(input)) {return;}
 						worldMap[coord.val] = input;
-						properties[coord.val][1] = input; // And update property with new value
-						overwriteProperties(properties); // Updates panel
+						properties[coord.val][1] = input;
+						overwriteProperties(properties);
 						worldMap.clearPointCache();
 						window.Repaint();
 					}});
@@ -526,8 +535,8 @@ function createMenu() {
 						let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
 						if (answer === popup.no) {return;}
 					}
-					properties.iWriteTags[1] = mode.val; // And update property with new value
-					overwriteProperties(properties); // Updates panel
+					properties.iWriteTags[1] = mode.val;
+					overwriteProperties(properties);
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return properties.iWriteTags[1];});
