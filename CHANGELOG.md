@@ -28,6 +28,7 @@
 ## [Unreleased][]
 ### Added
 - UI: new option to set the frequency at which the panel is refreshed after tracks change. Now set to 1000 ms by default. This avoids refreshing the panel when selection changes faster than such value (for ex. while scrolling the library), only updating the panel once afterwards.
+- Package: new installation method as package.
 ### Changed
 - Console: multiple improvements when logging to file for FbMetadbHandle, FbMetadbHandleList, Error and unknown instances (totally irrelevant except for debug purposes).
 - Console: menu entries are no longer logged to console after clicking.
