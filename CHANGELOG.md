@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.8.0](#270---2023-05-08)
 - [2.7.0](#270---2023-03-08)
 - [2.6.0](#260---2023-03-04)
 - [2.5.0](#250---2023-02-19)
@@ -27,6 +28,12 @@
 
 ## [Unreleased][]
 ### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.8.0] - 2023-05-08
+### Added
 - UI: new option to set the frequency at which the panel is refreshed after tracks change. Now set to 1000 ms by default. This avoids refreshing the panel when selection changes faster than such value (for ex. while scrolling the library), only updating the panel once afterwards.
 - Package: new installation method as package.
 ### Changed
@@ -35,6 +42,7 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+
 
 ## [2.7.0] - 2023-03-08
 ### Added
@@ -299,7 +307,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.7.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.0...HEAD
+[2.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.4.1...v2.5.0
