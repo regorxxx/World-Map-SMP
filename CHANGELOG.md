@@ -29,6 +29,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Biography Integration: optimized processing when Bio Panel notifies tags multiple times, updating just the first time per track.
 ### Removed
 ### Fixed
 

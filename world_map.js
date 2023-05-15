@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/23
+//14/05/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -404,6 +404,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 	Callbacks for integration with other scripts
 */
  // When used along WilB's Biography script (on other panel), data may be fetched automatically
+const bioCache = {rawPath: null, subSong: null};
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
@@ -413,6 +414,8 @@ addEventListener('on_notify_data', (name, info) => {
 	// If both panels don't have the same selection mode, it will not work
 	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
 		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags')) {
+			if (info.handle.RawPath === bioCache.rawPath && info.handle.SubSong === bioCache.subSong) {return;} 
+			else {bioCache.handleRawPath = info.handle.RawPath; bioCache.subSong = info.handle.SubSong;}
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
 			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 			// Get Tags
@@ -424,7 +427,7 @@ addEventListener('on_notify_data', (name, info) => {
 				} else if (info.tags.hasOwnProperty(tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
-				// Replace country name with iso standard name if it's a known variation
+				// Replace country name with ISO standard name if it's a known variation
 				if (nameReplacers.has(locale[locale.length - 1])) {locale[locale.length - 1] = formatCountry(nameReplacers.get(locale[locale.length - 1]));}
 				const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 				if (jsonId.length && locale.length) {
