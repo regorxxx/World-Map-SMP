@@ -413,9 +413,9 @@ addEventListener('on_notify_data', (name, info) => {
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
 	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
-		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags')) {
-			if (info.handle.RawPath === bioCache.rawPath && info.handle.SubSong === bioCache.subSong) {return;} 
-			else {bioCache.handleRawPath = info.handle.RawPath; bioCache.subSong = info.handle.SubSong;}
+		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags') && info.handle.RawPath !== bioCache.rawPath && info.handle.SubSong !== bioCache.subSong) {
+			bioCache.handleRawPath = info.handle.RawPath; 
+			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
 			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 			// Get Tags
