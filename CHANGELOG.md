@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.8.1](#281---2023-05-16)
 - [2.8.0](#280---2023-05-08)
 - [2.7.0](#270---2023-03-08)
 - [2.6.0](#260---2023-03-04)
@@ -27,6 +28,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.8.1] - 2023-05-16
 ### Added
 ### Changed
 - Biography Integration: optimized processing when Bio Panel notifies tags multiple times, updating just the first time per track.
@@ -307,7 +314,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.1...HEAD
+[2.8.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.6.0...v2.7.0
 [2.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.5.0...v2.6.0
