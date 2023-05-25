@@ -30,8 +30,10 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
+- UI: script version number.
 
 ## [2.8.1] - 2023-05-16
 ### Added
