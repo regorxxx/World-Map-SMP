@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/03/23
+//19/05/23
 
 /* 
 	Global tags, queries, RegExp
@@ -54,9 +54,11 @@ function loadUserDefFile(def) {
 function addGlobTags() { // Add calculated properties
 	globTags.sortPlayCount = '$sub(99999,' + globTags.playCount + ')';
 	globTags.remDupl = [globTags.title, globTags.artist, globTags.date];
+	globTags.genreStyle = [globTags.genre, globTags.style, globTags.folksonomy];
 	globQuery.noFemale = 'NOT (' + globQuery.female + ')';
 	globQuery.noInstrumental = 'NOT (' + globQuery.instrumental + ')';
 	globQuery.noAcoustic = 'NOT (' + globQuery.acoustic + ')';
+	globQuery.remDuplBias = globTags.rating + '|$strstr($lower(' + globTags.genreStyle.join('\', \'') + '),live)';
 }
 
 // Tags: user replaceable with a presets file at folders.data
@@ -79,7 +81,8 @@ const globTags = {
 	acoustidFP: 'ACOUSTID_FINGERPRINT_RAW',
 	fooidFP: 'FINGERPRINT_FOOID',
 	playCount: '$max(%PLAY_COUNT%,%LASTFM_PLAY_COUNT%)',
-	folksonomy: 'FOLKSONOMY'
+	folksonomy: 'FOLKSONOMY',
+	feedback: 'FEEDBACK',
 };
 
 // Queries: user replaceable with a presets file at folders.data
