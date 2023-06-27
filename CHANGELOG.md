@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.8.2](#282---2023-06-27)
 - [2.8.1](#281---2023-05-16)
 - [2.8.0](#280---2023-05-08)
 - [2.7.0](#270---2023-03-08)
@@ -30,9 +31,19 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [2.8.2] - 2023-06-27
+### Added
+### Changed
+- Tags: improved country names display in some cases (with shorter names).
+- Data: updated default database.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- Tags: fix alternate country names in some cases.
+- Biography Integration: fix locale tag not updating properly in some cases since [2.8.1](#281---2023-05-16).
 - UI: script version number.
 
 ## [2.8.1] - 2023-05-16
@@ -316,7 +327,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.2...HEAD
+[2.8.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.7.0...v2.8.0
 [2.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.6.0...v2.7.0
