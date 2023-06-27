@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/23
+//27/06/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -286,7 +286,7 @@ addEventListener('on_paint', (gr) => {
 			let countryName = '- none -';
 			if (worldMap.lastPoint.length === 1) {
 				const id = worldMap.lastPoint[0].id;
-				countryName = nameReplacersRev.has(id.toLowerCase()) ? formatCountry(nameReplacersRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+				countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
 			} else if (worldMap.lastPoint.length > 1 ) {
 				countryName = 'Multiple countries...';
 			}
@@ -413,7 +413,7 @@ addEventListener('on_notify_data', (name, info) => {
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
 	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
-		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags') && info.handle.RawPath !== bioCache.rawPath && info.handle.SubSong !== bioCache.subSong) {
+		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
 			bioCache.handleRawPath = info.handle.RawPath; 
 			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
@@ -421,30 +421,35 @@ addEventListener('on_notify_data', (name, info) => {
 			// Get Tags
 			const tagName = worldMap.properties.writeToTag[1];
 			if (tagName.length) {
-				let locale = '';
+				let locale = [];
 				if (isArray(info.tags)) { // Biography 1.1.3
 					locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
 				} else if (info.tags.hasOwnProperty(tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
-				// Replace country name with ISO standard name if it's a known variation
-				if (nameReplacers.has(locale[locale.length - 1])) {locale[locale.length - 1] = formatCountry(nameReplacers.get(locale[locale.length - 1]));}
-				const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-				if (jsonId.length && locale.length) {
-					// Set tag on map for drawing if found
-					if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-						worldMap.setTag(locale[locale.length - 1], jsonId);
-						repaint();
-					}
-					// Update tags or json if needed (even if the handle was not within the selection)
-					if (worldMap.properties.iWriteTags[1] > 0){
-						const tfo = _bt(tagName);
-						if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
-							if (worldMap.properties.iWriteTags[1] === 1) {
-								new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
-							} else if (worldMap.properties.iWriteTags[1] === 2) {
-								const newData = {[worldMap.jsonId]: jsonId, val: locale};
-								if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
+				const len = locale.length;
+				if (len) {
+					// Replace country name with ISO standard name if it's a known variation
+					const country = (locale[len - 1] || '').toLowerCase();
+					if (nameReplacers.has(country)) {locale[len - 1] = formatCountry(nameReplacers.get(country));}
+					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
+					console.log(locale[len - 1]);
+					if (jsonId.length) {
+						// Set tag on map for drawing if found
+						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
+							worldMap.setTag(locale[len - 1], jsonId);
+							repaint();
+						}
+						// Update tags or json if needed (even if the handle was not within the selection)
+						if (worldMap.properties.iWriteTags[1] > 0){
+							const tfo = _bt(tagName);
+							if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
+								if (worldMap.properties.iWriteTags[1] === 1) {
+									new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
+								} else if (worldMap.properties.iWriteTags[1] === 2) {
+									const newData = {[worldMap.jsonId]: jsonId, val: locale};
+									if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
+								}
 							}
 						}
 					}
