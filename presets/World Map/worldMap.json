@@ -22453,5 +22453,877 @@
 			"Bayamón",
 			"Puerto Rico"
 		]
+	},
+	{
+		"artist": "Kesakò",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Dahú",
+		"val": [
+			"Portugal"
+		]
+	},
+	{
+		"artist": "Hartmut Haenchen, Eckart Haupt",
+		"val": [
+			"Dresden",
+			"Sachsen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Zacari",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Mozzy, Sjava, Reason",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Van Cliburn, Fritz Reiner",
+		"val": [
+			"Shreveport",
+			"Caddo Parish",
+			"Louisiana",
+			"United States"
+		]
+	},
+	{
+		"artist": "Fritz Reiner, Chicago Symphony Orchestra",
+		"val": [
+			"Budapest",
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Fritz Reiner, John Weicher, Chicago Symphony Orchestra",
+		"val": [
+			"Budapest",
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Lara St. John, Eduardo Marturet, The Simón Bolívar Youth Orchestra of Venezuela",
+		"val": [
+			"London",
+			"Middlesex County",
+			"Ontario",
+			"Canada"
+		]
+	},
+	{
+		"artist": "Janine Jansen",
+		"val": [
+			"Soest",
+			"Utrecht",
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Karl Münchinger, Stuttgarter Kammerorchester",
+		"val": [
+			"Stuttgart",
+			"Baden-Württemberg",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Henryk Szeryng, Antal Dorati, The London Symphony Orchestra",
+		"val": [
+			"Żelazowa Wola",
+			"Mazowieckie",
+			"Poland"
+		]
+	},
+	{
+		"artist": "Clifford Curzon, George Szell, The London Symphony Orchestra",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Christian Ferras, Herbert Von Karajan, Berliner Philharmoniker",
+		"val": [
+			"Le Touquet-Paris-Plage",
+			"Pas-de-Calais",
+			"Hauts-de-France",
+			"France"
+		]
+	},
+	{
+		"artist": "Pierre Fournier, Josef Firkusny",
+		"val": [
+			"Paris",
+			"Île-de-France",
+			"France"
+		]
+	},
+	{
+		"artist": "Sviatoslav Richter, Erich Leinsdorf, The Chicago Symphony Orchestra",
+		"val": [
+			"Zhytomyr",
+			"Zhytomyrs'ka Oblast'",
+			"Ukraine"
+		]
+	},
+	{
+		"artist": "François Chaplin",
+		"val": [
+			"Paris",
+			"Île-de-France",
+			"France"
+		]
+	},
+	{
+		"artist": "Arthur Rubinstein",
+		"val": [
+			"Łódź",
+			"Łódzkie",
+			"Poland"
+		]
+	},
+	{
+		"artist": "Fou Ts'Ong",
+		"val": [
+			"Shanghai",
+			"China"
+		]
+	},
+	{
+		"artist": "Alexander Uninsky",
+		"val": [
+			"Kyïv",
+			"Ukraine"
+		]
+	},
+	{
+		"artist": "Krystian Zimerman",
+		"val": [
+			"Zabrze",
+			"Śląskie",
+			"Poland"
+		]
+	},
+	{
+		"artist": "Martha Argerich",
+		"val": [
+			"Buenos Aires",
+			"Argentina"
+		]
+	},
+	{
+		"artist": "Garrick Ohlsson",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Dinu Lipatti",
+		"val": [
+			"București",
+			"Romania"
+		]
+	},
+	{
+		"artist": "Leonard Pennario",
+		"val": [
+			"Buffalo",
+			"Erie County",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Arturo Benedetti Michelangeli",
+		"val": [
+			"Brescia",
+			"Brescia",
+			"Lombardia",
+			"Italy"
+		]
+	},
+	{
+		"artist": "Karl Böhm, Bayreuth Festival Orchestra",
+		"val": [
+			"Graz",
+			"Steiermark",
+			"Austria"
+		]
+	},
+	{
+		"artist": "Erich Leinsdorf, Los Angeles Philharmonic Orchestra",
+		"val": [
+			"Wien",
+			"Austria"
+		]
+	},
+	{
+		"artist": "George Szell, Cleveland Orchestra",
+		"val": [
+			"Budapest",
+			"Hungary"
+		]
+	},
+	{
+		"artist": "John Eliot Gardiner, Tristan Fry Percussion Ensemble",
+		"val": [
+			"Dorset",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Jacqueline du Pré, Daniel Barenboim",
+		"val": [
+			"Oxford",
+			"Oxfordshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Daniel Barenboim, The English Chamber Orchestra",
+		"val": [
+			"Buenos Aires",
+			"Argentina"
+		]
+	},
+	{
+		"artist": "Itzhak Perlman, Lawrence Foster, The Royal Philharmonic Orchestra",
+		"val": [
+			"Tel Aviv",
+			"Tel-Aviv",
+			"Israel"
+		]
+	},
+	{
+		"artist": "Bruno Walter, The Philadelphia Orchestra",
+		"val": [
+			"Berlin",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Wilhelm Kempff, Pierre Fournier",
+		"val": [
+			"Jüterbog",
+			"Brandenburg",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Rudolf Serkin, Seiji Ozawa",
+		"val": [
+			"Eger",
+			"Heves",
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Peter Frankl",
+		"val": [
+			"Budapest",
+			"Hungary"
+		]
+	},
+	{
+		"artist": "Sir Thomas Beecham, Royal Philarmonic Orchestra",
+		"val": [
+			"St Helens",
+			"St. Helens",
+			"Merseyside",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ernest Ansermet, Orchestre de la Suisse Romande",
+		"val": [
+			"Vevey",
+			"Vaud",
+			"Switzerland"
+		]
+	},
+	{
+		"artist": "Sir Adrian Boult, Henry Datyner, London Philharmonic Orchestra",
+		"val": [
+			"Chester",
+			"Cheshire West and Chester",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ofra Harnoy",
+		"val": [
+			"Hadera",
+			"H̱efa",
+			"Israel"
+		]
+	},
+	{
+		"artist": "Igor Zhukov",
+		"val": [
+			"Nizhny Novgorod",
+			"Nizhegorodskaya oblast'",
+			"Russian Federation"
+		]
+	},
+	{
+		"artist": "Daniel Barenboim",
+		"val": [
+			"Buenos Aires",
+			"Argentina"
+		]
+	},
+	{
+		"artist": "Bernd Glemser",
+		"val": [
+			"Dürbheim",
+			"Baden-Württemberg",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Maurizio Pollini",
+		"val": [
+			"Milan",
+			"Milano",
+			"Lombardia",
+			"Italy"
+		]
+	},
+	{
+		"artist": "Vladimir Ashkenazy",
+		"val": [
+			"Nizhny Novgorod",
+			"Nizhegorodskaya oblast'",
+			"Russian Federation"
+		]
+	},
+	{
+		"artist": "The London Philharmonic Orchestra, Enrique Batiz, Eva Maria Zuk",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Janine Jansen, Itamar Golan",
+		"val": [
+			"Soest",
+			"Utrecht",
+			"Netherlands"
+		]
+	},
+	{
+		"artist": "Zacari, Babes Wodumo",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Leopold Stokowski, London Symphony Orchestra, Erich Gruenberg",
+		"val": [
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Dmitri Krychov, Alexander Titov, St.-Petersburg State Orchestra",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Timofeyeva",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Tatiana Shebanova",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Halina Czerny-Stefanska",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Henryk Sztompka",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Jakov Zak",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Irina Zaritzkaya",
+		"val": [
+			"Poland"
+		]
+	},
+	{
+		"artist": "Georg Solti, Wiener Philharmoniker",
+		"val": [
+			"Hungary"
+		]
+	},
+	{
+		"artist": "I Musici & Félix Ayo",
+		"val": [
+			"Italy"
+		]
+	},
+	{
+		"artist": "Sergei Rachmaninoff, Leopold Stokowski, The Philadelphia Orchestra",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Sergei Rachmaninoff, Eugene Ormandy, The Philadelphia Orchestra",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Christopher Taylor, Leslie Pearson, Dennis Vigay",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Sheila Armstrong, Martin Jones",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Josef Suk, Julius Katchen",
+		"val": [
+			"Czech Republic"
+		]
+	},
+	{
+		"artist": "Audiophysical",
+		"val": [
+			"New Zealand"
+		]
+	},
+	{
+		"artist": "Monsieur Grandin",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Neroche",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Ancient Astronauts",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Karthala 72",
+		"val": [
+			"Central African Republic"
+		]
+	},
+	{
+		"artist": "The Larks",
+		"val": [
+			"United States"
+		]
+	},
+	{
+		"artist": "Czech orchestras",
+		"val": [
+			"Czech Republic"
+		]
+	},
+	{
+		"artist": "Similia",
+		"val": [
+			"Canada"
+		]
+	},
+	{
+		"artist": "Engegårdkvartetten",
+		"val": [
+			"Norway"
+		]
+	},
+	{
+		"artist": "Pavel Kogan, Moscow State Symphony Orchestra",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Wilhelm Furtwängle, Berlin Philharmonic Orchestra",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Aloosh",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Michael Krutik, Alexander Titov, St.-Petersburg State Orchestra",
+		"val": [
+			"Russia"
+		]
+	},
+	{
+		"artist": "Eduard Mrazek, Hans Swarowsk, Vienna State Opera Orchestra",
+		"val": [
+			"Germany"
+		]
+	},
+	{
+		"artist": "Billy Bragg & Wilco, Billy Bragg, Wilco, Natalie Merchant",
+		"val": [
+			"Barking",
+			"Barking and Dagenham",
+			"London",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Natalie Merchant, R.E.M.",
+		"val": [
+			"Jamestown",
+			"Chautauqua County",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Natalie Merchant, Susan McKeown",
+		"val": [
+			"Jamestown",
+			"Chautauqua County",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Harry Styles",
+		"val": [
+			"Redditch",
+			"Worcestershire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Dos",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Duo l'Hêtre Heureux",
+		"val": [
+			"France"
+		]
+	},
+	{
+		"artist": "Les Bottines Artistiques",
+		"val": [
+			"Belgium"
+		]
+	},
+	{
+		"artist": "Duo de Schepper-Sanczuk",
+		"val": [
+			"Belgium"
+		]
+	},
+	{
+		"artist": "Andrés Calamaro",
+		"val": [
+			"Buenos Aires",
+			"Argentina"
+		]
+	},
+	{
+		"artist": "Aterciopelados",
+		"val": [
+			"Bogotá",
+			"Colombia"
+		]
+	},
+	{
+		"artist": "Mägo de Oz",
+		"val": [
+			"Madrid",
+			"Comunidad de Madrid",
+			"Spain"
+		]
+	},
+	{
+		"artist": "J. Cole",
+		"val": [
+			"Frankfurt am Main",
+			"Hessen",
+			"Germany"
+		]
+	},
+	{
+		"artist": "Ska-P",
+		"val": [
+			"Madrid",
+			"Comunidad de Madrid",
+			"Spain"
+		]
+	},
+	{
+		"artist": "Jorge Drexler",
+		"val": [
+			"Montevideo",
+			"Montevideo",
+			"Uruguay"
+		]
+	},
+	{
+		"artist": "BTS",
+		"val": [
+			"Seoul",
+			"Korea",
+			"Republic of"
+		]
+	},
+	{
+		"artist": "Che Sudaka",
+		"val": [
+			"Barcelona",
+			"Barcelona",
+			"Catalunya",
+			"Spain"
+		]
+	},
+	{
+		"artist": "Natalia Lacunza, Guitarricadelafuente",
+		"val": [
+			"Pamplona",
+			"Navarra",
+			"Spain"
+		]
+	},
+	{
+		"artist": "Lana Del Rey",
+		"val": [
+			"Manhattan",
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Taylor Swift feat. Ed Sheeran",
+		"val": [
+			"West Reading",
+			"Berks County",
+			"Pennsylvania",
+			"United States"
+		]
+	},
+	{
+		"artist": "Pacific Gas and Electric",
+		"val": [
+			"Los Angeles",
+			"Los Angeles County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": "Isabel LaRosa",
+		"val": [
+			"Annapolis",
+			"Anne Arundel County",
+			"Maryland",
+			"United States"
+		]
+	},
+	{
+		"artist": "Las Ninyas del Corro",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Guitarricadelafuente",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Fetén Fetén, Guitarricadelafuente",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "M.I.A.",
+		"val": [
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Mott the Hoople",
+		"val": [
+			"Hereford",
+			"Herefordshire",
+			"England",
+			"United Kingdom"
+		]
+	},
+	{
+		"artist": "Opeth",
+		"val": [
+			"Stockholm",
+			"Stockholm municipality",
+			"Stockholms län",
+			"Sweden"
+		]
+	},
+	{
+		"artist": "Deftones",
+		"val": [
+			"Sacramento",
+			"Sacramento County",
+			"California",
+			"United States"
+		]
+	},
+	{
+		"artist": ".38 Special",
+		"val": [
+			"Jacksonville",
+			"Duval County",
+			"Florida",
+			"United States"
+		]
+	},
+	{
+		"artist": "Gillian Welch, David Rawlings",
+		"val": [
+			"New York",
+			"New York",
+			"United States"
+		]
+	},
+	{
+		"artist": "Dulce y Agraz",
+		"val": [
+			"Chile"
+		]
+	},
+	{
+		"artist": "Nessa Barrett",
+		"val": [
+			"Atlantic County",
+			"New Jersey",
+			"United States"
+		]
+	},
+	{
+		"artist": "Alexandra Stan",
+		"val": [
+			"Constanța",
+			"Romania"
+		]
+	},
+	{
+		"artist": "Nunatak",
+		"val": [
+			"Rothera",
+			"Antarctica"
+		]
+	},
+	{
+		"artist": "Havalina",
+		"val": [
+			"Long Beach",
+			"CA"
+		]
+	},
+	{
+		"artist": "Rainbows Are Free",
+		"val": [
+			"Norman",
+			"Cleveland County",
+			"Oklahoma",
+			"United States"
+		]
+	},
+	{
+		"artist": "Marina Sena",
+		"val": [
+			"Minas Gerais",
+			"Brazil"
+		]
+	},
+	{
+		"artist": "Lia Kali",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Lia Kali, SDFK",
+		"val": [
+			"Spain"
+		]
+	},
+	{
+		"artist": "Travis Scott",
+		"val": [
+			"Houston",
+			"Harris County",
+			"Texas",
+			"United States"
+		]
+	},
+	{
+		"artist": "Masters of Reality",
+		"val": [
+			"Syracuse",
+			"New York",
+			"United States"
+		]
 	}
 ]
