@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/06/23
+//29/06/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -433,7 +433,6 @@ addEventListener('on_notify_data', (name, info) => {
 					const country = (locale[len - 1] || '').toLowerCase();
 					if (nameReplacers.has(country)) {locale[len - 1] = formatCountry(nameReplacers.get(country));}
 					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-					console.log(locale[len - 1]);
 					if (jsonId.length) {
 						// Set tag on map for drawing if found
 						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
