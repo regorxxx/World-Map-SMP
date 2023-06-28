@@ -33,6 +33,7 @@
 ### Changed
 ### Removed
 ### Fixed
+- Console: removed forgotten testing console logging.
 
 ## [2.8.2] - 2023-06-27
 ### Added
