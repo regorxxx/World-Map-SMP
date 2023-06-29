@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.8.3](#283---2023-06-29)
 - [2.8.2](#282---2023-06-27)
 - [2.8.1](#281---2023-05-16)
 - [2.8.0](#280---2023-05-08)
@@ -33,7 +34,14 @@
 ### Changed
 ### Removed
 ### Fixed
+
+## [2.8.3] - 2023-06-29
+### Added
+### Changed
+### Removed
+### Fixed
 - Console: removed forgotten testing console logging.
+- Helpers: fixed incorrect warning about missing font.
 
 ## [2.8.2] - 2023-06-27
 ### Added
@@ -328,7 +336,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.2...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.3...HEAD
+[2.8.3]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.2...v2.8.3
 [2.8.2]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.1...v2.8.2
 [2.8.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.0...v2.8.1
 [2.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.7.0...v2.8.0
