@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/02/23
+//27/07/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -25,7 +25,8 @@ function imageMap({
 		bStaticCoord = true,
 		pointShape = 'circle', // string, circle
 		pointSize = 10,
-		pointLineSize = 25
+		pointLineSize = 25,
+		bSkipInit = false
 	} = {}) {
 	// Constants
 	const bShowSize = false;
@@ -498,5 +499,5 @@ function imageMap({
 	this.pointShape = pointShape;
 	this.pointSize = pointSize;
 	this.pointLineSize = pointLineSize;
-	this.init();
+	if (!bSkipInit) {this.init();}
 }
