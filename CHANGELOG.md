@@ -32,7 +32,9 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Configuration: ALBUM ARTIST is now used instead of ARTIST by default (on new installations). This ensures better compatibility with classical music, where the artist is the actual performer but the album artist is the original composer/artist. To apply the change on existing installations, delete '[foobar_profile]\js_data\presets\global\globQuery.json' and '[foobar_profile]\foobar2000\js_data\presets\global\globTags.json' files. Further configuration may be needed via menus.
+- Configuration: database now uses album artist by default instead of artist (file translation is done automatically).
+- UI: improvements to panel updating when changing selection or updating tags, ensuring panel does not update unnecessarily.
+- UI: locale values are cache during the session, to be reused in case tags, Bio or JSON don't have a match.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
