@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/07/23
+//28/07/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -42,7 +42,7 @@ function imageMap({
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height);
 		}
 	}
-	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false}) => { // on_paint
+	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false, bClearCachedValues = false}) => { // on_paint
 		this.paintBg(gr);
 		var toPaintArr = [];
 		// When moving mouse, retrieve last points
@@ -110,7 +110,7 @@ function imageMap({
 		}
 		// Clear the lists
 		this.clearLastPoint();
-		this.clearTagValue();
+		if (bClearCachedValues) {this.clearTagValue();}
 		// Paint
 		toPaintArr.forEach( (toPaint) => {
 			const id = toPaint.id;
@@ -204,6 +204,7 @@ function imageMap({
 			if (byKey.length && this.tagValue.hasOwnProperty(byKey)) {
 				// Set by other script or forced by other panel
 				if (!mapTagValue.length || this.mapTag === 'External Script') {mapTagValue = this.tagValue[byKey];}
+				else if (mapTagValue.length) {this.setTag(mapTagValue, byKey);} // Cache for later use
 			}
 		}
 		return mapTagValue;
