@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/06/23
+//28/07/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -111,15 +111,44 @@ setProperties(worldMap_properties, '', 0);
 const worldMap = new imageMap({
 	imagePath:				folders.xxx + 'images\\MC_WorldMap_No_Ant.jpg',
 	properties:				getPropertiesPairs(worldMap_properties, '', 0),
-	jsonId:					'artist', // id and tag used to identify different entries
+	jsonId:					'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc:			findCountry, // Function at helpers\world_map_tables.js
 	selPointFunc:			selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
 	selFindPointFunc:		selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
 	tooltipFunc: 			tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
 	tooltipFindPointFunc: 	tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
-	font:					globFonts.standard.name
+	font:					globFonts.standard.name,
+	bSkiptInit: 			true
 });
+
+// Replace save/load code to ensure artist is always the id
+worldMap.save = (path = worldMap.jsonPath) => {
+	let data = clone(worldMap.jsonData);
+	if (worldMap.jsonId !== 'artist') {
+		data = data.map((obj) => {
+			return {artist: obj[worldMap.jsonId], val: obj.val};
+		});
+	}
+	_save(path, JSON.stringify(data, null, '\t'));
+};
+
+worldMap.loadData = (path = worldMap.jsonPath) => {
+	if (_isFile(path)) {
+		worldMap.jsonData = [];
+		let data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
+		if (!data) {return;}
+		if (worldMap.jsonId !== 'artist') {
+			data = data.map((obj) => {
+				return {[worldMap.jsonId]: obj.artist, val: obj.val};
+			});
+		}
+		data.forEach((item) => {worldMap.jsonData.push(item);});
+	}
+};
+
+// Init with changes
+worldMap.init();
 
 // Additional config
 worldMap.pointSize = worldMap.properties.customPointSize[1];
@@ -201,6 +230,7 @@ addEventListener('on_paint', (gr) => {
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
+		const rawPaths = new Set(sel.Convert().map((handle) => handle.RawPath + ',' + handle.SubSong));
 		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length)});
 		if (sel.Count) {
 			if (bPressShift && !bPressWin && worldMap.foundPoints.length){
@@ -256,7 +286,7 @@ addEventListener('on_paint', (gr) => {
 							}
 						}
 					}
-					if (worldMap.properties.pointMode[1] === 2) {  // Both
+					if (worldMap.properties.pointMode[1] === 2) { // Both
 						let point = worldMap.point[id];
 						if (!point) {
 							const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
@@ -437,7 +467,9 @@ addEventListener('on_notify_data', (name, info) => {
 						// Set tag on map for drawing if found
 						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
 							worldMap.setTag(locale[len - 1], jsonId);
-							repaint();
+							if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
+								repaint();
+							}
 						}
 						// Update tags or json if needed (even if the handle was not within the selection)
 						if (worldMap.properties.iWriteTags[1] > 0){
