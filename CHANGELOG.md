@@ -33,9 +33,12 @@
 
 ## [Unreleased][]
 ### Added
+- Statistics: added statistics mode which can display multiple stats according to the library and database in charts. See [ Statistics-Framework-SMP](https://github.com/regorxxx/Statistics-Framework-SMP).
 ### Changed
+- Helpers: updated helpers
 ### Removed
 ### Fixed
+- Name replacers not being used at some stages of the code (it probably did not affect anything though).
 
 ## [2.9.1] - 2023-07-29
 ### Added
