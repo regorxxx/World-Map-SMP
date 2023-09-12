@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/07/23
+//12/09/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -34,8 +34,9 @@ function imageMap({
 	this.tooltip = new _tt(null);
 	
 	// Paint
-	this.paintBg = (gr) => {
+	this.paintBg = (gr, bOnlyPanel = false) => {
 		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);}
+		if (bOnlyPanel) {return;}
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
 		} else {

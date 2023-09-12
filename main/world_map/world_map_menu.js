@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/04/23
+//12/09/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -38,7 +38,7 @@ function createMenu() {
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
-			const options = ['Standard mode (selection & playback)' , 'Library mode (all artist on library)'];
+			const options = ['Standard mode (selection & playback)' , 'Library mode (all artist on library)', 'Statistics mode'];
 			menu.newEntry({menuName, entryText: 'Switch panel mode:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode, idx) => {
@@ -46,10 +46,20 @@ function createMenu() {
 					if (properties.panelMode[1] === idx) {return;}
 					properties.panelMode[1] = idx;
 					overwriteProperties(properties);
-					if (properties.panelMode[1]) {
-						fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
-					} else {
-						fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
+					switch (properties.panelMode[1]) {
+						case 1:
+							fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+							stats.bEnabled = false;
+							break;
+						case 2:
+							fb.ShowPopupMessage('Displays statistics about current database using charts.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+							stats.bEnabled = true;
+							stats.init();
+							break;
+						default:
+							fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at 	menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
+							stats.bEnabled = false;
+							break;
 					}
 					worldMap.clearIdSelected();
 					worldMap.clearLastPoint(); 
