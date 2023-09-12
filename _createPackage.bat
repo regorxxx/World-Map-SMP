@@ -94,10 +94,13 @@ CALL :copy_file helpers\helpers_xxx_UI.js
 CALL :copy_file helpers\helpers_xxx_UI_chars.js
 CALL :copy_file helpers\map_xxx.js
 CALL :copy_file helpers\menu_xxx.js
+CALL :copy_file helpers\popup_xxx.js
 CALL :check_folder helpers\readme
 CALL :copy_file helpers\readme\world_map.txt
 REM helpers external
 CALL :copy_folder helpers-external\checkso
+CALL :copy_folder helpers-external\chroma.js-2.4.0
+CALL :delete_file helpers-external\chroma.js-2.4.0\chroma-light.js
 CALL :copy_folder helpers-external\cmdutils
 CALL :copy_folder helpers-external\countries-mercator
 CALL :delete_file helpers-external\countries-mercator\_Kosovo.png
@@ -211,6 +214,8 @@ CALL :copy_file helpers\readme\playlist_manager.txt
 REM helpers external
 CALL :copy_folder helpers-external\7z
 CALL :copy_folder helpers-external\checkso
+CALL :copy_folder helpers-external\chroma.js-2.4.0
+CALL :delete_file helpers-external\chroma.js-2.4.0\chroma-light.js
 CALL :copy_folder helpers-external\cmdutils
 CALL :copy_folder helpers-external\keycode-2.2.0
 CALL :copy_folder helpers-external\SimpleCrypto-js
