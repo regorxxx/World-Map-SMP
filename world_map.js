@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/07/23
+//12/09/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'XXX', version: '2.9.1', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'XXX', version: '3.0.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -54,6 +54,7 @@ include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 include('main\\world_map\\world_map_helpers.js');
 include('main\\world_map\\world_map_flags.js');
+include('main\\world_map\\world_map_statistics.js');
 include('main\\filter_and_query\\remove_duplicates.js');
 
 checkCompatible('1.6.1', 'smp');
@@ -92,17 +93,26 @@ const worldMap_properties = {
 	customLocaleColor	:	['Custom text color', 0xFF000000, {func: isInt}, 0xFF000000],
 	bShowLocale			:	['Show current locale tag', true, {func: isBoolean}, true],
 	fontSize			:	['Size of header text', 10, {func: isInt}, globFonts.standard.size],
-	panelMode			:	['Display selection (0) or current library (1)', 0, {func: isInt, range: [[0, 1]]}, 0],
+	panelMode			:	['Selection (0), library (1), stats (2)', 0, {func: isInt, range: [[0, 2]]}, 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
 	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2],
 	bShowSelModePopup	:	['Show warning when selection mode changes', true, {func: isBoolean}, true],
-	iRepaintDelay		:	['Panel repaint delay (ms)', 1000, {func: isInt}, 1000]
+	iRepaintDelay		:	['Panel repaint delay (ms)', 1000, {func: isInt}, 1000],
+	statsConfig			:	['Stats mode configuration', JSON.stringify({
+		// graph: {/* type, borderWidth, point */},
+		// dataManipulation = {/* sort, filter, slice, distribution , probabilityPlot*/},
+		background: {color: null},
+		margin: {left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15)},
+		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
+		// axis = {x: {/* show, color, width, ticks, labels, key *, singleLabels/}, y: {/* ... */}}
+	})]
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
 worldMap_properties['customPanelColor'].push({func: isInt}, worldMap_properties['customPanelColor'][1]);
+worldMap_properties['statsConfig'].push({func: isJSON}, worldMap_properties['statsConfig'][1]);
 setProperties(worldMap_properties, '', 0);
 
 /* 
@@ -184,6 +194,9 @@ const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonPar
 	}
 }
 
+// Statisctics mode
+const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] === 2, JSON.parse(worldMap.properties.statsConfig[1]));
+
 /* 
 	Callbacks for painting 
 */
@@ -218,6 +231,7 @@ addEventListener('on_colours_changed', () => {
 const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], iso: new Set(), processedIso: new Set()}};
 addEventListener('on_paint', (gr) => {
 	if (!worldMap.properties.bEnabled[1]) {worldMap.paintBg(gr); return;}
+	if (worldMap.properties.panelMode[1] === 2) {worldMap.paintBg(gr, true); return;}
 	if (worldMap.properties.panelMode[1]) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
@@ -257,7 +271,7 @@ addEventListener('on_paint', (gr) => {
 				worldMap.lastPoint.forEach((point, i) => {
 					let id = point.id;
 					if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
-						const iso = id && id.length ? isoMap.get(id.toLowerCase()) : null;
+						const iso = id && id.length ? getCountryISO(id) : null;
 						if (iso) {
 							if (!imgAsync.layers.iso.has(iso)) {
 								imgAsync.layers.iso.add(iso);
@@ -343,31 +357,37 @@ addEventListener('on_paint', (gr) => {
 });
 
 addEventListener('on_playback_new_track', (metadb) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (!metadb) {return;}
 	repaint(true);
 });
 
 addEventListener('on_selection_changed', () => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_item_focus_change', () => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_playlist_switch', () => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	repaint();
 });
 
 addEventListener('on_playback_stop', (reason) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (reason !== 2) { // Invoked by user or Starting another track
 		repaint();
 	}
 });
 
 addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (playlistIndex === plman.ActivePlaylist && newCount === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
@@ -377,6 +397,7 @@ addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
 });
 
 addEventListener('on_metadb_changed', (handleList, fromHook) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (fromHook) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -397,6 +418,7 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	Callbacks for move and click
 */
 addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable point menu without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -406,6 +428,7 @@ addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 });
 
 addEventListener('on_mouse_move', (x, y, mask) => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -417,15 +440,18 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 });
 
 addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) {window.Repaint();}
 });
 
 addEventListener('on_mouse_leave', () => {
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	worldMap.move(-1, -1);
 });
 
 addEventListener('on_mouse_rbtn_up', (x, y) => {
+	if (worldMap.properties.panelMode[1] === 2) {return true;}
 	createMenu().btn_up(x, y);
 	return true; // Disable right button menu
 });
@@ -437,6 +463,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 const bioCache = {rawPath: null, subSong: null};
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') {return;}
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (!worldMap.properties.bEnabledBiography[1]) {return;}
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
@@ -525,3 +552,5 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 	}
 });
+
+stats.attachCallbacks();
