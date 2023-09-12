@@ -285,24 +285,28 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			case 'json': {
 				switch (arg) {
 					case 'artists' : {
-						data = [libraryPoints.map((country, i) => {
-							return {x: country.id, y: country.val};
-						})];
+						if (libraryPoints) {
+							data = [libraryPoints.map((country, i) => {
+								return {x: country.id, y: country.val};
+							})];
+						}
 						break;
 					}
 					case 'artists region' : {
-						const tagCount = new Map();
-						libraryPoints.map((point, i) => {
-							const country = country.id;
-							const isoCode = getCountryISO(country);
-							if (isoCode) {
-								const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
-								if (!id) {return;}
-								if (!tagCount.has(id)) {tagCount.set(id, point.val);}
-								else {tagCount.set(id, tagCount.get(id) + point.val);};
-							}
-						});
-						data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
+						if (libraryPoints) {
+							const tagCount = new Map();
+							libraryPoints.map((point, i) => {
+								const country = country.id;
+								const isoCode = getCountryISO(country);
+								if (isoCode) {
+									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
+									if (!id) {return;}
+									if (!tagCount.has(id)) {tagCount.set(id, point.val);}
+									else {tagCount.set(id, tagCount.get(id) + point.val);};
+								}
+							});
+							data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
+						}
 						break;
 					}
 				}
@@ -381,24 +385,28 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			case 'json': {
 				switch (arg) {
 					case 'artists' : {
-						data = [libraryPoints.map((country, i) => {
-							return {x: country.id, y: country.val};
-						})];
+						if (libraryPoints) {
+							data = [libraryPoints.map((country, i) => {
+								return {x: country.id, y: country.val};
+							})];
+						}
 						break;
 					}
 					case 'artists region' : {
-						const tagCount = new Map();
-						libraryPoints.map((point, i) => {
-							const country = point.id;
-							const isoCode = getCountryISO(country);
-							if (isoCode) {
-								const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
-								if (!id) {return;}
-								if (!tagCount.has(id)) {tagCount.set(id, point.val);}
-								else {tagCount.set(id, tagCount.get(id) + point.val);};
-							}
-						});
-						data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
+						if (libraryPoints) {
+							const tagCount = new Map();
+							libraryPoints.map((point, i) => {
+								const country = point.id;
+								const isoCode = getCountryISO(country);
+								if (isoCode) {
+									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
+									if (!id) {return;}
+									if (!tagCount.has(id)) {tagCount.set(id, point.val);}
+									else {tagCount.set(id, tagCount.get(id) + point.val);};
+								}
+							});
+							data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
+						}
 						break;
 					}
 				}
