@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [3.0.0](#300---2023-09-12)
+- [3.0.0](#300---2023-09-13)
 - [2.9.1](#291---2023-07-29)
 - [2.9.0](#290---2023-07-28)
 - [2.8.3](#283---2023-06-29)
@@ -38,7 +38,7 @@
 ### Removed
 ### Fixed
 
-## [3.0.0] - 2023-09-12
+## [3.0.0] - 2023-09-13
 ### Added
 - Statistics: added statistics mode which can display multiple stats according to the library and database in charts. See [ Statistics-Framework-SMP](https://github.com/regorxxx/Statistics-Framework-SMP).
 ### Changed

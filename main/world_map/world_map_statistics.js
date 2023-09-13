@@ -58,7 +58,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			this.menu = new _menu({
 				onBtnUp: () => {
 					const config = this.exportConfig();
-					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin']);
+					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin', 'colors']);
 					Object.keys(config).forEach((key) => {
 						if (!keys.has(key)) {delete config[key];}
 					});
@@ -124,6 +124,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		const filtLow = (num) => {return (a) => {return a.y < num;}};
 		const fineGraphs = new Set(['bars', 'doughnut', 'pie']);
 		const sizeGraphs = new Set(['scatter', 'lines']);
+		const colorGraphs = new Set(['scatter', 'bars', 'lines']);
 		// Header
 		menu.newEntry({entryText: this.title, flags: MF_GRAYED});
 		menu.newEntry({entryText: 'sep'});
@@ -169,6 +170,9 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				{isEq: null,	key: this.graph.type, value: null,				newValue: 'pie',			entryText: 'Pie'},
 			].forEach(createMenuOption('graph', 'type', subMenu, void(0), (option) => {
 				this.graph.borderWidth = fineGraphs.has(option.newValue) ? _scale(1) : _scale(4);
+				if (colorGraphs.has(option.newValue)){
+					this.colors = [opaqueColor(worldMap.properties.customPointColor[1], 50)];
+				}
 			}));
 		}
 		{
@@ -507,9 +511,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	this.init = () => {
 		const newConfig = [
 			[ // Row
-				this.bAsync 
+				{...this.config, ...(this.bAsync 
 					? {dataAsync: () => this.getDataAsync(this.source, this.arg)}
 					: {data: Array(1).fill(...this.getData(this.source, this.arg))}
+				)}
 			]
 		];
 		rows = newConfig.length;
@@ -534,5 +539,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	this.source = config && config.data ? config.data.source : 'json';
 	this.arg = config && config.data ? config.data.arg : 'artists';
 	this.bAsync = config && config.data && config.data.hasOwnProperty('bAsync') ? !!config.data.bAsync : true;
+	this.config = config ? config : {};
+	delete this.config.data;
 	if (this.bEnabled) {this.init();}
 }
