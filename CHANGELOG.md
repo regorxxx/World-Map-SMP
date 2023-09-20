@@ -36,6 +36,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: tooltip now shows region and continent for the selected country.
 ### Removed
 ### Fixed
 

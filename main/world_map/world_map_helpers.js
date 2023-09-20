@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/09/23
+//20/09/23
 
 include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -159,7 +159,8 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 function tooltip(point) { 
 	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(getCountryISO(point.id));
-	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' - ';
+	const continent = music_graph_descriptors_countries.getMainRegion(region);
+	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' ' + _p(continent) + ' - ';
 	text += '\n(L. Click to create Autoplaylist from same country)\n';
 	if (!worldMap.properties.panelMode[1]) {
 		modifiers.forEach( (mod) => {
