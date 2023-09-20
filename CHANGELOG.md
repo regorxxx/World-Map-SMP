@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.0.1](#301---2023-09-20)
 - [3.0.0](#300---2023-09-13)
 - [2.9.1](#291---2023-07-29)
 - [2.9.0](#290---2023-07-28)
@@ -35,6 +36,13 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [3.0.1] - 2023-09-13
+### Added
+### Changed
+- Helpers: updated helpers
 ### Removed
 ### Fixed
 
