@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.1.0](#310---2023-09-25)
 - [3.0.1](#301---2023-09-20)
 - [3.0.0](#300---2023-09-13)
 - [2.9.1](#291---2023-07-29)
@@ -36,12 +37,18 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [3.1.0] - 2023-09-25
+### Added
+### Changed
 - UI: tooltip now shows region and continent for the selected country.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
 
-## [3.0.1] - 2023-09-13
+## [3.0.1] - 2023-09-20
 ### Added
 ### Changed
 - Helpers: updated helpers
@@ -376,7 +383,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.9.1...v3.0.0
 [2.9.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.9.0...v2.9.1
 [2.9.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.8.2...v2.9.0
