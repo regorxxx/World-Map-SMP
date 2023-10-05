@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.2.0](#320---2023-10-05)
 - [3.1.0](#310---2023-09-25)
 - [3.0.1](#301---2023-09-20)
 - [3.0.0](#300---2023-09-13)
@@ -37,8 +38,15 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [3.2.0] - 2023-10-05
+### Added
+### Changed
 - Configuration: expanded user configurable files at '[FOOBAR PROFILE FOLDER]\js_data\presets\global' with new queries. File will be automatically updated with new values (maintaining the user settings).
 - Configuration: improved the user configurable files update check for missing keys.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
@@ -385,7 +393,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.9.1...v3.0.0
 [2.9.1]: https://github.com/regorxxx/World-Map-SMP/compare/v2.9.0...v2.9.1

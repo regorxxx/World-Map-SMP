@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/23
+//05/10/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.1.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.2.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
