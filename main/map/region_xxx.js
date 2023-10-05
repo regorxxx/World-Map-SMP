@@ -1,7 +1,7 @@
 ﻿'use strict';
-//25/09/22
+//04/10/22
 
-function regionMap({nodeName = 'node', intraSubRegionDist = 0.3, interSubRegionDist = 0.6, interRegionDist = 1, culturalRegion} = {}) {
+function regionMap({nodeName = 'node', intraSubRegionDist = 1, interSubRegionDist = 2, interRegionDist = 4, culturalRegion} = {}) {
 	this.culturalRegion = culturalRegion || {
 		'Antarctica': {'Antarctica': []},
 		'Africa': {'West Africa': [],'Maghreb': [],'Central Africa': [],'East Africa': [],'South Africa': []},
@@ -12,17 +12,36 @@ function regionMap({nodeName = 'node', intraSubRegionDist = 0.3, interSubRegionD
 		'Oceania': {'Australasia': [],'Melanesia': [],'Micronesia': [],'Polynesia': []}
 	};
 	[this.intraSubRegionDist, this.interSubRegionDist, this.interRegionDist] = [intraSubRegionDist, interSubRegionDist, interRegionDist];
+	this.cache = {getDistance: new Map(), regionsNorm: {}};
 	this.nodeName = nodeName;
 	this.regionList = {};
-	this.updateRegionList = function updateRegionList() {
+	this.nodeList = new Map();
+	this.updateRegionList = function updateRegionList({bNodeList = false} = {}) {
 		const mainRegions = Object.keys(this.culturalRegion);
 		const regions = {};
 		const regionsMap = new Map();
+		this.nodeList.clear();
 		mainRegions.forEach((key) => {regionsMap.set(key, key);});
 		mainRegions.forEach((key) => {
 			regions[key] = [];
 			Object.keys(this.culturalRegion[key]).forEach((subKey) => {
-				if (subKey !== '_ALL_') {regions[key].push(subKey); regionsMap.set(subKey, key);}
+				if (subKey !== '_ALL_') {
+					regions[key].push(subKey); 
+					regionsMap.set(subKey, key);
+					this.cache.regionsNorm[subKey] = new Set(this.culturalRegion[key][subKey].map(n => n.toUpperCase()));
+					if (bNodeList) {
+						this.culturalRegion[key][subKey].forEach((node) => {
+							const regionObj = this.nodeList.has(node) ? this.nodeList.get(node) : {};
+							if (key === subKey) {regionObj[key] = [];}
+							else if (regionObj[key]) {regionObj[key].push(subKey);}
+							else {regionObj[key] = [];}
+							Object.keys(regionObj).forEach((key) => { // Fix for main region equal to subregion
+								if (regionObj[key].length === 0) {regionObj[key].push(key);}
+							});
+							this.nodeList.set(node, regionObj);
+						});
+					}
+				}
 			});
 		});
 		const regionsList = [...regionsMap.keys()];
@@ -89,17 +108,17 @@ regionMap.prototype.regionHasNode = function regionHasNode(region, node) {
 		const key = this.get(region);
 		const subKey = this.capitalize(region) !== key ? this.capitalize(region) : null;
 		const nodeNorm = node.toUpperCase();
-		const findNode = (subKey) => {return this.culturalRegion[key][subKey].findIndex((nodeNormNew) => {return nodeNormNew.toUpperCase() === nodeNorm;});};
+		const findNode = (subKey) => {return this.cache.regionsNorm[subKey].has(nodeNorm);};
 		if (subKey) { // Look only at given subregion
-			bFound = findNode(subKey) !== -1;
+			bFound = findNode(subKey);
 		} else { // Look within all subregions
-			bFound = this.getSubRegions(key).some((subKey) => {return findNode(subKey) !== -1;});
+			bFound = this.getSubRegions(key).some((subKey) => {return findNode(subKey);});
 		}
 	}
 	return bFound;
 };
 
-regionMap.prototype.getNodeRegion = function getNodeRegion(node) {
+regionMap.prototype.getNodeRegion = function getNodeRegion(node) { // A cached version may be retrieved at this.nodeList map
 	const regions = new Set();
 	if (!node || !node.length) {console.log('getNodeRegion: Node has not been set'); return {};}
 	this.getRegionNames().forEach((region) => {if (this.regionHasNode(region, node)) {regions.add(region); regions.add(this.getMainRegion(region));}});
@@ -144,11 +163,18 @@ regionMap.prototype.getNodesFromRegion = function getNodesFromRegion(region) {
 
 // Distance functions
 regionMap.prototype.getDistance = function getDistance(nodeA, nodeB) {
-	return this.capitalize(nodeA) === this.capitalize(nodeB)
-		? 0
-		: this.isSameRegionNodes(nodeA, nodeB)
-			? this.intraSubRegionDist
-			: this.isSameRegionNodes(nodeA, nodeB, true)
-				? this.interSubRegionDist
-				: this.interRegionDist;
+	let distance;
+	const id = [nodeA, nodeB].sort().join('-');
+	if (this.cache.getDistance.has(id)) {distance = this.cache.getDistance.get(id);}
+	else {
+		distance = this.capitalize(nodeA) === this.capitalize(nodeB)
+			? 0
+			: this.isSameRegionNodes(nodeA, nodeB)
+				? this.intraSubRegionDist
+				: this.isSameRegionNodes(nodeA, nodeB, true)
+					? this.interSubRegionDist
+					: this.interRegionDist;
+		this.cache.getDistance.set(id, distance);
+	}
+	return distance;
 };
