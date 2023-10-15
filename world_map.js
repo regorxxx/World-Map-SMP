@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/23
+//15/10/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.2.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.3.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -69,10 +69,10 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 	{mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE'}
 ];
 const worldMap_properties = {
-	mapTag				: 	['Tag name or TF expression for artist\'s country', '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))', {func: isString}, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
+	mapTag				: 	['Tag name or TF expression to read artist\'s country', '$meta(LOCALE LAST.FM,$sub($meta_num(LOCALE LAST.FM),1))', {func: isString}, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
 	imageMapPath		: 	['Path to your own world map (mercator projection)', '', {func: isStringWeak}, ''],
 	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0, {func: isInt, range: [[0, 2]]}, 0],
-	writeToTag			:	['Where to write tag values (should be related to 1st property)', 'Locale Last.fm', {func: isString}, 'Locale Last.fm'],
+	writeToTag			:	['Tag name to write artist\'s country', 'Locale Last.fm', {func: isString}, 'LOCALE LAST.FM'],
 	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0], {eq: selMode}, selMode[0]],
 	bEnabled			:	['Enable panel', true, {func: isBoolean}, true],
 	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false, {func: isBoolean}, false],
@@ -329,7 +329,8 @@ addEventListener('on_paint', (gr) => {
 			const h = worldMap.imageMap.Height * worldMap.scale;
 			let countryName = '- none -';
 			if (worldMap.lastPoint.length === 1) {
-				const id = worldMap.lastPoint[0].id;
+				let id = worldMap.lastPoint[0].id;
+				if (getCountryISO(id) === id) {id = formatCountry(getCountryName(id));} // Tag has ISO codes instead of country names
 				countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
 			} else if (worldMap.lastPoint.length > 1 ) {
 				countryName = 'Multiple countries...';
