@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/09/23
+//15/10/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -263,22 +263,6 @@ function createMenu() {
 			menu.newCheckMenu(menuName, properties.bShowSelModePopup[0], void(0),  () => {return properties.bShowSelModePopup[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
-		{	// Modifier tags
-			const menuName = menu.newMenu('Modifier tags for playlists');
-			menu.newEntry({menuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
-			menu.newEntry({menuName, entryText: 'sep'});
-			modifiers.forEach( (mod, index) => {
-				menu.newEntry({menuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
-					let input = '';
-					try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
-					catch(e) {return;}
-					if (!input.length) {return;}
-					properties[mod.tag][1] = input;
-					overwriteProperties(properties);
-				}});
-			});
-		}
-		menu.newEntry({entryText: 'sep'});
 		{	// UI
 			const menuUI = menu.newMenu('UI');
 			{	// Map image
@@ -533,27 +517,59 @@ function createMenu() {
 			}
 		}
 		menu.newEntry({entryText: 'sep'});
-		{	// Write tags?
-			const menuName = menu.newMenu('Write tags on playback', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
-			menu.newEntry({menuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
+		{	// Tags
+			const menuName = menu.newMenu('Tags...');
+			menu.newEntry({menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
+				let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.Name, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))');
+				if (input === null) {return;}
+				properties.mapTag[1] = input;
+				overwriteProperties(properties);
+			}});
+			menu.newEntry({menuName, entryText: 'Write country\'s data to...' + '\t' + _b(properties.writeToTag[1]), func: () => {
+				let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', window.Name, 'LOCALE LAST.FM');
+				if (input === null) {return;}
+				properties.writeToTag[1] = input;
+				overwriteProperties(properties);
+			}});
 			menu.newEntry({menuName, entryText: 'sep'});
-			const options = [{text: 'No (read only from tags, online or json)', val: 0}, {text: 'Yes, when tag has not been already set on track', val: 1}, {text: 'Yes, as json (for internal use on the script)', val: 2}];
-			options.forEach( (mode) => {
-				menu.newEntry({menuName, entryText: mode.text, func: () => {
-					if (properties.iWriteTags[1] === mode.val) {return;}
-					if (mode.val) { // Warning check
-						let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
-						if (answer === popup.no) {return;}
-					}
-					properties.iWriteTags[1] = mode.val;
-					overwriteProperties(properties);
-				}});
-			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text, () => {return properties.iWriteTags[1];});
-			menu.newEntry({menuName, entryText: 'sep', func: null});
-			menu.newEntry({menuName, entryText: 'Show data folder', func: () => {
-				_explorer(properties.fileName[1]);
-			}, flags: () => {return _isFile(properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
+			{	// Modifier tags
+				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);
+				menu.newEntry({menuName: subMenuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
+				menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+				modifiers.forEach((mod, index) => {
+					menu.newEntry({menuName: subMenuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
+						let input = '';
+						try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
+						catch(e) {return;}
+						if (!input.length) {return;}
+						properties[mod.tag][1] = input;
+						overwriteProperties(properties);
+					}});
+				});
+			}
+			menu.newEntry({menuName, entryText: 'sep'});
+			{	// Write tags?
+				const subMenuName = menu.newMenu('Write tags on playback...', menuName, properties.panelMode[1] ? MF_GRAYED : MF_STRING);
+				menu.newEntry({menuName: subMenuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED});
+				menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+				const options = [{text: 'No (read only from tags, online or json)', val: 0}, {text: 'Yes, when tag has not been already set on track', val: 1}, {text: 'Yes, as json (for internal use on the script)', val: 2}];
+				options.forEach((mode) => {
+					menu.newEntry({menuName: subMenuName, entryText: mode.text, func: () => {
+						if (properties.iWriteTags[1] === mode.val) {return;}
+						if (mode.val) { // Warning check
+							let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
+							if (answer === popup.no) {return;}
+						}
+						properties.iWriteTags[1] = mode.val;
+						overwriteProperties(properties);
+					}});
+				});
+				menu.newCheckMenu(subMenuName, options[0].text, options[options.length - 1].text, () => {return properties.iWriteTags[1];});
+				menu.newEntry({menuName: subMenuName, entryText: 'sep', func: null});
+				menu.newEntry({menuName: subMenuName, entryText: 'Show data folder', func: () => {
+					_explorer(properties.fileName[1]);
+				}, flags: () => {return _isFile(properties.fileName[1]) ? MF_STRING : MF_GRAYED;}});
+			}
 		}
 		{	// Database
 			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED)});
