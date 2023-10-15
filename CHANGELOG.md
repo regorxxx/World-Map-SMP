@@ -37,7 +37,10 @@
 
 ## [Unreleased][]
 ### Added
+- UI: menu entries to edit locale tags for writing and reading from files. Old properties will be lost on updating.
 ### Changed
+- UI: better compatibility when locale tag contains the ISO 3166 3-letter code, instead of a country name. Header now displays the country name associated instead of the ISO code.
+- UI: reworked menus associated to file tags, now merged on the same submenu.
 ### Removed
 ### Fixed
 
