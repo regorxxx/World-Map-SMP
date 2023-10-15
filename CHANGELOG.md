@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.3.0](#330---2023-10-15)
 - [3.2.0](#320---2023-10-05)
 - [3.1.0](#310---2023-09-25)
 - [3.0.1](#301---2023-09-20)
@@ -36,6 +37,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.3.0] - 2023-10-15
 ### Added
 - UI: menu entries to edit locale tags for writing and reading from files. Old properties will be lost on updating.
 ### Changed
@@ -396,7 +403,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v2.9.1...v3.0.0
