@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/09/23
+//23/10/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -26,6 +26,7 @@ function imageMap({
 		pointShape = 'circle', // string, circle
 		pointSize = 10,
 		pointLineSize = 25,
+		bSplitTags = false, // By '|' when jsonId and mapTag are different
 		bSkipInit = false
 	} = {}) {
 	// Constants
@@ -52,14 +53,14 @@ function imageMap({
 				toPaintArr.push({...point});
 			});
 		// Otherwise, use selection
-		} else if (selMulti) { // multiple points per handle id and tag value are the same... just enumerate them: handle -> [...id] -> [...id]
+		} else if (selMulti) { // multiple points per handle, id and tag value are the same... just enumerate them: handle -> [...id] -> [...id]
 			// Handle list
 			if (selMulti.Count >= 0) {
 				if (selMulti.Count === 0) {return;}
 				let added = new Set();
 				const currentMatch = getTagsValuesV3(selMulti, [this.jsonId], true);
-				currentMatch.forEach( (tagArr, idx) => {
-					tagArr.forEach( (tag) => {
+				currentMatch.forEach((tagArr, idx) => {
+					tagArr.forEach((tag) => {
 						const id = tag;
 						if (id.length) {
 							if (added.has(id)) {
@@ -84,22 +85,26 @@ function imageMap({
 				if (sel.Count === 0) {return;}
 				else if (sel.Count === 1) {
 					const currentMatch =  sel[0] ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel[0]) : '';
-					const id = sel[0] ? this.findTag(sel[0], currentMatch) : '';
-					if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
+					const ids = sel[0] ? this.findTag(sel[0], currentMatch).split(this.bSplitTags ? '|' : void(0)) : [];
+					ids.forEach((id) => {
+						if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
+					});
 				} else {
 					sel.Convert().forEach( (handle, index) => {
 						const currentMatch = handle ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(handle) : '';
-						const id = handle ? this.findTag(handle, currentMatch) : '';
-						if (id.length) {
-							const idx = toPaintArr.findIndex((point) => {return (point.id === id);});
-							if (idx === -1) {
-								toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});
+						const ids = handle ? this.findTag(handle, currentMatch).split(this.bSplitTags ? '|' : void(0)) : [];
+						ids.forEach((id) => {
+							if (id.length) {
+								const idx = toPaintArr.findIndex((point) => {return (point.id === id);});
+								if (idx === -1) {
+									toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});
+								}
+								else {
+									toPaintArr[idx].val++;
+									toPaintArr[idx].jsonId.add(currentMatch);
+								}
 							}
-							else {
-								toPaintArr[idx].val++;
-								toPaintArr[idx].jsonId.add(currentMatch);
-							}
-						}
+						});
 					}); 
 				}
 			// Handle
@@ -501,5 +506,6 @@ function imageMap({
 	this.pointShape = pointShape;
 	this.pointSize = pointSize;
 	this.pointLineSize = pointLineSize;
+	this.bSplitTags = typeof this.properties.bSplitTags !== 'undefined' ? this.properties.bSplitTags[1] : bSplitTags;
 	if (!bSkipInit) {this.init();}
 }
