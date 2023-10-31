@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/23
+//23/10/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -531,6 +531,13 @@ function createMenu() {
 				properties.writeToTag[1] = input;
 				overwriteProperties(properties);
 			}});
+			menu.newEntry({menuName, entryText: 'Split multi-value country tag by \'|\'', func: () => {
+				properties.bSplitTags[1] = !properties.bSplitTags[1];
+				overwriteProperties(properties);
+				worldMap.bSplitTags = properties.bSplitTags[1];
+				window.Repaint();
+			}});
+			menu.newCheckMenu(menuName,'Split multi-value country tag by \'|\'', void(0), () => properties.bSplitTags[1]);
 			menu.newEntry({menuName, entryText: 'sep'});
 			{	// Modifier tags
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);

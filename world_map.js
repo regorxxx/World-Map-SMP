@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/23
+//23/10/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.3.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.4.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -106,7 +106,8 @@ const worldMap_properties = {
 		margin: {left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15)},
 		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
 		// axis = {x: {/* show, color, width, ticks, labels, key *, singleLabels/}, y: {/* ... */}}
-	})]
+	})],
+	bSplitTags			:	['Allow multi-locale tags split by \'|\'?', false, {func: isBoolean}, false],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -120,7 +121,7 @@ setProperties(worldMap_properties, '', 0);
 */
 const worldMap = new imageMap({
 	imagePath:				folders.xxx + 'images\\MC_WorldMap_No_Ant.jpg',
-	properties:				getPropertiesPairs(worldMap_properties, '', 0),
+	properties:				getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes and bSplitTags
 	jsonId:					'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc:			findCountry, // Function at helpers\world_map_tables.js

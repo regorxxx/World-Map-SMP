@@ -38,6 +38,7 @@
 
 ## [Unreleased][]
 ### Added
+- Tags: setting to enable multi-value tags support, when there are multiple ISO values within the same tag separated by '|'. For ex. 'FRA|GBR'.
 ### Changed
 ### Removed
 ### Fixed
