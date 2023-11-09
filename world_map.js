@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/23
+//09/11/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -108,6 +108,7 @@ const worldMap_properties = {
 		// axis = {x: {/* show, color, width, ticks, labels, key *, singleLabels/}, y: {/* ... */}}
 	})],
 	bSplitTags			:	['Allow multi-locale tags split by \'|\'?', false, {func: isBoolean}, false],
+	bAutoUpdateCheck	:	['Automatically check updates?', globSettings.bAutoUpdateCheck, {func: isBoolean}, globSettings.bAutoUpdateCheck],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -176,6 +177,12 @@ if (!worldMap.properties['firstPopup'][1]) {
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	const readme = _open(readmePath, utf8);
 	if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
+}
+
+// Update check
+if (worldMap.properties.bAutoUpdateCheck[1]) {
+	include('helpers\\helpers_xxx_web_update.js');
+	setTimeout(checkUpdate, 120000, {bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb});
 }
 
 // Additional check

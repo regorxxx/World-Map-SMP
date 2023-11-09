@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/23
+//09/11/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -35,6 +35,16 @@ function createMenu() {
 				properties.iRepaintDelay[1] = input;
 				overwriteProperties(properties);
 			}});
+			menu.newEntry({menuName, entryText: 'sep'});
+			menu.newEntry({menuName, entryText: 'Automatically check for updates', func: () => {
+				properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
+				overwriteProperties(properties);
+				if (properties.bAutoUpdateCheck[1]) {
+					if (typeof checkUpdate === 'undefined') {include('helpers\\helpers_xxx_web_update.js');}
+					setTimeout(checkUpdate, 1000, {bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false});
+				}
+			}});
+			menu.newCheckMenu(menuName, 'Automatically check for updates', void(0),  () => properties.bAutoUpdateCheck[1]);
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
@@ -701,6 +711,13 @@ function createMenu() {
 				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED)}});
 				menu.newEntry({entryText: 'sep'});
 			}
+		}
+		{
+			menu.newEntry({entryText: 'Check for updates...',  func: () => {
+				if (typeof checkUpdate === 'undefined') {include('helpers\\helpers_xxx_web_update.js');}
+				checkUpdate({bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false})
+					.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.Name));
+			}});
 		}
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
