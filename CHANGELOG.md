@@ -42,8 +42,7 @@
 - Tags: setting to enable multi-value tags support, when there are multiple ISO values within the same tag separated by '|'. For ex. 'FRA|GBR'.
 - Auto-update: added -optional- automatic checks for updates on script load; enabled by default. Compares version of current file against GitHub repository. Manual checking can also be found at the settings menu. Setting may also be globally switched at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bAutoUpdateCheck'. It will apply by default to any new installed script (previous scripts will still need to be manually configured to change them).
 ### Changed
-- Helpers: updated statistics mode with new graphs and features from the latest [ Statistics-Framework-SMP
-](https://github.com/regorxxx/Statistics-Framework-SMP) version.
+- Helpers: updated statistics mode with new graphs and features from the latest [Statistics-Framework-SMP](https://github.com/regorxxx/Statistics-Framework-SMP) version.
 - Helpers: replaced library [chroma.js with own version](https://regorxxx.github.io/chroma.js/).
 - Helpers: updated helpers.
 ### Removed
