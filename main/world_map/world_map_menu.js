@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/23
+//14/11/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -298,8 +298,6 @@ function createMenu() {
 							overwriteProperties(properties);
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
-							worldMap.init();
-							window.Repaint();
 						} else {
 							worldMap.imageMapPath = map.path;
 							worldMap.factorX = map.factorX;
@@ -308,9 +306,9 @@ function createMenu() {
 							properties.factorX[1] = map.factorX;
 							properties.factorY[1] = map.factorY;
 							overwriteProperties(properties);
-							worldMap.init();
-							window.Repaint();
 						}
+						worldMap.init();
+						repaint();
 					}});
 				});
 				menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {
@@ -341,7 +339,7 @@ function createMenu() {
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			{
-				const menuName = menu.newMenu('Colours...', menuUI);
+				const menuName = menu.newMenu('Colors...', menuUI);
 				{	// Background color
 					const subMenuName = menu.newMenu('Panel background', menuName);
 					const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom'];
@@ -352,18 +350,18 @@ function createMenu() {
 							// Update property to save between reloads
 							properties.customPanelColorMode[1] = worldMap.customPanelColorMode;
 							overwriteProperties(properties);
-							worldMap.coloursChanged();
+							worldMap.colorsChanged();
 							window.Repaint();
 						}});
 					});
 					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode;});
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
+					menu.newEntry({menuName: subMenuName, entryText: 'Set custom color...', func: () => {
 						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
 						// Update property to save between reloads
 						properties.customPanelColor[1] = worldMap.panelColor;
 						overwriteProperties(properties);
-						worldMap.coloursChanged();
+						worldMap.colorsChanged();
 						window.Repaint();
 					}, flags: properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
 				}
@@ -382,13 +380,34 @@ function createMenu() {
 					});
 					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customPointColorMode[1];});
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-					menu.newEntry({menuName: subMenuName, entryText: 'Set custom colour...', func: () => {
+					menu.newEntry({menuName: subMenuName, entryText: 'Set custom color...', func: () => {
 						worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
 						// Update property to save between reloads
 						properties.customPointColor[1] = worldMap.defaultColor;
 						overwriteProperties(properties);
 						window.Repaint();
 					}, flags: properties.customPointColorMode[1] === 1 ? MF_STRING : MF_GRAYED,});
+				}
+				{	// Country color
+					const subMenuName = menu.newMenu('Country shapes', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
+					const options = ['Default', 'Custom'];
+					const optionsLength = options.length;
+					options.forEach((item, i) => {
+						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+							properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
+							overwriteProperties(properties);
+							repaint();
+						}});
+					});
+					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customShapeColor[1] === -1 ? 0 : 1;});
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					menu.newEntry({menuName: subMenuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
+						const input = Input.number('int positive', Math.round(properties.customShapeAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
+						if (input === null) {return;}
+						properties.customShapeAlpha[1] = Math.round(input * 255 / 100);
+						overwriteProperties(properties);
+						repaint();
+					}});
 				}
 				{	// Text color
 					menu.newEntry({menuName, entryText: 'Text...', func: () => {
@@ -429,7 +448,7 @@ function createMenu() {
 							}
 							properties.customLocaleColor[1] =  worldMap.textColor;
 							overwriteProperties(properties);
-							worldMap.coloursChanged();
+							worldMap.colorsChanged();
 							window.Repaint();
 						}});
 					});
@@ -498,19 +517,25 @@ function createMenu() {
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			{	// Header
 				const menuName = menu.newMenu('Header...', menuUI);
-				menu.newEntry({menuName, entryText: 'Show current country header?', func: () => {
-					properties.bShowLocale[1] = !properties.bShowLocale[1];
+				menu.newEntry({menuName, entryText: 'Show header', func: () => {
+					properties.bShowHeader[1] = !properties.bShowHeader[1];
 					window.Repaint();
 					overwriteProperties(properties);
 				}});
-				menu.newCheckMenu(menuName, 'Show current country header?', void(0), () => {return properties.bShowLocale[1];});
-				
-				menu.newEntry({menuName, entryText: 'Show flag on header?', func: () => {
+				menu.newCheckMenu(menuName, 'Show header', void(0), () => {return properties.bShowLocale[1];});
+				menu.newEntry({menuName, entryText: 'sep'});
+				menu.newEntry({menuName, entryText: 'Show current country', func: () => {
+					properties.bShowLocale[1] = !properties.bShowLocale[1];
+					window.Repaint();
+					overwriteProperties(properties);
+				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
+				menu.newCheckMenu(menuName, 'Show current country', void(0), () => {return properties.bShowLocale[1];});
+				menu.newEntry({menuName, entryText: 'Show flag', func: () => {
 					properties.bShowFlag[1] = !properties.bShowFlag[1];
 					window.Repaint();
 					overwriteProperties(properties);
-				}, flags: properties.bShowLocale[1] ? MF_STRING : MF_GRAYED});
-				menu.newCheckMenu(menuName, 'Show flag on header?', void(0), () => {return properties.bShowFlag[1];});
+				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
+				menu.newCheckMenu(menuName, 'Show flag', void(0), () => {return properties.bShowFlag[1];});
 			}
 			{	// Shapes
 				const menuName = menu.newMenu('Country highlighting...', menuUI);

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/23
+//14/11/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -109,6 +109,9 @@ const worldMap_properties = {
 	})],
 	bSplitTags			:	['Allow multi-locale tags split by \'|\'?', false, {func: isBoolean}, false],
 	bAutoUpdateCheck	:	['Automatically check updates?', globSettings.bAutoUpdateCheck, {func: isBoolean}, globSettings.bAutoUpdateCheck],
+	bShowHeader			:	['Show header', true, {func: isBoolean}, true],
+	customShapeColor	:	['Custom country shape color', -1, {func: isInt}, -1],
+	customShapeAlpha	:	['Country shape transparency', 240, {func: isInt, range: [[0, 255]]}, 240],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -233,7 +236,7 @@ addEventListener('on_size', (width, height) => {
 });
 
 addEventListener('on_colours_changed', () => {
-	worldMap.coloursChanged();
+	worldMap.colorsChanged();
 	window.Repaint();
 });
 const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], iso: new Set(), processedIso: new Set()}};
@@ -268,11 +271,24 @@ addEventListener('on_paint', (gr) => {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				if (imgAsync.layers.bPaint) {
+				const bMask = worldMap.properties.customShapeColor[1] !== -1;
+				if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
 					if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
-					imgAsync.layers.imgs.forEach((imgObj) => {
-						gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, 240);
-					});
+					if (bMask) {
+						const layer =  gdi.CreateImage(imgAsync.layers.imgs[0].w, imgAsync.layers.imgs[0].h);
+						const layerGr = layer.GetGraphics();
+						layerGr.FillSolidRect(0, 0, layer.Width, layer.Height, worldMap.properties.customShapeColor[1]);
+						layer.ReleaseGraphics(layerGr);
+						imgAsync.layers.imgs.forEach((imgObj) => {
+							const subLayer = layer.Clone(0, 0, layer.Width, layer.Height);
+							subLayer.ApplyMask(imgObj.img);
+							gr.DrawImage(subLayer, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
+						});
+					} else {
+						imgAsync.layers.imgs.forEach((imgObj) => {
+							gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
+						});
+					}
 				}
 				const promises = [];
 				imgAsync.layers.bStop = false;
@@ -283,7 +299,7 @@ addEventListener('on_paint', (gr) => {
 						if (iso) {
 							if (!imgAsync.layers.iso.has(iso)) {
 								imgAsync.layers.iso.add(iso);
-								const file = folders.xxx + 'helpers-external\\countries-mercator\\' + iso + '.png';
+								const file = folders.xxx + 'helpers-external\\countries-mercator' + (bMask ? '-mask' : '') + '\\' + iso + '.png';
 								if (_isFile(file)) {
 									promises.push(new Promise((resolve) => {
 										setTimeout(() => {
@@ -330,18 +346,20 @@ addEventListener('on_paint', (gr) => {
 				}
 			}
 		}
-		if (sel.Count && worldMap.properties.bShowLocale[1]) { // Header text
+		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
 			const posX = worldMap.posX;
 			const posY = worldMap.posY;
 			const w = worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
 			let countryName = '- none -';
-			if (worldMap.lastPoint.length === 1) {
-				let id = worldMap.lastPoint[0].id;
-				if (getCountryISO(id) === id) {id = formatCountry(getCountryName(id));} // Tag has ISO codes instead of country names
-				countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
-			} else if (worldMap.lastPoint.length > 1 ) {
-				countryName = 'Multiple countries...';
+			if (worldMap.properties.bShowLocale[1]) {
+				if (worldMap.lastPoint.length === 1) {
+					let id = worldMap.lastPoint[0].id;
+					if (getCountryISO(id) === id) {id = formatCountry(getCountryName(id));} // Tag has ISO codes instead of country names
+					countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+				} else if (worldMap.lastPoint.length > 1 ) {
+					countryName = 'Multiple countries...';
+				}
 			}
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
@@ -353,11 +371,13 @@ addEventListener('on_paint', (gr) => {
 				let flag = loadFlagImage(id);
 				const flagScale = flag.Height / textH;
 				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic) 
-				gr.DrawImage(flag, posX + 10, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
+				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
 				// Text
-				if (textW + flag.Width < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
-				else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
-			} else {
+				if (worldMap.properties.bShowLocale[1]) {
+					if (textW + flag.Width < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
+					else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
+				}
+			} else if (worldMap.properties.bShowLocale[1]) {
 				if (textW < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
 				else {gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
 			}
