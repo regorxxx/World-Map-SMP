@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/23
+//14/11/23
 
 /* 
 	Map v 0.2 04/02/22
@@ -362,7 +362,7 @@ function imageMap({
 		return keysArr;
 	}
 	
-	this.coloursChanged = () => {
+	this.colorsChanged = () => {
 		this.panelColor = this.customPanelColorMode === 2 ? this.properties.customPanelColor[1] : (window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3));
 	}
 	// Init
@@ -467,7 +467,7 @@ function imageMap({
 		_createFolder(jsonFolder);
 		this.loadData();
 		this.clearPointCache();
-		this.coloursChanged();
+		this.colorsChanged();
 	}
 	
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
