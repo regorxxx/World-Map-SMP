@@ -39,6 +39,8 @@
 
 ## [Unreleased][]
 ### Added
+- UI: country shapes are now configurable: color and transparency. Setting a custom color uses masking under the hood, which may have a different performance impact than the 'default' mode (which just loads the country shapes with a fixed color).
+- UI: option to only show the flag at header (without requiring the country name).
 - Tags: setting to enable multi-value tags support, when there are multiple ISO values within the same tag separated by '|'. For ex. 'FRA|GBR'.
 - Auto-update: added -optional- automatic checks for updates on script load; enabled by default. Compares version of current file against GitHub repository. Manual checking can also be found at the settings menu. Setting may also be globally switched at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bAutoUpdateCheck'. It will apply by default to any new installed script (previous scripts will still need to be manually configured to change them).
 - Added setting to disable popups related to features not being supported by the OS (at startup). Found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bPopupOnCheckSOFeatures'. By default popups are always shown. This setting will never be exposed within foobar, only at this file.
@@ -48,6 +50,7 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- UI: country layer not painted at right position after changing map type in some cases; it was only updated properly after playback/selection changed. Now is also reset after the setting is changed.
 
 ## [3.3.0] - 2023-10-15
 ### Added
