@@ -122,6 +122,12 @@ CALL :delete_file helpers-external\countries-mercator\"_N. Cyprus.png"
 CALL :delete_file helpers-external\countries-mercator\_Somaliland.png
 CALL :delete_file helpers-external\countries-mercator\worldmap_natural.png
 CALL :delete_file helpers-external\countries-mercator\worldmap_shapes.png
+CALL :copy_folder helpers-external\countries-mercator-mask
+CALL :delete_file helpers-external\countries-mercator-mask\_Kosovo.png
+CALL :delete_file helpers-external\countries-mercator-mask\"_N. Cyprus.png"
+CALL :delete_file helpers-external\countries-mercator-mask\_Somaliland.png
+CALL :delete_file helpers-external\countries-mercator-mask\worldmap_natural.png
+CALL :delete_file helpers-external\countries-mercator-mask\worldmap_shapes.png
 CALL :copy_folder helpers-external\namethatcolor
 CALL :copy_folder helpers-external\natsort
 REM others
