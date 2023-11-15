@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [3.4.0](#340---2023-11-09)
+- [3.4.0](#340---2023-11-15)
 - [3.3.0](#330---2023-10-15)
 - [3.2.0](#320---2023-10-05)
 - [3.1.0](#310---2023-09-25)
@@ -38,6 +38,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.4.0] - 2023-11-15
 ### Added
 - UI: country shapes are now configurable: color and transparency. Setting a custom color uses masking under the hood, which may have a different performance impact than the 'default' mode (which just loads the country shapes with a fixed color).
 - UI: option to only show the flag at header (without requiring the country name).
@@ -414,7 +420,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...HEAD
+[3.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.0.0...v3.1.0
