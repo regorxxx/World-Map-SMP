@@ -1,11 +1,12 @@
 ﻿'use strict';
-//14/11/23
+//15/11/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 include('..\\..\\helpers\\helpers_xxx_input.js');
+include('..\\..\\helpers-external\\namethatcolor\\ntc.js');
 
 const menu = new _menu();
 
@@ -339,61 +340,53 @@ function createMenu() {
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			{
+				const getColorName = (val) => {return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-');}
 				const menuName = menu.newMenu('Colors...', menuUI);
 				{	// Background color
 					const subMenuName = menu.newMenu('Panel background', menuName);
-					const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom'];
+					const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+						menu.newEntry({menuName: subMenuName, entryText: item + (i === 2 ? '\t' + _b(getColorName(worldMap.panelColor)) : ''), func: () => {
 							worldMap.customPanelColorMode = i;
 							// Update property to save between reloads
 							properties.customPanelColorMode[1] = worldMap.customPanelColorMode;
+							if (i === 2) {
+								worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
+								properties.customPanelColor[1] = worldMap.panelColor;
+							}
 							overwriteProperties(properties);
 							worldMap.colorsChanged();
-							window.Repaint();
+							repaint();
 						}});
 					});
 					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode;});
-					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-					menu.newEntry({menuName: subMenuName, entryText: 'Set custom color...', func: () => {
-						worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
-						// Update property to save between reloads
-						properties.customPanelColor[1] = worldMap.panelColor;
-						overwriteProperties(properties);
-						worldMap.colorsChanged();
-						window.Repaint();
-					}, flags: properties['customPanelColorMode'][1] === 2 ? MF_STRING : MF_GRAYED,});
 				}
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
-					const options = ['Default', 'Custom'];
+					const options = ['Default', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+						menu.newEntry({menuName: subMenuName, entryText: item + (i === 1 ? '\t' + _b(getColorName(worldMap.defaultColor)) : ''), func: () => {
 							worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : 0xFF00FFFF;
 							// Update property to save between reloads
 							properties.customPointColorMode[1] = i;
+							if (i === 1) {
+								worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
+								properties.customPointColor[1] = worldMap.panelColor;
+							}
 							overwriteProperties(properties);
-							window.Repaint();
+							repaint();
 						}});
 					});
 					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customPointColorMode[1];});
-					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-					menu.newEntry({menuName: subMenuName, entryText: 'Set custom color...', func: () => {
-						worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
-						// Update property to save between reloads
-						properties.customPointColor[1] = worldMap.defaultColor;
-						overwriteProperties(properties);
-						window.Repaint();
-					}, flags: properties.customPointColorMode[1] === 1 ? MF_STRING : MF_GRAYED,});
 				}
 				{	// Country color
 					const subMenuName = menu.newMenu('Country shapes', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
-					const options = ['Default', 'Custom'];
+					const options = ['Default', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item, func: () => {
+						menu.newEntry({menuName: subMenuName, entryText: item + (i === 1 ? '\t' + _b(getColorName(properties.customShapeColor[1])) : ''), func: () => {
 							properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
 							overwriteProperties(properties);
 							repaint();
@@ -410,7 +403,7 @@ function createMenu() {
 					}});
 				}
 				{	// Text color
-					menu.newEntry({menuName, entryText: 'Text...', func: () => {
+					menu.newEntry({menuName, entryText: 'Text...' + '\t' + _b(getColorName(worldMap.textColor)), func: () => {
 						worldMap.textColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
 						// Update property to save between reloads
 						properties.customLocaleColor[1] = worldMap.textColor;
@@ -744,6 +737,7 @@ function createMenu() {
 					.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.Name));
 			}});
 		}
+		menu.newEntry({entryText: 'sep'});
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({entryText: 'Open readme...', func: () => {
