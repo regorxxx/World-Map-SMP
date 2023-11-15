@@ -24,7 +24,7 @@ function createMenu() {
 					if (properties.bEnabled[1] === mode.val) {return;}
 					properties.bEnabled[1] = mode.val;
 					overwriteProperties(properties);
-					window.Repaint();
+					repaint();
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabled[1] ? 0 : 1);});
@@ -74,7 +74,7 @@ function createMenu() {
 					}
 					worldMap.clearIdSelected();
 					worldMap.clearLastPoint(); 
-					window.Repaint();
+					repaint();
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties.panelMode[1];});
@@ -94,7 +94,7 @@ function createMenu() {
 					properties.bEnabledBiography[1] = mode.val;
 					overwriteProperties(properties);
 					syncBio(true); // Sync selection and enable notify tags
-					window.Repaint();
+					repaint();
 				}, flags: () => {return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
 			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabledBiography[1] ? 0 : 1);});
@@ -252,7 +252,7 @@ function createMenu() {
 					if (properties.bEnabledBiography[1]) { // synchronize selection property
 						syncBio(true); // Sync selection and enable notify tags
 					}
-					window.Repaint();
+					repaint();
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return options.indexOf(properties.selection[1]);});
@@ -334,7 +334,7 @@ function createMenu() {
 						properties[coord.val][1] = input;
 						overwriteProperties(properties);
 						worldMap.clearPointCache();
-						window.Repaint();
+						repaint();
 					}});
 				});
 			}
@@ -408,7 +408,7 @@ function createMenu() {
 						// Update property to save between reloads
 						properties.customLocaleColor[1] = worldMap.textColor;
 						overwriteProperties(properties);
-						window.Repaint();
+						repaint();
 					}});
 				}
 				menu.newEntry({menuName, entryText: 'sep'});
@@ -442,7 +442,7 @@ function createMenu() {
 							properties.customLocaleColor[1] =  worldMap.textColor;
 							overwriteProperties(properties);
 							worldMap.colorsChanged();
-							window.Repaint();
+							repaint();
 						}});
 					});
 				}
@@ -464,7 +464,7 @@ function createMenu() {
 							if (properties.customPointSize[1] === worldMap.pointSize) {return;}
 							worldMap.pointSize = properties.customPointSize[1];
 							worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
-							window.Repaint();
+							repaint();
 							overwriteProperties(properties);
 						}});
 					});
@@ -476,7 +476,7 @@ function createMenu() {
 					menu.newEntry({menuName, entryText: 'Fill the circle? (point shape)', func: () => {
 						properties.bPointFill[1] = !properties.bPointFill[1];
 						worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
-						window.Repaint();
+						repaint();
 						overwriteProperties(properties);
 					}});
 					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return properties.bPointFill[1];});
@@ -497,7 +497,7 @@ function createMenu() {
 							if (properties.fontSize[1] === worldMap.fontSize) {return;}
 							worldMap.fontSize = properties.fontSize[1];
 							worldMap.calcScale(window.Width, window.Height);
-							window.Repaint();
+							repaint();
 							overwriteProperties(properties);
 						}});
 					});
@@ -512,20 +512,20 @@ function createMenu() {
 				const menuName = menu.newMenu('Header...', menuUI);
 				menu.newEntry({menuName, entryText: 'Show header', func: () => {
 					properties.bShowHeader[1] = !properties.bShowHeader[1];
-					window.Repaint();
+					repaint();
 					overwriteProperties(properties);
 				}});
 				menu.newCheckMenu(menuName, 'Show header', void(0), () => {return properties.bShowLocale[1];});
 				menu.newEntry({menuName, entryText: 'sep'});
 				menu.newEntry({menuName, entryText: 'Show current country', func: () => {
 					properties.bShowLocale[1] = !properties.bShowLocale[1];
-					window.Repaint();
+					repaint();
 					overwriteProperties(properties);
 				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
 				menu.newCheckMenu(menuName, 'Show current country', void(0), () => {return properties.bShowLocale[1];});
 				menu.newEntry({menuName, entryText: 'Show flag', func: () => {
 					properties.bShowFlag[1] = !properties.bShowFlag[1];
-					window.Repaint();
+					repaint();
 					overwriteProperties(properties);
 				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
 				menu.newCheckMenu(menuName, 'Show flag', void(0), () => {return properties.bShowFlag[1];});
@@ -537,7 +537,7 @@ function createMenu() {
 					menu.newEntry({menuName, entryText: option, func: () => {
 						if (i >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
 						properties.pointMode[1] = i;
-						window.Repaint();
+						repaint();
 						overwriteProperties(properties);
 					}});
 				});
@@ -563,7 +563,7 @@ function createMenu() {
 				properties.bSplitTags[1] = !properties.bSplitTags[1];
 				overwriteProperties(properties);
 				worldMap.bSplitTags = properties.bSplitTags[1];
-				window.Repaint();
+				repaint();
 			}});
 			menu.newCheckMenu(menuName,'Split multi-value country tag by \'|\'', void(0), () => properties.bSplitTags[1]);
 			menu.newEntry({menuName, entryText: 'sep'});
@@ -661,7 +661,7 @@ function createMenu() {
 					}
 					if (countN || countO) {
 						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
-						window.Repaint();
+						repaint();
 					}
 					console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
 				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED);}});
@@ -689,7 +689,7 @@ function createMenu() {
 					});
 					if (countN || countO) {
 						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
-						window.Repaint();
+						repaint();
 					}
 					console.log('World Map: writing file tags to database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
 				}});
