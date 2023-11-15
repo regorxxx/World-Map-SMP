@@ -515,7 +515,7 @@ function createMenu() {
 					repaint();
 					overwriteProperties(properties);
 				}});
-				menu.newCheckMenu(menuName, 'Show header', void(0), () => {return properties.bShowLocale[1];});
+				menu.newCheckMenu(menuName, 'Show header', void(0), () => {return properties.bShowHeader[1];});
 				menu.newEntry({menuName, entryText: 'sep'});
 				menu.newEntry({menuName, entryText: 'Show current country', func: () => {
 					properties.bShowLocale[1] = !properties.bShowLocale[1];
