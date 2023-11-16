@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/09/23
+//16/11/23
 
 include('..\\statistics\\statistics_xxx.js');
 include('..\\..\\helpers\\menu_xxx.js');
@@ -43,92 +43,95 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			charts.forEach((chart) => {chart.leave();});
 		});
 
-		addEventListener('on_mouse_rbtn_up', (x, y) => {
+		addEventListener('on_mouse_lbtn_up', (x, y) => {
 			if (!this.bEnabled) {return true;}
-			charts.some((chart) => {return chart.rbtn_up(x,y);});
-			return true; // left shift + left windows key will bypass this callback and will open default context menu.
+			charts.some((chart) => {return chart.lbtnUp(x,y);});
+		});
+
+		addEventListener('on_mouse_lbtn_dblclk', (x, y, mask) => {
+			if (!window.ID || !this.bEnabled) {return;}
+			charts.some((chart) => {return chart.lbtnDblClk(x, y, mask);});
 		});
 	};
 	
+	const createMenuOptionParent = function createMenuOptionParent(menu, key, subKey, menuName = menu.getMainMenuName(), bCheck = true, addFunc = null, postFunc = null) {
+		return function (option) {
+			if (option.entryText === 'sep' && menu.getEntries().pop().entryText !== 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;} // Add sep only if any entry has been added
+			if (option.isEq && option.key === option.value || !option.isEq && option.key !== option.value || option.isEq === null) {
+				menu.newEntry({menuName, entryText: option.entryText, func: () => {
+					if (addFunc) {addFunc(option);}
+					if (subKey) {
+						if (Array.isArray(subKey)) {
+							const len = subKey.length - 1;
+							const obj = {[key]: {}};
+							let prev = obj[key];
+							subKey.forEach((curr, i) => {
+								prev[curr] = i === len ? option.newValue : {};
+								prev = prev[curr];
+							});
+							this.changeConfig(obj);
+						} else {
+							this.changeConfig({[key]: {[subKey]: option.newValue}});
+						}
+					}
+					else {this.changeConfig({[key]: option.newValue});}
+					if (postFunc) {postFunc(option);}
+				}});
+				if (bCheck) {
+					menu.newCheckMenu(menuName, option.entryText, void(0), () => {
+						const val = subKey 
+							? Array.isArray(subKey)
+								? subKey.reduce((acc, curr) => acc[curr], this[key])
+								: this[key][subKey] 
+							: this[key];
+						if (key === 'dataManipulation' && subKey === 'sort' && option.newValue === this.convertSortLabel(this.sortKey)) {return true;}
+						if ((key === 'data' || key === 'dataAsync') && option.args.data.source === parent.source && option.args.data.arg === parent.arg) {return true;}
+						if (option.newValue && typeof option.newValue === 'function') {return !!(val && val.name === option.newValue.name);}
+						if (option.newValue && typeof option.newValue === 'object') {
+							if (Array.isArray(val)) {
+								return !!(val && val.toString() === option.newValue.toString());
+							} else if (val) {
+								const keys = Object.keys(option.newValue);
+								return keys.every((key) => val[key] === option.newValue[key]);
+							}
+						} else {
+							return option.isEq === null && option.value === null && (option.newValue === true || option.newValue === false)
+								? !!val
+								: (val === option.newValue);
+						}
+					});
+				}
+			}
+		}.bind(this);
+	}
+	
 	// Generic statistics menu which should work on almost any chart...
-	this.graphMenu = function graphMenu(bClear = true) {
+	this.onLbtnUpSettings = function onLbtnUpSettings(bClear = true) {
 		// Constants
 		this.tooltip.SetValue(null);
-		if (!this.menu) {
-			this.menu = new _menu({
+		if (!this.settingsMenu) {
+			this.settingsMenu = new _menu({
 				onBtnUp: () => {
 					const config = this.exportConfig();
-					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin', 'colors']);
+					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin']);
 					Object.keys(config).forEach((key) => {
 						if (!keys.has(key)) {delete config[key];}
 					});
-					config.data = {source: parent.source, arg: parent.arg, bAsync: parent.bAsync};
+					config.dataManipulation.sort = this.exportSortLabel();
+					config.data = {source: parent.source, arg: parent.arg, bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
 					worldMap.properties['statsConfig'][1] = JSON.stringify(config);
 					overwriteProperties(worldMap.properties);
 				}
 			});
 		}
-		const menu = this.menu;
+		const menu = this.settingsMenu;
 		if (bClear) {menu.clear(true);} // Reset on every call
 		// helper
-		const createMenuOption = (key, subKey, menuName = menu.getMainMenuName(), bCheck = true, addFunc = null) => {
-			return function (option) {
-				if (option.entryText === 'sep' && menu.getEntries().pop().entryText !== 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;} // Add sep only if any entry has been added
-				if (option.isEq && option.key === option.value || !option.isEq && option.key !== option.value || option.isEq === null) {
-					menu.newEntry({menuName, entryText: option.entryText, func: () => {
-						if (addFunc) {addFunc(option);}
-						if (subKey) {
-							if (Array.isArray(subKey)) {
-								const len = subKey.length - 1;
-								const obj = {[key]: {}};
-								let prev = obj[key];
-								subKey.forEach((curr, i) => {
-									prev[curr] = i === len ? option.newValue : {};
-									prev = prev[curr];
-								});
-								this.changeConfig(obj);
-							} else {
-								this.changeConfig({[key]: {[subKey]: option.newValue}});
-							}
-						}
-						else {this.changeConfig({[key]: option.newValue});}
-					}});
-					if (bCheck) {
-						menu.newCheckMenu(menuName, option.entryText, void(0), () => {
-							const val = subKey 
-								? Array.isArray(subKey)
-									? subKey.reduce((acc, curr) => acc[curr], this[key])
-									: this[key][subKey] 
-								: this[key];
-							if (option.newValue && typeof option.newValue === 'function') {return !!(val && val.name === option.newValue.name);}
-							if (option.newValue && typeof option.newValue === 'object') {
-								if (Array.isArray(val)) {
-									return !!(val && val.toString() === option.newValue.toString());
-								} else if (val) {
-									const keys = Object.keys(option.newValue);
-									return keys.every((key) => val[key] === option.newValue[key]);
-								}
-							} else {
-								return option.isEq === null && option.value === null && (option.newValue === true || option.newValue === false)
-									? !!val
-									: (val === option.newValue);
-							}
-						});
-					}
-				}
-			}.bind(this);
-		}
-		const sortInv = (a, b) => {return b.y - a.y;};
-		const sortNat = (a, b) => {return a.y - b.y;};
-		const filtGreat = (num) => {return (a) => {return a.y > num;}};
-		const filtLow = (num) => {return (a) => {return a.y < num;}};
-		const fineGraphs = new Set(['bars', 'doughnut', 'pie']);
-		const sizeGraphs = new Set(['scatter', 'lines']);
-		const colorGraphs = new Set(['scatter', 'bars', 'lines']);
+		const createMenuOption = createMenuOptionParent.bind(this, menu);
 		// Header
 		menu.newEntry({entryText: this.title, flags: MF_GRAYED});
 		menu.newEntry({entryText: 'sep'});
-		{
+		{	// Data
 			const subMenu = menu.newMenu('Data...');
 			const key = parent.bAsync ? this.data : this.dataAsync;
 			[
@@ -144,21 +147,62 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					entryText: 'Listens per Region', args: {axis: 'Listens', data: {source: 'library', arg: 'listens region'}}},
 				{isEq: null, key, value: null, newValue: null,
 					entryText: 'Listens per Region (normalized)', args: {axis: 'Listens / track', data: {source: 'library', arg: 'listens region normalized'}}},
-			].forEach(createMenuOption(parent.bAsync ? 'dataAsync' : 'data', null, subMenu, false, (option) => {
+			].forEach(createMenuOption(parent.bAsync ? 'dataAsync' : 'data', null, subMenu, true, (option) => {
 				option.newValue = parent.bAsync
 					? () => parent.getDataAsync(option.args.data.source, option.args.data.arg)
 					: Array(1).fill(...parent.getData(option.args.data.source, option.args.data.arg));
 				[parent.source, parent.arg] = [option.args.data.source, option.args.data.arg];
 				this.changeConfig(
-					{axis: {
-							y: {key: option.args.axis},
-							x: {key:  /\bregion\b/i.test(parent.arg) ? 'Region' : 'Country'}
-						}
+					{
+						axis: {
+							y: {[key]: option.args.axis},
+							x: {[key]: /\bregion\b/i.test(parent.arg) ? 'Region' : 'Country'}
+						},
+						title: window.Name + ' - ' + option.entryText
 					}
 				);
 			}));
-			menu.newEntry({entryText: 'sep'});
 		}
+		menu.newEntry({entryText: 'sep'});
+		menu.newEntry({entryText: 'Exit statistics mode', func: () => {
+			parent.bEnabled = !parent.bEnabled;
+			worldMap.properties['panelMode'][1] = 0;
+			overwriteProperties(worldMap.properties);
+			repaint();
+		}});
+		return menu;
+	}
+	
+	this.onLbtnUpDisplay = function onLbtnUpDisplay(bClear = true) {
+		// Constants
+		this.tooltip.SetValue(null);
+		if (!this.displayMenu) {
+			this.displayMenu = new _menu({
+				onBtnUp: () => {
+					const config = this.exportConfig();
+					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin']);
+					Object.keys(config).forEach((key) => {
+						if (!keys.has(key)) {delete config[key];}
+					});
+					config.dataManipulation.sort = this.exportSortLabel();
+					config.data = {source: parent.source, arg: parent.arg, bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
+					worldMap.properties['statsConfig'][1] = JSON.stringify(config);
+					overwriteProperties(worldMap.properties);
+				}
+			});
+		}
+		const menu = this.displayMenu;
+		if (bClear) {menu.clear(true);} // Reset on every call
+		// helper
+		const createMenuOption = createMenuOptionParent.bind(this, menu);
+		const filtGreat = (num) => {return (a) => {return a.y > num;}};
+		const filtLow = (num) => {return (a) => {return a.y < num;}};
+		const fineGraphs = new Set(['bars', 'doughnut', 'pie']);
+		const sizeGraphs = new Set(['scatter', 'lines']);
+		const type = this.graph.type.toLowerCase();
+		// Header
+		menu.newEntry({entryText: this.title, flags: MF_GRAYED});
+		menu.newEntry({entryText: 'sep'});
 		// Menus
 		{
 			const subMenu = menu.newMenu('Chart type...');
@@ -170,8 +214,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				{isEq: null,	key: this.graph.type, value: null,				newValue: 'pie',			entryText: 'Pie'},
 			].forEach(createMenuOption('graph', 'type', subMenu, void(0), (option) => {
 				this.graph.borderWidth = fineGraphs.has(option.newValue) ? _scale(1) : _scale(4);
-				if (colorGraphs.has(option.newValue)){
-					this.colors = [opaqueColor(worldMap.properties.customPointColor[1], 50)];
+			}, (option) => {
+				if (['doughnut', 'pie'].includes(type) && type !== option.newValue) {
+					this.colors = [worldMap.defaultColor];
+					this.checkColors();
 				}
 			}));
 		}
@@ -187,10 +233,13 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			const subMenu = menu.newMenu('Sorting...');
 			if (this.dataManipulation.distribution === null) {
 				[
-					{isEq: null,	key: this.dataManipulation.sort, value: null,						newValue: sortNat,			entryText: 'Natural sorting'},
-					{isEq: null,	key: this.dataManipulation.sort, value: null,						newValue: sortInv,			entryText: 'Inverse sorting'},
+					{isEq: null,	key: this.dataManipulation.sort, value: null,					newValue: 'natural|x',	entryText: 'Natural sorting (x)'},
+					{isEq: null,	key: this.dataManipulation.sort, value: null,					newValue: 'reverse|x',	entryText: 'Inverse sorting (x)'},
 					{entryText: 'sep'},
-					{isEq: null,	key: this.dataManipulation.sort, value: null,						newValue: null,				entryText: 'No sorting'}
+					{isEq: null,	key: this.dataManipulation.sort, value: null,					newValue: 'natural|y',	entryText: 'Natural sorting (Y)'},
+					{isEq: null,	key: this.dataManipulation.sort, value: null,					newValue: 'reverse|y',	entryText: 'Reverse sorting (Y)'},
+					{entryText: 'sep'},
+					{isEq: null,	key: this.dataManipulation.sort, value: null,						newValue: null,		entryText: 'No sorting'}
 				].forEach(createMenuOption('dataManipulation', 'sort', subMenu));
 			} else {
 				[
@@ -247,39 +296,62 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			menu.newEntry({entryText: 'sep'});
 		}
 		{
-			const subMenu = menu.newMenu('Axis...');
-			[
-				{isEq: null,	key: this.axis.x.labels, value: null,					newValue: {labels: !this.axis.x.labels},			entryText: (this.axis.x.labels ? 'Hide' : 'Show') + ' X labels'}
-			].forEach(createMenuOption('axis', 'x', subMenu, false));
-			[
-				{isEq: null,	key: this.axis.y.labels, value: null,					newValue: {labels: !this.axis.y.labels},			entryText: (this.axis.y.labels ? 'Hide' : 'Show') + ' Y labels'}
-			].forEach(createMenuOption('axis', 'y', subMenu, false));
-			menu.newEntry({menuName: subMenu, entryText: 'sep'});
-			[
-				{isEq: null,	key: this.axis.x.bAltLabels, value: null,				newValue: !this.axis.x.bAltLabels,		entryText: 'Alt. X labels'},
-			].forEach(createMenuOption('axis', ['x', 'bAltLabels'], subMenu, true));
-		}
-		const type = this.graph.type.toLowerCase();
-		if (sizeGraphs.has(type)) {
-			const subMenu = menu.newMenu('Other config...');
-			const configSubMenu = menu.newMenu((type === 'lines' ? 'Line' : 'Point') + ' size...', subMenu);
-			[1, 2, 3, 4].map((val) => {
-				return {isEq: null,	key: this.graph.borderWidth, value: null, newValue: _scale(val), entryText: val.toString()};
-			}).forEach(createMenuOption('graph', 'borderWidth', configSubMenu));
-			if (type === 'scatter') {
-				const configSubMenu = menu.newMenu('Point type...', subMenu);
-				['circle', 'circumference', 'cross', 'triangle', 'plus'].map((val) => {
-					return {isEq: null, key: this.graph.point, value: null, newValue: val, entryText: val};
-				}).forEach(createMenuOption('graph', 'point', configSubMenu));
+			const subMenu = menu.newMenu('Axis & labels...');
+			{
+				const subMenuTwo = menu.newMenu('Axis...', subMenu);
+				[
+					{isEq: null,	key: this.axis.x.show, value: null,					newValue: {show: !this.axis.x.show},			entryText: (this.axis.x.show ? 'Hide' : 'Show') + ' X axis'}
+				].forEach(createMenuOption('axis', 'x', subMenuTwo, false));
+				[
+					{isEq: null,	key: this.axis.y.show, value: null,					newValue: {show: !this.axis.y.show},			entryText: (this.axis.y.show ? 'Hide' : 'Show') + ' Y axis'}
+				].forEach(createMenuOption('axis', 'y', subMenuTwo, false));
+			}
+			{
+				const subMenuTwo = menu.newMenu('Labels...', subMenu);
+				[
+					{isEq: null,	key: this.axis.x.labels, value: null,					newValue: {labels: !this.axis.x.labels},			entryText: (this.axis.x.labels ? 'Hide' : 'Show') + ' X labels'}
+				].forEach(createMenuOption('axis', 'x', subMenuTwo, false));
+				[
+					{isEq: null,	key: this.axis.y.labels, value: null,					newValue: {labels: !this.axis.y.labels},			entryText: (this.axis.y.labels ? 'Hide' : 'Show') + ' Y labels'}
+				].forEach(createMenuOption('axis', 'y', subMenuTwo, false));
+				menu.newEntry({menuName: subMenuTwo, entryText: 'sep'});
+				[
+					{isEq: null,	key: this.axis.x.bAltLabels, value: null,				newValue: !this.axis.x.bAltLabels,		entryText: 'Alt. X labels'},
+				].forEach(createMenuOption('axis', ['x', 'bAltLabels'], subMenuTwo, true));
+			}
+			{
+				const subMenuTwo = menu.newMenu('Titles...', subMenu);
+				[
+					{isEq: null,	key: this.axis.x.showKey, value: null,					newValue: {showKey: !this.axis.x.showKey},			entryText: (this.axis.x.showKey ? 'Hide' : 'Show') + ' X title'}
+				].forEach(createMenuOption('axis', 'x', subMenuTwo, false));
+				[
+					{isEq: null,	key: this.axis.y.showKey, value: null,					newValue: {showKey: !this.axis.y.showKey},			entryText: (this.axis.y.showKey ? 'Hide' : 'Show') + ' Y title'}
+				].forEach(createMenuOption('axis', 'y', subMenuTwo, false));
 			}
 		}
-		menu.newEntry({entryText: 'sep'});
-		menu.newEntry({entryText: 'Exit statistics mode', func: () => {
-			parent.bEnabled = !parent.bEnabled;
-			worldMap.properties['panelMode'][1] = 0;
-			overwriteProperties(worldMap.properties);
-			window.Repaint();
-		}});
+		{
+			const subMenu = menu.newMenu('Other config...');
+			if (sizeGraphs.has(type)) {
+				{
+					const configSubMenu = menu.newMenu((type === 'lines' ? 'Line' : 'Point') + ' size...', subMenu);
+					[1, 2, 3, 4].map((val) => {
+						return {isEq: null,	key: this.graph.borderWidth, value: null, newValue: _scale(val), entryText: val.toString()};
+					}).forEach(createMenuOption('graph', 'borderWidth', configSubMenu));
+				}
+				if (type === 'scatter') {
+					const configSubMenu = menu.newMenu('Point type...', subMenu);
+					['circle', 'circumference', 'cross', 'triangle', 'plus'].map((val) => {
+						return {isEq: null, key: this.graph.point, value: null, newValue: val, entryText: val};
+					}).forEach(createMenuOption('graph', 'point', configSubMenu));
+				}
+			}
+			{
+				const configSubMenu = menu.newMenu('Point transparency...', subMenu);
+				[0, 20, 40, 60, 80, 100].map((val) => {
+					return {isEq: null,	key: this.graph.pointAlpha, value: null, newValue: Math.round(val * 255 / 100), entryText: val.toString() + (val === 0 ? '\t(transparent)' : val === 100 ? '\t(opaque)' : '')};
+				}).forEach(createMenuOption('graph', 'pointAlpha', configSubMenu));
+			}
+		}
 		return menu;
 	}
 	
@@ -485,12 +557,18 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	}
 	
 	this.defaultConfig = () => {
+		const onLbtnUpSettings = this.onLbtnUpSettings;
+		const onLbtnUpDisplay = this.onLbtnUpDisplay;
 		return {
 			data: [], // No data is added by default to set no colors on first init
-			graph: {type: 'doughnut'},
-			dataManipulation: {sort: (a, b) => {return b.y - a.y;}, slice: [0, 4], filter: null, distribution: null},
+			graph: {type: 'doughnut', pointAlpha: Math.round(40 * 255 / 100)},
+			chroma: {scheme: [
+				opaqueColor(worldMap.defaultColor, 100), 
+				opaqueColor(invert(worldMap.panelColor), 100)
+			]},
+			dataManipulation: {sort: 'reverse|y', slice: [0, 4], filter: null, distribution: null},
 			background: {color: null},
-			colors: [opaqueColor(worldMap.properties.customPointColor[1], 50)],
+			colors: [worldMap.defaultColor],
 			margin: {left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15)},
 			axis: {
 				x: {show: true, color: blendColors(invert(worldMap.panelColor, true), worldMap.panelColor, 0.1), width: _scale(2), ticks: 'auto', labels: true, key: 'Countries', bAltLabels: true}, 
@@ -501,7 +579,22 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			y: 0,
 			h: 0,
 			tooltipText: '\n\n(Right click to configure chart)',
-			configuration: {bPopupBackground: true}
+			configuration: {bPopupBackground: true},
+			callbacks: {
+				// point:		{onLbtnUp: onLbtnUpPoint},
+				settings:	{onLbtnUp: function(x, y, mask) {onLbtnUpSettings.call(this).btn_up(x, y);}},
+				display:	{onLbtnUp: function(x, y, mask) {onLbtnUpDisplay.call(this).btn_up(x, y);}},
+				custom:		{onLbtnUp: function() {
+					parent.bEnabled = !parent.bEnabled;
+					worldMap.properties['panelMode'][1] = 0;
+					overwriteProperties(worldMap.properties);
+					repaint();
+				}, tooltip: 'Exit statistics mode...'},
+				config:		{
+					backgroundColor: () => [worldMap.panelColor]
+				},
+			},
+			buttons: {settings: true, display: true, custom: true}
 		};
 	}
 	
@@ -532,7 +625,6 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			});
 		});
 		charts = nCharts.flat(Infinity);
-		charts.forEach((chart) => { _attachedMenu.call(chart, {rMenu: this.graphMenu.bind(chart), popup: chart.pop});}); // Binds the generic right click menu to every chart
 	};
 	
 	this.bEnabled = bEnabled;

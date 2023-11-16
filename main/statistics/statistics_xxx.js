@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/11/23
+//16/11/23
 
 include('statistics_xxx_helper.js');
 
@@ -7,15 +7,15 @@ function _chart({
 				data /* [[{x, y}, ...]]*/,
 				dataAsync = null, /* function returning a promise or promise, resolving to data, see above*/
 				colors = [/* rgbSerie1, ... */],
-				chroma = {/* scheme, colorBlindSafe */}, // diverging, qualitative, sequential, random or [color, ...] see https://vis4.net/chromajs/#color-scales
+				chroma = {/* scheme, colorBlindSafe, interpolation */}, // diverging, qualitative, sequential, random or [color, ...] see https://vis4.net/chromajs/#color-scales
 				graph = {/* type, multi, borderWidth, point, pointAlpha */},
 				dataManipulation = {/* sort, filter, slice, distribution , probabilityPlot, group*/},
 				background = {/* color, image*/},
 				grid = {x: {/* show, color, width */}, y: {/* ... */}},
 				axis = {x: {/* show, color, width, ticks, labels, key, singleLabels, bAltLabels */}, y: {/* ... */}, z: {/* ... */}}, // singleLabels & bAltLabels only for X axis
 				margin = {/* left, right, top, bottom */}, 
-				buttons = {/* xScroll , settings, display */},
-				callbacks = {point: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, focus: {/* onMouseWwheel, onRbtnUp */}, settings: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, display: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, zoom: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, config: {/* change, backgroundColor */}},
+				buttons = {/* xScroll , settings, display, zoom, custom */},
+				callbacks = {point: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, focus: {/* onMouseWwheel, onRbtnUp */}, settings: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, display: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, zoom: {/* onLbtnUp, onRbtnUp, onDblLbtn */}, custom: {/* onLbtnUp, onRbtnUp, onDblLbtn, tooltip */}, config: {/* change, backgroundColor */}},
 				configuration = {/* bLoadAsyncData: true , bAltVerticalText: false, bPopupBackground: false, bProfile: false, bSlicePerKey: true*, bDynColor: true, bDynColorBW: true */},
 				x = 0,
 				y = 0,
@@ -45,6 +45,7 @@ function _chart({
 		const selBar = this.graph.borderWidth * 2;
 		let valH;
 		const borderColor = RGBA(...toRGB(invert(this.colors[i], true)), getBrightness(...toRGB(this.colors[i])) < 50 ? 300 : 25);
+		const color = RGBA(...toRGB(this.colors[i]), this.graph.pointAlpha);
 		serie.forEach((value, j) => {
 			valH = value.y / maxY * (y - h);
 			const xPoint = x + xAxisValues.indexOf(value.x) * tickW;
@@ -58,14 +59,14 @@ function _chart({
 				const paintPoint = (color) => {
 					gr.DrawEllipse(xPoint - this.graph.borderWidth / 2, yPoint - this.graph.borderWidth / 2, this.graph.borderWidth, this.graph.borderWidth, this.graph.borderWidth, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			} else if (this.graph.point.toLowerCase() === 'circumference') {
 				this.dataCoords[i][j] = {x: xPoint, y: yPoint -  this.graph.borderWidth / 2, w: selBar, h: valH};
 				const paintPoint = (color) => {
 					gr.DrawEllipse(xPoint - this.graph.borderWidth * 2 / 3, yPoint - this.graph.borderWidth  * 2 / 3, this.graph.borderWidth * 4 / 3, this.graph.borderWidth * 4 / 3, this.graph.borderWidth / 2, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			} else if (this.graph.point.toLowerCase() === 'cross') {
 				this.dataCoords[i][j] = {x: xPoint, y: yPoint -  this.graph.borderWidth, w: selBar, h: valH};
@@ -73,7 +74,7 @@ function _chart({
 					gr.DrawLine(xPoint - this.graph.borderWidth, yPoint - this.graph.borderWidth, xPoint + this.graph.borderWidth, yPoint + this.graph.borderWidth, this.graph.borderWidth / 2, color);
 					gr.DrawLine(xPoint - this.graph.borderWidth, yPoint + this.graph.borderWidth, xPoint + this.graph.borderWidth, yPoint - this.graph.borderWidth, this.graph.borderWidth / 2, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			} else if (this.graph.point.toLowerCase() === 'plus') {
 				this.dataCoords[i][j] = {x: xPoint, y: yPoint -  this.graph.borderWidth, w: selBar, h: valH};
@@ -81,7 +82,7 @@ function _chart({
 					gr.DrawLine(xPoint - this.graph.borderWidth, yPoint, xPoint + this.graph.borderWidth, yPoint, this.graph.borderWidth / 2, color);
 					gr.DrawLine(xPoint, yPoint + this.graph.borderWidth, xPoint, yPoint - this.graph.borderWidth, this.graph.borderWidth / 2, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			} else if (this.graph.point.toLowerCase() === 'triangle') {
 				this.dataCoords[i][j] = {x: xPoint, y: yPoint -  this.graph.borderWidth, w: selBar, h: valH};
@@ -90,7 +91,7 @@ function _chart({
 					gr.DrawLine(xPoint - this.graph.borderWidth, yPoint + this.graph.borderWidth, xPoint + this.graph.borderWidth / 8, yPoint - this.graph.borderWidth, this.graph.borderWidth / 2, color);
 					gr.DrawLine(xPoint + this.graph.borderWidth, yPoint + this.graph.borderWidth, xPoint - this.graph.borderWidth / 8, yPoint - this.graph.borderWidth, this.graph.borderWidth / 2, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			}
 		});
@@ -102,6 +103,7 @@ function _chart({
 		// Values
 		let valH;
 		const borderColor = RGBA(...toRGB(invert(this.colors[i], true)), getBrightness(...toRGB(this.colors[i])) < 50 ? 300 : 25);
+		const color = RGBA(...toRGB(this.colors[i]), this.graph.pointAlpha);
 		serie.forEach((value, j) => {
 			valH = value.y / maxY * (y - h);
 			const idx = xAxisValues.indexOf(value.x);
@@ -120,7 +122,7 @@ function _chart({
 					const newYPoint = y - newValH;
 					gr.DrawLine(newXPoint, newYPoint, xPoint, yPoint, this.graph.borderWidth, color);
 				};
-				paintPoint(this.colors[i]);
+				paintPoint(color);
 				if (bFocused) {paintPoint(borderColor);}
 			}
 		});
@@ -132,6 +134,7 @@ function _chart({
 		const xValues = x + i * barW;
 		let valH;
 		const borderColor = RGBA(...toRGB(invert(this.colors[i], true)), getBrightness(...toRGB(this.colors[i])) < 50 ? 300 : 25);
+		const color = RGBA(...toRGB(this.colors[i]), this.graph.pointAlpha);
 		serie.forEach((value, j) => {
 			valH = value.y / maxY * (y - h);
 			const xPoint = xValues + xAxisValues.indexOf(value.x) * tickW;
@@ -139,7 +142,7 @@ function _chart({
 			const bFocused = this.currPoint[0] === i && this.currPoint[1] === j;
 			this.dataCoords[i][j] = {x: xPoint, y: yPoint, w: barW, h: valH};
 			const point = this.dataCoords[i][j];
-			gr.FillSolidRect(point.x, point.y, point.w, point.h, this.colors[i]);
+			gr.FillSolidRect(point.x, point.y, point.w, point.h, color);
 			if (bFocused) {gr.FillSolidRect(point.x, point.y, point.w, point.h, borderColor);}
 			// Borders
 			if (this.graph.borderWidth) {
@@ -186,10 +189,18 @@ function _chart({
 			iX = r * Math.cos(2 * Math.PI / ticks * j)
 			circleArr.push(c.x + iX, c.y + iY);
 		}
-		gr.FillPolygon(invert(this.background.color, true), 0, circleArr);
+		if (this.background.color !== null || this.configuration.bDynColor && this.callbacks.config.backgroundColor) {
+			const bgColor = this.configuration.bDynColor && this.callbacks.config.backgroundColor
+				? this.configuration.bDynColorBW 
+					? invert(this.callbacks.config.backgroundColor()[0], true) 
+					: Chroma.average(this.callbacks.config.backgroundColor(), void(0), [0.6, 0.4]).android()
+				: this.background.color;
+			gr.FillPolygon(RGBA(...toRGB(invert(this.background.color, true)), this.graph.pointAlpha / 2), 0, circleArr);
+		}
 		let alpha = 0;
 		serie.forEach((value, j, thisSerie) => {
 			const borderColor = RGBA(...toRGB(invert(this.colors[i][j], true)), getBrightness(...toRGB(this.colors[i][j])) < 50 ? 300 : 25);
+			const color = RGBA(...toRGB(this.colors[i][j]), this.graph.pointAlpha);
 			const bFocused = this.currPoint[0] === i && this.currPoint[1] === j;
 			circleArr = [...Object.values(c)];
 			const sumY = thisSerie.reduce((acc, val) => acc + val.y, 0);
@@ -202,7 +213,7 @@ function _chart({
 				circleArr.push(c.x + iX, c.y + iY);
 			}
 			if (circleArr.length) {
-				gr.FillPolygon(this.colors[i][j], 0, circleArr);
+				gr.FillPolygon(color, 0, circleArr);
 				if (bFocused) {gr.FillPolygon(borderColor, 0, circleArr);}
 				// Borders
 				if (this.graph.borderWidth) {
@@ -229,6 +240,7 @@ function _chart({
 		let alpha = 0;
 		serie.forEach((value, j, thisSerie) => {
 			const borderColor = RGBA(...toRGB(invert(this.colors[i][j], true)), getBrightness(...toRGB(this.colors[i][j])) < 50 ? 300 : 25);
+			const color = RGBA(...toRGB(this.colors[i][j]), this.graph.pointAlpha);
 			const bFocused = this.currPoint[0] === i && this.currPoint[1] === j;
 			circleArr = [];
 			const sumY = thisSerie.reduce((acc, val) => acc + val.y, 0);
@@ -246,7 +258,7 @@ function _chart({
 				circleArr.push(c.x + iX, c.y + iY);
 			}
 			if (circleArr.length) {
-				gr.FillPolygon(this.colors[i][j], 0, circleArr);
+				gr.FillPolygon(color, 0, circleArr);
 				if (bFocused) {gr.FillPolygon(borderColor, 0, circleArr);}
 				// Borders
 				if (this.graph.borderWidth) {
@@ -269,7 +281,7 @@ function _chart({
 			? this.configuration.bDynColorBW 
 				? invert(this.callbacks.config.backgroundColor()[0], true) 
 				: Chroma.average(this.callbacks.config.backgroundColor(), void(0), [0.6, 0.4]).android()
-			: null;
+			: this.background.color;
 		const xAxisColor = bgColor || this.axis.x.color;
 		const xAxisColorInverted = xAxisColor === this.axis.x.color 
 			? xAxisColor 
@@ -499,7 +511,9 @@ function _chart({
 									const yTickText = label.from.y + (border + tickH /2) * Math.sin(tetha) - tickH / 2;
 									const xTickText = label.from.x + (border + tickW) * Math.cos(tetha) - tickW / 2;
 									const flags = DT_CENTER | DT_END_ELLIPSIS | DT_CALCRECT | DT_NOPREFIX;
-									const borderColor = RGBA(...toRGB(invert(this.colors[i][j], true)), 150);
+									const borderColor = bgColor
+										? RGBA(...Chroma.average([invert(this.colors[i][j], true), bgColor], void(0), [0.9, 0.1]).rgb(), 150)
+										: RGBA(...toRGB(invert(this.colors[i][j], true)), 150);
 									const offsetR = Math.max(Math.max(xTickText + tickW + _scale(2) + this.margin.right / 3, w) - w - x, 0);
 									const offsetL = Math.max(Math.max(xTickText, this.x + _scale(2) + this.margin.left / 3) - xTickText, 0);
 									// Lines to labels
@@ -787,6 +801,7 @@ function _chart({
 			if (this.buttons.settings) {this.settingsBtn.paint(gr, color);}
 			if (this.buttons.display) {this.displayBtn.paint(gr, color);}
 			if (this.buttons.zoom) {this.zoomBtn.paint(gr, color);}
+			if (this.buttons.custom) {this.customBtn.paint(gr, color);}
 		}
 	}
 	
@@ -821,8 +836,8 @@ function _chart({
 		return RGB(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255));
 	};
 	
-	this.chromaColor = (scheme = this.chroma.scheme, len = this.series) => {
-		return Chroma.scale(scheme).colors(len, 'rgb').map((arr) => {return RGB(...arr);});
+	this.chromaColor = (scheme = this.chroma.scheme, len = this.series, mode = this.chroma.interpolation) => {
+		return Chroma.scale(scheme).mode(mode || 'lrgb').colors(len, 'rgb').map((arr) => {return RGB(...arr);});
 	}
 	
 	this.nFormatter = (num, digits) => { // Y axis formatter
@@ -972,6 +987,16 @@ function _chart({
 						ttText = 'Press Shift to zoom out...\nDouble CLick for max zoom in/out';
 					} else if (this.zoomBtn.hover !== bHover) {bPaint = true;}
 				}
+				if (this.buttons.custom) {
+					const bHover = this.customBtn.hover;
+					if (this.customBtn.move(x, y)) {
+						bHand = true;
+						bPaint = true;
+						ttText = this.callbacks.custom.tooltip 
+							? isFunction(this.callbacks.custom.tooltip) ? this.callbacks.custom.tooltip() : this.callbacks.custom.tooltip
+							: '';
+					} else if (this.customBtn.hover !== bHover) {bPaint = true;}
+				}
 				const [serie, idx] = this.tracePoint(x, y, true);
 				bPaint = bPaint || this.currPoint[0] !== serie || this.currPoint[1] !== idx;
 				if (bPaint) {this.repaint();}
@@ -1025,6 +1050,9 @@ function _chart({
 		}
 		if (this.buttons.zoom) {
 			this.zoomBtn.hover = false;
+		}
+		if (this.buttons.custom) {
+			this.customBtn.hover = false;
 		}
 		return this.leavePoints() || this.repaint();
 	};
@@ -1119,7 +1147,6 @@ function _chart({
 					? 2 
 					: 1
 				);
-		console.log(step, newRange);
 		if (range === points && newRange > range) {return false;}
 		let left, right;
 		if (Number.isFinite(newRange)) {
@@ -1142,7 +1169,6 @@ function _chart({
 			right = Infinity;
 			if ((left - right) >= range) {return false;}
 		}
-		console.log(left, right);
 		this.changeConfig({bPaint: true, dataManipulation: {slice: [left, right === points ? Infinity : right]}});
 		this.move(this.mx, this.my);
 		return true;
@@ -1209,6 +1235,9 @@ function _chart({
 			if (this.buttons.zoom && this.zoomBtn.hover && this.callbacks.zoom.onLbtnUp) {
 				if (this.zoomBtn.lbtn_up(x, y, mask, this)) {return true;}
 			}
+			if (this.buttons.custom && this.customBtn.hover && this.callbacks.custom.onLbtnUp) {
+				if (this.customBtn.lbtn_up(x, y, mask, this)) {return true;}
+			}
 			if (this.callbacks.point.onLbtnUp) {
 				const point = this.getCurrentPoint(false);
 				if (point) {this.callbacks.point.onLbtnUp.call(this, point, x, y, mask);}
@@ -1233,6 +1262,9 @@ function _chart({
 			if (this.buttons.zoom && this.zoomBtn.hover) {
 				if (this.zoomBtn.lbtn_dblclk(x, y, mask, this)) {return true;}
 			}
+			if (this.buttons.custom && this.customBtn.hover) {
+				if (this.customBtn.lbtn_dblclk(x, y, mask, this)) {return true;}
+			}
 			return true;
 		}
 		return false;
@@ -1250,6 +1282,8 @@ function _chart({
 				this.displayBtn.rbtn_up(x, y, mask, this);
 			} else if (this.buttons.zoom && this.zoomBtn.hover && this.callbacks.zoom.onRbtnUp) {
 				this.zoomBtn.rbtn_up(x, y, mask, this);
+			} else if (this.buttons.custom && this.customBtn.hover && this.callbacks.custom.onRbtnUp) {
+				this.customBtn.rbtn_up(x, y, mask, this);
 			} else if (this.callbacks.focus.onRbtnUp) {
 				this.callbacks.focus.onRbtnUp.call(this, x, y, mask);
 			}
@@ -1678,7 +1712,7 @@ function _chart({
 							} else { // An array of colors or colorbrewer palette (string)
 								scheme = this.chroma.scheme;
 							}
-							const scale = this.chromaColor(scheme, serieLen);
+							const scale = this.chromaColor(scheme, serieLen, this.chroma.interpolation || 'lrgb');
 							let k = 0;
 							arrCol.forEach((color, j) => {
 								if (!color) {
@@ -1923,7 +1957,7 @@ function _chart({
 	
 	this.setDefaults = () => {
 		this.colors = [];
-		this.chroma = {scheme: 'sequential', colorBlindSafe: true}; // diverging, qualitative, sequential, random or [color, ...] see https://vis4.net/chromajs/#color-scales
+		this.chroma = {scheme: 'sequential', colorBlindSafe: true, interpolation: 'lrgb'}; // diverging, qualitative, sequential, random or [color, ...] see https://vis4.net/chromajs/#color-scales
 		this.graph = {type: 'bars', multi: false, borderWidth: _scale(1), point: null, pointAlpha: 255};
 		this.dataManipulation = {sort: 'natural', filter: null, slice: [0, 10], distribution: null, probabilityPlot: null, group: 4};
 		this.background = {color: RGB(255 , 255, 255), image: null};
@@ -1934,7 +1968,7 @@ function _chart({
 			z: {key: '', tf: ''},
 		};
 		this.margin = {left: _scale(20), right: _scale(20), top: _scale(20), bottom: _scale(20)};
-		this.buttons = {xScroll: false, settings: false, display: false, zoom: false};
+		this.buttons = {xScroll: false, settings: false, display: false, zoom: false, custom: false};
 		this.callbacks = {
 			point: {onLbtnUp: null, onRbtnUp: null, onDblLbtn: null}, 
 			focus: {
@@ -1947,7 +1981,8 @@ function _chart({
 				onLbtnUp: (x, y, mask) => this.zoomX(mask === MK_SHIFT || this.getCurrentRange() === 1 ? -1 : 1),
 				onDblLbtn: (x, y, mask) => {this.zoomX(mask === MK_SHIFT || this.getCurrentRange() === 1 ? -Infinity : Infinity)},
 				onRbtnUp: null,
-			}, 
+			},
+			custom: {onLbtnUp: null, onRbtnUp: null, onDblLbtn: null, tooltip: null},
 			config: {change: null, backgroundColor: null}
 		};
 		this.configuration = {
@@ -1992,6 +2027,7 @@ function _chart({
 		if (callbacks.settings) {this.callbacks.settings = {...this.callbacks.settings, ...callbacks.settings};}
 		if (callbacks.display) {this.callbacks.display = {...this.callbacks.display, ...callbacks.display};}
 		if (callbacks.zoom) {this.callbacks.zoom = {...this.callbacks.zoom, ...callbacks.zoom};}
+		if (callbacks.custom) {this.callbacks.custom = {...this.callbacks.custom, ...callbacks.custom};}
 		if (callbacks.config) {this.callbacks.config = {...this.callbacks.config, ...callbacks.config};}
 	}
 	this.currPoint = [-1, -1];
@@ -2052,6 +2088,15 @@ function _chart({
 		rbtnFunc: (x, y, mask, parent) => {this.callbacks.display.onRbtnUp && this.callbacks.display.onRbtnUp.call(this, x, y, mask, parent);},
 		lbtnDblFunc: (x, y, mask, parent) => {this.callbacks.display.onDblLbtn && this.callbacks.display.onDblLbtn.call(this, x, y, mask, parent);}
 	})
+ 	this.customBtn = new _button({
+		text: chars.close,
+		x: this.x, y: this.y, w: this.buttonsCoords.size, h: this.buttonsCoords.size, 
+		isVisible: (time, timer) => {return this.inFocus || (Date.now() - time < timer);},
+		notVisibleMode: 25, bTimerOnVisible: true,
+		lbtnFunc: (x, y, mask, parent) => {this.callbacks.custom.onLbtnUp && this.callbacks.custom.onLbtnUp.call(this, x, y, mask, parent);},
+		rbtnFunc: (x, y, mask, parent) => {this.callbacks.custom.onRbtnUp && this.callbacks.custom.onRbtnUp.call(this, x, y, mask, parent);},
+		lbtnDblFunc: (x, y, mask, parent) => {this.callbacks.custom.onDblLbtn && this.callbacks.custom.onDblLbtn.call(this, x, y, mask, parent);}
+	})
 	/* 
 	Animation
 	*/
@@ -2065,7 +2110,7 @@ function _chart({
 			border: {enabled: false}, 
 			icon: {enabled: true}, 
 			...(this.configuration.bPopupBackground 
-				? {color: {panel: opaqueColor(0xFF4354AF, 30), text: invert(this.background.color, true)}} // Blue overlay
+				? {color: {panel: opaqueColor(0xFF4354AF, 30), text: invert(this.background.color || RGB(0, 0, 0), true)}} // Blue overlay
 				: {})
 			}
 	});
