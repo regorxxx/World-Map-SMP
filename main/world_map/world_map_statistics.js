@@ -421,7 +421,6 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		// Menus
 		menu.newEntry({entryText: 'Create playlist...', func: () => {
 			if (checkQuery(query)) {
-				console.log(query);
 				let handleList = fb.GetQueryItems(fb.GetLibraryItems(), query);
 				handleList = removeDuplicatesV2({handleList, sortOutput: '', checkKeys: globTags.remDupl, sortBias: globQuery.remDuplBias, bAdvTitle: true, bPreserveSort: false});
 				sendToPlaylist(handleList, 'World Map: ' + point.x);
