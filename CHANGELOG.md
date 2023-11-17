@@ -39,11 +39,16 @@
 
 ## [Unreleased][]
 ### Added
+- Statistics: click on point to create playlists by selected key and data mode
+- Statistics: added point statistics.
 - Statistics: added buttons to statistics mode. Menus are now opened via buttons, no longer with R. click. There is also a button to directly exit statistics mode.
 - Statistics: added sorting options according to Y axis.
 - Statistics: colors are now forced with a scheme based on panel colors.
 - UI: transparency input menu entries now have a hint about which value is opaque and which transparent.
 ### Changed
+- Statistics: after changing data type, number of values shown is kept if possible.
+- UI: Improved responsiveness of repaint in some instances after changing settings or exiting statistics mode.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
