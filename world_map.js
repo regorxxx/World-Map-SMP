@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/11/23
+//17/11/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -212,7 +212,7 @@ const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] ==
 	Callbacks for painting 
 */
 const debouncedRepaint = {};
-function repaint(bPlayback = false) {
+function repaint(bPlayback = false, bInmediate = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
 	if (worldMap.properties.panelMode[1]) {return;}
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
@@ -222,7 +222,7 @@ function repaint(bPlayback = false) {
 	imgAsync.layers.processedIso.clear();
 	imgAsync.layers.bPaint = false;
 	imgAsync.layers.bStop = true;
-	const delay = worldMap.properties.iRepaintDelay[1];
+	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
 		if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.Repaint, delay, false, window);}
 		debouncedRepaint[delay]();
