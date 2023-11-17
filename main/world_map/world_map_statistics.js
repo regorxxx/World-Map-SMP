@@ -1,8 +1,11 @@
 ﻿'use strict';
-//16/11/23
+//17/11/23
 
 include('..\\statistics\\statistics_xxx.js');
 include('..\\..\\helpers\\menu_xxx.js');
+include('..\\..\\helpers\\helpers_xxx_playlists.js');
+include('..\\filter_and_query\\remove_duplicates.js');
+
 
 function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	const parent = this;
@@ -35,17 +38,17 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 
 		addEventListener('on_mouse_move', (x, y, mask) => {
 			if (!window.ID || !this.bEnabled) {return;}
-			const bFound = charts.some((chart) => {return chart.move(x,y);});
+			const bFound = charts.some((chart) => {return chart.move(x, y, mask);});
 		});
 
-		addEventListener('on_mouse_leave', (x, y, mask) => {
+		addEventListener('on_mouse_leave', () => {
 			if (!this.bEnabled) {return;}
 			charts.forEach((chart) => {chart.leave();});
 		});
 
-		addEventListener('on_mouse_lbtn_up', (x, y) => {
+		addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 			if (!this.bEnabled) {return true;}
-			charts.some((chart) => {return chart.lbtnUp(x,y);});
+			charts.some((chart) => {return chart.lbtnUp(x, y, mask);});
 		});
 
 		addEventListener('on_mouse_lbtn_dblclk', (x, y, mask) => {
@@ -118,7 +121,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 						if (!keys.has(key)) {delete config[key];}
 					});
 					config.dataManipulation.sort = this.exportSortLabel();
-					config.data = {source: parent.source, arg: parent.arg, bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
+					config.data = {source: parent.source.toLowerCase(), arg: parent.arg.toLowerCase(), bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
 					worldMap.properties['statsConfig'][1] = JSON.stringify(config);
 					overwriteProperties(worldMap.properties);
 				}
@@ -133,19 +136,20 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		menu.newEntry({entryText: 'sep'});
 		{	// Data
 			const subMenu = menu.newMenu('Data...');
-			const key = parent.bAsync ? this.data : this.dataAsync;
+			const data = parent.bAsync ? this.data : this.dataAsync;
+			const slice = this.dataManipulation.slice;
 			[
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Artists per Country', args: {axis: 'Artists', data: {source: 'json', arg: 'artists'}}},
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Artists per Region', args: {axis: 'Artists', data: {source: 'json', arg: 'artists region'}}},
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Listens per Country', args: {axis: 'Listens', data: {source: 'library', arg: 'listens'}}},
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Listens per Country (normalized)', args: {axis: 'Listens / track', data: {source: 'library', arg: 'listens normalized'}}},
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Listens per Region', args: {axis: 'Listens', data: {source: 'library', arg: 'listens region'}}},
-				{isEq: null, key, value: null, newValue: null,
+				{isEq: null, key: data, value: null, newValue: null,
 					entryText: 'Listens per Region (normalized)', args: {axis: 'Listens / track', data: {source: 'library', arg: 'listens region normalized'}}},
 			].forEach(createMenuOption(parent.bAsync ? 'dataAsync' : 'data', null, subMenu, true, (option) => {
 				option.newValue = parent.bAsync
@@ -155,21 +159,18 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				this.changeConfig(
 					{
 						axis: {
-							y: {[key]: option.args.axis},
-							x: {[key]: /\bregion\b/i.test(parent.arg) ? 'Region' : 'Country'}
+							y: {key: option.args.axis},
+							x: {key: /\bregion\b/i.test(parent.arg) ? 'Region' : 'Country'}
 						},
 						title: window.Name + ' - ' + option.entryText
 					}
 				);
+			}, (option) => {
+				this.changeConfig({dataManipulation: {slice}});
 			}));
 		}
 		menu.newEntry({entryText: 'sep'});
-		menu.newEntry({entryText: 'Exit statistics mode', func: () => {
-			parent.bEnabled = !parent.bEnabled;
-			worldMap.properties['panelMode'][1] = 0;
-			overwriteProperties(worldMap.properties);
-			repaint();
-		}});
+		menu.newEntry({entryText: 'Exit statistics mode', func: parent.exit});
 		return menu;
 	}
 	
@@ -185,7 +186,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 						if (!keys.has(key)) {delete config[key];}
 					});
 					config.dataManipulation.sort = this.exportSortLabel();
-					config.data = {source: parent.source, arg: parent.arg, bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
+					config.data = {source: parent.source.toLowerCase(), arg: parent.arg.toLowerCase(), bAsync: parent.bAsync}; // Similar to this.exportDataLabels()
 					worldMap.properties['statsConfig'][1] = JSON.stringify(config);
 					overwriteProperties(worldMap.properties);
 				}
@@ -253,10 +254,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			{
 				const subMenu = menu.newMenu('Values shown...');
 				[
+					{isEq: false,	key: this.dataManipulation.slice, value: [0, 3],					newValue: [0, 3],			entryText: '3 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
 					{isEq: false,	key: this.dataManipulation.slice, value: [0, 4],					newValue: [0, 4],			entryText: '4 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
+					{isEq: false,	key: this.dataManipulation.slice, value: [0, 6],					newValue: [0, 6],			entryText: '6 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
 					{isEq: false,	key: this.dataManipulation.slice, value: [0, 10],					newValue: [0, 10],			entryText: '10 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
-					{isEq: false,	key: this.dataManipulation.slice, value: [0, 20],					newValue: [0, 20],			entryText: '20 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
-					{isEq: false,	key: this.dataManipulation.slice, value: [0, 50],					newValue: [0, 50],			entryText: '50 values' + (this.dataManipulation.distribution ? ' per tail' : '')},
 					{entryText: 'sep'},
 					{isEq: false,	key: this.dataManipulation.slice, value: [0, Infinity],				newValue: [0, Infinity],			entryText: 'Show all values'},
 				].forEach(createMenuOption('dataManipulation', 'slice', subMenu));
@@ -354,6 +355,105 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		}
 		return menu;
 	}
+	
+	this.onLbtnUpPoint = function onLbtnUpPoint(point, x, y, mask) {
+		const dataId = worldMap.jsonId; // The tag used to match data
+		const dataIdTag = _t(dataId.toUpperCase()); // for readability
+		const mapTag = worldMap.properties.mapTag[1];
+		const queryNapTag = (mapTag.indexOf('$') !== -1 ? _q(mapTag) : mapTag);
+		const queryByCountry = (countryName) => {
+			let query = '';
+			query = queryNapTag + ' IS ' + countryName + ' OR ' + queryNapTag + ' IS ' + getCountryISO(countryName);
+			const jsonQuery = [];
+			worldMap.getData().forEach((item) => {
+				if (item.val[item.val.length - 1] === countryName) {jsonQuery.push(item[dataId]);}
+			});
+			if (jsonQuery.length) {query = _p(query) + ' OR ' + _p(query_combinations(jsonQuery, dataIdTag, 'OR'));}
+			return query;
+		};
+		const queryByRegion = (regionName) => {
+			let query = '';
+			const isoArr = music_graph_descriptors_countries.getNodesFromRegion(regionName);
+			const isoSet = new Set(isoArr);
+			query = _p(query_combinations(isoArr, queryNapTag, 'OR'));
+			const jsonQuery = [];
+			worldMap.getData().forEach((item) => {
+				const dataIso = getCountryISO(item.val[item.val.length - 1]);
+				if (isoSet.has(dataIso)) {jsonQuery.push(item[dataId]);}
+			});
+			if (jsonQuery.length) {query = _p(query) + ' OR ' + _p(query_combinations(jsonQuery, dataIdTag, 'OR'));}
+			return query;
+		};
+		let query = '';
+		switch (parent.source) {
+			case 'json': {
+				switch (parent.arg) {
+					case 'artists' : {
+						query = queryByCountry(point.x);
+						break;
+					}
+					case 'artists region' : {
+						query = queryByRegion(point.x);
+						break;
+					}
+				}
+				break;
+			}
+			case 'library' : {
+				switch (parent.arg) {
+					case 'listens region normalized':
+					case 'listens region':
+						query =  _q(globTags.playCount) + ' GREATER 0 AND ' + _p(queryByRegion(point.x));
+						break;
+					case 'listens normalized': 
+					case 'listens' :
+						query =  _q(globTags.playCount) + ' GREATER 0 AND ' + _p(queryByCountry(point.x));
+						break;
+				}
+				break;
+			}
+		}
+		// Constants
+		const menu = new _menu();
+		// Header
+		menu.newEntry({entryText: this.title, flags: MF_GRAYED});
+		menu.newEntry({entryText: 'sep'});
+		// Menus
+		menu.newEntry({entryText: 'Create playlist...', func: () => {
+			if (checkQuery(query)) {
+				console.log(query);
+				let handleList = fb.GetQueryItems(fb.GetLibraryItems(), query);
+				handleList = removeDuplicatesV2({handleList, sortOutput: '', checkKeys: globTags.remDupl, sortBias: globQuery.remDuplBias, bAdvTitle: true, bPreserveSort: false});
+				sendToPlaylist(handleList, 'World Map: ' + point.x);
+			}
+		}});
+		menu.newEntry({entryText: 'Create AutoPlaylist...', func: () => {
+			if (checkQuery(query)) {
+				plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.PlaylistCount, 'World Map: ' + point.x, query);
+			}
+		}});
+		menu.newEntry({entryText: 'sep'});
+		menu.newEntry({entryText: 'Point statistics', func: () => {
+			const report = '';
+			const avg = this.data[0]
+				.reduce((acc, curr, i, arr) => acc + (curr.y - acc) / (i + 1), 0);
+			const total = this.data[0]
+				.reduce((acc, curr, i, arr) => acc + curr.y, 0);
+			const libItems = fb.GetLibraryItems();
+			fb.ShowPopupMessage(
+				this.axis.x.key + ':\t' + point.x +
+				'\n' + 
+				this.axis.y.key + ':\t' + point.y + ' ' + _p(round(point.y / total * 100, 2) + '%') +
+				'\n' + 
+				'-'.repeat(40) +
+				'\n' + 
+				'Average ' + this.axis.y.key + ' (any ' + this.axis.x.key + '): ' + Math.round(avg) +  ' ' + _p(round(avg / total * 100, 2) + '%') +
+				'\n' + 
+				'Global total ' + this.axis.y.key + ': ' + total
+			, window.Name + ': Point statistics');
+		}});
+		return menu.btn_up(x, y);
+	};
 	
 	this.getData = (source = 'json', arg = 'artists') => {
 		let data = [];
@@ -578,18 +678,13 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			w: 0,
 			y: 0,
 			h: 0,
-			tooltipText: '\n\n(Right click to configure chart)',
+			tooltipText: function(point, serie, mask) {return '\n\n(L. click to create playlist by ' + this.axis.x.key + ')';},
 			configuration: {bPopupBackground: true},
 			callbacks: {
-				// point:		{onLbtnUp: onLbtnUpPoint},
+				point:		{onLbtnUp: parent.onLbtnUpPoint},
 				settings:	{onLbtnUp: function(x, y, mask) {onLbtnUpSettings.call(this).btn_up(x, y);}},
 				display:	{onLbtnUp: function(x, y, mask) {onLbtnUpDisplay.call(this).btn_up(x, y);}},
-				custom:		{onLbtnUp: function() {
-					parent.bEnabled = !parent.bEnabled;
-					worldMap.properties['panelMode'][1] = 0;
-					overwriteProperties(worldMap.properties);
-					repaint();
-				}, tooltip: 'Exit statistics mode...'},
+				custom:		{onLbtnUp: parent.exit, tooltip: 'Exit statistics mode...'},
 				config:		{
 					backgroundColor: () => [worldMap.panelColor]
 				},
@@ -627,9 +722,16 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		charts = nCharts.flat(Infinity);
 	};
 	
+	this.exit = () => {
+		parent.bEnabled = !parent.bEnabled;
+		worldMap.properties['panelMode'][1] = 0;
+		overwriteProperties(worldMap.properties);
+		repaint(void(0), true);
+	};
+	
 	this.bEnabled = bEnabled;
-	this.source = config && config.data ? config.data.source : 'json';
-	this.arg = config && config.data ? config.data.arg : 'artists';
+	this.source = config && config.data ? config.data.source.toLowerCase() : 'json';
+	this.arg = config && config.data ? config.data.arg.toLowerCase() : 'artists';
 	this.bAsync = config && config.data && config.data.hasOwnProperty('bAsync') ? !!config.data.bAsync : true;
 	this.config = config ? config : {};
 	delete this.config.data;
