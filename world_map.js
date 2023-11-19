@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/23
+//19/11/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -275,15 +275,17 @@ addEventListener('on_paint', (gr) => {
 				if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
 					if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
 					if (bMask) {
-						const layer =  gdi.CreateImage(imgAsync.layers.imgs[0].w, imgAsync.layers.imgs[0].h);
-						const layerGr = layer.GetGraphics();
-						layerGr.FillSolidRect(0, 0, layer.Width, layer.Height, worldMap.properties.customShapeColor[1]);
-						layer.ReleaseGraphics(layerGr);
-						imgAsync.layers.imgs.forEach((imgObj) => {
-							const subLayer = layer.Clone(0, 0, layer.Width, layer.Height);
-							subLayer.ApplyMask(imgObj.img);
-							gr.DrawImage(subLayer, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
-						});
+						if (imgAsync.layers.imgs.length) {
+							const layer = gdi.CreateImage(imgAsync.layers.imgs[0].w, imgAsync.layers.imgs[0].h);
+							const layerGr = layer.GetGraphics();
+							layerGr.FillSolidRect(0, 0, layer.Width, layer.Height, worldMap.properties.customShapeColor[1]);
+							layer.ReleaseGraphics(layerGr);
+							imgAsync.layers.imgs.forEach((imgObj) => {
+								const subLayer = layer.Clone(0, 0, layer.Width, layer.Height);
+								subLayer.ApplyMask(imgObj.img);
+								gr.DrawImage(subLayer, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
+							});
+						}
 					} else {
 						imgAsync.layers.imgs.forEach((imgObj) => {
 							gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
