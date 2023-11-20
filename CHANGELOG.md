@@ -49,6 +49,7 @@
 - Statistics: after changing data type, number of values shown is kept if possible.
 - UI: Improved responsiveness of repaint in some instances after changing settings or exiting statistics mode.
 - Helpers: updated helpers.
+- Console: reduced max log file size to 1 MB.
 ### Removed
 ### Fixed
 - Crash on some cases using country masks.
