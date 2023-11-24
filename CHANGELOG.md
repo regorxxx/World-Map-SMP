@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.5.0](#350---2023-11-24)
 - [3.4.0](#340---2023-11-15)
 - [3.3.0](#330---2023-10-15)
 - [3.2.0](#320---2023-10-05)
@@ -38,6 +39,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.5.0] - 2023-11-24
 ### Added
 - Statistics: click on point to create playlists by selected key and data mode
 - Statistics: added point statistics.
@@ -431,7 +438,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...HEAD
+[3.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.1.0...v3.2.0
