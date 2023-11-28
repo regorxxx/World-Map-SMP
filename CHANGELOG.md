@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.6.0](#360---2023-11-28)
 - [3.5.0](#350---2023-11-24)
 - [3.4.0](#340---2023-11-15)
 - [3.3.0](#330---2023-10-15)
@@ -39,6 +40,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.6.0] - 2023-11-28
 ### Added
 - UI: added setting to disable tooltip on all scripts. Found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bTooltip'. By default tooltip is always shown. This setting will never be exposed within foobar, only at this file.
 ### Changed
@@ -441,7 +448,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...HEAD
+[3.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.2.0...v3.3.0
