@@ -40,6 +40,9 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 See [_TIPS and INSTALLATION (txt)](https://github.com/regorxxx/World-Map-SMP/blob/main/_TIPS%20and%20INSTALLATION.txt) and the [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki/Installation).
 Not properly following the installation instructions will result in scripts not working as intended. Please don't report errors before checking this.
 
+## Nightly releases
+Automatic package [built from GitHub](https://nightly.link/regorxxx/World-Map-SMP/workflows/build/main/file.zip) (using the latest commit).
+
 [changelog]: CHANGELOG.md
 [version_badge]: https://img.shields.io/github/release/regorxxx/World-Map-SMP.svg
 [codacy_badge]: https://api.codacy.com/project/badge/Grade/d68ef528f77646bca546fd206d28e8a1
