@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/09/23
+//01/12/23
 
 include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -157,7 +157,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 
 // When mouse is over point
 function tooltip(point) { 
-	const count = worldMap.lastPoint.find( (last) => {return last.id === point.id;}).val;
+	const count = worldMap.lastPoint.find((last) => {return last.id === point.id;}).val;
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(getCountryISO(point.id));
 	const continent = music_graph_descriptors_countries.getMainRegion(region);
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' ' + _p(continent) + ' - ';

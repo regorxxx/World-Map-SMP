@@ -1,8 +1,7 @@
 ﻿'use strict';
-//14/11/23
+//01/12/23
 
 /* 
-	Map v 0.2 04/02/22
 	Helper to create arbitrary map objects. Defaults to world map if no properties or argument is given.
 	imageMap.findCoordinates must be specified using 'findCoordinatesFunc' if creating the map with any argument.
 	TODO:
@@ -35,6 +34,15 @@ function imageMap({
 	this.tooltip = new _tt(null);
 	
 	// Paint
+	const debouncedRepaint = {};
+	this.repaint = (delay = this.delay) => {
+		if (delay > 0) {
+			if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+			debouncedRepaint[delay](this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
+		} else {
+			window.RepaintRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
+		}
+	};
 	this.paintBg = (gr, bOnlyPanel = false) => {
 		if (this.customPanelColorMode !== 1 && this.panelColor) {gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor);}
 		if (bOnlyPanel) {return;}
@@ -123,7 +131,13 @@ function imageMap({
 			if (id.length) {
 				// Is a new point? Calculate it
 				if (!this.bStaticCoord || !this.point.hasOwnProperty(id)) {
-					let [xPos , yPos] = this.findCoordinates(id, this.imageMap.Width, this.imageMap.Height, this.factorX, this.factorY);
+					let [xPos , yPos] = this.findCoordinates({
+						id, 
+						mapWidth: this.imageMap.Width, 
+						mapHeight: this.imageMap.Height, 
+						factorX: this.factorX,
+						factorY: this.factorY
+					});
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
 						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id}; 
@@ -216,8 +230,11 @@ function imageMap({
 		return mapTagValue;
 	}
 	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}};
-	this.findCoordinates = (value, mapWidth, mapHeight, factorX, factorY) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
-	this.findPointFunc = (x, y, mapWidth, mapHeight, factorX, factorY) => {return [];}; // [{key, simil}] Could be overwritten
+	this.findCoordinates = ({id, mapWidth, mapHeight, factorX, factorY}) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
+	this.findPointFunc = ({x, y, mapWidth, mapHeight, factorX, factorY}) => {return [];}; // [{key, simil}] Could be overwritten
+	this.matchId = (id) => {
+		return (this.point.hasOwnProperty(id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
+	};
 	// Selection
 	this.selPoint = (point, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
 	this.selFindPoint = (foundPoints, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
@@ -230,7 +247,7 @@ function imageMap({
 		let foundId = '';
 		switch (this.pointShape) {
 			case 'string': {
-				this.lastPoint.forEach( (last) => {
+				this.lastPoint.forEach((last) => {
 					if (foundId.length) {return;}
 					const point = this.point[last.id];
 					if (!point || point.xScaled === -1 || point.yScaled === -1) {return;}
@@ -242,7 +259,7 @@ function imageMap({
 			}
 			case 'circle':
 			default : {
-				this.lastPoint.forEach( (last) => {
+				this.lastPoint.forEach((last) => {
 					if (foundId.length) {return;}
 					const point = this.point[last.id];
 					if (!point || point.xScaled === -1 || point.yScaled === -1) {return;}
@@ -257,29 +274,51 @@ function imageMap({
 		}
 		return foundId;
 	}
-	this.move = (x, y, mask) => { // on_mouse_move & on_mouse_leave
+	this.tracePointId = (x, y) => this.findPointFunc({
+		x: x - this.posX,
+		y: y - this.posY, 
+		mapWidth: this.imageMap.Width * this.scale,
+		mapHeight: this.imageMap.Height * this.scale,
+		factorX: this.factorX, 
+		factorY: this.factorY,
+		bSingle: true
+	});
+	this.move = (x, y, mask, bPaint = true) => { // on_mouse_move & on_mouse_leave
 		if (this.mX === x && this.mY === y && !(x === -1 && y === -1)) {return;}
 		this.mX = x;
 		this.mY = y;
 		window.SetCursor(IDC_ARROW);
 		if (this.trace(x, y)) { // Over the map
-			const foundId = this.tracePoint(x,y);
-			if (foundId && foundId.length) { // Over a point
-				this.idSelected = foundId;
-				window.Repaint();
-				const ttText = this.tooltipText(this.point[foundId]);
-				if (ttText && ttText.length) {
-					this.tooltip.SetValue(ttText, true);
+			if (this.lastPoint.length) {
+				const foundId = this.matchId(this.tracePoint(x, y) || this.tracePointId(x, y));
+				if (foundId && foundId.length && this.lastPoint.some((p) => p.id === foundId)) { // Over a point
+					this.idSelected = foundId;
+					if (bPaint) {this.repaint();}
+					const ttText = this.tooltipText(this.point[foundId]);
+					if (ttText && ttText.length) {
+						this.tooltip.SetValue(ttText, true);
+					}
+				} else {
+					this.idSelected = 'none';
+					if (bPaint) {this.repaint();}
+					this.tooltip.SetValue(null);
 				}
 			} else {  // No point
 				if (this.idSelected.length) {
 					this.idSelected = 'none';
-					window.Repaint();
+					if (bPaint) {this.repaint();}
 					this.tooltip.SetValue(null);
 				}
 				const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 				if (!this.lastPoint.length || (mask === MK_SHIFT && !bPressWin)) {  // Add tag selecting directly from map (can be forced with shift)
-					const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
+					const found = this.findPointFunc({
+						x: x - this.posX,
+						y: y - this.posY, 
+						mapWidth: this.imageMap.Width * this.scale,
+						mapHeight: this.imageMap.Height * this.scale,
+						factorX: this.factorX, 
+						factorY: this.factorY
+					});
 					if (found && found.length) {
 						this.foundPoints  = found;
 						const ttText = this.tooltipFindPointText(found);
@@ -289,9 +328,15 @@ function imageMap({
 					} else {this.tooltip.SetValue(null); this.foundPoints = [];}
 				}
 			}
-		} else if (this.idSelected.length && this.idSelected !== 'none') {this.idSelected = 'none'; window.Repaint(); this.tooltip.SetValue(null);}
-		else {this.clearIdSelected(); this.tooltip.SetValue(null); this.foundPoints = [];}
-		if (x === -1 && y === -1 && mask === MK_SHIFT) {this.foundPoints = []; this.clearIdSelected(); window.Repaint();}
+		} else if (this.idSelected.length && this.idSelected !== 'none') {
+			this.idSelected = 'none'; 
+			if (bPaint) {this.repaint();}
+			this.tooltip.SetValue(null);
+		} else {this.clearIdSelected(); this.tooltip.SetValue(null); this.foundPoints = [];}
+		if (x === -1 && y === -1 && mask === MK_SHIFT) {
+			this.foundPoints = []; this.clearIdSelected(); 
+			if (bPaint) {this.repaint();}
+		}
 	}
 	this.btn_up = (x, y, mask) => { // on_mouse_lbtn_up
 		this.mX = x;
@@ -300,7 +345,14 @@ function imageMap({
 		if (foundPoint) { // Over a point
 			return this.selPoint(foundPoint, mask, x, y);
 		} else if (this.trace(x, y) && (!this.lastPoint.length || mask === MK_SHIFT)) {  // Add tag selecting directly from map (can be forced with shift)
-			const found = this.findPointFunc(x - this.posX, y - this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.factorX, this.factorY);
+			const found = this.findPointFunc({
+				x: x - this.posX,
+				y: y - this.posY, 
+				mapWidth: this.imageMap.Width * this.scale,
+				mapHeight: this.imageMap.Height * this.scale,
+				factorX: this.factorX, 
+				factorY: this.factorY
+			});
 			if (found && found.length) {
 				return this.selFindPoint(found, mask, x, y, mask === MK_SHIFT);
 			}
@@ -507,5 +559,6 @@ function imageMap({
 	this.pointSize = pointSize;
 	this.pointLineSize = pointLineSize;
 	this.bSplitTags = typeof this.properties.bSplitTags !== 'undefined' ? this.properties.bSplitTags[1] : bSplitTags;
+	this.delay = 30;
 	if (!bSkipInit) {this.init();}
 }

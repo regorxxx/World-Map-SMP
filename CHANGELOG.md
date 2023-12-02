@@ -41,9 +41,13 @@
 
 ## [Unreleased][]
 ### Added
+- Statistics Mode (gradient): added new mode which displays countries filled with a color scale according number of artists on library from that country. i.e. like Library mode but showing on the UI the count of artists.
+- UI: current country while moving the mouse is now highlighted when using country layers.
 ### Changed
+- UI: greatly enhanced performance while using country layers.
 ### Removed
 ### Fixed
+- UI: panel not being repainted when changing from library to standard mode.
 
 ## [3.6.0] - 2023-11-28
 ### Added

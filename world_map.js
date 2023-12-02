@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/11/23
+//01/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -93,7 +93,7 @@ const worldMap_properties = {
 	customLocaleColor	:	['Custom text color', 0xFF000000, {func: isInt}, 0xFF000000],
 	bShowLocale			:	['Show current locale tag', true, {func: isBoolean}, true],
 	fontSize			:	['Size of header text', 10, {func: isInt}, globFonts.standard.size],
-	panelMode			:	['Selection (0), library (1), stats (2)', 0, {func: isInt, range: [[0, 2]]}, 0],
+	panelMode			:	['Selection (0), library (1), stats (2), gradient (3)', 0, {func: isInt, range: [[0, 3]]}, 0],
 	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
 	bShowFlag			:	['Show flag on header', false, {func: isBoolean}, false],
 	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2],
@@ -154,7 +154,16 @@ worldMap.loadData = (path = worldMap.jsonPath) => {
 		let data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
 		if (!data) {return;}
 		if (worldMap.jsonId !== 'artist') {
+			const dic = new Map();
 			data = data.map((obj) => {
+				obj.val = obj.val.map((v) => {
+					let nV = dic.get(v.toLowerCase());
+					if (!nV) {
+						nV = formatCountry(nameReplacers.get(v.toLowerCase()) || '') || v;
+						dic.set(v.toLowerCase(), nV);
+					}
+					return nV;
+				});
 				return {[worldMap.jsonId]: obj.artist, val: obj.val};
 			});
 		}
@@ -211,13 +220,19 @@ const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] ==
 /* 
 	Callbacks for painting 
 */
-const debouncedRepaint = {};
-function repaint(bPlayback = false, bInmediate = false) {
+const debouncedRepaint = {
+	'30': debounce(window.Repaint, 30, false, window),
+	'20-rect': debounce(window.RepaintRect, 20, false, window),
+	'1500-full': debounce(repaint, 1500, false, window),
+};
+function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
-	if (worldMap.properties.panelMode[1]) {return;}
+	if (worldMap.properties.panelMode[1] >= 1 && !bForce) {return;}
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
 	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
+	imgAsync.fullImg = null;
 	imgAsync.layers.imgs.length = 0;
+	imgAsync.layers.id.length = 0;
 	imgAsync.layers.iso.clear();
 	imgAsync.layers.processedIso.clear();
 	imgAsync.layers.bPaint = false;
@@ -233,22 +248,138 @@ function repaint(bPlayback = false, bInmediate = false) {
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
+	debouncedRepaint['1500-full'](void(0), false, true);
 });
 
 addEventListener('on_colours_changed', () => {
 	worldMap.colorsChanged();
 	window.Repaint();
 });
-const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], iso: new Set(), processedIso: new Set()}};
+
+const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set()}, fullImg: null, cacheW: 0, cacheH: 0};
+const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null} = {}) => {
+	const bMask = worldMap.properties.customShapeColor[1] !== -1;
+	const idSel = worldMap.idSelected;
+	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
+		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
+		const bFullImg = bStatsModes && imgAsync.fullImg;
+		if (bFullImg) {
+			const fullImg = imgAsync.fullImg;
+			const offsetX = 100, offsetY = 100;
+			const x = Math.max(worldMap.posX - offsetX * 2, 0);
+			const y = Math.max(worldMap.posY - offsetY / 2, 0);
+			gr.DrawImage(imgAsync.fullImg, x, y, fullImg.Width, fullImg.Height, 0, 0, fullImg.Width, fullImg.Height);
+		} else if (bStatsModes && imgAsync.layers.imgs.length) {
+			imgAsync.fullImg = gdi.CreateImage(worldMap.imageMap.Width, worldMap.imageMap.Height);
+		}
+		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
+		if (bMask) {
+			if (imgAsync.layers.imgs.length) {
+				const w = imgAsync.layers.imgs[0].w;
+				const h = imgAsync.layers.imgs[0].h;
+				const layer = gdi.CreateImage(w, h);
+				let grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
+				let scheme = null;
+				if (gradient) {
+					const top = Math.round(Math.log(Math.max.apply(Math, worldMap.lastPoint.map((p) => p.val))));
+					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
+				} else {
+					const layerGr = layer.GetGraphics();
+					layerGr.FillSolidRect(0, 0, w, h, color);
+					layer.ReleaseGraphics(layerGr);
+				}
+				imgAsync.layers.imgs.forEach((imgObj, i) => {
+					const id = imgAsync.layers.id[i];
+					if (idSel !== id && bFullImg) {return;}
+					let subLayer = layer.Clone(0, 0, w, h);
+					if (gradient) {
+						const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
+						const layerGr = subLayer.GetGraphics();
+						layerGr.FillSolidRect(0, 0, w, h, scheme[count]);
+						subLayer.ReleaseGraphics(layerGr);
+					}
+					subLayer.ApplyMask(imgObj.img);
+					if (!grFullImg && idSel === id) {subLayer = subLayer.InvertColours();}
+					(grFullImg || gr).DrawImage(subLayer, imgObj.x, imgObj.y, w, h, 0, 0, w, h, 0, worldMap.properties.customShapeAlpha[1]);
+				});
+				if (grFullImg) {imgAsync.fullImg.ReleaseGraphics(grFullImg); window.Repaint();}
+			}
+		} else {
+			imgAsync.layers.imgs.forEach((imgObj) => {
+				gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
+			});
+		}
+	}
+	const promises = [];
+	imgAsync.layers.bStop = false;
+	worldMap.lastPoint.forEach((point, i) => {
+		let id = point.id;
+		if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
+			const iso = id && id.length ? getCountryISO(id) : null;
+			if (iso) {
+				if (!imgAsync.layers.iso.has(iso)) {
+					imgAsync.layers.iso.add(iso);
+					const file = folders.xxx + 'helpers-external\\countries-mercator' + (bMask ? '-mask' : '') + '\\' + iso + '.png';
+					if (_isFile(file)) {
+						promises.push(new Promise((resolve) => {
+							setTimeout(() => {
+								if (imgAsync.layers.bStop) {resolve();}
+								if (imgAsync.layers.processedIso.has(iso)) {resolve();}
+								gdi.LoadImageAsyncV2(void(0), file).then((img) => {
+									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
+										// Hardcoded values comparing Mercator map with Antarctica against python generated countries
+										const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+										const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+										const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+										const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+										img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
+										imgAsync.layers.imgs.push({img, iso, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
+										imgAsync.layers.processedIso.add(iso);
+										imgAsync.layers.id.push(id);
+									}
+									resolve();
+								});
+							}, i * 250 + 25)
+						}));
+					}
+				}
+			}
+		}
+		if (worldMap.properties.pointMode[1] === 2) { // Both
+			let point = worldMap.point[id];
+			if (!point) {
+				const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
+				if (xPos !== -1 && yPos !== -1) {
+					point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
+				}
+			}
+			if (point) {
+				gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, idSel === id ? worldMap.selectionColor : worldMap.defaultColor);
+			}
+		}
+	});
+	if (promises.length) {
+		Promise.all(promises).then(() => {
+			if (imgAsync.layers.bStop) {return;}
+			imgAsync.layers.bPaint = true;
+			window.Repaint();
+		});
+	}
+}
+
 addEventListener('on_paint', (gr) => {
 	if (!worldMap.properties.bEnabled[1]) {worldMap.paintBg(gr); return;}
 	if (worldMap.properties.panelMode[1] === 2) {worldMap.paintBg(gr, true); return;}
-	if (worldMap.properties.panelMode[1]) { // Display entire library
+	if (worldMap.properties.panelMode[1] === 1 || worldMap.properties.panelMode[1] === 3) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
 			worldMap.lastPoint = libraryPoints;
 		}
-		worldMap.paint({gr});
+		worldMap.paint({gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1});
+		if (worldMap.properties.pointMode[1] >= 1) {
+			const color = worldMap.properties.customShapeColor[1];
+			paintLayers({gr, gradient: worldMap.properties.panelMode[1] === 3 ? [Chroma(color).brighten(2).android(), Chroma(color).darken(2).android()] : null});
+		}
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		sel = removeDuplicatesV2({handleList: sel, checkKeys:[worldMap.jsonId]});
@@ -271,81 +402,7 @@ addEventListener('on_paint', (gr) => {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				const bMask = worldMap.properties.customShapeColor[1] !== -1;
-				if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
-					if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
-					if (bMask) {
-						if (imgAsync.layers.imgs.length) {
-							const layer = gdi.CreateImage(imgAsync.layers.imgs[0].w, imgAsync.layers.imgs[0].h);
-							const layerGr = layer.GetGraphics();
-							layerGr.FillSolidRect(0, 0, layer.Width, layer.Height, worldMap.properties.customShapeColor[1]);
-							layer.ReleaseGraphics(layerGr);
-							imgAsync.layers.imgs.forEach((imgObj) => {
-								const subLayer = layer.Clone(0, 0, layer.Width, layer.Height);
-								subLayer.ApplyMask(imgObj.img);
-								gr.DrawImage(subLayer, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
-							});
-						}
-					} else {
-						imgAsync.layers.imgs.forEach((imgObj) => {
-							gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
-						});
-					}
-				}
-				const promises = [];
-				imgAsync.layers.bStop = false;
-				worldMap.lastPoint.forEach((point, i) => {
-					let id = point.id;
-					if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
-						const iso = id && id.length ? getCountryISO(id) : null;
-						if (iso) {
-							if (!imgAsync.layers.iso.has(iso)) {
-								imgAsync.layers.iso.add(iso);
-								const file = folders.xxx + 'helpers-external\\countries-mercator' + (bMask ? '-mask' : '') + '\\' + iso + '.png';
-								if (_isFile(file)) {
-									promises.push(new Promise((resolve) => {
-										setTimeout(() => {
-											if (imgAsync.layers.bStop) {resolve();}
-											if (imgAsync.layers.processedIso.has(iso)) {resolve();}
-											gdi.LoadImageAsyncV2(void(0), file).then((img) => {
-												if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
-													// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-													const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-													const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
-													const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-													const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
-													img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
-													imgAsync.layers.imgs.push({img, iso, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
-													imgAsync.layers.processedIso.add(iso);
-												}
-												resolve();
-											});
-										}, i * 250 + 25)
-									}));
-								}
-							}
-						}
-					}
-					if (worldMap.properties.pointMode[1] === 2) { // Both
-						let point = worldMap.point[id];
-						if (!point) {
-							const [xPos, yPos] = worldMap.findCoordinates(id, worldMap.imageMap.Width, worldMap.imageMap.Height, worldMap.factorX, worldMap.factorY);
-							if (xPos !== -1 && yPos !== -1) {
-								point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
-							}
-						}
-						if (point) {
-							gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
-						}
-					}
-				});
-				if (promises.length) {
-					Promise.all(promises).then(() => {
-						if (imgAsync.layers.bStop) {return;}
-						imgAsync.layers.bPaint = true;
-						window.Repaint();
-					});
-				}
+				paintLayers({gr});
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
@@ -465,9 +522,19 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (!sel || !sel.Count) {return;}
 	}
-	const cache = worldMap.foundPoints.length ? worldMap.foundPoints[0] : null;
-	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
-	if (cache && worldMap.foundPoints.length && worldMap.foundPoints[0] !== cache) {window.Repaint();}
+	const cache = {
+		foundPoint: worldMap.foundPoints.length ? worldMap.foundPoints[0] : null,
+		idSelected: worldMap.idSelected
+	};
+	// Disable shift on library mode and override painting when using layers
+	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask, worldMap.properties.pointMode[1] === 0);
+	const bSel = worldMap.idSelected && worldMap.idSelected !== cache.idSelected;
+	const bFound = !!cache.foundPoint && worldMap.foundPoints.length !== 0 && worldMap.foundPoints[0] !== cache.foundPoint;
+	if (bSel || bFound) {
+		const w = window.Width;
+		const h = window.Height;
+		debouncedRepaint['30']();
+	}
 });
 
 addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
