@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/23
+//01/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -49,7 +49,7 @@ function createMenu() {
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
-			const options = ['Standard mode (selection & playback)' , 'Library mode (all artist on library)', 'Statistics mode'];
+			const options = ['Standard mode (selection & playback)' , 'Library mode (all artist on library)', 'Statistics mode (chart)', 'Statistics mode (gradient map)'];
 			menu.newEntry({menuName, entryText: 'Switch panel mode:', func: null, flags: MF_GRAYED});
 			menu.newEntry({menuName, entryText: 'sep'});
 			options.forEach( (mode, idx) => {
@@ -64,17 +64,23 @@ function createMenu() {
 							break;
 						case 2:
 							fb.ShowPopupMessage('Displays statistics about current database using charts.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+							imgAsync.layers.bStop = true;
 							stats.bEnabled = true;
 							stats.init();
 							break;
+						case 3:
+							fb.ShowPopupMessage('Displays statistics about current database using a gradient map.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+							stats.bEnabled = false;
+							break;
 						default:
 							fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at 	menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
+							imgAsync.layers.bStop = true;
 							stats.bEnabled = false;
 							break;
 					}
 					worldMap.clearIdSelected();
-					worldMap.clearLastPoint(); 
-					repaint(void(0), true);
+					worldMap.clearLastPoint();
+					repaint(void(0), true, true); 
 				}});
 			});
 			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties.panelMode[1];});
@@ -726,6 +732,7 @@ function createMenu() {
 					fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
 					saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 					console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
+					if (worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3) {repaint(void(0), true, true);}
 				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED)}});
 				menu.newEntry({entryText: 'sep'});
 			}
