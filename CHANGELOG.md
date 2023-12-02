@@ -45,6 +45,7 @@
 - UI: current country while moving the mouse is now highlighted when using country layers.
 ### Changed
 - UI: greatly enhanced performance while using country layers.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 - UI: panel not being repainted when changing from library to standard mode.

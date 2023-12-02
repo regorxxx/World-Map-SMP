@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/12/23
+//02/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -27,7 +27,7 @@ function createMenu() {
 					repaint();
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabled[1] ? 0 : 1);});
+			menu.newCheckMenuLast(() => {return (properties.bEnabled[1] ? 0 : 1);}, options);
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
 				let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.Name, 1000);
@@ -45,7 +45,7 @@ function createMenu() {
 					setTimeout(checkUpdate, 1000, {bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false});
 				}
 			}});
-			menu.newCheckMenu(menuName, 'Automatically check for updates', void(0),  () => properties.bAutoUpdateCheck[1]);
+			menu.newCheckMenuLast(() => properties.bAutoUpdateCheck[1]);
 		}
 		{	// Panel mode
 			const menuName = menu.newMenu('Map panel mode');
@@ -83,7 +83,7 @@ function createMenu() {
 					repaint(void(0), true, true); 
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return properties.panelMode[1];});
+			menu.newCheckMenuLast(() => {return properties.panelMode[1];}, options);
 		}
 		{	// Enabled Biography?
 			const menuName = menu.newMenu('WilB\'s Biography integration', void(0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
@@ -103,7 +103,7 @@ function createMenu() {
 					repaint(void(0), true);
 				}, flags: () => {return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED);}});
 			});
-			menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {return (properties.bEnabledBiography[1] ? 0 : 1);});
+			menu.newCheckMenuLast(() => {return (properties.bEnabledBiography[1] ? 0 : 1);}, options);
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: () => {return (properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)');}, func: () => {
 				let  foundArr = [];
@@ -261,7 +261,7 @@ function createMenu() {
 					repaint(void(0), true);
 				}});
 			});
-			menu.newCheckMenu(menuName, options[0], options[options.length - 1],  () => {return options.indexOf(properties.selection[1]);});
+			menu.newCheckMenuLast(() => {return options.indexOf(properties.selection[1]);}, options);
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: properties.iLimitSelection[0], func: () => {
 				let input = properties.iLimitSelection[1];
@@ -277,7 +277,7 @@ function createMenu() {
 				properties.bShowSelModePopup[1] = !properties.bShowSelModePopup[1];
 				overwriteProperties(properties);
 			}});
-			menu.newCheckMenu(menuName, properties.bShowSelModePopup[0], void(0),  () => {return properties.bShowSelModePopup[1];});
+			menu.newCheckMenuLast(() => {return properties.bShowSelModePopup[1];});
 		}
 		menu.newEntry({entryText: 'sep'});
 		{	// UI
@@ -318,10 +318,10 @@ function createMenu() {
 						repaint(void(0), true);
 					}});
 				});
-				menu.newCheckMenu(menuName, options[0].text, options[options.length - 1].text,  () => {
+				menu.newCheckMenuLast(() => {
 					let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;});
 					return (idx !== -1) ? idx : options.length - 1;
-				});
+				}, options);
 			}
 			{	// Coordinates factor
 				const menuName = menu.newMenu('Coordinates transformation', menuUI);
@@ -366,7 +366,7 @@ function createMenu() {
 							repaint(void(0), true);
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return worldMap.customPanelColorMode;});
+					menu.newCheckMenuLast(() => {return worldMap.customPanelColorMode;}, options);
 				}
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
@@ -385,7 +385,7 @@ function createMenu() {
 							repaint(void(0), true);
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customPointColorMode[1];});
+					menu.newCheckMenuLast(() => {return properties.customPointColorMode[1];}, options);
 				}
 				{	// Country color
 					const subMenuName = menu.newMenu('Country shapes', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
@@ -398,7 +398,7 @@ function createMenu() {
 							repaint(void(0), true);
 						}});
 					});
-					menu.newCheckMenu(subMenuName, options[0], options[optionsLength - 1], () => {return properties.customShapeColor[1] === -1 ? 0 : 1;});
+					menu.newCheckMenuLast(() => {return properties.customShapeColor[1] === -1 ? 0 : 1;}, options);
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					menu.newEntry({menuName: subMenuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
 						const input = Input.number('int positive', Math.round(properties.customShapeAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
@@ -474,10 +474,10 @@ function createMenu() {
 							overwriteProperties(properties);
 						}});
 					});
-					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
+					menu.newCheckMenuLast(() => {
 						const idx = options.indexOf(worldMap.pointSize);
 						return (idx !== -1 ? idx : optionsLength - 1);
-					});
+					}, options);
 					menu.newEntry({menuName, entryText: 'sep'});
 					menu.newEntry({menuName, entryText: 'Fill the circle? (point shape)', func: () => {
 						properties.bPointFill[1] = !properties.bPointFill[1];
@@ -485,7 +485,7 @@ function createMenu() {
 						repaint(void(0), true);
 						overwriteProperties(properties);
 					}});
-					menu.newCheckMenu(menuName, 'Fill the circle? (point shape)', void(0), () => {return properties.bPointFill[1];});
+					menu.newCheckMenuLast(() => {return properties.bPointFill[1];});
 				}
 				{	// Text size
 					const menuName = menu.newMenu('Text size...', menuUI);
@@ -507,10 +507,10 @@ function createMenu() {
 							overwriteProperties(properties);
 						}});
 					});
-					menu.newCheckMenu(menuName, options[0], options[optionsLength - 1], () => {
+					menu.newCheckMenuLast(() => {
 						const idx = options.indexOf(properties.fontSize[1]);
 						return (idx !== -1 ? idx : optionsLength - 1);
-					});
+					}, options);
 				}
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
@@ -521,20 +521,20 @@ function createMenu() {
 					repaint(void(0), true);
 					overwriteProperties(properties);
 				}});
-				menu.newCheckMenu(menuName, 'Show header', void(0), () => {return properties.bShowHeader[1];});
+				menu.newCheckMenuLast(() => {return properties.bShowHeader[1];});
 				menu.newEntry({menuName, entryText: 'sep'});
 				menu.newEntry({menuName, entryText: 'Show current country', func: () => {
 					properties.bShowLocale[1] = !properties.bShowLocale[1];
 					repaint(void(0), true);
 					overwriteProperties(properties);
 				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
-				menu.newCheckMenu(menuName, 'Show current country', void(0), () => {return properties.bShowLocale[1];});
+				menu.newCheckMenuLast(() => {return properties.bShowLocale[1];});
 				menu.newEntry({menuName, entryText: 'Show flag', func: () => {
 					properties.bShowFlag[1] = !properties.bShowFlag[1];
 					repaint(void(0), true);
 					overwriteProperties(properties);
 				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
-				menu.newCheckMenu(menuName, 'Show flag', void(0), () => {return properties.bShowFlag[1];});
+				menu.newCheckMenuLast(() => {return properties.bShowFlag[1];});
 			}
 			{	// Shapes
 				const menuName = menu.newMenu('Country highlighting...', menuUI);
@@ -547,7 +547,7 @@ function createMenu() {
 						overwriteProperties(properties);
 					}});
 				});
-				menu.newCheckMenu(menuName, options[0], options[options.length - 1], () => {return properties.pointMode[1];});
+				menu.newCheckMenuLast(() => {return properties.pointMode[1];}, options);
 			}
 		}
 		menu.newEntry({entryText: 'sep'});
@@ -571,7 +571,7 @@ function createMenu() {
 				worldMap.bSplitTags = properties.bSplitTags[1];
 				repaint(void(0), true);
 			}});
-			menu.newCheckMenu(menuName,'Split multi-value country tag by \'|\'', void(0), () => properties.bSplitTags[1]);
+			menu.newCheckMenuLast(() => properties.bSplitTags[1]);
 			menu.newEntry({menuName, entryText: 'sep'});
 			{	// Modifier tags
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);
@@ -605,7 +605,7 @@ function createMenu() {
 						overwriteProperties(properties);
 					}});
 				});
-				menu.newCheckMenu(subMenuName, options[0].text, options[options.length - 1].text, () => {return properties.iWriteTags[1];});
+				menu.newCheckMenuLast(() => {return properties.iWriteTags[1];}, options);
 				menu.newEntry({menuName: subMenuName, entryText: 'sep', func: null});
 				menu.newEntry({menuName: subMenuName, entryText: 'Show data folder', func: () => {
 					_explorer(properties.fileName[1]);
