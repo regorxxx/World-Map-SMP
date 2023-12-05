@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/12/23
+//05/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -36,6 +36,14 @@ function createMenu() {
 				properties.iRepaintDelay[1] = input;
 				overwriteProperties(properties);
 			}});
+			menu.newEntry({menuName, entryText: 'sep'});
+			menu.newEntry({menuName, entryText: 'Low memory mode', func: () => {
+				properties.bLowMemMode[1] = !properties.bLowMemMode[1];
+				overwriteProperties(properties);
+				fb.ShowPopupMessage('In low memory mode, country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, in big libraries SMP may crash in such modes while using country layers. As downside, it may affec quality in really high resolutions and big panel sizes.', window.Name);
+				repaint(void(0), true, true);
+			}});
+			menu.newCheckMenuLast(() => properties.bLowMemMode[1]);
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: 'Automatically check for updates', func: () => {
 				properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
@@ -271,7 +279,7 @@ function createMenu() {
 				if (properties.iLimitSelection[1] === input) {return;}
 				properties.iLimitSelection[1] = input;
 				overwriteProperties(properties);
-				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
+				if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country layers, since they take a lot of time and memory to load.', window.Name);}
 			}, flags: properties.selection[1] === selMode[0] ? MF_STRING : MF_GRAYED});
 			menu.newEntry({menuName, entryText: properties.bShowSelModePopup[0], func: () => {
 				properties.bShowSelModePopup[1] = !properties.bShowSelModePopup[1];
@@ -373,7 +381,7 @@ function createMenu() {
 					const options = ['Default', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item + (i === 1 ? '\t' + _b(getColorName(worldMap.defaultColor)) : ''), func: () => {
+						menu.newEntry({menuName: subMenuName, entryText: item + ('\t' + _b(getColorName(worldMap.defaultColor))), func: () => {
 							worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : 0xFF00FFFF;
 							// Update property to save between reloads
 							properties.customPointColorMode[1] = i;
@@ -388,24 +396,50 @@ function createMenu() {
 					menu.newCheckMenuLast(() => {return properties.customPointColorMode[1];}, options);
 				}
 				{	// Country color
-					const subMenuName = menu.newMenu('Country shapes', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
+					const subMenuName = menu.newMenu('Country layers', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
 					const options = ['Default', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item + (i === 1 ? '\t' + _b(getColorName(properties.customShapeColor[1])) : ''), func: () => {
+						menu.newEntry({menuName: subMenuName, entryText: item + '\t' + _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192))), func: () => {
 							properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
 							overwriteProperties(properties);
-							repaint(void(0), true);
+							repaint(void(0), true, true);
 						}});
 					});
 					menu.newCheckMenuLast(() => {return properties.customShapeColor[1] === -1 ? 0 : 1;}, options);
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					menu.newEntry({menuName: subMenuName, entryText: 'Gradient from color', func: () => {
+						properties.customGradientColor[1] = '';
+						overwriteProperties(properties);
+						repaint(void(0), true, true);
+					}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
+					menu.newCheckMenuLast(() => {return properties.customGradientColor[1].length === 0});
+					{
+						const subMenuNameTwo = menu.newMenu('Gradient from scheme...', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
+						let j = 0;
+						for (let key in colorbrewer) {
+							if (key === 'colorBlind') {continue;}
+							colorbrewer[key].forEach((scheme, i) => {
+								if (i === 0) {
+									menu.newEntry({menuName: subMenuNameTwo, entryText: key.charAt(0).toUpperCase() + key.slice(1), flags: (j === 0 ? MF_GRAYED : MF_GRAYED | MF_MENUBARBREAK)});
+									menu.newEntry({menuName: subMenuNameTwo, entryText: 'sep'});
+								}
+								menu.newEntry({menuName: subMenuNameTwo, entryText: scheme, func: () => {
+									properties.customGradientColor[1] = scheme;
+									overwriteProperties(properties);
+									repaint(void(0), true, true);
+								}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
+							});
+							j++;
+						}
+					}
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					menu.newEntry({menuName: subMenuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
 						const input = Input.number('int positive', Math.round(properties.customShapeAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
 						if (input === null) {return;}
 						properties.customShapeAlpha[1] = Math.round(input * 255 / 100);
 						overwriteProperties(properties);
-						repaint(void(0), true);
+						window.Repaint();
 					}});
 				}
 				{	// Text color
@@ -536,12 +570,12 @@ function createMenu() {
 				}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED});
 				menu.newCheckMenuLast(() => {return properties.bShowFlag[1];});
 			}
-			{	// Shapes
+			{	// Layers
 				const menuName = menu.newMenu('Country highlighting...', menuUI);
-				const options = ['Use points', 'Use country shapes', 'Use both'];
+				const options = ['Use points', 'Use country layers', 'Use both'];
 				options.forEach((option, i) => {
 					menu.newEntry({menuName, entryText: option, func: () => {
-						if (i >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country shapes, since they take a lot of time to load.', window.Name);}
+						if (i >= 1 && properties.iLimitSelection[1] > 5) {fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country layers, since they take a lot of time and memory to load.', window.Name);}
 						properties.pointMode[1] = i;
 						repaint(void(0), true);
 						overwriteProperties(properties);
