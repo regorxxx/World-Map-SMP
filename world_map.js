@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/12/23
+//05/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -112,6 +112,9 @@ const worldMap_properties = {
 	bShowHeader			:	['Show header', true, {func: isBoolean}, true],
 	customShapeColor	:	['Custom country shape color', -1, {func: isInt}, -1],
 	customShapeAlpha	:	['Country shape transparency', 240, {func: isInt, range: [[0, 255]]}, 240],
+	bProfile			:	['Enable profiler', false, {func: isBoolean}, false],
+	customGradientColor	:	['Custom country shape gradient color', '', {func: isStringWeak}, ''],
+	bLowMemMode			:	['Low memory mode', true, {func: isBoolean}, true],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -222,8 +225,7 @@ const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] ==
 */
 const debouncedRepaint = {
 	'30': debounce(window.Repaint, 30, false, window),
-	'20-rect': debounce(window.RepaintRect, 20, false, window),
-	'1500-full': debounce(repaint, 1500, false, window),
+	'20-rect': debounce(window.RepaintRect, 20, false, window)
 };
 function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	if (!worldMap.properties.bEnabled[1]) {return;}
@@ -237,6 +239,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	imgAsync.layers.processedIso.clear();
 	imgAsync.layers.bPaint = false;
 	imgAsync.layers.bStop = true;
+	imgAsync.layers.bCreated = false;
 	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
 		if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.Repaint, delay, false, window);}
@@ -248,7 +251,6 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
-	debouncedRepaint['1500-full'](void(0), false, true);
 });
 
 addEventListener('on_colours_changed', () => {
@@ -256,58 +258,123 @@ addEventListener('on_colours_changed', () => {
 	window.Repaint();
 });
 
-const imgAsync = {layers: {bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set()}, fullImg: null, cacheW: 0, cacheH: 0};
-const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null} = {}) => {
-	const bMask = worldMap.properties.customShapeColor[1] !== -1;
-	const idSel = worldMap.idSelected;
+const imgAsync = {
+	layers: {bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set()},
+	masks: {sel: null, std: null},
+	lowMemMode-: {maxSize: 1000}
+	fullImg: null
+};
+const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false} = {}) => {
+	const profile = bProfile ?  new FbProfiler('paintLayers') : null;
+	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
+	const idSel = worldMap.idSelected
 	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
 		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
 		const bFullImg = bStatsModes && imgAsync.fullImg;
 		if (bFullImg) {
-			const fullImg = imgAsync.fullImg;
-			const offsetX = 100, offsetY = 100;
-			const x = Math.max(worldMap.posX - offsetX * 2, 0);
-			const y = Math.max(worldMap.posY - offsetY / 2, 0);
-			gr.DrawImage(imgAsync.fullImg, x, y, fullImg.Width, fullImg.Height, 0, 0, fullImg.Width, fullImg.Height);
+			const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+			const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;;
+			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+			const x = worldMap.posX - offsetX * worldMap.scale;
+			const y = worldMap.posY - offsetY * worldMap.scale;
+			gr.DrawImage(imgAsync.fullImg, x, y, w, h, 0, 0, imgAsync.fullImg.Width, imgAsync.fullImg.Height, 0, worldMap.properties.customShapeAlpha[1]);
+			imgAsync.layers.bStop = true;
 		} else if (bStatsModes && imgAsync.layers.imgs.length) {
-			imgAsync.fullImg = gdi.CreateImage(worldMap.imageMap.Width, worldMap.imageMap.Height);
+			imgAsync.fullImg = gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h);
 		}
+		if (bProfile) {profile.Print('background');}
 		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
-		if (bMask) {
-			if (imgAsync.layers.imgs.length) {
-				const w = imgAsync.layers.imgs[0].w;
-				const h = imgAsync.layers.imgs[0].h;
-				const layer = gdi.CreateImage(w, h);
-				let grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
+		if (imgAsync.layers.imgs.length) {
+			const layerW = imgAsync.layers.w;
+			const layerH = imgAsync.layers.h;
+			if (bFullImg && !idSel && imgAsync.layers.bCreated) {return;}
+			if (bMask) {
+				const grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				let scheme = null;
 				if (gradient) {
 					const top = Math.round(Math.log(Math.max.apply(Math, worldMap.lastPoint.map((p) => p.val))));
 					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
-				} else {
-					const layerGr = layer.GetGraphics();
-					layerGr.FillSolidRect(0, 0, w, h, color);
-					layer.ReleaseGraphics(layerGr);
 				}
-				imgAsync.layers.imgs.forEach((imgObj, i) => {
-					const id = imgAsync.layers.id[i];
-					if (idSel !== id && bFullImg) {return;}
-					let subLayer = layer.Clone(0, 0, w, h);
-					if (gradient) {
-						const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
-						const layerGr = subLayer.GetGraphics();
-						layerGr.FillSolidRect(0, 0, w, h, scheme[count]);
-						subLayer.ReleaseGraphics(layerGr);
+				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
+				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
+				let i = 0;
+				for (const imgObj of imgAsync.layers.imgs) {
+					const id = imgAsync.layers.id[i++];
+					const bSel = idSel === id;
+					if (!bSel && bFullImg) {continue;}
+					const img = imgObj.img;
+					if (grFullImg) {
+						let subLayer = imgAsync.masks.std.Clone(0, 0, layerW, layerH);
+						if (gradient) {
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
+							const layerGr = subLayer.GetGraphics();
+							layerGr.FillSolidRect(0, 0, layerW, layerH, scheme[count]);
+							subLayer.ReleaseGraphics(layerGr);
+						}
+						subLayer.ApplyMask(img);
+						grFullImg.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
+					} else {
+						let subLayer = imgAsync.masks[bSel && !gradient ? 'sel' : 'std'].Clone(0, 0, layerW, layerH);
+						if (gradient) {
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
+							const layerGr = subLayer.GetGraphics();
+							layerGr.FillSolidRect(0, 0, layerW, layerH, bSel ? invert(scheme[count]) : scheme[count]);
+							subLayer.ReleaseGraphics(layerGr);
+						}
+						subLayer.ApplyMask(img);
+						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
 					}
-					subLayer.ApplyMask(imgObj.img);
-					if (!grFullImg && idSel === id) {subLayer = subLayer.InvertColours();}
-					(grFullImg || gr).DrawImage(subLayer, imgObj.x, imgObj.y, w, h, 0, 0, w, h, 0, worldMap.properties.customShapeAlpha[1]);
-				});
-				if (grFullImg) {imgAsync.fullImg.ReleaseGraphics(grFullImg); window.Repaint();}
+					if (bProfile) {profile.Print('Sub-layer');}
+					if (bSel && bFullImg) {break;}
+				}
+				if (grFullImg) {
+					imgAsync.fullImg.ReleaseGraphics(grFullImg);
+					imgAsync.layers.bCreated = true;
+					imgAsync.layers.imgs.length = 0;
+					window.Repaint();
+				}
+				if (bProfile) {profile.Print('Layers');}
+			} else {
+				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
+				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
+				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
+				let i = 0;
+				for (const imgObj of imgAsync.layers.imgs) {
+					const id = imgAsync.layers.id[i++];
+					const bSel = idSel === id;
+					if (!bSel && bFullImg) {continue;}
+					const img = imgObj.img;
+					if (grFullImg) {
+						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
+					} else {
+						if (bSel) {
+							let subLayer = imgAsync.masks.sel.Clone(0, 0, layerW, layerH);
+							subLayer.ApplyMask(img);
+							gr.DrawImage(subLayer, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
+						} else {
+							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
+						}
+					}
+					if (bSel && bFullImg) {break;}
+				}
+				if (grFullImg) {
+					if (worldMap.properties.bLowMemMode) {imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic);}
+					imgAsync.fullImg.ReleaseGraphics(grFullImg);
+					imgAsync.layers.bCreated = true;
+					imgAsync.layers.imgs.length = 0;
+					window.Repaint();
+				}
 			}
-		} else {
-			imgAsync.layers.imgs.forEach((imgObj) => {
-				gr.DrawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.w, imgObj.h, 0, 0, imgObj.w, imgObj.h, 0, worldMap.properties.customShapeAlpha[1]);
-			});
 		}
 	}
 	const promises = [];
@@ -327,13 +394,11 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 								if (imgAsync.layers.processedIso.has(iso)) {resolve();}
 								gdi.LoadImageAsyncV2(void(0), file).then((img) => {
 									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
-										// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-										const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-										const offsetX = 100, offsetY = 100, offsetYAntarc = 620;
-										const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-										const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
-										img = img.Resize(w, h, InterpolationMode.HighQualityBicubic);
-										imgAsync.layers.imgs.push({img, iso, x: worldMap.posX - offsetX * worldMap.scale, y: worldMap.posY - offsetY * worldMap.scale, w: img.Width, h: img.Height});
+										if (worldMap.properties.bLowMemMode) {
+											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
+											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
+										}
+										imgAsync.layers.imgs.push({img, iso});
 										imgAsync.layers.processedIso.add(iso);
 										imgAsync.layers.id.push(id);
 									}
@@ -362,9 +427,23 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 		Promise.all(promises).then(() => {
 			if (imgAsync.layers.bStop) {return;}
 			imgAsync.layers.bPaint = true;
+			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
+			imgAsync.layers.h = imgAsync.layers.imgs[0].img.Height;
+			imgAsync.masks = {
+				std: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+				sel: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+			};
+			if (!gradient) {
+				Object.keys(imgAsync.masks).forEach((type) => {
+					const layerGr = imgAsync.masks[type].GetGraphics();
+					layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, type === 'sel' ? invert(color) : color);
+					imgAsync.masks[type].ReleaseGraphics(layerGr);
+				});
+			}
+			if (bProfile) {profile.Print('Retrieve img layers');}
 			window.Repaint();
 		});
-	}
+	} else if (bProfile) {profile.Print('End');}
 }
 
 addEventListener('on_paint', (gr) => {
@@ -377,8 +456,11 @@ addEventListener('on_paint', (gr) => {
 		}
 		worldMap.paint({gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1});
 		if (worldMap.properties.pointMode[1] >= 1) {
-			const color = worldMap.properties.customShapeColor[1];
-			paintLayers({gr, gradient: worldMap.properties.panelMode[1] === 3 ? [Chroma(color).brighten(2).android(), Chroma(color).darken(2).android()] : null});
+			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
+			const gradient = worldMap.properties.panelMode[1] === 3 
+				? worldMap.properties.customGradientColor[1] || [Chroma(color).saturate(2).luminance(0.8).android(), Chroma(color).saturate(2).luminance(0.4).android()]
+				: null;
+			paintLayers({gr, color, gradient, bProfile: worldMap.properties.bProfile[1]});
 		}
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -402,7 +484,8 @@ addEventListener('on_paint', (gr) => {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				paintLayers({gr});
+				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
+				paintLayers({gr, color});
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
@@ -429,7 +512,7 @@ addEventListener('on_paint', (gr) => {
 				const id = worldMap.lastPoint[0].id;
 				let flag = loadFlagImage(id);
 				const flagScale = flag.Height / textH;
-				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic) 
+				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
 				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
 				// Text
 				if (worldMap.properties.bShowLocale[1]) {

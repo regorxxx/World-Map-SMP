@@ -42,13 +42,17 @@
 ## [Unreleased][]
 ### Added
 - Statistics Mode (gradient): added new mode which displays countries filled with a color scale according number of artists on library from that country. i.e. like Library mode but showing on the UI the count of artists.
+- UI: added settings for gradient colors according to ColorBrewer schemes.
+- UI: added low memory mode to be used along country layers which should minimize memory usage on big libraries with minimal quality impact.
 - UI: current country while moving the mouse is now highlighted when using country layers.
 ### Changed
-- UI: greatly enhanced performance while using country layers.
+- UI: greatly enhanced performance while using country layers, transparencies and other features.
+- UI: color names are now shown for for default colors too.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
 - UI: panel not being repainted when changing from library to standard mode.
+- UI: possible crash during layer creation if panel size changed in the process.
 
 ## [3.6.0] - 2023-11-28
 ### Added
@@ -78,7 +82,7 @@
 
 ## [3.4.0] - 2023-11-15
 ### Added
-- UI: country shapes are now configurable; color and transparency. Setting a custom color uses masking under the hood, which may have a different performance impact than the 'default' mode (which just loads the country shapes with a fixed color).
+- UI: country layers are now configurable; color and transparency. Setting a custom color uses masking under the hood, which may have a different performance impact than the 'default' mode (which just loads the country layers with a fixed color).
 - UI: option to only show the flag at header (without requiring the country name).
 - Tags: setting to enable multi-value tags support, when there are multiple ISO values within the same tag separated by '|'. For ex. 'FRA|GBR'.
 - Auto-update: added -optional- automatic checks for updates on script load; enabled by default. Compares version of current file against GitHub repository. Manual checking can also be found at the settings menu. Setting may also be globally switched at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bAutoUpdateCheck'. It will apply by default to any new installed script (previous scripts will still need to be manually configured to change them).
@@ -224,11 +228,11 @@
 
 ## [2.4.0] - 2023-02-15
 ### Added
-- UI: allow multiple shapes drawing when selecting different artists on selection mode.
+- UI: allow multiple layers drawing when selecting different artists on selection mode.
 ### Changed
 - UI: popups warning about selection mode changes can be hidden now (by using the appropriate setting).
 - UI: antialiasing for point shape, should look much better now.
-- UI: country shapes loading is now asynchronous.
+- UI: country layers loading is now asynchronous.
 - UI: selection limit to refresh panel can now be configured via menus.
 - UI: header now shows a predefined message when drawing multiple countries, instead of being hidden. Flag is still only showed when there is a single country drawn.
 - UI: header now shows a -none- message when there is no locale tag found.
@@ -275,10 +279,10 @@
 
 ## [2.1.0] - 2022-08-05
 ### Added
-- UI: Configuration option to use country shapes, points (old behaviour) or both. Country shapes option highlights the entire country.
+- UI: Configuration option to use country layers, points (old behaviour) or both. Country layers option highlights the entire country.
 ### Changed
-- UI: changed all built-in map images by those provided by [Countries-Shapes-Generator](https://github.com/regorxxx/Countries-Shapes-Generator): natural and shapes. Full/no Antarctica versions for both. Shapes files have transparent background.
-- Tagging: On tagging mode (Shift + L. Click), country shape highlighting is used now instead of showing the point.
+- UI: changed all built-in map images by those provided by [Countries-Shapes-Generator](https://github.com/regorxxx/Countries-Shapes-Generator): natural and layers. Full/no Antarctica versions for both. layers files have transparent background.
+- Tagging: On tagging mode (Shift + L. Click), country layer highlighting is used now instead of showing the point.
 - Readmes: rewritten readmes to avoid line wrapping wen showing them within popup for a cleaner presentation.
 - Helpers: temp files are now written at 'js_data\temp' instead of 'js_data'.
 - Helpers: updated helpers.
