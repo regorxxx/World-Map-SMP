@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/12/23
+//07/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -261,7 +261,7 @@ addEventListener('on_colours_changed', () => {
 const imgAsync = {
 	layers: {bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set()},
 	masks: {sel: null, std: null},
-	lowMemMode-: {maxSize: 1000}
+	lowMemMode: {maxSize: 1000},
 	fullImg: null
 };
 const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false} = {}) => {
