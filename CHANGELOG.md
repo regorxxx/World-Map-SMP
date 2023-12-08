@@ -43,6 +43,7 @@
 ### Added
 - Statistics Mode (gradient): added new mode which displays countries filled with a color scale according number of artists on library from that country. i.e. like Library mode but showing on the UI the count of artists.
 - UI: added settings for gradient colors according to ColorBrewer schemes.
+- UI: added settings to fill the country layers with a custom color (previous behavior), predominant country flag's color, gradient of the flag's color or the flag image.
 - UI: added low memory mode to be used along country layers which should minimize memory usage on big libraries with minimal quality impact.
 - UI: current country while moving the mouse is now highlighted when using country layers.
 ### Changed

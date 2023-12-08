@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/12/23
+//08/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -397,40 +397,64 @@ function createMenu() {
 				}
 				{	// Country color
 					const subMenuName = menu.newMenu('Country layers', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
-					const options = ['Default', 'Custom...'];
-					const optionsLength = options.length;
-					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item + '\t' + _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192))), func: () => {
-							properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
+					{
+						const options = ['Default', 'Custom...'];
+						const optionsLength = options.length;
+						options.forEach((item, i) => {
+							menu.newEntry({menuName: subMenuName, entryText: item + '\t' + _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192))), func: () => {
+								properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
+								overwriteProperties(properties);
+								repaint(void(0), true, true);
+							}});
+						});
+						menu.newCheckMenuLast(() => {return properties.customShapeColor[1] === -1 ? 0 : 1;}, options);
+					}
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					{
+						const subMenuNameTwo = menu.newMenu('Layer fill...' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] !== -1 ? MF_STRING : MF_GRAYED);
+						const options = [
+							{name: 'None', val: ''},
+							{name: 'Flag color', val: 'color'},
+							{name: 'Flag gradient', val: 'gradient'},
+							{name: 'Flag', val: 'flag'},
+						];
+						const optionsLength = options.length;
+						options.forEach((item, i) => {
+							menu.newEntry({menuName: subMenuNameTwo, entryText: item.name, func: () => {
+								properties.layerFillMode[1] =item.val;
+								overwriteProperties(properties);
+								repaint(void(0), true, true);
+							}});
+						});
+						menu.newCheckMenuLast(() => {return options.findIndex((o) => o.val === properties.layerFillMode[1])}, options);
+					}
+					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
+					{
+						const subMenuNameTwo = menu.newMenu('Statistics mode...', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
+						menu.newEntry({menuName: subMenuNameTwo, entryText: 'Gradient from color', func: () => {
+							properties.customGradientColor[1] = '';
 							overwriteProperties(properties);
 							repaint(void(0), true, true);
-						}});
-					});
-					menu.newCheckMenuLast(() => {return properties.customShapeColor[1] === -1 ? 0 : 1;}, options);
-					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-					menu.newEntry({menuName: subMenuName, entryText: 'Gradient from color', func: () => {
-						properties.customGradientColor[1] = '';
-						overwriteProperties(properties);
-						repaint(void(0), true, true);
-					}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
-					menu.newCheckMenuLast(() => {return properties.customGradientColor[1].length === 0});
-					{
-						const subMenuNameTwo = menu.newMenu('Gradient from scheme...', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
-						let j = 0;
-						for (let key in colorbrewer) {
-							if (key === 'colorBlind') {continue;}
-							colorbrewer[key].forEach((scheme, i) => {
-								if (i === 0) {
-									menu.newEntry({menuName: subMenuNameTwo, entryText: key.charAt(0).toUpperCase() + key.slice(1), flags: (j === 0 ? MF_GRAYED : MF_GRAYED | MF_MENUBARBREAK)});
-									menu.newEntry({menuName: subMenuNameTwo, entryText: 'sep'});
-								}
-								menu.newEntry({menuName: subMenuNameTwo, entryText: scheme, func: () => {
-									properties.customGradientColor[1] = scheme;
-									overwriteProperties(properties);
-									repaint(void(0), true, true);
-								}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
-							});
-							j++;
+						}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
+						menu.newCheckMenuLast(() => {return properties.customGradientColor[1].length === 0});
+						{
+							const subMenuNameThree = menu.newMenu('Gradient from scheme...', subMenuNameTwo);
+							let j = 0;
+							for (let key in colorbrewer) {
+								if (key === 'colorBlind') {continue;}
+								colorbrewer[key].forEach((scheme, i) => {
+									if (i === 0) {
+										menu.newEntry({menuName: subMenuNameThree, entryText: key.charAt(0).toUpperCase() + key.slice(1), flags: (j === 0 ? MF_GRAYED : MF_GRAYED | MF_MENUBARBREAK)});
+										menu.newEntry({menuName: subMenuNameThree, entryText: 'sep'});
+									}
+									menu.newEntry({menuName: subMenuNameThree, entryText: scheme, func: () => {
+										properties.customGradientColor[1] = scheme;
+										overwriteProperties(properties);
+										repaint(void(0), true, true);
+									}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
+								});
+								j++;
+							}
 						}
 					}
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
