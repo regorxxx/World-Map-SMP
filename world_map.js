@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.6.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.7.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
