@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/12/23
+//08/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -110,11 +110,12 @@ const worldMap_properties = {
 	bSplitTags			:	['Allow multi-locale tags split by \'|\'?', false, {func: isBoolean}, false],
 	bAutoUpdateCheck	:	['Automatically check updates?', globSettings.bAutoUpdateCheck, {func: isBoolean}, globSettings.bAutoUpdateCheck],
 	bShowHeader			:	['Show header', true, {func: isBoolean}, true],
-	customShapeColor	:	['Custom country shape color', -1, {func: isInt}, -1],
-	customShapeAlpha	:	['Country shape transparency', 240, {func: isInt, range: [[0, 255]]}, 240],
+	customShapeColor	:	['Custom country layer color', -1, {func: isInt}, -1],
+	customShapeAlpha	:	['Country layer transparency', 240, {func: isInt, range: [[0, 255]]}, 240],
 	bProfile			:	['Enable profiler', false, {func: isBoolean}, false],
-	customGradientColor	:	['Custom country shape gradient color', '', {func: isStringWeak}, ''],
+	customGradientColor	:	['Custom country layer gradient color', '', {func: isStringWeak}, ''],
 	bLowMemMode			:	['Low memory mode', true, {func: isBoolean}, true],
+	layerFillMode		:	['Country layer fill mode', '', {func: isStringWeak}, ''],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
@@ -264,6 +265,45 @@ const imgAsync = {
 	lowMemMode: {maxSize: 1000},
 	fullImg: null
 };
+const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / worldMap.imageMap.Width, imgAsync.layers.h / worldMap.imageMap.Height)) => {
+	if (!mode || !mode.length) {return;}
+	const flagSize = 64; const w = 40; const h = 30;
+	const flag = mode === 'flag' 
+		? loadFlagImage(id)
+		: loadFlagImage(id).Clone((flagSize - w) / 2, (flagSize - h) / 2, (flagSize + w) / 2, (flagSize + h) / 2); // Extract center of flag
+	const layerGr = subLayer.GetGraphics();
+	const point = worldMap.point[id];
+	switch (mode) {
+		case 'color': {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq)
+				.map((o) => o.col).filter((color) => {
+					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
+				});
+			const flagColor = flagColors[0] || RGB(255, 255, 255);
+			layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, flagColor);
+			break;
+		}
+		case 'gradient': {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq).map((o) => o.col)
+				.filter((color) => {
+					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
+				});
+			if (flagColors.length === 0) {flagColors.push(RGB(0, 0, 0));}
+			if (flagColors.length === 1) {flagColors.push(RGB(255, 255, 255));}
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			layerGr.FillGradRect(x, y, w, h, 0, flagColors[0], flagColors[1], 0.25);
+			break;
+		}
+		case 'flag': {
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flag.Width, flag.Height);
+			break;
+		}
+	}
+	subLayer.ReleaseGraphics(layerGr);
+};
 const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false} = {}) => {
 	const profile = bProfile ?  new FbProfiler('paintLayers') : null;
 	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
@@ -303,6 +343,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
 				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
+				const layerFill = worldMap.properties.layerFillMode[1];
 				let i = 0;
 				for (const imgObj of imgAsync.layers.imgs) {
 					const id = imgAsync.layers.id[i++];
@@ -311,6 +352,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					const img = imgObj.img;
 					if (grFullImg) {
 						let subLayer = imgAsync.masks.std.Clone(0, 0, layerW, layerH);
+						if (layerFill.length) {fillSubLayer(subLayer, id, layerFill);}
 						if (gradient) {
 							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
 							const layerGr = subLayer.GetGraphics();
@@ -321,6 +363,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 						grFullImg.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
 					} else {
 						let subLayer = imgAsync.masks[bSel && !gradient ? 'sel' : 'std'].Clone(0, 0, layerW, layerH);
+						if (!bSel && !gradient && layerFill.length) {fillSubLayer(subLayer, id, layerFill);}
 						if (gradient) {
 							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
 							const layerGr = subLayer.GetGraphics();
@@ -356,12 +399,19 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					if (grFullImg) {
 						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
 					} else {
-						if (bSel) {
-							let subLayer = imgAsync.masks.sel.Clone(0, 0, layerW, layerH);
-							subLayer.ApplyMask(img);
-							gr.DrawImage(subLayer, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
+						// Without masks, only transparency can be changed. It works fine except on library mode,
+						// since the background already has the layer painted...
+						if (worldMap.properties.panelMode[1] === 1 && bSel) {
+							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
 						} else {
-							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
+							const alpha = bSel 
+								? worldMap.properties.customShapeAlpha[1] > 200 
+									? worldMap.properties.customShapeAlpha[1] - 50 
+									: worldMap.properties.customShapeAlpha[1] > 100 
+										? worldMap.properties.customShapeAlpha[1] + 50
+										: worldMap.properties.customShapeAlpha[1] + 100
+								: worldMap.properties.customShapeAlpha[1];
+							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, alpha);
 						}
 					}
 					if (bSel && bFullImg) {break;}
@@ -370,7 +420,6 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					if (worldMap.properties.bLowMemMode) {imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic);}
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
-					imgAsync.layers.imgs.length = 0;
 					window.Repaint();
 				}
 			}
@@ -428,16 +477,18 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 			imgAsync.layers.bPaint = true;
 			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
 			imgAsync.layers.h = imgAsync.layers.imgs[0].img.Height;
-			imgAsync.masks = {
-				std: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
-				sel: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
-			};
-			if (!gradient) {
-				Object.keys(imgAsync.masks).forEach((type) => {
-					const layerGr = imgAsync.masks[type].GetGraphics();
-					layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, type === 'sel' ? invert(color) : color);
-					imgAsync.masks[type].ReleaseGraphics(layerGr);
-				});
+			if (bMask) {
+				imgAsync.masks = {
+					std: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+					sel: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+				};
+				if (!gradient) {
+					Object.keys(imgAsync.masks).forEach((type) => {
+						const layerGr = imgAsync.masks[type].GetGraphics();
+						layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, type === 'sel' ? invert(color) : color);
+						imgAsync.masks[type].ReleaseGraphics(layerGr);
+					});
+				}
 			}
 			if (bProfile) {profile.Print('Retrieve img layers');}
 			window.Repaint();
@@ -484,7 +535,7 @@ addEventListener('on_paint', (gr) => {
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
 				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
-				paintLayers({gr, color});
+				paintLayers({gr, color, bProfile: worldMap.properties.bProfile[1]});
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
