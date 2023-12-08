@@ -328,7 +328,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 							subLayer.ReleaseGraphics(layerGr);
 						}
 						subLayer.ApplyMask(img);
-						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
+						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH, 0, worldMap.properties.customShapeAlpha[1]);
 					}
 					if (bProfile) {profile.Print('Sub-layer');}
 					if (bSel && bFullImg) {break;}
@@ -336,7 +336,6 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				if (grFullImg) {
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
-					imgAsync.layers.imgs.length = 0;
 					window.Repaint();
 				}
 				if (bProfile) {profile.Print('Layers');}
