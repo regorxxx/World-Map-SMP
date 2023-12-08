@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.7.0](#370---2023-12-08)
 - [3.6.0](#360---2023-11-28)
 - [3.5.0](#350---2023-11-24)
 - [3.4.0](#340---2023-11-15)
@@ -40,6 +41,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.7.0] - 2023-12-08
 ### Added
 - Statistics Mode (gradient): added new mode which displays countries filled with a color scale according number of artists on library from that country. i.e. like Library mode but showing on the UI the count of artists.
 - UI: added settings for gradient colors according to ColorBrewer schemes.
@@ -458,7 +465,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...HEAD
+[3.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...v3.5.0
 [3.4.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.3.0...v3.4.0
