@@ -57,7 +57,8 @@ SET id=FA5A85D5-5C81-4B9B-BF01-52872BA83EA7
 SET description=https://regorxxx.github.io/foobar2000-SMP.github.io/scripts/world-map-smp/\r\n\r\nA foobar2000 UI Spider Monkey Panel which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along WilB's Biography Script.\r\n\r\n• Map image configurable:\r\n   - Full.\r\n   - No Antarctica.\r\n   - Custom. (coordinates may need a transformation to work)\r\n• Configurable X and Y factors for transformation (along custom image maps).\r\n• 2 modes:\r\n   - Standard: Follow now playing track or selection.\r\n   - Library: display statistics of entire library (independtly of the selection/playback).\r\n• Works with multiple selected tracks (draws all points on the map), allowing to show statistics of an entire playlist or library.\r\n• Fully configurable UI.\r\n• On playback the panel fetches tags from (by order of preference):\r\n   - Track's tags.\r\n   - JSON database.\r\n   - WilB's Biography panel.\r\n• WilB's Biography integration\r\n• Tool-tip shows multiple info about the points and tracks selected.\r\n• AutoPlaylist creation on click over a point with any artist on your library from the selected country.\r\n• Fully Wine - Unix - non IE SOs compatible.
 REM version
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr /R "version:" world_map.js`) DO (SET version=%%F)
-IF ERRORLEVEL 1 (
+IF "%version%" == "" (
+	ECHO Main file not found or wrong version string
 	PAUSE>NUL
 	EXIT /B 1
 )
@@ -178,7 +179,8 @@ SET id=2A6AEDC9-BAE4-4D30-88E2-EDE7225B494D
 SET description=https://regorxxx.github.io/foobar2000-SMP.github.io/scripts/playlist-manager-smp/\r\n\r\nPlaylist manager for foobar2000 and Spider Monkey Panel to save and load (auto)playlists on demand, synchronizing, ... along many more utilities.\r\n\r\n• Manages Playlist files, AutoPlaylists and Smart Playlists(XBMC or Kodi).\r\n• ListenBrainz integration: sync user's playlists, ...\r\n• Loads playlist files x100 times faster than standard foobar.\r\n• Multiple exporting options: compatible with Foobar2000 mobile, Kodi and XBMC systems, etc.\r\n• Group by categories, tags and inline searching.\r\n• Filters and Sorting.\r\n• Configurable UI.\r\n• Fully Wine - Unix - non IE SOs compatible.\r\n• Other scripts integration:\r\n   - Playlist-Tools-SMP\r\n   - ajquery-xxx\r\n   - SMP Dynamic menus
 REM version
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr /R "version:" playlist_manager.js`) DO (SET version=%%F)
-IF ERRORLEVEL 1 (
+IF "%version%" == "" (
+	ECHO Main file not found or wrong version string
 	PAUSE>NUL
 	EXIT /B 1
 )
@@ -313,7 +315,8 @@ SET id=293B12D8-CC8B-4D21-8883-1A29EAFC4074
 SET description=https://github.com/regorxxx/Not-A-Waveform-Seekbar-SMP\r\n\r\nA seekbar for foobar2000, using Spider Monkey Panel, audiowaveform or ffprobe. It's based on RMS, peak levels, the actual waveform or visualization presets.\r\n\r\n• Uses audiowaveform by default (included).\r\n• ffprobe can be used if desired. Download it and copy ffprobe.exe into 'helpers-external\\ffprobe'.\r\n• Visualizer mode to simply show an animation which changes according to BPM (if tag exists).\r\n• Fully configurable using the R. Click menu:\r\n   - Colors\r\n   - Waveform modes\r\n   - Analysis modes\r\n   - Animations\r\n   - Refresh rate (not recommended anything below 100 ms except on really modern CPUs)
 REM version
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr /R "version:" seekbar.js`) DO (SET version=%%F)
-IF ERRORLEVEL 1 (
+IF "%version%" == "" (
+	ECHO Main file not found or wrong version string
 	PAUSE>NUL
 	EXIT /B 1
 )
@@ -373,7 +376,8 @@ SET id=EAEB88D1-44AC-4B13-8960-FB3AAD78828D
 SET description=https://github.com/regorxxx/Timeline-SMP\r\n\r\nA timeline for foobar2000, using Spider Monkey Panel, and Statistics-Framework-SMP (https://github.com/regorxxx/Statistics-Framework-SMP).\r\n\r\n• Draws date (X) and nº tracks (Y) per artist (Z) by default.\r\n• Contextual menu to create playlists clicking on any point.\r\n• Fully customizable data per axis with TitleFormat.\r\n• Asynchronous data calculations. \r\n• Point statistics.\r\n• Scroll with buttons and mouse dragging.\r\n• Zoom with mouse wheel.\r\n• Configurable background.\r\n• Highly configurable chart and data manipulation.
 REM version
 FOR /F "tokens=* USEBACKQ" %%F IN (`findstr /R "version:" timeline.js`) DO (SET version=%%F)
-IF ERRORLEVEL 1 (
+IF "%version%" == "" (
+	ECHO Main file not found or wrong version string
 	PAUSE>NUL
 	EXIT /B 1
 )
