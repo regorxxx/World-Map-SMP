@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/12/23
+//11/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.7.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.8.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -56,6 +56,8 @@ include('main\\world_map\\world_map_helpers.js');
 include('main\\world_map\\world_map_flags.js');
 include('main\\world_map\\world_map_statistics.js');
 include('main\\filter_and_query\\remove_duplicates.js');
+include('main\\window\\window_xxx_background.js');
+include('main\\window\\window_xxx_background_menu.js');
 
 checkCompatible('1.6.1', 'smp');
 
@@ -84,8 +86,6 @@ const worldMap_properties = {
 	factorX				:	['Percentage applied to X coordinates', 100, {func: isInt, range: [[50, 200]]}, 100],
 	factorY				:	['Percentage applied to Y coordinates',137, {func: isInt, range: [[50, 200]]}, 137],
 	bInstalledBiography	:	['Is installed biography mod?', false, {func: isBoolean}, false],
-	customPanelColorMode:	['Custom background color mode', 0, {func: isInt, range: [[0, 2]]}, 0],
-	customPanelColor	:	['Custom background color for the panel', window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3)],
 	customPointSize		:	['Custom point size for the panel', 16, {func: isInt}, 16],
 	customPointColorMode:	['Custom point color mode', 0, {func: isInt, range: [[0, 1]]}, 0],
 	customPointColor	:	['Custom point color for the panel', 0xFF00FFFF, {func: isInt}, 0xFF00FFFF],
@@ -116,12 +116,16 @@ const worldMap_properties = {
 	customGradientColor	:	['Custom country layer gradient color', '', {func: isStringWeak}, ''],
 	bLowMemMode			:	['Low memory mode', true, {func: isBoolean}, true],
 	layerFillMode		:	['Country layer fill mode', '', {func: isStringWeak}, ''],
+	background:	['Background options', JSON.stringify(deepAssign()(
+		(new _background).defaults(), 
+		{colorMode: 'gradient', colorModeOptions: {color: [RGB(270,270,270), RGB(300,300,300)]}, coverMode: 'front'}
+	))],
 };
 modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
 worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
 worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
-worldMap_properties['customPanelColor'].push({func: isInt}, worldMap_properties['customPanelColor'][1]);
 worldMap_properties['statsConfig'].push({func: isJSON}, worldMap_properties['statsConfig'][1]);
+worldMap_properties['background'].push({func: isJSON}, worldMap_properties['background'][1]);
 setProperties(worldMap_properties, '', 0);
 
 /* 
@@ -185,6 +189,22 @@ if (worldMap.properties.customPointColorMode[1] === 1) {worldMap.defaultColor = 
 worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 worldMap.textColor = worldMap.properties.customLocaleColor[1];
 
+/* 
+	Panel background
+*/
+const background = new _background({
+	...JSON.parse(worldMap.properties.background[1]),
+	callbacks: {
+		change: function(config, changeArgs, callbackArgs) {
+			if (callbackArgs && callbackArgs.bSaveProperties) {
+				['x', 'y', 'w', 'h'].forEach((key) => delete config[key]);
+				worldMap.properties.background[1] = JSON.stringify(config);
+				overwriteProperties(worldMap.properties);
+			}
+		},
+	},
+});
+
 // Info Popup
 if (!worldMap.properties['firstPopup'][1]) {
 	worldMap.properties['firstPopup'][1] = true;
@@ -229,10 +249,10 @@ const debouncedRepaint = {
 	'20-rect': debounce(window.RepaintRect, 20, false, window)
 };
 function repaint(bPlayback = false, bInmediate = false, bForce = false) {
-	if (!worldMap.properties.bEnabled[1]) {return;}
-	if (worldMap.properties.panelMode[1] >= 1 && !bForce) {return;}
-	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
-	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return;}
+	if (!worldMap.properties.bEnabled[1]) {return false;}
+	if (worldMap.properties.panelMode[1] >= 1 && !bForce) {return false;}
+	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return false;}
+	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return false;}
 	imgAsync.fullImg = null;
 	imgAsync.layers.imgs.length = 0;
 	imgAsync.layers.id.length = 0;
@@ -248,10 +268,12 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	} else {
 		window.Repaint();
 	}
+	return true;
 }
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
+	background.resize({w: window.Width, h: window.Height, bPaint: false});
 });
 
 addEventListener('on_colours_changed', () => {
@@ -497,8 +519,9 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 }
 
 addEventListener('on_paint', (gr) => {
+	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {worldMap.paintBg(gr); return;}
-	if (worldMap.properties.panelMode[1] === 2) {worldMap.paintBg(gr, true); return;}
+	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (worldMap.properties.panelMode[1] === 1 || worldMap.properties.panelMode[1] === 3) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
@@ -579,31 +602,50 @@ addEventListener('on_paint', (gr) => {
 
 addEventListener('on_playback_new_track', (metadb) => {
 	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (background.coverMode.toLowerCase() !== 'none') {background.updateImageBg();}
 	if (!metadb) {return;}
 	repaint(true);
 });
 
 addEventListener('on_selection_changed', () => {
 	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+		background.updateImageBg();
+	}
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_item_focus_change', () => {
 	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+		background.updateImageBg();
+	}
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_playlist_switch', () => {
 	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+		background.updateImageBg();
+	}
 	repaint();
 });
 
 addEventListener('on_playback_stop', (reason) => {
 	if (worldMap.properties.panelMode[1] === 2) {return;}
 	if (reason !== 2) { // Invoked by user or Starting another track
+		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) {background.updateImageBg();}
+	}
+	if (reason !== 2) { // Invoked by user or Starting another track
 		repaint();
+	}
+});
+
+addEventListener('on_playlists_changed', () => { // To show/hide loaded playlist indicators...
+	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+		background.updateImageBg();
 	}
 });
 
@@ -683,7 +725,9 @@ addEventListener('on_mouse_leave', () => {
 
 addEventListener('on_mouse_rbtn_up', (x, y) => {
 	if (worldMap.properties.panelMode[1] === 2) {return true;}
-	createMenu().btn_up(x, y);
+	const menu = createMenu();
+	createBackgroundMenu.call(background, {menuName: 'Background...', subMenuFrom: 'UI'}, menu);
+	menu.btn_up(x, y);
 	return true; // Disable right button menu
 });
 
