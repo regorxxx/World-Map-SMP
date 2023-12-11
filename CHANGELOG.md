@@ -55,8 +55,8 @@
 ### Removed
 - UI: old background settings (no longer working).
 ### Fixed
-- UI: crash due to missing helpers.
 - UI: panel not being refreshed when globally disabling/enabling the panel.
+- Crash due to missing helpers.
 
 ## [3.7.0] - 2023-12-08
 ### Added
