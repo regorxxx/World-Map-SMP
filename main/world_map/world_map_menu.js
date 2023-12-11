@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/12/23
+//11/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -24,7 +24,7 @@ function createMenu() {
 					if (properties.bEnabled[1] === mode.val) {return;}
 					properties.bEnabled[1] = mode.val;
 					overwriteProperties(properties);
-					repaint();
+					repaint(false, true, true) || window.Repaint();
 				}});
 			});
 			menu.newCheckMenuLast(() => {return (properties.bEnabled[1] ? 0 : 1);}, options);
@@ -353,29 +353,11 @@ function createMenu() {
 				});
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
+			const menuName = menu.newMenu('Background...', menuUI);
+			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			{
 				const getColorName = (val) => {return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-');}
 				const menuName = menu.newMenu('Colors...', menuUI);
-				{	// Background color
-					const subMenuName = menu.newMenu('Panel background', menuName);
-					const options = [(window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting'), 'No background', 'Custom...'];
-					const optionsLength = options.length;
-					options.forEach((item, i) => {
-						menu.newEntry({menuName: subMenuName, entryText: item + (i === 2 ? '\t' + _b(getColorName(worldMap.panelColor)) : ''), func: () => {
-							worldMap.customPanelColorMode = i;
-							// Update property to save between reloads
-							properties.customPanelColorMode[1] = worldMap.customPanelColorMode;
-							if (i === 2) {
-								worldMap.panelColor = utils.ColourPicker(window.ID, worldMap.panelColor);
-								properties.customPanelColor[1] = worldMap.panelColor;
-							}
-							overwriteProperties(properties);
-							worldMap.colorsChanged();
-							repaint(void(0), true);
-						}});
-					});
-					menu.newCheckMenuLast(() => {return worldMap.customPanelColorMode;}, options);
-				}
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
 					const options = ['Default', 'Custom...'];
@@ -386,8 +368,7 @@ function createMenu() {
 							// Update property to save between reloads
 							properties.customPointColorMode[1] = i;
 							if (i === 1) {
-								worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
-								properties.customPointColor[1] = worldMap.panelColor;
+								properties.customPointColor[1] = worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
 							}
 							overwriteProperties(properties);
 							repaint(void(0), true);
@@ -484,7 +465,7 @@ function createMenu() {
 						{name: 'sep'},
 						{name: 'Gray Scale (dark)', colors: [colorBlind.white[0], colorBlind.black[2], colorBlind.black[0]]},
 						{name: 'sep'},
-						{name: 'Dark theme (red)', colors: [RGB(255,255,255), RGB(236,47,47), RGB(0,0,0)]},
+						{name: 'Dark theme (red)', colors: [RGB(255,255,255), RGB(236,47,47), RGB(98,9,9)]},
 						{name: 'sep'},
 						{name: 'Default', colors: [RGB(255,255,255)]}
 					];
@@ -494,14 +475,18 @@ function createMenu() {
 							if (preset.name.toLowerCase() === 'default') {
 								worldMap.textColor  = preset.colors[0];
 								properties.customPointColorMode[1] = 0;
-								properties.customPanelColorMode[1] = worldMap.customPanelColorMode = 0;
+								background.changeConfig({config: JSON.parse(properties.background[3]), callbackArgs: {bSaveProperties: true}});
 							}
 							else {
-								[worldMap.textColor, worldMap.defaultColor, worldMap.panelColor]  = preset.colors;
+								let bgColor;
+								[worldMap.textColor, worldMap.defaultColor, bgColor]  = preset.colors;
 								properties.customPointColorMode[1] = 1;
-								properties.customPanelColorMode[1] = worldMap.customPanelColorMode = 2;
 								properties.customPointColor[1] = worldMap.defaultColor;
-								properties.customPanelColor[1] = worldMap.panelColor;
+								if (background.colorMode !== 'single') {
+									const gradient = [Chroma(bgColor).saturate(2).luminance(0.005).android(), bgColor];
+									bgColor = Chroma.scale(gradient).mode('lrgb').colors(background.colorModeOptions.color.length, 'android');
+								}
+								background.changeConfig({config: {colorModeOptions: {color: bgColor}}, callbackArgs: {bSaveProperties: true}});
 							}
 							properties.customLocaleColor[1] =  worldMap.textColor;
 							overwriteProperties(properties);
