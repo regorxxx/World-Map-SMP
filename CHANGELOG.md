@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.8.0](#380---2023-12-11)
 - [3.7.0](#370---2023-12-08)
 - [3.6.0](#360---2023-11-28)
 - [3.5.0](#350---2023-11-24)
@@ -45,6 +46,17 @@
 ### Changed
 ### Removed
 ### Fixed
+
+## [3.8.0] - 2023-12-11
+### Added
+### Changed
+- UI: replaced all background settings with a new implementation, equal to the one found at [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP), which allows to use covers, colors, gradients, etc.
+- Helpers: updated helpers.
+### Removed
+- UI: old background settings (no longer working).
+### Fixed
+- UI: crash due to missing helpers.
+- UI: panel not being refreshed when globally disabling/enabling the panel.
 
 ## [3.7.0] - 2023-12-08
 ### Added
@@ -465,7 +477,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.8.0...HEAD
+[3.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...v3.6.0
 [3.5.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.4.0...v3.5.0
