@@ -1,11 +1,12 @@
 ﻿'use strict';
-//11/12/23
+//12/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 include('..\\..\\helpers\\helpers_xxx_input.js');
+include('..\\window\\window_xxx_background_menu.js');
 include('..\\..\\helpers-external\\namethatcolor\\ntc.js');
 
 const menu = new _menu();
@@ -41,7 +42,7 @@ function createMenu() {
 				properties.bLowMemMode[1] = !properties.bLowMemMode[1];
 				overwriteProperties(properties);
 				fb.ShowPopupMessage('In low memory mode, country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, in big libraries SMP may crash in such modes while using country layers. As downside, it may affec quality in really high resolutions and big panel sizes.', window.Name);
-				repaint(void(0), true, true);
+				window.Reload();
 			}});
 			menu.newCheckMenuLast(() => properties.bLowMemMode[1]);
 			menu.newEntry({menuName, entryText: 'sep'});
@@ -294,27 +295,23 @@ function createMenu() {
 				const menuName = menu.newMenu('Map image', menuUI);
 				menu.newEntry({menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED});
 				menu.newEntry({menuName, entryText: 'sep'});
-				const options = [
-					{text: 'Full', path: folders.xxx + 'images\\MC_WorldMap.jpg', factorX: 100, factorY: 109}, 
-					{text: 'No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_No_Ant.jpg', factorX: 100, factorY: 137},
-					{text: 'Shapes', path: folders.xxx + 'images\\MC_WorldMap_Shapes.png', factorX: 100, factorY: 109},
-					{text: 'Shapes No Antarctica', path: folders.xxx + 'images\\MC_WorldMap_Shapes_No_Ant.png', factorX: 100, factorY: 137},
-					{text: 'Custom...'}
-				];
-				options.forEach( (map, index) => {
+				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
+				const options = [...worldMapImages, {text: 'Custom...'}];
+				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx,'.\\profile\\' + folders.xxxName) : worldMap.imageMapPath).replace('hires\\', '');
+				options.forEach((map, index) => {
 					menu.newEntry({menuName, entryText: map.text,  func: () => {
 						if (index === options.length - 1) {
 							let input = '';
-							try {input = utils.InputBox(window.ID, 'Input path to file:', window.Name, worldMap.imageMapPath, true);} 
+							try {input = utils.InputBox(window.ID, 'Input path to file:', window.Name, defPath, true);} 
 							catch (e) {return;}
 							if (!input.length) {return;}
-							worldMap.imageMapPath = input;
+							worldMap.imageMapPath = bPortable ? input.replace('.\\profile\\' + folders.xxxName, folders.xxx) : input;
 							properties.imageMapPath[1] = input;
 							overwriteProperties(properties);
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\X factor'); // Call factor input
 							menu.btn_up(void(0), void(0), void(0), 'Coordinates transformation\\Y factor');
 						} else {
-							worldMap.imageMapPath = map.path;
+							worldMap.imageMapPath = bPortable ? map.path.replace('.\\profile\\' + folders.xxxName, folders.xxx) : map.path;
 							worldMap.factorX = map.factorX;
 							worldMap.factorY = map.factorY;
 							properties.imageMapPath[1] = map.path;
@@ -327,9 +324,22 @@ function createMenu() {
 					}});
 				});
 				menu.newCheckMenuLast(() => {
-					let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;});
-					return (idx !== -1) ? idx : options.length - 1;
+					let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;}); // Uses abs paths
+					return (idx !== -1) 
+						? idx 
+						: properties.imageMapPath[1].length // Replace current abs path with relative path when there is no custom image
+							? options.length - 1 
+							: options.findIndex((opt) => {return opt.path === defPath;});
 				}, options);
+				menu.newEntry({menuName, entryText: 'sep'});
+				menu.newEntry({menuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.imageMapAlpha[1] * 100 / 255) + ']', func: () => {
+					const input = Input.number('int positive', Math.round(properties.imageMapAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
+					if (input === null) {return;}
+					properties.imageMapAlpha[1] = Math.round(input * 255 / 100);
+					worldMap.imageMapAlpha = properties.imageMapAlpha[1];
+					overwriteProperties(properties);
+					repaint(void(0), true);
+				}});
 			}
 			{	// Coordinates factor
 				const menuName = menu.newMenu('Coordinates transformation', menuUI);
@@ -382,11 +392,14 @@ function createMenu() {
 						const options = ['Default', 'Custom...'];
 						const optionsLength = options.length;
 						options.forEach((item, i) => {
-							menu.newEntry({menuName: subMenuName, entryText: item + '\t' + _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192))), func: () => {
+							const tip = i === 1 && properties.layerFillMode[1].length 
+								? '(Only None fill)' 
+								: _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192)));
+							menu.newEntry({menuName: subMenuName, entryText: item + '\t' + tip, func: () => {
 								properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
 								overwriteProperties(properties);
 								repaint(void(0), true, true);
-							}});
+							}, flags: i === 1 && properties.layerFillMode[1].length ? MF_GRAYED : MF_STRING});
 						});
 						menu.newCheckMenuLast(() => {return properties.customShapeColor[1] === -1 ? 0 : 1;}, options);
 					}
