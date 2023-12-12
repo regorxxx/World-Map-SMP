@@ -1,16 +1,17 @@
 ﻿'use strict';
-//11/12/23
+//12/12/23
 
 include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_input.js');
 
-function createBackgroundMenu(appendTo /* {menuName, subMenuFrom, flags} */, parentMenu) { // Must be bound to _background() instance
+function createBackgroundMenu(appendTo /* {menuName, subMenuFrom, flags} */, parentMenu, options = {nameColors: false /* Requires Chroma */}) { // Must be bound to _background() instance
 	// Constants
 	if (this.hasOwnProperty('tooltip')) {this.tooltip.SetValue(null);}
 	const menu = parentMenu || new _menu();
 	if (appendTo) {menu.findOrNewMenu(appendTo.menuName, appendTo.subMenuFrom, appendTo.flags);}
 	const mainMenuName = appendTo.menuName || menu.getMainMenuName();
 	// helper
+	const getColorName = (val) => {return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-');}
 	const createMenuOption = (key, subKey, menuName = mainMenuName, bCheck = true, addFunc = null) => {
 		return function (option) {
 			if (option.entryText === 'sep' && menu.getEntries().pop().entryText !== 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;} // Add sep only if any entry has been added
@@ -83,6 +84,7 @@ function createBackgroundMenu(appendTo /* {menuName, subMenuFrom, flags} */, par
 		[
 			{isEq: null,	key: this.coverModeOptions.bNowPlaying, value: null,	newValue: !this.coverModeOptions.bNowPlaying,	entryText: 'Follow now playing'}
 		].forEach(createMenuOption('coverModeOptions', 'bNowPlaying', subMenu, true));
+		menu.getLastEntry().flags = this.coverMode === 'none' ? MF_GRAYED : MF_STRING;
 		[
 			{isEq: null,	key: this.coverModeOptions.bProportions, value: null,	newValue: !this.coverModeOptions.bProportions,	entryText: 'Maintain proportions'}
 		].forEach(createMenuOption('coverModeOptions', 'bProportions', subMenu, true));
@@ -108,9 +110,9 @@ function createBackgroundMenu(appendTo /* {menuName, subMenuFrom, flags} */, par
 		const subMenu = menu.newMenu('Color mode...', mainMenuName);
 		[
 			{isEq: null,	key: this.colorMode, value: null,				newValue: 'none',		entryText: 'None'},
-			{isEq: null,	key: this.colorMode, value: null,				newValue: 'single',		entryText: 'Single...'},
-			{isEq: null,	key: this.colorMode, value: null,				newValue: 'gradient',	entryText: 'Gradient...'},
-			{isEq: null,	key: this.colorMode, value: null,				newValue: 'bigradient',	entryText: 'Bigradient...'},
+			{isEq: null,	key: this.colorMode, value: null,				newValue: 'single',		entryText: 'Single...' + (options.nameColors ? '\t[' + getColorName(this.colorModeOptions.color[0]) + ']' : '')},
+			{isEq: null,	key: this.colorMode, value: null,				newValue: 'gradient',	entryText: 'Gradient...' + (options.nameColors ? '\t[' + this.colorModeOptions.color.map(getColorName).join(', ') + ']' : '')},
+			{isEq: null,	key: this.colorMode, value: null,				newValue: 'bigradient',	entryText: 'Bigradient...' + (options.nameColors ? '\t[' + this.colorModeOptions.color.map(getColorName).join(', ') + ']' : '')},
 		].forEach(createMenuOption('colorMode',  void(0), subMenu, true, (option) => {
 			if (option.newValue !== 'none') {
 				let input;
