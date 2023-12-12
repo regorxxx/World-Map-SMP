@@ -54,6 +54,7 @@
 ### Removed
 ### Fixed
 - UI: low memory mode was always active despite disabling it.
+- UI: fixed playlist creation when clicking on points if artist tag was set to ALBUM ARTIST.
 
 ## [3.8.0] - 2023-12-11
 ### Added

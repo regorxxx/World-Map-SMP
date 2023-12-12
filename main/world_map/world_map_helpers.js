@@ -29,7 +29,7 @@ function selPoint(point, mask) {
 	worldMap.getData().forEach( (item) => {
 		if (item.val[item.val.length - 1] === point.id) {jsonQuery.push(item[dataId]);}
 	});
-	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, dataIdTag, 'OR'));}
+	if (jsonQuery.length) {query.push(query_combinations(jsonQuery, _t(dataIdTag), 'OR'));}
 	// What about current tracks (from selected point)? -> Always a match
 	const selPointData = worldMap.getLastPoint().find( (last) => {return (last.id === point.id);}); // Has list of artist on every paint
 	if (selPointData.jsonId.size) { // Data is a set, so no duplicates
@@ -80,7 +80,8 @@ function selPoint(point, mask) {
 	query = query_join(query,'AND');
 	// Create autoplaylist
 	if (checkQuery(query)) {
-		console.log('World Map: playlist created '+ (query.length > 300 ? query.slice(0, 300) + '...' : query));
+		// console.log('World Map: playlist created '+ (query.length > 300 ? query.slice(0, 300) + '...' : query));
+		console.log('World Map: playlist created ' + query);
 		const name = capitalize(dataId) + ' from '+ point.id + (currentModifier ? ' (+' + capitalizeAll(currentModifier.val.split(',').filter(Boolean).join('/'),'/') + ')' : '');
 		const duplicPl = getPlaylistIndexArray(name);
 		if (duplicPl.length === 1) {
