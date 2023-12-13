@@ -47,7 +47,7 @@
 - UI: added transparency settings for map image.
 ### Changed
 - UI: changed defaults settings on new installations for a more modern look.
-- UI: improved handling of map image paths on portable installations.
+- UI: improved path handling of map images on portable installations.
 - UI: country highlighting on mouse over sensitivity has been increased, making it easier to select a country when there is only one country painted.
 - UI: minor performance improvements.
 - UI: reduced default image sizes to improve performance.
