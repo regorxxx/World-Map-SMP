@@ -297,7 +297,7 @@ function createMenu() {
 				menu.newEntry({menuName, entryText: 'sep'});
 				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
 				const options = [...worldMapImages, {text: 'Custom...'}];
-				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx,'.\\profile\\' + folders.xxxName) : worldMap.imageMapPath).replace('hires\\', '');
+				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx,'.\\profile\\') : worldMap.imageMapPath).replace('hires\\', '');
 				options.forEach((map, index) => {
 					menu.newEntry({menuName, entryText: map.text,  func: () => {
 						if (index === options.length - 1) {
@@ -320,7 +320,7 @@ function createMenu() {
 							overwriteProperties(properties);
 						}
 						worldMap.init();
-						repaint(void(0), true);
+						window.Repaint();
 					}});
 				});
 				menu.newCheckMenuLast(() => {
