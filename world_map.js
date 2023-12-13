@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/12/23
+//13/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -141,7 +141,7 @@ const worldMapImages = [
 	const bLowMemMode = properties.bLowMemMode[1];
 	worldMapImages.forEach((img) => {
 		const prefix = (bPortable 
-			?  '.\\profile\\' + folders.xxxName
+			? folders.xxx.replace(fb.ProfilePath, '.\\profile\\')
 			: folders.xxx
 		) + 'images\\';
 		if ((prefix + img.path) === properties.imageMapPath[1]) {
