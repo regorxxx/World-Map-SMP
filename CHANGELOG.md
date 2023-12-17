@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.9.0](#390---2023-12-17)
 - [3.8.0](#380---2023-12-11)
 - [3.7.0](#370---2023-12-08)
 - [3.6.0](#360---2023-11-28)
@@ -42,6 +43,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.9.0] - 2023-12-17
 ### Added
 - UI: added color names to background color settings.
 - UI: added transparency settings for map image.
@@ -486,7 +493,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.8.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.9.0...HEAD
+[3.9.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.8.0...v3.9.0
 [3.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...v3.7.0
 [3.6.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.5.0...v3.6.0

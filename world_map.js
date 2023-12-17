@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/12/23
+//17/12/23
 
 /* 
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.8.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.9.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_properties.js');
@@ -72,7 +72,7 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 const worldMap_properties = {
 	mapTag				: 	['Tag name or TF expression to read artist\'s country', '$meta(LOCALE LAST.FM,$sub($meta_num(LOCALE LAST.FM),1))', {func: isString}, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
 	imageMapPath		: 	['Path to your own world map (mercator projection)', '', {func: isStringWeak}, ''],
-	imageMapAlpha		:	['Map image transparency', 191, {func: isInt, range: [[0, 255]]}, 191],
+	imageMapAlpha		:	['Map image transparency', 217, {func: isInt, range: [[0, 255]]}, 217],
 	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0, {func: isInt, range: [[0, 2]]}, 0],
 	writeToTag			:	['Tag name to write artist\'s country', 'Locale Last.fm', {func: isString}, 'LOCALE LAST.FM'],
 	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0], {eq: selMode}, selMode[0]],
