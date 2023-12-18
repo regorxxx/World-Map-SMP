@@ -1,19 +1,28 @@
 ﻿'use strict';
-//01/12/23
+//18/12/23
 
+/* exported selPoint, tooltip, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
+
+/* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
+/* global MF_GRAYED:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
+/* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
+/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable */
+include('..\\..\\helpers\\helpers_xxx_tags.js');
+/* global query_combinations:readable, query_join:readable, checkQuery:readable, getTagsValuesV3:readable */
 include('..\\..\\helpers\\menu_xxx.js');
+/* global _menu:readable, */
 
-/* 
+/*
 	Map helpers
 */
 
 // When clicking on a point
 function selPoint(point, mask) {
 	let bDone = false;
-	// The entire function is tag agnostic, it may be used for anything. 
+	// The entire function is tag agnostic, it may be used for anything.
 	// When jsonId is set as 'artist' so it looks for artists with same map value
 	// The ctrl modifier is set to force 'genre' and 'style' tags but can be used with anything
 	if (!point.id.length) {return bDone;}
@@ -42,7 +51,7 @@ function selPoint(point, mask) {
 	const currentModifier = modifiers.find( (mod) => {return mod.mask === mask;});
 	if (currentModifier) { // When using ctrl + click, Shift, ...
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		if (sel && sel.Count) { 
+		if (sel && sel.Count) {
 			if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 				let selPoint = new FbMetadbHandleList();
 				const selJsonId = getTagsValuesV3(sel, [dataIdTag], true).filter(Boolean);
@@ -100,7 +109,7 @@ function selPoint(point, mask) {
 // When clicking on a the map with tracks without tags
 function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 	let bDone = false;
-	// The entire function is tag agnostic, it may be used for anything. 
+	// The entire function is tag agnostic, it may be used for anything.
 	// When jsonId is set as 'artist' so it looks for artists with same map value
 	// The ctrl modifier is set to force 'genre' and 'style' tags but can be used with anything
 	if (!foundPoints.length) {return bDone;}
@@ -157,7 +166,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 }
 
 // When mouse is over point
-function tooltip(point) { 
+function tooltip(point) {
 	const count = worldMap.lastPoint.find((last) => {return last.id === point.id;}).val;
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(getCountryISO(point.id));
 	const continent = music_graph_descriptors_countries.getMainRegion(region);
@@ -171,11 +180,11 @@ function tooltip(point) {
 		text += '-'.repeat(60);
 		text += '\n(Shift + L. Click on map rewrites locale tag)\n';
 	}
-	return (point && point.hasOwnProperty('id') ? text : null);
+	return (point && Object.prototype.hasOwnProperty.call(point, 'id') ? text : null);
 }
 
 // When mouse is over point
-function tooltipFindPoint(foundPoints) { 
+function tooltipFindPoint(foundPoints) {
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (!sel || !sel.Count) {return;}
 	let text = foundPoints.map((point) => {return  formatCountry(point.key) + ' ' + _p(point.prox + '%');}).join(', ');
@@ -184,10 +193,10 @@ function tooltipFindPoint(foundPoints) {
 }
 
 // Property check
-function biographyCheck(prop) {
+function biographyCheck() {
 	if (worldMap.properties['bEnabledBiography'][1] && !worldMap.properties['bInstalledBiography'][1]) {return false;}
 	else {return true;}
-}	
+}
 
 // Capitalize names
 function formatCountry(country) {

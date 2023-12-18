@@ -1,20 +1,33 @@
 ﻿'use strict';
 //12/12/23
 
+/* exported createMenu */
+
+/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
 include('..\\..\\helpers\\menu_xxx.js');
+/* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
+/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable */
+include('..\\..\\helpers\\helpers_xxx_file.js');
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
+/* global getTagsValuesV3:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
+/* global sendToPlaylist:readable */
+include('..\\..\\helpers\\helpers_xxx_prototypes.js');
+/* global _bt:readable, _b:readable, _p:readable, isArrayEqual:readable */
 include('..\\..\\helpers\\helpers_xxx_input.js');
+/* global Input:readable */
 include('..\\window\\window_xxx_background_menu.js');
 include('..\\..\\helpers-external\\namethatcolor\\ntc.js');
+/* global ntc:readable */
 
 const menu = new _menu();
 
 function createMenu() {
 	const properties = worldMap.properties;
 	menu.clear(true); // Reset on every call
-	{	
+	{
 		{	// Enabled?
 			const menuName = menu.newMenu('Map panel functionality');
 			const options = [{text: 'Enabled', val: true}, {text: 'Disabled', val: false}];
@@ -89,7 +102,7 @@ function createMenu() {
 					}
 					worldMap.clearIdSelected();
 					worldMap.clearLastPoint();
-					repaint(void(0), true, true); 
+					repaint(void(0), true, true);
 				}});
 			});
 			menu.newCheckMenuLast(() => {return properties.panelMode[1];}, options);
@@ -118,6 +131,7 @@ function createMenu() {
 				let  foundArr = [];
 				// Biography 1.2.X
 				// There are 2 paths here: beta versions require some file changes, while the 1.2.0+ releases work as is
+				const modPackageTextV12 = '\ninclude(\'' + file1_2_0_beta + '\');';
 				let packageFile = '';
 				const file1_2_0_beta = 'biography_mod_1_2_0_beta_xxx.js';
 				{
@@ -126,7 +140,6 @@ function createMenu() {
 					try {packagePath = utils.GetPackagePath(idFolder);} // Exception when not found
 					catch(e) {packagePath = '';}
 					packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
-					const modPackageText = '\ninclude(\'' + file1_2_0_beta + '\');';
 					if (_isFile(packageFile)) {
 						const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
 						if (packageText) {
@@ -134,9 +147,9 @@ function createMenu() {
 								const fileText = _open(packageFile);
 								if (!fileText.length) {return;}
 								if (!properties.bInstalledBiography[1]) {
-									if (fileText.indexOf(modPackageText) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
+									if (fileText.indexOf(modPackageTextV12) === -1) {foundArr.push({path: packageFile, ver: packageText.version});} // When installing, look for not modified script
 								} else {
-									if (fileText.indexOf(modPackageText) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
+									if (fileText.indexOf(modPackageTextV12) !== -1) {foundArr.push({path: packageFile, ver: packageText.version});} // Otherwise, look for the mod string
 								}
 							} else { // 1.2.0+: requires no further changes
 								let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
@@ -224,7 +237,7 @@ function createMenu() {
 							} else {fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return;}
 							if (bDone) {
 								let fileText = _open(packageFile);
-								fileText += modPackageText;
+								fileText += modPackageTextV12;
 								bDone = fileText.length && _save(packageFile, fileText);
 							} else {fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, window.Name); return;}
 						} else {
@@ -234,7 +247,7 @@ function createMenu() {
 							if (bDone) {
 								bDone = _renameFile(packageFile + backupExt, packageFile);
 							} else {fb.ShowPopupMessage('Error deleting the modified file.\n' + packageFile, window.Name); return;}
-							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + packageFilez, window.Name); return;}
+							if (!bDone) {fb.ShowPopupMessage('Error renaming the backup.\n' + packageFile, window.Name); return;}
 						}
 					}
 				});
@@ -274,7 +287,7 @@ function createMenu() {
 			menu.newEntry({menuName, entryText: 'sep'});
 			menu.newEntry({menuName, entryText: properties.iLimitSelection[0], func: () => {
 				let input = properties.iLimitSelection[1];
-				try {input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true));} 
+				try {input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true));}
 				catch (e) {return;}
 				if (!Number.isSafeInteger(input)) {return;}
 				if (properties.iLimitSelection[1] === input) {return;}
@@ -302,7 +315,7 @@ function createMenu() {
 					menu.newEntry({menuName, entryText: map.text,  func: () => {
 						if (index === options.length - 1) {
 							let input = '';
-							try {input = utils.InputBox(window.ID, 'Input path to file:', window.Name, defPath, true);} 
+							try {input = utils.InputBox(window.ID, 'Input path to file:', window.Name, defPath, true);}
 							catch (e) {return;}
 							if (!input.length) {return;}
 							worldMap.imageMapPath = bPortable ? input.replace('.\\profile\\' + folders.xxxName, folders.xxx) : input;
@@ -325,10 +338,10 @@ function createMenu() {
 				});
 				menu.newCheckMenuLast(() => {
 					let idx = options.findIndex((opt) => {return opt.path === worldMap.imageMapPath;}); // Uses abs paths
-					return (idx !== -1) 
-						? idx 
+					return (idx !== -1)
+						? idx
 						: properties.imageMapPath[1].length // Replace current abs path with relative path when there is no custom image
-							? options.length - 1 
+							? options.length - 1
 							: options.findIndex((opt) => {return opt.path === defPath;});
 				}, options);
 				menu.newEntry({menuName, entryText: 'sep'});
@@ -351,7 +364,7 @@ function createMenu() {
 				options.forEach( (coord) => {
 					menu.newEntry({menuName, entryText: coord.text,  func: () => {
 						let input = -1;
-						try {input = Number(utils.InputBox(window.ID,  coord.text[0] + ' axis scale. Input a number (percentage):', window.Name, properties[coord.val][1], true));} 
+						try {input = Number(utils.InputBox(window.ID,  coord.text[0] + ' axis scale. Input a number (percentage):', window.Name, properties[coord.val][1], true));}
 						catch (e) {return;}
 						if (!Number.isSafeInteger(input)) {return;}
 						worldMap[coord.val] = input;
@@ -363,15 +376,14 @@ function createMenu() {
 				});
 			}
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
-			const menuName = menu.newMenu('Background...', menuUI);
+			menu.newMenu('Background...', menuUI);
 			menu.newEntry({menuName: menuUI, entryText: 'sep'});
 			{
-				const getColorName = (val) => {return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-');}
+				const getColorName = (val) => {return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-');};
 				const menuName = menu.newMenu('Colors...', menuUI);
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
 					const options = ['Default', 'Custom...'];
-					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({menuName: subMenuName, entryText: item + ('\t' + _b(getColorName(worldMap.defaultColor))), func: () => {
 							worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : 0xFF00FFFF;
@@ -390,10 +402,9 @@ function createMenu() {
 					const subMenuName = menu.newMenu('Country layers', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
 					{
 						const options = ['Default', 'Custom...'];
-						const optionsLength = options.length;
 						options.forEach((item, i) => {
-							const tip = i === 1 && properties.layerFillMode[1].length 
-								? '(Only None fill)' 
+							const tip = i === 1 && properties.layerFillMode[1].length
+								? '(Only None fill)'
 								: _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199,233,192)));
 							menu.newEntry({menuName: subMenuName, entryText: item + '\t' + tip, func: () => {
 								properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
@@ -412,15 +423,14 @@ function createMenu() {
 							{name: 'Flag gradient', val: 'gradient'},
 							{name: 'Flag', val: 'flag'},
 						];
-						const optionsLength = options.length;
-						options.forEach((item, i) => {
+						options.forEach((item) => {
 							menu.newEntry({menuName: subMenuNameTwo, entryText: item.name, func: () => {
 								properties.layerFillMode[1] =item.val;
 								overwriteProperties(properties);
 								repaint(void(0), true, true);
 							}});
 						});
-						menu.newCheckMenuLast(() => {return options.findIndex((o) => o.val === properties.layerFillMode[1])}, options);
+						menu.newCheckMenuLast(() => {return options.findIndex((o) => o.val === properties.layerFillMode[1]);}, options);
 					}
 					menu.newEntry({menuName: subMenuName, entryText: 'sep'});
 					{
@@ -430,7 +440,7 @@ function createMenu() {
 							overwriteProperties(properties);
 							repaint(void(0), true, true);
 						}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED});
-						menu.newCheckMenuLast(() => {return properties.customGradientColor[1].length === 0});
+						menu.newCheckMenuLast(() => {return properties.customGradientColor[1].length === 0;});
 						{
 							const subMenuNameThree = menu.newMenu('Gradient from scheme...', subMenuNameTwo);
 							let j = 0;
@@ -518,7 +528,7 @@ function createMenu() {
 						menu.newEntry({menuName, entryText: item, func: () => {
 							if (i === optionsLength - 1) {
 								let input = '';
-								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));} 
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));}
 								catch(e) {return;}
 								if (Number.isNaN(input)) {return;}
 								properties.customPointSize[1] = input;
@@ -551,7 +561,7 @@ function createMenu() {
 						menu.newEntry({menuName, entryText: item, func: () => {
 							if (i === optionsLength - 1) {
 								let input = '';
-								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));} 
+								try {input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true));}
 								catch(e) {return;}
 								if (Number.isNaN(input)) {return;}
 								properties.fontSize[1] = input;
@@ -633,10 +643,10 @@ function createMenu() {
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);
 				menu.newEntry({menuName: subMenuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED});
 				menu.newEntry({menuName: subMenuName, entryText: 'sep'});
-				modifiers.forEach((mod, index) => {
+				modifiers.forEach((mod) => {
 					menu.newEntry({menuName: subMenuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
 						let input = '';
-						try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);} 
+						try {input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true);}
 						catch(e) {return;}
 						if (!input.length) {return;}
 						properties[mod.tag][1] = input;
@@ -669,7 +679,7 @@ function createMenu() {
 			}
 		}
 		{	// Database
-			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED)});
+			const menuDatabase = menu.newMenu('Database', void(0), () => {return (properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED);});
 			{
 				menu.newEntry({menuName: menuDatabase, entryText: 'Current database: ' + (properties.iWriteTags[1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED});
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
@@ -702,7 +712,7 @@ function createMenu() {
 				menu.newEntry({menuName: menuDatabase, entryText: 'sep'});
 				menu.newEntry({menuName: menuDatabase, entryText: 'Merge JSON databases...', func: () => {
 					let input = '';
-					try {input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.Name, folders.data + 'worldMap.json', true);} 
+					try {input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.Name, folders.data + 'worldMap.json', true);}
 					catch(e) {return;}
 					if (!input.length) {return;}
 					let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
@@ -789,7 +799,7 @@ function createMenu() {
 					saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 					console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
 					if (worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3) {repaint(void(0), true, true);}
-				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED)}});
+				}, flags: () => {return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED);}});
 				menu.newEntry({entryText: 'sep'});
 			}
 		}
@@ -806,9 +816,9 @@ function createMenu() {
 			menu.newEntry({entryText: 'Open readme...', func: () => {
 				const readme = _open(readmePath, utf8); // Executed on script load
 				if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
-				else {console.log('Readme not found: ' + value);}
+				else {console.log('Readme not found: ' + readmePath);}
 			}});
-		}	
+		}
 	}
 	return menu;
 }
@@ -823,7 +833,7 @@ function syncBio (bReload = false) {
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
-		if (config && config.hasOwnProperty('notifyTags') && !config.notifyTags) {
+		if (config && Object.prototype.hasOwnProperty.call(config, 'notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
 			_save(configPath, JSON.stringify(config, null, '\t'));
 			if (bReload) {window.NotifyOthers('bio_refresh', null);}  // Reload Biograpy panel

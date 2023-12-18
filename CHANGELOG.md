@@ -45,8 +45,10 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Code cleanup.
 ### Removed
 ### Fixed
+- Minor fixes.
 
 ## [3.9.0] - 2023-12-17
 ### Added

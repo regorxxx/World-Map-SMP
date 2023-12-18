@@ -1,43 +1,52 @@
 ﻿'use strict';
 //12/12/23
 
-/* 
+/* exported imageMap */
+
+/*
 	Helper to create arbitrary map objects. Defaults to world map if no properties or argument is given.
 	imageMap.findCoordinates must be specified using 'findCoordinatesFunc' if creating the map with any argument.
 	TODO:
-		- Create arbitrary map images using a graph or tag cloud? 
+		- Create arbitrary map images using a graph or tag cloud?
 		- Allow multiple tags to paint multiple points
 			- Merge near enough locations into 'zones', to draw the points for multiple artists.
  */
 
 include('..\\..\\helpers\\helpers_xxx.js');
+/* global debounce:readable, folders:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
+/* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable */
+include('..\\..\\helpers\\helpers_xxx_tags.js');
+/* global getTagsValuesV3:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
+/* global _bt:readable, _b:readable, isArray:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
+/* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
 
 // Map object
 function imageMap({
-		imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
-		findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, isNearPointFunc = null, tooltipFindPointFunc = null,
-		jsonPath = '', jsonId = '', 
-		bStaticCoord = true,
-		pointShape = 'circle', // string, circle
-		pointSize = 10,
-		pointLineSize = 25,
-		bSplitTags = false, // By '|' when jsonId and mapTag are different
-		bSkipInit = false
-	} = {}) {
+	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
+	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, isNearPointFunc = null, tooltipFindPointFunc = null,
+	jsonPath = '', jsonId = '',
+	bStaticCoord = true,
+	pointShape = 'circle', // string, circle
+	pointSize = 10,
+	pointLineSize = 25,
+	bSplitTags = false, // By '|' when jsonId and mapTag are different
+	bSkipInit = false
+} = {}) {
 	// Constants
 	const bShowSize = false;
 	// Global tooltip
 	this.tooltip = new _tt(null);
-	
+
 	// Paint
 	const debouncedRepaint = {};
 	this.repaint = (delay = this.delay) => {
 		if (delay > 0) {
-			if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+			if (!Object.prototype.hasOwnProperty.call(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
 			debouncedRepaint[delay](this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
 		} else {
 			window.RepaintRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
@@ -51,7 +60,7 @@ function imageMap({
 		} else if (this.imageMapAlpha !== 0) {
 			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height, 0, this.imageMapAlpha);
 		}
-	}
+	};
 	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false, bClearCachedValues = false}) => { // on_paint
 		this.paintBg(gr);
 		var toPaintArr = [];
@@ -67,7 +76,7 @@ function imageMap({
 				if (selMulti.Count === 0) {return;}
 				let added = new Set();
 				const currentMatch = getTagsValuesV3(selMulti, [this.jsonId], true);
-				currentMatch.forEach((tagArr, idx) => {
+				currentMatch.forEach((tagArr) => {
 					tagArr.forEach((tag) => {
 						const id = tag;
 						if (id.length) {
@@ -98,7 +107,7 @@ function imageMap({
 						if (id.length) {toPaintArr.push({id, val: 1, jsonId: new Set([currentMatch])});}
 					});
 				} else {
-					sel.Convert().forEach( (handle, index) => {
+					sel.Convert().forEach((handle) => {
 						const currentMatch = handle ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(handle) : '';
 						const ids = handle ? this.findTag(handle, currentMatch).split(this.bSplitTags ? '|' : void(0)) : [];
 						ids.forEach((id) => {
@@ -113,7 +122,7 @@ function imageMap({
 								}
 							}
 						});
-					}); 
+					});
 				}
 			// Handle
 			} else {
@@ -130,17 +139,17 @@ function imageMap({
 			const id = toPaint.id;
 			if (id.length) {
 				// Is a new point? Calculate it
-				if (!this.bStaticCoord || !this.point.hasOwnProperty(id)) {
+				if (!this.bStaticCoord || !Object.prototype.hasOwnProperty.call(this.point, id)) {
 					let [xPos , yPos] = this.findCoordinates({
-						id, 
-						mapWidth: this.imageMap.Width, 
-						mapHeight: this.imageMap.Height, 
+						id,
+						mapWidth: this.imageMap.Width,
+						mapHeight: this.imageMap.Height,
 						factorX: this.factorX,
 						factorY: this.factorY
 					});
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
-						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id}; 
+						this.point[id] = {x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id};
 					}
 				}
 				// Draw points
@@ -175,7 +184,7 @@ function imageMap({
 			}
 		});
 		return toPaintArr;
-	}
+	};
 	// Tags and coordinates
 	this.calcScale = (ww = window.Width, wh = window.Height) => { // on_size
 		this.scaleW = ww / this.imageMap.Width;
@@ -205,7 +214,7 @@ function imageMap({
 			point.xScaled = point.x * this.scale + this.posX;
 			point.yScaled = point.y * this.scale + this.posY;
 		});
-	}
+	};
 	this.findTag = (sel, byKey = '') => {
 		var mapTagValue = '';
 		if (sel) {
@@ -221,29 +230,33 @@ function imageMap({
 				}
 			}
 			// Or external
-			if (byKey.length && this.tagValue.hasOwnProperty(byKey)) {
+			if (byKey.length && Object.prototype.hasOwnProperty.call(this.tagValue, byKey)) {
 				// Set by other script or forced by other panel
 				if (!mapTagValue.length || this.mapTag === 'External Script') {mapTagValue = this.tagValue[byKey];}
 				else if (mapTagValue.length) {this.setTag(mapTagValue, byKey);} // Cache for later use
 			}
 		}
 		return mapTagValue;
-	}
+	};
 	this.setTag = (tagValue, byKey) => {if (byKey.length && typeof tagValue !== 'undefined') {this.tagValue[byKey] = tagValue;}};
+	// eslint-disable-next-line no-unused-vars
 	this.findCoordinates = ({id, mapWidth, mapHeight, factorX, factorY}) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
+	// eslint-disable-next-line no-unused-vars
 	this.findPointFunc = ({x, y, mapWidth, mapHeight, factorX, factorY}) => {return [];}; // [{key, simil}] Could be overwritten
 	this.isNearPointFunc = null; /* ({id, x, y,precision}) => {return false;}; // Boolean Could be overwritten */
 	this.matchId = (id) => {
-		return (this.point.hasOwnProperty(id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
+		return (Object.prototype.hasOwnProperty.call(this.point, id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
 	};
 	// Selection
+	// eslint-disable-next-line no-unused-vars
 	this.selPoint = (point, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
+	// eslint-disable-next-line no-unused-vars
 	this.selFindPoint = (foundPoints, mask, x, y) => {return null;}; // Could be overwritten, arbitrary return
-	this.getLastPoint = () => {return this.lastPoint;}; 
+	this.getLastPoint = () => {return this.lastPoint;};
 	// Move and click
 	this.trace = (x, y) => {
 		return x > this.posX && x < this.posX + this.imageMap.Width * this.scale && y > this.posY && y < this.posY + this.imageMap.Height * this.scale;
-	}
+	};
 	this.tracePoint = (x, y) => {
 		let foundId = '';
 		switch (this.pointShape) {
@@ -274,13 +287,13 @@ function imageMap({
 			}
 		}
 		return foundId;
-	}
+	};
 	this.tracePointId = (x, y, precision, minPrecision) => this.findPointFunc({
 		x: x - this.posX,
-		y: y - this.posY, 
+		y: y - this.posY,
 		mapWidth: this.imageMap.Width * this.scale,
 		mapHeight: this.imageMap.Height * this.scale,
-		factorX: this.factorX, 
+		factorX: this.factorX,
 		factorY: this.factorY,
 		bSingle: true,
 		precision: precision,
@@ -288,11 +301,11 @@ function imageMap({
 	});
 	this.isNearPoint = (id, x, y, precision) => this.isNearPointFunc({
 		id,
-		x: x - this.posX, 
-		y: y - this.posY, 
+		x: x - this.posX,
+		y: y - this.posY,
 		mapWidth: this.imageMap.Width * this.scale,
-		mapHeight: this.imageMap.Height * this.scale, 
-		factorX: this.factorX, 
+		mapHeight: this.imageMap.Height * this.scale,
+		factorX: this.factorX,
 		factorY: this.factorY,
 		precision
 	});
@@ -328,10 +341,10 @@ function imageMap({
 				if (!this.lastPoint.length || (mask === MK_SHIFT && !bPressWin)) {  // Add tag selecting directly from map (can be forced with shift)
 					const found = this.findPointFunc({
 						x: x - this.posX,
-						y: y - this.posY, 
+						y: y - this.posY,
 						mapWidth: this.imageMap.Width * this.scale,
 						mapHeight: this.imageMap.Height * this.scale,
-						factorX: this.factorX, 
+						factorX: this.factorX,
 						factorY: this.factorY
 					});
 					if (found && found.length) {
@@ -344,15 +357,15 @@ function imageMap({
 				}
 			}
 		} else if (this.idSelected.length && this.idSelected !== 'none') {
-			this.idSelected = 'none'; 
+			this.idSelected = 'none';
 			if (bPaint) {this.repaint();}
 			this.tooltip.SetValue(null);
 		} else {this.clearIdSelected(); this.tooltip.SetValue(null); this.foundPoints = [];}
 		if (x === -1 && y === -1 && mask === MK_SHIFT) {
-			this.foundPoints = []; this.clearIdSelected(); 
+			this.foundPoints = []; this.clearIdSelected();
 			if (bPaint) {this.repaint();}
 		}
-	}
+	};
 	this.btn_up = (x, y, mask) => { // on_mouse_lbtn_up
 		this.mX = x;
 		this.mY = y;
@@ -362,18 +375,20 @@ function imageMap({
 		} else if (this.trace(x, y) && (!this.lastPoint.length || mask === MK_SHIFT)) {  // Add tag selecting directly from map (can be forced with shift)
 			const found = this.findPointFunc({
 				x: x - this.posX,
-				y: y - this.posY, 
+				y: y - this.posY,
 				mapWidth: this.imageMap.Width * this.scale,
 				mapHeight: this.imageMap.Height * this.scale,
-				factorX: this.factorX, 
+				factorX: this.factorX,
 				factorY: this.factorY
 			});
 			if (found && found.length) {
 				return this.selFindPoint(found, mask, x, y, mask === MK_SHIFT);
 			}
 		}
-	}
+	};
+	// eslint-disable-next-line no-unused-vars
 	this.tooltipText = (point) => {return '';}; // Could be overwritten, return a string
+	// eslint-disable-next-line no-unused-vars
 	this.tooltipFindPointText = (foundPoints) => {return '';}; // Could be overwritten, return a string
 	// Clear
 	this.clearPointCache = () => {this.point = {};};
@@ -388,7 +403,7 @@ function imageMap({
 			if (!data) {return;}
 			data.forEach((item) => {this.jsonData.push(item);});
 		}
-	}
+	};
 	this.saveData = (data, path = this.jsonPath) => { // Does not check for duplication!
 		if (isArray(data)) {
 			data.forEach( (val) => {this.jsonData.push(val);});
@@ -396,22 +411,22 @@ function imageMap({
 			this.jsonData.push(data);
 		}
 		this.save(path);
-	}
+	};
 	this.save = (path = this.jsonPath) => {
 		_save(path, JSON.stringify(this.jsonData, null, '\t'));
-	}
+	};
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === data[byKey]);}) : false);
-	}
+	};
 	this.hasDataById = (id, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => {return (obj[byKey] === id);}) : false);
-	}
+	};
 	this.getData = () => {
 		return (this.jsonData.length ? [...this.jsonData] : []);
-	}
+	};
 	this.getDataById = (id) => {
 		return 	id.length ? this.jsonData.find((obj) => {return (obj[this.jsonId] === id);}) : null;
-	}
+	};
 	this.deleteDataById = (id, byKey = this.jsonId) => { // Delete by key
 		const idx = this.jsonData.findIndex((obj) => {return (obj[byKey] === id);});
 		if (idx !== -1) {
@@ -420,18 +435,18 @@ function imageMap({
 			return true;
 		}
 		return false;
-	}
+	};
 	this.getDataKeys = (byKey = this.jsonId) => {
 		let keysArr = [];
 		if (this.jsonData.length) {
 			this.jsonData.forEach( (data) => {keysArr.push(data[byKey]);});
 		}
 		return keysArr;
-	}
-	
+	};
+
 	this.colorsChanged = () => {
 		this.panelColor = this.customPanelColorMode === 2 ? this.properties.customPanelColor[1] : (window.InstanceType ? window.GetColourDUI(1): window.GetColourCUI(3));
-	}
+	};
 	// Init
 	this.init = () => {
 		let bfuncSet = false;
@@ -439,6 +454,7 @@ function imageMap({
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length ) {
 			if (_isFile(folders.xxx + 'main\\world_map\\world_map_tables.js')) {
 				include('..\\main\\world_map\\world_map_tables.js');
+				// eslint-disable-next-line no-undef
 				this.findCoordinates = findCountryCoords; // Default is country coordinates
 			}
 			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap.jpg'; // Default is world map
@@ -476,25 +492,25 @@ function imageMap({
 			}
 			if (jsonPath.length) {
 				this.jsonPath = jsonPath;
-			}			
+			}
 			if (jsonId.length) {
 				this.jsonId = jsonId;
 			}
 			// Or overwrite args if properties are not empty
 			if (Object.keys(this.properties).length) {
-				if (this.properties.hasOwnProperty('imageMapPath') && this.properties['imageMapPath'][1].length) {
+				if (Object.prototype.hasOwnProperty.call(this.properties, 'imageMapPath') && this.properties['imageMapPath'][1].length) {
 					this.imageMapPath = this.properties['imageMapPath'][1];
 				}
-				if (this.properties.hasOwnProperty('mapTag') && this.properties['mapTag'][1].length) {
+				if (Object.prototype.hasOwnProperty.call(this.properties, 'mapTag') && this.properties['mapTag'][1].length) {
 					this.mapTag = this.properties['mapTag'][1];
 				}
-				if (this.properties.hasOwnProperty('fileName') && this.properties['fileName'][1].length) {
+				if (Object.prototype.hasOwnProperty.call(this.properties, 'fileName') && this.properties['fileName'][1].length) {
 					this.jsonPath = this.properties['fileName'][1];
 				}
-				if (this.properties.hasOwnProperty('factorX') && this.properties['factorX'][1] !== 100) {
+				if (Object.prototype.hasOwnProperty.call(this.properties, 'factorX') && this.properties['factorX'][1] !== 100) {
 					this.factorX = this.properties['factorX'][1];
 				}
-				if (this.properties.hasOwnProperty('factorY') && this.properties['factorY'][1] !== 100) {
+				if (Object.prototype.hasOwnProperty.call(this.properties, 'factorY') && this.properties['factorY'][1] !== 100) {
 					this.factorY = this.properties['factorY'][1];
 				}
 			}
@@ -509,7 +525,7 @@ function imageMap({
 		}
 		if (!this.imageMapPath.length) {
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.Name);
-			this.trace = (x, y) => {};
+			this.trace = () => {};
 			this.calcScale = () => {};
 			this.paint = () => {};
 			this.paintBg = () => {};
@@ -523,7 +539,7 @@ function imageMap({
 				this.imageMapPath = 'background';
 				this.imageMap = {Width: maxWidth, Height: maxSize};
 			} else {
-				try {this.imageMap = gdi.Image(this.imageMapPath);} 
+				try {this.imageMap = gdi.Image(this.imageMapPath);}
 				catch (e) {
 					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath + '\n\n' + e.message, window.Name);
 					this.imageMapPath = 'background';
@@ -537,8 +553,8 @@ function imageMap({
 		this.loadData();
 		this.clearPointCache();
 		this.colorsChanged();
-	}
-	
+	};
+
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
 	this.tagValue = {};
 	this.mapTag = '';

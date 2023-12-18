@@ -51,7 +51,7 @@ function compareObjects(a, b, enforcePropertiesOrder = false, cyclic = false) {
 				return false; // functions should be strictly equal because of closure context
 			}
 			case '[object Array]': {
-				if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated bellow for [object Object]
+				if (cyclic && (x = referenceEquals(a, b)) !== null) return x; // intentionally duplicated bellow for [object Object]
 				if ((l = a.length) != b.length) return false;
 				// Both have as many elements
 				while (l--) {
@@ -61,12 +61,12 @@ function compareObjects(a, b, enforcePropertiesOrder = false, cyclic = false) {
 				return true;
 			}
 			case '[object Object]': {
-				if (cyclic && (x = reference_equals(a, b)) !== null) return x; // intentionally duplicated from above for [object Array]
+				if (cyclic && (x = referenceEquals(a, b)) !== null) return x; // intentionally duplicated from above for [object Array]
 				l = 0; // counter of own properties
 				if (enforcePropertiesOrder) {
 					const properties = [];
 					for (p in a) {
-						if (a.hasOwnProperty(p)) {
+						if (Object.prototype.hasOwnProperty.call(a, p)) {
 							properties.push(p);
 							if ((x = a[ p ]) === (y = b[ p ]) && x !== 0 || _equals(x, y)) {continue;}
 							return false;
@@ -74,11 +74,11 @@ function compareObjects(a, b, enforcePropertiesOrder = false, cyclic = false) {
 					}
 					// Check if 'b' has as the same properties as 'a' in the same order
 					for (p in b) {
-						if (b.hasOwnProperty(p) && properties[ l++ ] != p) {return false;}
+						if (Object.prototype.hasOwnProperty.call(b, p) && properties[ l++ ] != p) {return false;}
 					}
 				} else {
 					for (p in a) {
-						if (a.hasOwnProperty(p)) {
+						if (Object.prototype.hasOwnProperty.call(a, p)) {
 							++l;
 							if ((x = a[ p ]) === (y = b[ p ]) && x !== 0 || _equals(x, y)) {continue;}
 							return false;
@@ -86,7 +86,7 @@ function compareObjects(a, b, enforcePropertiesOrder = false, cyclic = false) {
 					}
 					// Check if 'b' has as not more own properties than 'a'
 					for (p in b) {
-						if (b.hasOwnProperty(p) && --l < 0) {return false;}
+						if (Object.prototype.hasOwnProperty.call(b, p) && --l < 0) {return false;}
 					}
 				}
 				return true;
@@ -94,15 +94,15 @@ function compareObjects(a, b, enforcePropertiesOrder = false, cyclic = false) {
 		}
 	}
 
-	function reference_equals(a, b) {
-		const object_references = [];
-		return (reference_equals = _reference_equals)(a, b);
-		function _reference_equals(a, b) {
-			let l = object_references.length;
+	function referenceEquals(a, b) {
+		const objectReferences = [];
+		return (referenceEquals = _referenceEquals)(a, b); // eslint-disable-line no-func-assign
+		function _referenceEquals(a, b) {
+			let l = objectReferences.length;
 			while (l--) {
-				if (object_references[ l-- ] === b) {return object_references[ l ] === a;}
+				if (objectReferences[ l-- ] === b) {return objectReferences[ l ] === a;}
 			}
-			object_references.push(a, b);
+			objectReferences.push(a, b);
 			return null;
 		}
 	}
@@ -138,9 +138,9 @@ function roughSizeOfObject(object) {
 		}
 		else if (typeof value === 'object' && objectList.indexOf(value) === -1) {
 			objectList.push(value);
-			for (const i in value) {if (!value.hasOwnProperty(i)) {continue;} stack.push(value[i]);}
+			for (const i in value) {if (!Object.prototype.hasOwnProperty.call(value, i)) {continue;} stack.push(value[i]);}
 		}
-	} // TODO Handle lists? TF?
+	} // TODO: Handle lists? TF?
 	return bytes;
 }
 
@@ -148,7 +148,7 @@ function roughSizeOfObject(object) {
 // https://stackoverflow.com/a/48579540
 function deepAssign(options = {nonEnum: false, symbols: false, descriptors: false, proto: false}) {
 	return function deepAssignWithOptions (target, ...sources) {
-		sources.forEach( (source) => {
+		sources.forEach((source) => {
 			if (!isDeepObject(source) || !isDeepObject(target)){return;}
 			// Copy source's own properties into target's own properties
 			function copyProperty(property) {
@@ -183,7 +183,7 @@ function deepAssign(options = {nonEnum: false, symbols: false, descriptors: fals
 			}
 		});
 		return target;
-	}
+	};
 }
 
 function toType(a) {
@@ -231,7 +231,7 @@ class biMap {
 		}
 	}
 	get(key) {return this.map[key];}
-	has(key) {return this.map.hasOwnProperty(key);}
+	has(key) {return this.map.hasOwnProperty(key);} // eslint-disable-line no-prototype-builtins
 	keys() {return Object.keys(this.map);}
 	uniKeys() {return Object.keys(this.uniMap);}
 	values() {return Object.values(this.map);}
@@ -311,7 +311,7 @@ Object.defineProperty(Promise, 'serial', {
 		const reducer = (acc$, inputValue, i) =>
 			acc$.then(acc => {
 				return (timeout
-					? new Promise((resolve) => {setTimeout(() => resolve(mapper(inputValue, i)), timeout)})
+					? new Promise((resolve) => {setTimeout(() => resolve(mapper(inputValue, i)), timeout);})
 					: mapper(inputValue, i)
 				).then(result => acc.push(result) && acc);
 			});
@@ -327,7 +327,7 @@ Object.defineProperty(Promise, 'parallel', {
 	value: (inputValues, mapper, timeout = 0) => {
 		const reducer = (inputValue, i) => {
 			return timeout
-				? new Promise((resolve) => {setTimeout(() => resolve(mapper(inputValue, i)), timeout)})
+				? new Promise((resolve) => {setTimeout(() => resolve(mapper(inputValue, i)), timeout);})
 				: mapper(inputValue, i);
 		};
 		return Promise.allSettled(inputValues.map(reducer));
@@ -378,7 +378,7 @@ String.prototype.count = function count(c) {
 
 const cutRegex = {};
 String.prototype.cut = function cut(c) {
-	if (!cutRegex.hasOwnProperty(c)) {cutRegex[c] = new RegExp('^(.{' + c + '}).{2,}', 'g');}
+	if (!cutRegex.hasOwnProperty(c)) {cutRegex[c] = new RegExp('^(.{' + c + '}).{2,}', 'g');} // eslint-disable-line no-prototype-builtins
 	return this.replace(cutRegex[c], '$1…');
 };
 

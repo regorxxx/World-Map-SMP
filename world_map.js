@@ -1,71 +1,84 @@
 ﻿'use strict';
-//17/12/23
+//18/12/23
 
-/* 
+/*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
 	Show artist's country drawing a circle over the world map. To get the country,
 	'mapTag' set on properties is used. It may be a tag name or a TF expression.
 	Therefore data must be previously on tracks or the database.
-	
+
 	'mapTag' may contain ISO values (ARG) or full names (Argentina). Capitalization
 	doesn't matter. Full names are converted to ISO values before coordinates lookup.
-	
+
 	Country tags can be manually fetched:
 		- Using Picard + Plugin (also created by me) (TODO)
 		https://picard.musicbrainz.org/
 		https://picard.musicbrainz.org/plugins/ (Look for -> Artist's Country)
-		
-		- WilB's Biography script: 
+
+		- WilB's Biography script:
 			+ shift Right Click / Write tags to selected tracks / Proceed
 			+ Be sure 'Locale last.fm' is checked. Is the only tag needed.
 			+ Check 'Images folder' for instructions. (you can use foo_preview as alternative)
 		https://hydrogenaud.io/index.php?topic=112913.75
-		
+
 		- Using web scrappers and saving the data as json:
 			[{artist: _artist_name_ , val: [_locale_tags_]}, ...]
-	
+
 	On playback the panel fetches tags from (by order of preference):
 		- Track's tags.
 		- Json database
 		- WilB's Biography script integration (*):
 		  https://hydrogenaud.io/index.php?topic=112913.75
-		
+
 	Panel is updated when playback changes, switching playlists, selecting tracks, ...
 	Requires a full world map using Mercator projection to work. One is given
 	for convenience, but can be changed if desired at properties.
-	
+
 	(*) Must use modified version provided at folder 'Biography 1.1.3_Mod' (not original one)
 	Required until the author updates it.
-	
-	See also: 
+
+	See also:
 		- helpers\world_map_tables.js (coordinates and country lookup logic)
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
 if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.9.0', features: {drag_n_drop: false}});}
 include('helpers\\helpers_xxx.js');
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globSettings:readable, globSettings:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable */
 include('helpers\\helpers_xxx_prototypes.js');
+/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
 include('helpers\\helpers_xxx_properties.js');
+/* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable */
 include('helpers\\helpers_xxx_tags.js');
+/* global checkQuery:readable, */
 include('main\\map\\map_xxx.js');
+/* global _isFile:readable, _scale:readable, RGB:readable, _save:readable, imageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
+/* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
 include('main\\world_map\\world_map_menu.js');
+/* global createMenu:readable */
 include('main\\world_map\\world_map_helpers.js');
+/* global selPoint:readable, selFindPoint:readable, tooltip:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable */
 include('main\\world_map\\world_map_flags.js');
+/* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
+/* global Chroma:readable, _mapStatistics:readable */
 include('main\\filter_and_query\\remove_duplicates.js');
+/* global removeDuplicatesV2:readable */
 include('main\\window\\window_xxx_background.js');
+/* global _background:readable, createBackgroundMenu:readable */
 
 checkCompatible('1.6.1', 'smp');
 
-/* 
-	Properties 
+/*
+	Properties
 */
 const selMode = ['Follow selected track(s) (playlist)','Prefer now playing'];
 const modifiers = [ // Easily expandable. Used at helpers and menu too
-	{mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' }, 
+	{mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' },
 	{mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'STYLE'},
 	{mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE'}
 ];
@@ -117,7 +130,7 @@ const worldMap_properties = {
 	bLowMemMode			:	['Low memory mode', true, {func: isBoolean}, true],
 	layerFillMode		:	['Country layer fill mode', '', {func: isStringWeak}, ''],
 	background:	['Background options', JSON.stringify(deepAssign()(
-		(new _background).defaults(), 
+		(new _background).defaults(),
 		{colorMode: 'gradient', colorModeOptions: {color: [RGB(270,270,270), RGB(300,300,300)]}, coverMode: 'front'}
 	))],
 };
@@ -129,7 +142,7 @@ worldMap_properties['background'].push({func: isJSON}, worldMap_properties['back
 setProperties(worldMap_properties, '', 0);
 
 const worldMapImages = [
-	{text: 'Full', path: 'MC_WorldMap.jpg', factorX: 100, factorY: 109}, 
+	{text: 'Full', path: 'MC_WorldMap.jpg', factorX: 100, factorY: 109},
 	{text: 'No Antarctica', path: 'MC_WorldMap_No_Ant.jpg', factorX: 100, factorY: 137},
 	{text: 'Shapes', path: 'MC_WorldMap_Shapes.png', factorX: 100, factorY: 109},
 	{text: 'Shapes No Antarctica', path: 'MC_WorldMap_Shapes_No_Ant.png', factorX: 100, factorY: 137, bDefault: true}
@@ -140,7 +153,7 @@ const worldMapImages = [
 	const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
 	const bLowMemMode = properties.bLowMemMode[1];
 	worldMapImages.forEach((img) => {
-		const prefix = (bPortable 
+		const prefix = (bPortable
 			? folders.xxx.replace(fb.ProfilePath, '.\\profile\\')
 			: folders.xxx
 		) + 'images\\';
@@ -148,7 +161,7 @@ const worldMapImages = [
 			let path;
 			if (bLowMemMode) {path = prefix + img.path;}
 			else {path = prefix + 'hires\\' + img.path;}
-			properties.imageMapPath[1] = path; 
+			properties.imageMapPath[1] = path;
 			overwriteProperties(properties);
 		}
 		if (bLowMemMode) {img.path = prefix + img.path;}
@@ -156,8 +169,8 @@ const worldMapImages = [
 	});
 }
 
-/* 
-	Map 
+/*
+	Map
 */
 const worldMap = new imageMap({
 	imagePath:				worldMapImages.find((img) => img.bDefault).path,
@@ -219,7 +232,7 @@ worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize 
 worldMap.textColor = worldMap.properties.customLocaleColor[1];
 worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
 
-/* 
+/*
 	Panel background
 */
 const background = new _background({
@@ -271,8 +284,8 @@ const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonPar
 // Statisctics mode
 const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] === 2, JSON.parse(worldMap.properties.statsConfig[1]));
 
-/* 
-	Callbacks for painting 
+/*
+	Callbacks for painting
 */
 const debouncedRepaint = {
 	'60': debounce(window.RepaintRect, 60, false, window),
@@ -292,7 +305,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	imgAsync.layers.bCreated = false;
 	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
-		if (!debouncedRepaint.hasOwnProperty(delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+		if (!Object.prototype.hasOwnProperty.call(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
 		debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 	} else {
 		window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
@@ -319,7 +332,7 @@ const imgAsync = {
 const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / worldMap.imageMap.Width, imgAsync.layers.h / worldMap.imageMap.Height)) => {
 	if (!mode || !mode.length) {return;}
 	const flagSize = 64; const w = 40; const h = 30;
-	const flag = mode === 'flag' 
+	const flag = mode === 'flag'
 		? loadFlagImage(id)
 		: loadFlagImage(id).Clone((flagSize - w) / 2, (flagSize - h) / 2, (flagSize + w) / 2, (flagSize + h) / 2); // Extract center of flag
 	const layerGr = subLayer.GetGraphics();
@@ -358,16 +371,16 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false} = {}) => {
 	const profile = bProfile ?  new FbProfiler('paintLayers') : null;
 	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
-	const idSel = worldMap.idSelected
+	const idSel = worldMap.idSelected;
 	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
 		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
 		const bFullImg = bStatsModes && imgAsync.fullImg;
 		if (bFullImg) {
-			const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100; 
+			const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 			const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 			const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
 			const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;;
+			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 			const x = worldMap.posX - offsetX * worldMap.scale;
 			const y = worldMap.posY - offsetY * worldMap.scale;
@@ -391,8 +404,8 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				}
 				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
 				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100; 
-				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100
+				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
+				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
@@ -440,8 +453,8 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 			} else {
 				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100; 
-				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100
+				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
+				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
@@ -461,10 +474,10 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 						if (worldMap.properties.panelMode[1] === 1 && bSel) {
 							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
 						} else {
-							const alpha = bSel 
-								? worldMap.properties.customShapeAlpha[1] > 200 
-									? worldMap.properties.customShapeAlpha[1] - 50 
-									: worldMap.properties.customShapeAlpha[1] > 100 
+							const alpha = bSel
+								? worldMap.properties.customShapeAlpha[1] > 200
+									? worldMap.properties.customShapeAlpha[1] - 50
+									: worldMap.properties.customShapeAlpha[1] > 100
 										? worldMap.properties.customShapeAlpha[1] + 50
 										: worldMap.properties.customShapeAlpha[1] + 100
 								: worldMap.properties.customShapeAlpha[1];
@@ -509,7 +522,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 									}
 									resolve();
 								});
-							}, i * 250 + 25)
+							}, i * 250 + 25);
 						}));
 					}
 				}
@@ -519,10 +532,10 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 			let point = worldMap.point[id];
 			if (!point) {
 				const [xPos, yPos] = worldMap.findCoordinates({
-					id, 
-					mapWidth: worldMap.imageMap.Width, 
-					mapHeight: worldMap.imageMap.Height, 
-					factorX: worldMap.factorX, 
+					id,
+					mapWidth: worldMap.imageMap.Width,
+					mapHeight: worldMap.imageMap.Height,
+					factorX: worldMap.factorX,
 					factorY: worldMap.factorY
 				});
 				if (xPos !== -1 && yPos !== -1) {
@@ -557,7 +570,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 		});
 	} else if (bProfile) {profile.Print('End');}
-}
+};
 
 addEventListener('on_paint', (gr) => {
 	// extendGR(gr, {Repaint: true}); // helpers_xxx_prototypes_smp.js
@@ -572,7 +585,7 @@ addEventListener('on_paint', (gr) => {
 		worldMap.paint({gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1});
 		if (worldMap.properties.pointMode[1] >= 1) {
 			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
-			const gradient = worldMap.properties.panelMode[1] === 3 
+			const gradient = worldMap.properties.panelMode[1] === 3
 				? worldMap.properties.customGradientColor[1] || [Chroma(color).saturate(2).luminance(0.8).android(), Chroma(color).saturate(2).luminance(0.4).android()]
 				: null;
 			paintLayers({gr, color, gradient, bProfile: worldMap.properties.bProfile[1]});
@@ -583,7 +596,6 @@ addEventListener('on_paint', (gr) => {
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
-		const rawPaths = new Set(sel.Convert().map((handle) => handle.RawPath + ',' + handle.SubSong));
 		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length)});
 		if (sel.Count) {
 			if (bPressShift && !bPressWin && worldMap.foundPoints.length){
@@ -591,10 +603,10 @@ addEventListener('on_paint', (gr) => {
 				let point = worldMap.point[id];
 				if (!point) {
 					const [xPos, yPos] = worldMap.findCoordinates({
-						id, 
-						mapWidth: worldMap.imageMap.Width, 
-						mapHeight: worldMap.imageMap.Height, 
-						factorX: worldMap.factorX, 
+						id,
+						mapWidth: worldMap.imageMap.Width,
+						mapHeight: worldMap.imageMap.Height,
+						factorX: worldMap.factorX,
 						factorY: worldMap.factorY
 					});
 					if (xPos !== -1 && yPos !== -1) {
@@ -634,15 +646,15 @@ addEventListener('on_paint', (gr) => {
 				let flag = loadFlagImage(id);
 				const flagScale = flag.Height / textH;
 				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
-				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height)
+				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height);
 				// Text
 				if (worldMap.properties.bShowLocale[1]) {
 					if (textW + flag.Width < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
-					else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
+					else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
 				if (textW < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
-				else {gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX)}
+				else {gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
 			}
 		}
 	}
@@ -726,7 +738,7 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	}
 });
 
-/* 
+/*
 	Callbacks for move and click
 */
 addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
@@ -778,10 +790,10 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 	return true; // Disable right button menu
 });
 
-/* 
+/*
 	Callbacks for integration with other scripts
 */
- // When used along WilB's Biography script (on other panel), data may be fetched automatically
+// When used along WilB's Biography script (on other panel), data may be fetched automatically
 const bioCache = {rawPath: null, subSong: null};
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') {return;}
@@ -792,8 +804,8 @@ addEventListener('on_notify_data', (name, info) => {
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
 	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
-		if (info.hasOwnProperty('handle') && info.hasOwnProperty('tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
-			bioCache.handleRawPath = info.handle.RawPath; 
+		if (Object.prototype.hasOwnProperty.call(info, 'handle') && Object.prototype.hasOwnProperty.call(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
+			bioCache.handleRawPath = info.handle.RawPath;
 			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
 			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
@@ -803,7 +815,7 @@ addEventListener('on_notify_data', (name, info) => {
 				let locale = [];
 				if (isArray(info.tags)) { // Biography 1.1.3
 					locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
-				} else if (info.tags.hasOwnProperty(tagName)) { // Biography 1.2.0
+				} else if (Object.prototype.hasOwnProperty.call(info.tags, tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
 				const len = locale.length;
@@ -839,7 +851,7 @@ addEventListener('on_notify_data', (name, info) => {
 	}
 	// Follow WilB's Biography script selection mode
 	if (name === 'Biography notifySelectionProperty') { // Biography 1.1.3
-		if (info.hasOwnProperty('property') && info.hasOwnProperty('val')) {
+		if (Object.prototype.hasOwnProperty.call(info, 'property') && Object.prototype.hasOwnProperty.call(info, 'val')) {
 			// When ppt.focus is true, then selmode is selMode[0]
 			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 				worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
@@ -852,7 +864,7 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 	}// Follow WilB's Biography script selection mode
 	if (name === 'biographyTags') { // Biography 1.2.0
-		if (info.hasOwnProperty('selectionMode')) {
+		if (Object.prototype.hasOwnProperty.call(info, 'selectionMode')) {
 			let bDone = false;
 			switch (info.selectionMode) {
 				case 'Prefer nowplaying': {
