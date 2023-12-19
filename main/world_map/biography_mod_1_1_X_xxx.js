@@ -1,7 +1,7 @@
 ﻿'use strict';
-//23/02/22
+//18/12/23
 
-/* 
+/*
 	Biography Mod v 1.1.X
 	-----------------------------------
 	Redefines some methods found on WilB's Biography Script to enable integration with other panels.
@@ -11,6 +11,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name);
 } else { // Where t = new Text, tag = new Tagger
 	// Rewrite entire function
+	/* eslint-disable no-undef */
 	tag.notifyCountry = function(handles) { // tags
 		// This 2 variables are private within tag object... so we need to define them again
 		const kww = 'Founded In: |Born In: |Gegründet: |Formado en: |Fondé en: |Luogo di fondazione: |出身地: |Założono w: |Local de fundação: |Место основания: |Grundat år: |Kurulduğu tarih: |创建于: |Geboren in: |Lugar de nacimiento: |Né\\(e\\) en: |Luogo di nascita: |出身地: |Urodzony w: |Local de nascimento: |Место рождения: |Född: |Doğum yeri: |生于: ';
@@ -45,21 +46,22 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 		}
 		tags.push({name: 'locale', val: locale});
 		window.NotifyOthers(window.Name + ' notifyCountry', {handle: handles, tags}); // tags
-	}
+	};
 	// Just rewrap
 	const old_t_draw = t.draw;
 	t.draw = function() {
 		tag.notifyCountry(s.handle(ppt.focus)); // tags
 		window.NotifyOthers(window.Name + ' notifySelectionProperty', {property: 'focus', val: ppt.focus}); // selection property
 		return old_t_draw.apply(old_t_draw, arguments);
-	}
+	};
+	/* eslint-enable no-undef */
 }
 
 // Retrieve data from other panels
 function onNotifyData(name, info) {
 	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
 	if (name === 'World Map' + ' notifySelectionProperty') {
-		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track();
+		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track(); // eslint-disable-line no-undef
 	}
 }
 if (typeof on_notify_data !== 'undefined') {
@@ -67,5 +69,5 @@ if (typeof on_notify_data !== 'undefined') {
 	on_notify_data = function(name, info) {
 		oldFunc(name, info);
 		onNotifyData(name, info);
-	}
-} else {var on_notify_data = onNotifyData;}
+	};
+} else {var on_notify_data = onNotifyData;} // eslint-disable-line no-redeclare

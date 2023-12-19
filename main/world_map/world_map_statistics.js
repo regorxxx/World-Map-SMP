@@ -1,10 +1,17 @@
 ﻿'use strict';
-//17/11/23
+//18/12/23
 
+/* exported _mapStatistics */
+
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, query_combinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable , repaint:readable */
 include('..\\statistics\\statistics_xxx.js');
+/* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\..\\helpers\\menu_xxx.js');
+/* global _menu:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
+/* global sendToPlaylist:readable */
 include('..\\filter_and_query\\remove_duplicates.js');
+/* global removeDuplicatesV2:readable */
 
 
 function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
@@ -13,7 +20,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	let columns = 0;
 	let nCharts = [];
 	let charts = [];
-	
+
 	this.attachCallbacks = () => {
 		addEventListener('on_paint', (gr) => {
 			if (!window.ID || !this.bEnabled) {return;}
@@ -38,7 +45,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 
 		addEventListener('on_mouse_move', (x, y, mask) => {
 			if (!window.ID || !this.bEnabled) {return;}
-			const bFound = charts.some((chart) => {return chart.move(x, y, mask);});
+			return charts.some((chart) => {return chart.move(x, y, mask);});
 		});
 
 		addEventListener('on_mouse_leave', () => {
@@ -56,7 +63,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			charts.some((chart) => {return chart.lbtnDblClk(x, y, mask);});
 		});
 	};
-	
+
 	const createMenuOptionParent = function createMenuOptionParent(menu, key, subKey, menuName = menu.getMainMenuName(), bCheck = true, addFunc = null, postFunc = null) {
 		return function (option) {
 			if (option.entryText === 'sep' && menu.getEntries().pop().entryText !== 'sep') {menu.newEntry({menuName, entryText: 'sep'}); return;} // Add sep only if any entry has been added
@@ -82,10 +89,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				}});
 				if (bCheck) {
 					menu.newCheckMenu(menuName, option.entryText, void(0), () => {
-						const val = subKey 
+						const val = subKey
 							? Array.isArray(subKey)
 								? subKey.reduce((acc, curr) => acc[curr], this[key])
-								: this[key][subKey] 
+								: this[key][subKey]
 							: this[key];
 						if (key === 'dataManipulation' && subKey === 'sort' && option.newValue === this.convertSortLabel(this.sortKey)) {return true;}
 						if ((key === 'data' || key === 'dataAsync') && option.args.data.source === parent.source && option.args.data.arg === parent.arg) {return true;}
@@ -106,8 +113,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				}
 			}
 		}.bind(this);
-	}
-	
+	};
+
 	// Generic statistics menu which should work on almost any chart...
 	this.onLbtnUpSettings = function onLbtnUpSettings(bClear = true) {
 		// Constants
@@ -165,15 +172,15 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 						title: window.Name + ' - ' + option.entryText
 					}
 				);
-			}, (option) => {
+			}, (option) => { // eslint-disable-line no-unused-vars
 				this.changeConfig({dataManipulation: {slice}});
 			}));
 		}
 		menu.newEntry({entryText: 'sep'});
 		menu.newEntry({entryText: 'Exit statistics mode', func: parent.exit});
 		return menu;
-	}
-	
+	};
+
 	this.onLbtnUpDisplay = function onLbtnUpDisplay(bClear = true) {
 		// Constants
 		this.tooltip.SetValue(null);
@@ -196,8 +203,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		if (bClear) {menu.clear(true);} // Reset on every call
 		// helper
 		const createMenuOption = createMenuOptionParent.bind(this, menu);
-		const filtGreat = (num) => {return (a) => {return a.y > num;}};
-		const filtLow = (num) => {return (a) => {return a.y < num;}};
+		const filtGreat = (num) => {return (a) => {return a.y > num;};};
+		const filtLow = (num) => {return (a) => {return a.y < num;};};
 		const fineGraphs = new Set(['bars', 'doughnut', 'pie']);
 		const sizeGraphs = new Set(['scatter', 'lines']);
 		const type = this.graph.type.toLowerCase();
@@ -354,9 +361,9 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			}
 		}
 		return menu;
-	}
-	
-	this.onLbtnUpPoint = function onLbtnUpPoint(point, x, y, mask) {
+	};
+
+	this.onLbtnUpPoint = function onLbtnUpPoint(point, x, y, mask) { // eslint-disable-line no-unused-vars
 		const dataId = worldMap.jsonId; // The tag used to match data
 		const dataIdTag = _t(dataId.toUpperCase()); // for readability
 		const mapTag = worldMap.properties.mapTag[1];
@@ -405,7 +412,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'listens region':
 						query =  _q(globTags.playCount) + ' GREATER 0 AND ' + _p(queryByRegion(point.x));
 						break;
-					case 'listens normalized': 
+					case 'listens normalized':
 					case 'listens' :
 						query =  _q(globTags.playCount) + ' GREATER 0 AND ' + _p(queryByCountry(point.x));
 						break;
@@ -433,27 +440,26 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		}});
 		menu.newEntry({entryText: 'sep'});
 		menu.newEntry({entryText: 'Point statistics', func: () => {
-			const report = '';
 			const avg = this.data[0]
-				.reduce((acc, curr, i, arr) => acc + (curr.y - acc) / (i + 1), 0);
+				.reduce((acc, curr, i) => acc + (curr.y - acc) / (i + 1), 0);
 			const total = this.data[0]
-				.reduce((acc, curr, i, arr) => acc + curr.y, 0);
-			const libItems = fb.GetLibraryItems();
+				.reduce((acc, curr) => acc + curr.y, 0);
 			fb.ShowPopupMessage(
 				this.axis.x.key + ':\t' + point.x +
-				'\n' + 
+				'\n' +
 				this.axis.y.key + ':\t' + point.y + ' ' + _p(round(point.y / total * 100, 2) + '%') +
-				'\n' + 
+				'\n' +
 				'-'.repeat(40) +
-				'\n' + 
+				'\n' +
 				'Average ' + this.axis.y.key + ' (any ' + this.axis.x.key + '): ' + Math.round(avg) +  ' ' + _p(round(avg / total * 100, 2) + '%') +
-				'\n' + 
+				'\n' +
 				'Global total ' + this.axis.y.key + ': ' + total
-			, window.Name + ': Point statistics');
+				, window.Name + ': Point statistics'
+			);
 		}});
 		return menu.btn_up(x, y);
 	};
-	
+
 	this.getData = (source = 'json', arg = 'artists') => {
 		let data = [];
 		switch (source) {
@@ -461,7 +467,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				switch (arg) {
 					case 'artists' : {
 						if (libraryPoints) {
-							data = [libraryPoints.map((country, i) => {
+							data = [libraryPoints.map((country) => {
 								return {x: country.id, y: country.val};
 							})];
 						}
@@ -470,14 +476,14 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'artists region' : {
 						if (libraryPoints) {
 							const tagCount = new Map();
-							libraryPoints.map((point, i) => {
+							libraryPoints.map((point) => {
 								const country = country.id;
 								const isoCode = getCountryISO(country);
 								if (isoCode) {
 									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
 									if (!id) {return;}
 									if (!tagCount.has(id)) {tagCount.set(id, point.val);}
-									else {tagCount.set(id, tagCount.get(id) + point.val);};
+									else {tagCount.set(id, tagCount.get(id) + point.val);}
 								}
 							});
 							data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
@@ -501,8 +507,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								const country = idData.val[idData.val.length - 1];
 								const isoCode = getCountryISO(country);
 								if (isoCode) {
-									const id = idData 
-										? arg === 'listens region' 
+									const id = idData
+										? arg === 'listens region'
 											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
 											: idData.val[idData.val.length - 1]
 										: null;
@@ -528,8 +534,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								const country = idData.val[idData.val.length - 1];
 								const isoCode = getCountryISO(country);
 								if (isoCode) {
-									const id = idData 
-										? arg === 'listens region normalized' 
+									const id = idData
+										? arg === 'listens region normalized'
 											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
 											: idData.val[idData.val.length - 1]
 										: null;
@@ -552,8 +558,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			}
 		}
 		return data;
-	}
-	
+	};
+
 	this.getDataAsync = async (source = 'json', arg = 'artists') => {
 		let data = [];
 		switch (source) {
@@ -561,7 +567,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				switch (arg) {
 					case 'artists' : {
 						if (libraryPoints) {
-							data = [libraryPoints.map((country, i) => {
+							data = [libraryPoints.map((country) => {
 								return {x: country.id, y: country.val};
 							})];
 						}
@@ -570,14 +576,14 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'artists region' : {
 						if (libraryPoints) {
 							const tagCount = new Map();
-							libraryPoints.map((point, i) => {
+							libraryPoints.map((point) => {
 								const country = point.id;
 								const isoCode = getCountryISO(country);
 								if (isoCode) {
 									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
 									if (!id) {return;}
 									if (!tagCount.has(id)) {tagCount.set(id, point.val);}
-									else {tagCount.set(id, tagCount.get(id) + point.val);};
+									else {tagCount.set(id, tagCount.get(id) + point.val);}
 								}
 							});
 							data = [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
@@ -602,9 +608,9 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 									const country = idData.val[idData.val.length - 1];
 									const isoCode = getCountryISO(country);
 									if (isoCode) {
-										const id = arg === 'listens region' 
-												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-												: country;
+										const id = arg === 'listens region'
+											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+											: country;
 										if (!id) {return;}
 										if (!tagCount.has(id)) {tagCount.set(id, Number(playCount[i]));}
 										else {tagCount.set(id, tagCount.get(id) + Number(playCount[i]));}
@@ -617,7 +623,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					}
 					case 'listens region normalized':
 					case 'listens normalized': {
-					const handleList = fb.GetLibraryItems();
+						const handleList = fb.GetLibraryItems();
 						const libraryTags = await fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbsAsync(handleList);
 						const playCount = await fb.TitleFormat(globTags.playCount).EvalWithMetadbsAsync(handleList);
 						const tagCount = new Map();
@@ -629,9 +635,9 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 									const country = idData.val[idData.val.length - 1];
 									const isoCode = getCountryISO(country);
 									if (isoCode) {
-										const id = arg === 'listens region normalized' 
-												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-												: country;
+										const id = arg === 'listens region normalized'
+											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+											: country;
 										if (!id) {console.log(isoCode, id); return;}
 										if (!tagCount.has(id)) {tagCount.set(id, Number(playCount[i]));}
 										else {tagCount.set(id, tagCount.get(id) + Number(playCount[i]));}
@@ -646,15 +652,14 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 							});
 							return [[...tagCount].map((point) => {return {x: point[0], y: point[1]};})];
 						});
-						break;
 					}
 				}
 				break;
 			}
 		}
 		return Promise.resolve(data);
-	}
-	
+	};
+
 	this.defaultConfig = () => {
 		const onLbtnUpSettings = this.onLbtnUpSettings;
 		const onLbtnUpDisplay = this.onLbtnUpDisplay;
@@ -662,7 +667,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			data: [], // No data is added by default to set no colors on first init
 			graph: {type: 'doughnut', pointAlpha: Math.round(40 * 255 / 100)},
 			chroma: {scheme: [
-				opaqueColor(worldMap.defaultColor, 100), 
+				opaqueColor(worldMap.defaultColor, 100),
 				opaqueColor(invert(worldMap.panelColor), 100)
 			]},
 			dataManipulation: {sort: 'reverse|y', slice: [0, 4], filter: null, distribution: null},
@@ -670,19 +675,19 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			colors: [worldMap.defaultColor],
 			margin: {left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15)},
 			axis: {
-				x: {show: true, color: blendColors(invert(worldMap.panelColor, true), worldMap.panelColor, 0.1), width: _scale(2), ticks: 'auto', labels: true, key: 'Countries', bAltLabels: true}, 
+				x: {show: true, color: blendColors(invert(worldMap.panelColor, true), worldMap.panelColor, 0.1), width: _scale(2), ticks: 'auto', labels: true, key: 'Countries', bAltLabels: true},
 				y: {show: true, color: blendColors(invert(worldMap.panelColor, true), worldMap.panelColor, 0.1), width: _scale(2), ticks: 'auto', labels: true, key: 'Artists'}
 			},
 			x: 0,
 			w: 0,
 			y: 0,
 			h: 0,
-			tooltipText: function(point, serie, mask) {return '\n\n(L. click to create playlist by ' + this.axis.x.key + ')';},
+			tooltipText: function(point, serie, mask) {return '\n\n(L. click to create playlist by ' + this.axis.x.key + ')';}, // eslint-disable-line no-unused-vars
 			configuration: {bPopupBackground: true},
 			callbacks: {
 				point:		{onLbtnUp: parent.onLbtnUpPoint},
-				settings:	{onLbtnUp: function(x, y, mask) {onLbtnUpSettings.call(this).btn_up(x, y);}},
-				display:	{onLbtnUp: function(x, y, mask) {onLbtnUpDisplay.call(this).btn_up(x, y);}},
+				settings:	{onLbtnUp: function(x, y, mask) {onLbtnUpSettings.call(this).btn_up(x, y);}}, // eslint-disable-line no-unused-vars
+				display:	{onLbtnUp: function(x, y, mask) {onLbtnUpDisplay.call(this).btn_up(x, y);}}, // eslint-disable-line no-unused-vars
 				custom:		{onLbtnUp: parent.exit, tooltip: 'Exit statistics mode...'},
 				config:		{
 					backgroundColor: () => [worldMap.panelColor]
@@ -690,15 +695,15 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			},
 			buttons: {settings: true, display: true, custom: true}
 		};
-	}
-	
-	/* 
+	};
+
+	/*
 		Automatically draw new graphs using table above
 	*/
 	this.init = () => {
 		const newConfig = [
 			[ // Row
-				{...this.config, ...(this.bAsync 
+				{...this.config, ...(this.bAsync
 					? {dataAsync: () => this.getDataAsync(this.source, this.arg)}
 					: {data: Array(1).fill(...this.getData(this.source, this.arg))}
 				)}
@@ -706,7 +711,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		];
 		rows = newConfig.length;
 		columns = newConfig[0].length;
-		nCharts = new Array(rows).fill(1).map((row) => {return new Array(columns).fill(1);}).map((row, i) => {
+		nCharts = new Array(rows).fill(1).map(() => {return new Array(columns).fill(1);}).map((row, i) => {
 			return row.map((cell, j) => {
 				const w = window.Width / columns;
 				const h = window.Height / rows * (i + 1);
@@ -720,18 +725,18 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		});
 		charts = nCharts.flat(Infinity);
 	};
-	
+
 	this.exit = () => {
 		parent.bEnabled = !parent.bEnabled;
 		worldMap.properties['panelMode'][1] = 0;
 		overwriteProperties(worldMap.properties);
 		repaint(void(0), true);
 	};
-	
+
 	this.bEnabled = bEnabled;
 	this.source = config && config.data ? config.data.source.toLowerCase() : 'json';
 	this.arg = config && config.data ? config.data.arg.toLowerCase() : 'artists';
-	this.bAsync = config && config.data && config.data.hasOwnProperty('bAsync') ? !!config.data.bAsync : true;
+	this.bAsync = config && config.data && Object.prototype.hasOwnProperty.call(config.data, 'bAsync') ? !!config.data.bAsync : true;
 	this.config = config ? config : {};
 	delete this.config.data;
 	if (this.bEnabled) {this.init();}

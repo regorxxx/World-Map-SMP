@@ -1,7 +1,27 @@
 ﻿'use strict';
-//14/12/23
+//19/12/23
 
 /* exported extendGR */
+
+/*
+	Object
+*/
+
+// Add ES2022 method
+// https://github.com/tc39/proposal-accessible-object-hasownproperty
+if (!Object.hasOwn) {
+	Object.defineProperty(Object, 'hasOwn', {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: function (object, property) {
+			if (object === null) {
+				throw new TypeError('Cannot convert undefined or null to object');
+			}
+			return Object.prototype.hasOwnProperty.call(Object(object), property); // NOSONAR
+		}
+	});
+}
 
 /*
 	FbTitleFormat
@@ -53,7 +73,7 @@ Object.defineProperty(fb, 'tfCache', {
 // Augment FbTitleFormat() constructor with 'Expression' property and add caching
 {
 	const old = FbTitleFormat;
-	FbTitleFormat = function FbTitleFormat() {
+	FbTitleFormat = function FbTitleFormat() { // NOSONAR
 		const bCache = Object.prototype.hasOwnProperty.call(fb.tfCache, arguments[0]);
 		const that = bCache ? fb.tfCache[arguments[0]] : old(...arguments);
 		that.Expression = arguments[0];
@@ -160,11 +180,10 @@ FbMetadbHandleList.partialSort = (handleList, orderHandleList) => { // 600 ms on
 		dic.set(id, prev);
 	});
 	const output = new Array(handleList.length);
-	handleList.forEach((handle, i) => {
+	handleList.forEach((handle) => {
 		const id = handle.RawPath + ',' + handle.SubSong;
 		const arrIdx = dic.get(id);
-		let idx = i;
-		idx = arrIdx.pop();
+		const idx = arrIdx.pop();
 		if (!arrIdx.length) {dic.delete(id);}
 		output[idx] = handle;
 	});
@@ -182,7 +201,7 @@ Object.defineProperty(fb, 'queryCache', {
 	value: {}
 });
 
-fb.GetQueryItemsCheck = (handleList = fb.GetLibraryItems(), query, bCache = false) => {
+fb.GetQueryItemsCheck = (handleList = fb.GetLibraryItems(), query = 'ALL', bCache = false) => {
 	let outputHandleList;
 	const id = handleList.Count + ' - ' + query;
 	bCache = bCache && fb.queryCache.hasOwnProperty(id); // eslint-disable-line no-prototype-builtins

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/12/23
+//19/12/23
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -53,7 +53,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _scale:readable, RGB:readable, _save:readable, imageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
+/* global _isFile:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
@@ -172,7 +172,7 @@ const worldMapImages = [
 /*
 	Map
 */
-const worldMap = new imageMap({
+const worldMap = new ImageMap({
 	imagePath:				worldMapImages.find((img) => img.bDefault).path,
 	properties:				getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes and bSplitTags
 	jsonId:					'album artist', // id and tag used to identify different entries
@@ -305,7 +305,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	imgAsync.layers.bCreated = false;
 	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
-		if (!Object.prototype.hasOwnProperty.call(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+		if (!Object.hasOwn(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
 		debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 	} else {
 		window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
@@ -399,7 +399,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				const grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				let scheme = null;
 				if (gradient) {
-					const top = Math.round(Math.log(Math.max.apply(Math, worldMap.lastPoint.map((p) => p.val))));
+					const top = Math.round(Math.log(Math.max(...worldMap.lastPoint.map((p) => p.val))));
 					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
 				}
 				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
@@ -804,7 +804,7 @@ addEventListener('on_notify_data', (name, info) => {
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
 	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
-		if (Object.prototype.hasOwnProperty.call(info, 'handle') && Object.prototype.hasOwnProperty.call(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
+		if (Object.hasOwn(info, 'handle') && Object.hasOwn(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
 			bioCache.handleRawPath = info.handle.RawPath;
 			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
@@ -815,7 +815,7 @@ addEventListener('on_notify_data', (name, info) => {
 				let locale = [];
 				if (isArray(info.tags)) { // Biography 1.1.3
 					locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
-				} else if (Object.prototype.hasOwnProperty.call(info.tags, tagName)) { // Biography 1.2.0
+				} else if (Object.hasOwn(info.tags, tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
 				const len = locale.length;
@@ -851,7 +851,7 @@ addEventListener('on_notify_data', (name, info) => {
 	}
 	// Follow WilB's Biography script selection mode
 	if (name === 'Biography notifySelectionProperty') { // Biography 1.1.3
-		if (Object.prototype.hasOwnProperty.call(info, 'property') && Object.prototype.hasOwnProperty.call(info, 'val')) {
+		if (Object.hasOwn(info, 'property') && Object.hasOwn(info, 'val')) {
 			// When ppt.focus is true, then selmode is selMode[0]
 			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 				worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
@@ -864,7 +864,7 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 	}// Follow WilB's Biography script selection mode
 	if (name === 'biographyTags') { // Biography 1.2.0
-		if (Object.prototype.hasOwnProperty.call(info, 'selectionMode')) {
+		if (Object.hasOwn(info, 'selectionMode')) {
 			let bDone = false;
 			switch (info.selectionMode) {
 				case 'Prefer nowplaying': {

@@ -1,7 +1,7 @@
 ﻿'use strict';
 //12/12/23
 
-/* exported imageMap */
+/* exported ImageMap */
 
 /*
 	Helper to create arbitrary map objects. Defaults to world map if no properties or argument is given.
@@ -26,7 +26,7 @@ include('..\\..\\helpers\\helpers_xxx_UI.js');
 /* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
 
 // Map object
-function imageMap({
+function ImageMap({
 	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
 	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, isNearPointFunc = null, tooltipFindPointFunc = null,
 	jsonPath = '', jsonId = '',
@@ -63,7 +63,7 @@ function imageMap({
 	};
 	this.paint = ({gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false, bClearCachedValues = false}) => { // on_paint
 		this.paintBg(gr);
-		var toPaintArr = [];
+		const toPaintArr = [];
 		// When moving mouse, retrieve last points
 		if (this.idSelected.length) {
 			this.lastPoint.forEach( (point) => {
@@ -197,7 +197,7 @@ function imageMap({
 		} else { // Scale window
 			this.scale = Math.min(this.scaleW, this.scaleH);
 		}
-		this.posX = 0, this.posY = 0;
+		this.posX = 0; this.posY = 0;
 		if (this.scaleW < this.scaleH) {
 			this.posY = (wh - this.imageMap.Height * this.scale) / 2;
 		}
@@ -216,7 +216,7 @@ function imageMap({
 		});
 	};
 	this.findTag = (sel, byKey = '') => {
-		var mapTagValue = '';
+		let mapTagValue = '';
 		if (sel) {
 			// Get from tags
 			const tfo = (this.mapTag.indexOf('$') === -1) ? _bt(this.mapTag) : _b(this.mapTag); // It's a function?
@@ -243,7 +243,7 @@ function imageMap({
 	this.findCoordinates = ({id, mapWidth, mapHeight, factorX, factorY}) => {fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1];}; // Must be overwritten
 	// eslint-disable-next-line no-unused-vars
 	this.findPointFunc = ({x, y, mapWidth, mapHeight, factorX, factorY}) => {return [];}; // [{key, simil}] Could be overwritten
-	this.isNearPointFunc = null; /* ({id, x, y,precision}) => {return false;}; // Boolean Could be overwritten */
+	this.isNearPointFunc = null; /* ({id, x, y,precision}) => {return false;}; // Boolean Could be overwritten */ // NOSONAR
 	this.matchId = (id) => {
 		return (Object.prototype.hasOwnProperty.call(this.point, id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
 	};

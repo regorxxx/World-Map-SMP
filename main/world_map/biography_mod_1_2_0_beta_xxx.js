@@ -1,7 +1,7 @@
 ﻿'use strict';
-//23/02/22
+//18/12/23
 
-/* 
+/*
 	Biography Mod v 1.2.0 Beta
 	-----------------------------------
 	Redefines some methods found on WilB's Biography Script to enable integration with other panels.
@@ -15,13 +15,15 @@ function onNotifyData(name, info) {
 	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
 	switch (name) {
 		case 'bio_focusPpt':
-			if (ppt.focus !== info) { // Mimics setsDisplay()
-				console.log('focus');
+			/* eslint-disable no-undef */
+			// Mimics setsDisplay()
+			if (ppt.focus !== info) {
 				ppt.toggle('focus');
 				panel.changed();
 				txt.on_playback_new_track();
 				img.on_playback_new_track();
 			}
+			/* eslint-enable no-undef */
 			break;
 	}
 }
@@ -30,5 +32,5 @@ if (typeof on_notify_data !== 'undefined') {
 	on_notify_data = function(name, info) {
 		oldFunc(name, info);
 		onNotifyData(name, info);
-	}
-} else {var on_notify_data = onNotifyData;}
+	};
+} else {var on_notify_data = onNotifyData;} // eslint-disable-line no-redeclare
