@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) {window.DefineScript('World Map', {author:'regorxxx', version: '3.9.0', features: {drag_n_drop: false}});}
+if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.9.0', features: { drag_n_drop: false } }); }
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globSettings:readable, globSettings:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
 /* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable */
@@ -76,76 +76,76 @@ checkCompatible('1.6.1', 'smp');
 /*
 	Properties
 */
-const selMode = ['Follow selected track(s) (playlist)','Prefer now playing'];
+const selMode = ['Follow selected track(s) (playlist)', 'Prefer now playing'];
 const modifiers = [ // Easily expandable. Used at helpers and menu too
-	{mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' },
-	{mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'STYLE'},
-	{mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE'}
+	{ mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' },
+	{ mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'STYLE' },
+	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE' }
 ];
 const worldMap_properties = {
-	mapTag				: 	['Tag name or TF expression to read artist\'s country', '$meta(LOCALE LAST.FM,$sub($meta_num(LOCALE LAST.FM),1))', {func: isString}, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
-	imageMapPath		: 	['Path to your own world map (mercator projection)', '', {func: isStringWeak}, ''],
-	imageMapAlpha		:	['Map image transparency', 217, {func: isInt, range: [[0, 255]]}, 217],
-	iWriteTags			:	['When used along Biography script, tags may be written to files (if not present)', 0, {func: isInt, range: [[0, 2]]}, 0],
-	writeToTag			:	['Tag name to write artist\'s country', 'Locale Last.fm', {func: isString}, 'LOCALE LAST.FM'],
-	selection			:	['Follow selection or playback? (must match Biography script!)', selMode[0], {eq: selMode}, selMode[0]],
-	bEnabled			:	['Enable panel', true, {func: isBoolean}, true],
-	bEnabledBiography	:	['Enable WilB\'s Biography script integration', false, {func: isBoolean}, false],
-	forcedQuery			:	['Global forced query', globQuery.filter, {func: (query) => {return checkQuery(query, true);}}, globQuery.filter],
-	fileName			:	['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
-	firstPopup			:	['World Map: Fired once', false, {func: isBoolean}, false],
-	tagFilter			:	['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', {func: isStringWeak}, 'Instrumental'],
-	iLimitSelection		:	['Repaint panel only if selecting less than...', 500, {func: isInt, range: [[2, 25000]]}, 5],
-	factorX				:	['Percentage applied to X coordinates', 100, {func: isInt, range: [[50, 200]]}, 100],
-	factorY				:	['Percentage applied to Y coordinates',137, {func: isInt, range: [[50, 200]]}, 137],
-	bInstalledBiography	:	['Is installed biography mod?', false, {func: isBoolean}, false],
-	customPointSize		:	['Custom point size for the panel', 16, {func: isInt}, 16],
-	customPointColorMode:	['Custom point color mode', 0, {func: isInt, range: [[0, 1]]}, 0],
-	customPointColor	:	['Custom point color for the panel', 0xFF00FFFF, {func: isInt}, 0xFF00FFFF],
-	bPointFill			:	['Draw a point or a circular corona?', false, {func: isBoolean}, false],
-	customLocaleColor	:	['Custom text color', 0xFF000000, {func: isInt}, 0xFF000000],
-	bShowLocale			:	['Show current locale tag', true, {func: isBoolean}, true],
-	fontSize			:	['Size of header text', globFonts.standardSmall.size, {func: isInt}, globFonts.standardSmall.size],
-	panelMode			:	['Selection (0), library (1), stats (2), gradient (3)', 0, {func: isInt, range: [[0, 3]]}, 0],
-	fileNameLibrary		:	['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
-	bShowFlag			:	['Show flag on header', true, {func: isBoolean}, true],
-	pointMode			:	['Points (0), shapes (1) or both (2)', 2, {func: isInt, range: [[0, 2]]}, 2],
-	bShowSelModePopup	:	['Show warning when selection mode changes', true, {func: isBoolean}, true],
-	iRepaintDelay		:	['Panel repaint delay (ms)', 1000, {func: isInt}, 1000],
-	statsConfig			:	['Stats mode configuration', JSON.stringify({
+	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(LOCALE LAST.FM,$sub($meta_num(LOCALE LAST.FM),1))', { func: isString }, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
+	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
+	imageMapAlpha: ['Map image transparency', 217, { func: isInt, range: [[0, 255]] }, 217],
+	iWriteTags: ['When used along Biography script, tags may be written to files (if not present)', 0, { func: isInt, range: [[0, 2]] }, 0],
+	writeToTag: ['Tag name to write artist\'s country', 'Locale Last.fm', { func: isString }, 'LOCALE LAST.FM'],
+	selection: ['Follow selection or playback? (must match Biography script!)', selMode[0], { eq: selMode }, selMode[0]],
+	bEnabled: ['Enable panel', true, { func: isBoolean }, true],
+	bEnabledBiography: ['Enable WilB\'s Biography script integration', false, { func: isBoolean }, false],
+	forcedQuery: ['Global forced query', globQuery.filter, { func: (query) => { return checkQuery(query, true); } }, globQuery.filter],
+	fileName: ['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
+	firstPopup: ['World Map: Fired once', false, { func: isBoolean }, false],
+	tagFilter: ['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', { func: isStringWeak }, 'Instrumental'],
+	iLimitSelection: ['Repaint panel only if selecting less than...', 500, { func: isInt, range: [[2, 25000]] }, 5],
+	factorX: ['Percentage applied to X coordinates', 100, { func: isInt, range: [[50, 200]] }, 100],
+	factorY: ['Percentage applied to Y coordinates', 137, { func: isInt, range: [[50, 200]] }, 137],
+	bInstalledBiography: ['Is installed biography mod?', false, { func: isBoolean }, false],
+	customPointSize: ['Custom point size for the panel', 16, { func: isInt }, 16],
+	customPointColorMode: ['Custom point color mode', 0, { func: isInt, range: [[0, 1]] }, 0],
+	customPointColor: ['Custom point color for the panel', 0xFF00FFFF, { func: isInt }, 0xFF00FFFF],
+	bPointFill: ['Draw a point or a circular corona?', false, { func: isBoolean }, false],
+	customLocaleColor: ['Custom text color', 0xFF000000, { func: isInt }, 0xFF000000],
+	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
+	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isInt }, globFonts.standardSmall.size],
+	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
+	fileNameLibrary: ['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
+	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
+	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
+	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
+	iRepaintDelay: ['Panel repaint delay (ms)', 1000, { func: isInt }, 1000],
+	statsConfig: ['Stats mode configuration', JSON.stringify({
 		// graph: {/* type, borderWidth, point */},
 		// dataManipulation = {/* sort, filter, slice, distribution , probabilityPlot*/},
-		background: {color: null},
-		margin: {left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15)},
+		background: { color: null },
+		margin: { left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15) },
 		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
 		// axis = {x: {/* show, color, width, ticks, labels, key *, singleLabels/}, y: {/* ... */}}
 	})],
-	bSplitTags			:	['Allow multi-locale tags split by \'|\'?', false, {func: isBoolean}, false],
-	bAutoUpdateCheck	:	['Automatically check updates?', globSettings.bAutoUpdateCheck, {func: isBoolean}, globSettings.bAutoUpdateCheck],
-	bShowHeader			:	['Show header', true, {func: isBoolean}, true],
-	customShapeColor	:	['Custom country layer color', RGB(0, 53, 89), {func: isInt}, RGB(0, 53, 89)],
-	customShapeAlpha	:	['Country layer transparency', 191, {func: isInt, range: [[0, 255]]}, 191],
-	bProfile			:	['Enable profiler', false, {func: isBoolean}, false],
-	customGradientColor	:	['Custom country layer gradient color', '', {func: isStringWeak}, ''],
-	bLowMemMode			:	['Low memory mode', true, {func: isBoolean}, true],
-	layerFillMode		:	['Country layer fill mode', '', {func: isStringWeak}, ''],
-	background:	['Background options', JSON.stringify(deepAssign()(
+	bSplitTags: ['Allow multi-locale tags split by \'|\'?', false, { func: isBoolean }, false],
+	bAutoUpdateCheck: ['Automatically check updates?', globSettings.bAutoUpdateCheck, { func: isBoolean }, globSettings.bAutoUpdateCheck],
+	bShowHeader: ['Show header', true, { func: isBoolean }, true],
+	customShapeColor: ['Custom country layer color', RGB(0, 53, 89), { func: isInt }, RGB(0, 53, 89)],
+	customShapeAlpha: ['Country layer transparency', 191, { func: isInt, range: [[0, 255]] }, 191],
+	bProfile: ['Enable profiler', false, { func: isBoolean }, false],
+	customGradientColor: ['Custom country layer gradient color', '', { func: isStringWeak }, ''],
+	bLowMemMode: ['Low memory mode', true, { func: isBoolean }, true],
+	layerFillMode: ['Country layer fill mode', '', { func: isStringWeak }, ''],
+	background: ['Background options', JSON.stringify(deepAssign()(
 		(new _background).defaults(),
-		{colorMode: 'gradient', colorModeOptions: {color: [RGB(270,270,270), RGB(300,300,300)]}, coverMode: 'front'}
+		{ colorMode: 'gradient', colorModeOptions: { color: [RGB(270, 270, 270), RGB(300, 300, 300)] }, coverMode: 'front' }
 	))],
 };
-modifiers.forEach( (mod) => {worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, {func: isStringWeak}, mod.val];});
-worldMap_properties['fileName'].push({portable: true}, worldMap_properties['fileName'][1]);
-worldMap_properties['fileNameLibrary'].push({portable: true}, worldMap_properties['fileNameLibrary'][1]);
-worldMap_properties['statsConfig'].push({func: isJSON}, worldMap_properties['statsConfig'][1]);
-worldMap_properties['background'].push({func: isJSON}, worldMap_properties['background'][1]);
+modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
+worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
+worldMap_properties['fileNameLibrary'].push({ portable: true }, worldMap_properties['fileNameLibrary'][1]);
+worldMap_properties['statsConfig'].push({ func: isJSON }, worldMap_properties['statsConfig'][1]);
+worldMap_properties['background'].push({ func: isJSON }, worldMap_properties['background'][1]);
 setProperties(worldMap_properties, '', 0);
 
 const worldMapImages = [
-	{text: 'Full', path: 'MC_WorldMap.jpg', factorX: 100, factorY: 109},
-	{text: 'No Antarctica', path: 'MC_WorldMap_No_Ant.jpg', factorX: 100, factorY: 137},
-	{text: 'Shapes', path: 'MC_WorldMap_Shapes.png', factorX: 100, factorY: 109},
-	{text: 'Shapes No Antarctica', path: 'MC_WorldMap_Shapes_No_Ant.png', factorX: 100, factorY: 137, bDefault: true}
+	{ text: 'Full', path: 'MC_WorldMap.jpg', factorX: 100, factorY: 109 },
+	{ text: 'No Antarctica', path: 'MC_WorldMap_No_Ant.jpg', factorX: 100, factorY: 137 },
+	{ text: 'Shapes', path: 'MC_WorldMap_Shapes.png', factorX: 100, factorY: 109 },
+	{ text: 'Shapes No Antarctica', path: 'MC_WorldMap_Shapes_No_Ant.png', factorX: 100, factorY: 137, bDefault: true }
 ];
 // Build the image paths according to portable/low mem options and update current image
 {
@@ -159,13 +159,13 @@ const worldMapImages = [
 		) + 'images\\';
 		if ((prefix + img.path) === properties.imageMapPath[1]) {
 			let path;
-			if (bLowMemMode) {path = prefix + img.path;}
-			else {path = prefix + 'hires\\' + img.path;}
+			if (bLowMemMode) { path = prefix + img.path; }
+			else { path = prefix + 'hires\\' + img.path; }
 			properties.imageMapPath[1] = path;
 			overwriteProperties(properties);
 		}
-		if (bLowMemMode) {img.path = prefix + img.path;}
-		else {img.path = prefix + 'hires\\' + img.path;}
+		if (bLowMemMode) { img.path = prefix + img.path; }
+		else { img.path = prefix + 'hires\\' + img.path; }
 	});
 }
 
@@ -173,18 +173,18 @@ const worldMapImages = [
 	Map
 */
 const worldMap = new ImageMap({
-	imagePath:				worldMapImages.find((img) => img.bDefault).path,
-	properties:				getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes and bSplitTags
-	jsonId:					'album artist', // id and tag used to identify different entries
-	findCoordinatesFunc:	findCountryCoords, // Function at helpers\world_map_tables.js
-	findPointFunc:			findCountry, // Function at helpers\world_map_tables.js
-	isNearPointFunc:		isNearCountry, // Function at helpers\world_map_tables.js
-	selPointFunc:			selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
-	selFindPointFunc:		selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
-	tooltipFunc: 			tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
-	tooltipFindPointFunc: 	tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
-	font:					globFonts.standard.name,
-	bSkiptInit: 			true
+	imagePath: worldMapImages.find((img) => img.bDefault).path,
+	properties: getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes and bSplitTags
+	jsonId: 'album artist', // id and tag used to identify different entries
+	findCoordinatesFunc: findCountryCoords, // Function at helpers\world_map_tables.js
+	findPointFunc: findCountry, // Function at helpers\world_map_tables.js
+	isNearPointFunc: isNearCountry, // Function at helpers\world_map_tables.js
+	selPointFunc: selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
+	selFindPointFunc: selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
+	tooltipFunc: tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
+	tooltipFindPointFunc: tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
+	font: globFonts.standard.name,
+	bSkiptInit: true
 });
 
 // Replace save/load code to ensure artist is always the id
@@ -192,7 +192,7 @@ worldMap.save = (path = worldMap.jsonPath) => {
 	let data = clone(worldMap.jsonData);
 	if (worldMap.jsonId !== 'artist') {
 		data = data.map((obj) => {
-			return {artist: obj[worldMap.jsonId], val: obj.val};
+			return { artist: obj[worldMap.jsonId], val: obj.val };
 		});
 	}
 	_save(path, JSON.stringify(data, null, '\t'));
@@ -202,7 +202,7 @@ worldMap.loadData = (path = worldMap.jsonPath) => {
 	if (_isFile(path)) {
 		worldMap.jsonData = [];
 		let data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
-		if (!data) {return;}
+		if (!data) { return; }
 		if (worldMap.jsonId !== 'artist') {
 			const dic = new Map();
 			data = data.map((obj) => {
@@ -214,10 +214,10 @@ worldMap.loadData = (path = worldMap.jsonPath) => {
 					}
 					return nV;
 				});
-				return {[worldMap.jsonId]: obj.artist, val: obj.val};
+				return { [worldMap.jsonId]: obj.artist, val: obj.val };
 			});
 		}
-		data.forEach((item) => {worldMap.jsonData.push(item);});
+		data.forEach((item) => { worldMap.jsonData.push(item); });
 	}
 };
 
@@ -227,7 +227,7 @@ worldMap.init();
 // Additional config
 worldMap.pointSize = worldMap.properties.customPointSize[1];
 worldMap.pointLineSize = worldMap.pointSize * 2 + 5;
-if (worldMap.properties.customPointColorMode[1] === 1) {worldMap.defaultColor = worldMap.properties.customPointColor[1];}
+if (worldMap.properties.customPointColorMode[1] === 1) { worldMap.defaultColor = worldMap.properties.customPointColor[1]; }
 worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 worldMap.textColor = worldMap.properties.customLocaleColor[1];
 worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
@@ -238,7 +238,7 @@ worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
 const background = new _background({
 	...JSON.parse(worldMap.properties.background[1]),
 	callbacks: {
-		change: function(config, changeArgs, callbackArgs) {
+		change: function (config, changeArgs, callbackArgs) {
 			if (callbackArgs && callbackArgs.bSaveProperties) {
 				['x', 'y', 'w', 'h'].forEach((key) => delete config[key]);
 				worldMap.properties.background[1] = JSON.stringify(config);
@@ -255,21 +255,21 @@ if (!worldMap.properties['firstPopup'][1]) {
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	const readme = _open(readmePath, utf8);
-	if (readme.length) {fb.ShowPopupMessage(readme, window.Name);}
+	if (readme.length) { fb.ShowPopupMessage(readme, window.Name); }
 }
 
 // Update check
 if (worldMap.properties.bAutoUpdateCheck[1]) {
 	include('helpers\\helpers_xxx_web_update.js');
-	setTimeout(checkUpdate, 120000, {bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb});
+	setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 }
 
 // Additional check
-worldMap.properties['bEnabledBiography'].push({func: biographyCheck}, worldMap.properties['bInstalledBiography'][1]);
+worldMap.properties['bEnabledBiography'].push({ func: biographyCheck }, worldMap.properties['bInstalledBiography'][1]);
 overwriteProperties(worldMap.properties); // Updates panel
 
 // Library Mode
-if (!_isFile(worldMap.properties.fileNameLibrary[1])) {saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap);}
+if (!_isFile(worldMap.properties.fileNameLibrary[1])) { saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap); }
 const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, utf8) : null;
 
 { // Default database
@@ -291,10 +291,10 @@ const debouncedRepaint = {
 	'60': debounce(window.RepaintRect, 60, false, window),
 };
 function repaint(bPlayback = false, bInmediate = false, bForce = false) {
-	if (!worldMap.properties.bEnabled[1]) {return false;}
-	if (worldMap.properties.panelMode[1] >= 1 && !bForce) {return false;}
-	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return false;}
-	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) {return false;}
+	if (!worldMap.properties.bEnabled[1]) { return false; }
+	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
+	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return false; }
+	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) { return false; }
 	imgAsync.fullImg = null;
 	imgAsync.layers.imgs.length = 0;
 	imgAsync.layers.id.length = 0;
@@ -305,7 +305,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	imgAsync.layers.bCreated = false;
 	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
-		if (!Object.hasOwn(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
 		debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 	} else {
 		window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
@@ -315,7 +315,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
-	background.resize({w: window.Width, h: window.Height, bPaint: false});
+	background.resize({ w: window.Width, h: window.Height, bPaint: false });
 });
 
 addEventListener('on_colours_changed', () => {
@@ -324,13 +324,13 @@ addEventListener('on_colours_changed', () => {
 });
 
 const imgAsync = {
-	layers: {bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set()},
-	masks: {sel: null, std: null},
-	lowMemMode: {maxSize: 1000},
+	layers: { bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set() },
+	masks: { sel: null, std: null },
+	lowMemMode: { maxSize: 1000 },
 	fullImg: null
 };
 const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / worldMap.imageMap.Width, imgAsync.layers.h / worldMap.imageMap.Height)) => {
-	if (!mode || !mode.length) {return;}
+	if (!mode || !mode.length) { return; }
 	const flagSize = 64; const w = 40; const h = 30;
 	const flag = mode === 'flag'
 		? loadFlagImage(id)
@@ -352,8 +352,8 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 				.filter((color) => {
 					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
 				});
-			if (flagColors.length === 0) {flagColors.push(RGB(0, 0, 0));}
-			if (flagColors.length === 1) {flagColors.push(RGB(255, 255, 255));}
+			if (flagColors.length === 0) { flagColors.push(RGB(0, 0, 0)); }
+			if (flagColors.length === 1) { flagColors.push(RGB(255, 255, 255)); }
 			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
 			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
 			layerGr.FillGradRect(x, y, w, h, 0, flagColors[0], flagColors[1], 0.25);
@@ -368,8 +368,8 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 	}
 	subLayer.ReleaseGraphics(layerGr);
 };
-const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false} = {}) => {
-	const profile = bProfile ?  new FbProfiler('paintLayers') : null;
+const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false } = {}) => {
+	const profile = bProfile ? new FbProfiler('paintLayers') : null;
 	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
 	const idSel = worldMap.idSelected;
 	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
@@ -389,12 +389,12 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 		} else if (bStatsModes && imgAsync.layers.imgs.length) {
 			imgAsync.fullImg = gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h);
 		}
-		if (bProfile) {profile.Print('background');}
-		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) {repaint();}
+		if (bProfile) { profile.Print('background'); }
+		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) { repaint(); }
 		if (imgAsync.layers.imgs.length) {
 			const layerW = imgAsync.layers.w;
 			const layerH = imgAsync.layers.h;
-			if (bFullImg && !idSel && imgAsync.layers.bCreated) {return;}
+			if (bFullImg && !idSel && imgAsync.layers.bCreated) { return; }
 			if (bMask) {
 				const grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				let scheme = null;
@@ -408,7 +408,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
 				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
 				const layerFill = worldMap.properties.layerFillMode[1];
@@ -416,13 +416,13 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				for (const imgObj of imgAsync.layers.imgs) {
 					const id = imgAsync.layers.id[i++];
 					const bSel = idSel === id;
-					if (!bSel && bFullImg) {continue;}
+					if (!bSel && bFullImg) { continue; }
 					const img = imgObj.img;
 					if (grFullImg) {
 						let subLayer = imgAsync.masks.std.Clone(0, 0, layerW, layerH);
-						if (layerFill.length) {fillSubLayer(subLayer, id, layerFill);}
+						if (layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
 						if (gradient) {
-							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
 							const layerGr = subLayer.GetGraphics();
 							layerGr.FillSolidRect(0, 0, layerW, layerH, scheme[count]);
 							subLayer.ReleaseGraphics(layerGr);
@@ -431,9 +431,9 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 						grFullImg.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
 					} else {
 						let subLayer = imgAsync.masks[bSel && !gradient ? 'sel' : 'std'].Clone(0, 0, layerW, layerH);
-						if (!bSel && !gradient && layerFill.length) {fillSubLayer(subLayer, id, layerFill);}
+						if (!bSel && !gradient && layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
 						if (gradient) {
-							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => {return last.id === id;}).val));
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
 							const layerGr = subLayer.GetGraphics();
 							layerGr.FillSolidRect(0, 0, layerW, layerH, bSel ? invert(scheme[count]) : scheme[count]);
 							subLayer.ReleaseGraphics(layerGr);
@@ -441,15 +441,15 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 						subLayer.ApplyMask(img);
 						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH, 0, worldMap.properties.customShapeAlpha[1]);
 					}
-					if (bProfile) {profile.Print('Sub-layer');}
-					if (bSel && bFullImg) {break;}
+					if (bProfile) { profile.Print('Sub-layer'); }
+					if (bSel && bFullImg) { break; }
 				}
 				if (grFullImg) {
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
 					window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 				}
-				if (bProfile) {profile.Print('Layers');}
+				if (bProfile) { profile.Print('Layers'); }
 			} else {
 				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
@@ -457,14 +457,14 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
 				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg ? layerH :(worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
 				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
 				let i = 0;
 				for (const imgObj of imgAsync.layers.imgs) {
 					const id = imgAsync.layers.id[i++];
 					const bSel = idSel === id;
-					if (!bSel && bFullImg) {continue;}
+					if (!bSel && bFullImg) { continue; }
 					const img = imgObj.img;
 					if (grFullImg) {
 						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
@@ -484,10 +484,10 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, alpha);
 						}
 					}
-					if (bSel && bFullImg) {break;}
+					if (bSel && bFullImg) { break; }
 				}
 				if (grFullImg) {
-					if (worldMap.properties.bLowMemMode[1]) {imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic);}
+					if (worldMap.properties.bLowMemMode[1]) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
 					window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
@@ -508,15 +508,15 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					if (_isFile(file)) {
 						promises.push(new Promise((resolve) => {
 							setTimeout(() => {
-								if (imgAsync.layers.bStop) {resolve();}
-								if (imgAsync.layers.processedIso.has(iso)) {resolve();}
-								gdi.LoadImageAsyncV2(void(0), file).then((img) => {
+								if (imgAsync.layers.bStop) { resolve(); }
+								if (imgAsync.layers.processedIso.has(iso)) { resolve(); }
+								gdi.LoadImageAsyncV2(void (0), file).then((img) => {
 									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
 										if (worldMap.properties.bLowMemMode[1]) {
 											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
 											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
 										}
-										imgAsync.layers.imgs.push({img, iso});
+										imgAsync.layers.imgs.push({ img, iso });
 										imgAsync.layers.processedIso.add(iso);
 										imgAsync.layers.id.push(id);
 									}
@@ -539,7 +539,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					factorY: worldMap.factorY
 				});
 				if (xPos !== -1 && yPos !== -1) {
-					point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
+					point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
 				}
 			}
 			if (point) {
@@ -549,7 +549,7 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 	});
 	if (promises.length) {
 		Promise.all(promises).then(() => {
-			if (imgAsync.layers.bStop) {return;}
+			if (imgAsync.layers.bStop) { return; }
 			imgAsync.layers.bPaint = true;
 			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
 			imgAsync.layers.h = imgAsync.layers.imgs[0].img.Height;
@@ -566,39 +566,39 @@ const paintLayers = ({gr, color = worldMap.properties.customShapeColor[1], gradi
 					});
 				}
 			}
-			if (bProfile) {profile.Print('Retrieve img layers');}
+			if (bProfile) { profile.Print('Retrieve img layers'); }
 			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
 		});
-	} else if (bProfile) {profile.Print('End');}
+	} else if (bProfile) { profile.Print('End'); }
 };
 
 addEventListener('on_paint', (gr) => {
 	// extendGR(gr, {Repaint: true}); // helpers_xxx_prototypes_smp.js
 	background.paint(gr);
-	if (!worldMap.properties.bEnabled[1]) {worldMap.paintBg(gr); return;}
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (!worldMap.properties.bEnabled[1]) { worldMap.paintBg(gr); return; }
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (worldMap.properties.panelMode[1] === 1 || worldMap.properties.panelMode[1] === 3) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
-			if (!worldMap.idSelected.length) {worldMap.idSelected = 'ALL';}
+			if (!worldMap.idSelected.length) { worldMap.idSelected = 'ALL'; }
 			worldMap.lastPoint = libraryPoints;
 		}
-		worldMap.paint({gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1});
+		worldMap.paint({ gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 });
 		if (worldMap.properties.pointMode[1] >= 1) {
-			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
+			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199, 233, 192); // Green
 			const gradient = worldMap.properties.panelMode[1] === 3
 				? worldMap.properties.customGradientColor[1] || [Chroma(color).saturate(2).luminance(0.8).android(), Chroma(color).saturate(2).luminance(0.4).android()]
 				: null;
-			paintLayers({gr, color, gradient, bProfile: worldMap.properties.bProfile[1]});
+			paintLayers({ gr, color, gradient, bProfile: worldMap.properties.bProfile[1] });
 		}
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		sel = removeDuplicatesV2({handleList: sel, checkKeys:[worldMap.jsonId]});
-		if (sel.Count > worldMap.properties.iLimitSelection[1]) {sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1);}
+		sel = removeDuplicatesV2({ handleList: sel, checkKeys: [worldMap.jsonId] });
+		if (sel.Count > worldMap.properties.iLimitSelection[1]) { sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1); }
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
-		worldMap.paint({gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length)});
+		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length) });
 		if (sel.Count) {
-			if (bPressShift && !bPressWin && worldMap.foundPoints.length){
+			if (bPressShift && !bPressWin && worldMap.foundPoints.length) {
 				const id = formatCountry(worldMap.foundPoints[0].key || '');
 				let point = worldMap.point[id];
 				if (!point) {
@@ -610,15 +610,15 @@ addEventListener('on_paint', (gr) => {
 						factorY: worldMap.factorY
 					});
 					if (xPos !== -1 && yPos !== -1) {
-						point = {x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id};
+						point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
 					}
 				}
 				if (point) {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199,233,192); // Green
-				paintLayers({gr, color, bProfile: worldMap.properties.bProfile[1]});
+				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199, 233, 192); // Green
+				paintLayers({ gr, color, bProfile: worldMap.properties.bProfile[1] });
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
@@ -630,9 +630,9 @@ addEventListener('on_paint', (gr) => {
 			if (worldMap.properties.bShowLocale[1]) {
 				if (worldMap.lastPoint.length === 1) {
 					let id = worldMap.lastPoint[0].id;
-					if (getCountryISO(id) === id) {id = formatCountry(getCountryName(id));} // Tag has ISO codes instead of country names
+					if (getCountryISO(id) === id) { id = formatCountry(getCountryName(id)); } // Tag has ISO codes instead of country names
 					countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
-				} else if (worldMap.lastPoint.length > 1 ) {
+				} else if (worldMap.lastPoint.length > 1) {
 					countryName = 'Multiple countries...';
 				}
 			}
@@ -649,27 +649,27 @@ addEventListener('on_paint', (gr) => {
 				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height);
 				// Text
 				if (worldMap.properties.bShowLocale[1]) {
-					if (textW + flag.Width < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
-					else {gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
+					if (textW + flag.Width < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
+					else { gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
-				if (textW < w) {gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
-				else {gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER|DT_NOPREFIX);}
+				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
+				else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
 			}
 		}
 	}
-	if (window.debugPainting) {window.drawDebugRectAreas(gr);}
+	if (window.debugPainting) { window.drawDebugRectAreas(gr); }
 });
 
 addEventListener('on_playback_new_track', (metadb) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (background.coverMode.toLowerCase() !== 'none') {background.updateImageBg();}
-	if (!metadb) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (background.coverMode.toLowerCase() !== 'none') { background.updateImageBg(); }
+	if (!metadb) { return; }
 	repaint(true);
 });
 
 addEventListener('on_selection_changed', () => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
@@ -678,7 +678,7 @@ addEventListener('on_selection_changed', () => {
 });
 
 addEventListener('on_item_focus_change', () => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
@@ -687,7 +687,7 @@ addEventListener('on_item_focus_change', () => {
 });
 
 addEventListener('on_playlist_switch', () => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
@@ -695,9 +695,9 @@ addEventListener('on_playlist_switch', () => {
 });
 
 addEventListener('on_playback_stop', (reason) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (reason !== 2) { // Invoked by user or Starting another track
-		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) {background.updateImageBg();}
+		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
 	}
 	if (reason !== 2) { // Invoked by user or Starting another track
 		repaint();
@@ -711,19 +711,19 @@ addEventListener('on_playlists_changed', () => { // To show/hide loaded playlist
 });
 
 addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (playlistIndex === plman.ActivePlaylist && newCount === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
-		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) {return;}
+		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return; }
 		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
 		repaint();
 	}
 });
 
 addEventListener('on_metadb_changed', (handleList, fromHook) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (fromHook) {return;}
-	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (fromHook) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	sel.Sort();
 	const handleListClone = handleList.Clone();
@@ -732,7 +732,7 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	if (sel && sel.Count) {
 		const mapTag = worldMap.properties.mapTag[1].indexOf('$') === -1 && worldMap.properties.mapTag[1].indexOf('%') === -1 ? '%' + worldMap.properties.mapTag[1] + '%' : worldMap.properties.mapTag[1];
 		const tags = fb.TitleFormat('[' + mapTag + ']').EvalWithMetadbs(sel);
-		if (tags.some((value) => {return worldMap.getLastPoint().some((last) => {return last.val !== value;});})) {
+		if (tags.some((value) => { return worldMap.getLastPoint().some((last) => { return last.val !== value; }); })) {
 			repaint();
 		}
 	}
@@ -742,21 +742,21 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	Callbacks for move and click
 */
 addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable point menu without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		if (!sel || !sel.Count) {return;}
+		if (!sel || !sel.Count) { return; }
 	}
 	worldMap.btn_up(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
 });
 
 addEventListener('on_mouse_move', (x, y, mask) => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		if (!sel || !sel.Count) {return;}
+		if (!sel || !sel.Count) { return; }
 	}
 	const cache = {
 		foundPoint: worldMap.foundPoints.length ? worldMap.foundPoints[0] : null,
@@ -772,20 +772,20 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 });
 
 addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) {window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 });
 
 addEventListener('on_mouse_leave', () => {
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (!worldMap.properties.bEnabled[1]) {return;}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	worldMap.move(-1, -1);
 });
 
 addEventListener('on_mouse_rbtn_up', (x, y) => {
-	if (worldMap.properties.panelMode[1] === 2) {return true;}
+	if (worldMap.properties.panelMode[1] === 2) { return true; }
 	const menu = createMenu();
-	createBackgroundMenu.call(background, {menuName: 'Background...', subMenuFrom: 'UI'}, menu, {nameColors: true});
+	createBackgroundMenu.call(background, { menuName: 'Background...', subMenuFrom: 'UI' }, menu, { nameColors: true });
 	menu.btn_up(x, y);
 	return true; // Disable right button menu
 });
@@ -794,12 +794,12 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 	Callbacks for integration with other scripts
 */
 // When used along WilB's Biography script (on other panel), data may be fetched automatically
-const bioCache = {rawPath: null, subSong: null};
+const bioCache = { rawPath: null, subSong: null };
 addEventListener('on_notify_data', (name, info) => {
-	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') {return;}
-	if (worldMap.properties.panelMode[1] === 2) {return;}
-	if (!worldMap.properties.bEnabled[1]) {return;}
-	if (!worldMap.properties.bEnabledBiography[1]) {return;}
+	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') { return; }
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return; }
+	if (!worldMap.properties.bEnabledBiography[1]) { return; }
 	// WilB's Biography script has a limitation, it only works with 1 track at once...
 	// So when selecting more than 1 track, this only gets the focused/playing track's tag
 	// If both panels don't have the same selection mode, it will not work
@@ -814,7 +814,7 @@ addEventListener('on_notify_data', (name, info) => {
 			if (tagName.length) {
 				let locale = [];
 				if (isArray(info.tags)) { // Biography 1.1.3
-					locale = [...info.tags.find( (tag) => {return tag.name === 'locale';}).val]; // Find the tag with name === locale in the array of tags
+					locale = [...info.tags.find((tag) => { return tag.name === 'locale'; }).val]; // Find the tag with name === locale in the array of tags
 				} else if (Object.hasOwn(info.tags, tagName)) { // Biography 1.2.0
 					locale = [...info.tags[tagName]]; // or  object key
 				}
@@ -822,8 +822,8 @@ addEventListener('on_notify_data', (name, info) => {
 				if (len) {
 					// Replace country name with ISO standard name if it's a known variation
 					const country = (locale[len - 1] || '').toLowerCase();
-					if (nameReplacers.has(country)) {locale[len - 1] = formatCountry(nameReplacers.get(country));}
-					const jsonId =  fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
+					if (nameReplacers.has(country)) { locale[len - 1] = formatCountry(nameReplacers.get(country)); }
+					const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
 					if (jsonId.length) {
 						// Set tag on map for drawing if found
 						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
@@ -833,14 +833,14 @@ addEventListener('on_notify_data', (name, info) => {
 							}
 						}
 						// Update tags or json if needed (even if the handle was not within the selection)
-						if (worldMap.properties.iWriteTags[1] > 0){
+						if (worldMap.properties.iWriteTags[1] > 0) {
 							const tfo = _bt(tagName);
 							if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
 								if (worldMap.properties.iWriteTags[1] === 1) {
-									new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{[tagName]: locale}])); // Uses tagName var as key here
+									new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{ [tagName]: locale }])); // Uses tagName var as key here
 								} else if (worldMap.properties.iWriteTags[1] === 2) {
-									const newData = {[worldMap.jsonId]: jsonId, val: locale};
-									if (!worldMap.hasDataById(jsonId)) {worldMap.saveData(newData);} // use path at properties
+									const newData = { [worldMap.jsonId]: jsonId, val: locale };
+									if (!worldMap.hasDataById(jsonId)) { worldMap.saveData(newData); } // use path at properties
 								}
 							}
 						}
@@ -868,11 +868,11 @@ addEventListener('on_notify_data', (name, info) => {
 			let bDone = false;
 			switch (info.selectionMode) {
 				case 'Prefer nowplaying': {
-					if (worldMap.properties.selection[1] !== selMode[1]) {worldMap.properties['selection'][1] = selMode[1]; bDone = true;}
+					if (worldMap.properties.selection[1] !== selMode[1]) { worldMap.properties['selection'][1] = selMode[1]; bDone = true; }
 					break;
 				}
 				case 'Follow selected track (playlist)': {
-					if (worldMap.properties.selection[1] !== selMode[0]) {worldMap.properties['selection'][1] = selMode[0]; bDone = true;}
+					if (worldMap.properties.selection[1] !== selMode[0]) { worldMap.properties['selection'][1] = selMode[0]; bDone = true; }
 					break;
 				}
 			}
