@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/12/23
+//20/12/23
 
 /*
 	Biography Mod v 1.1.X
@@ -25,7 +25,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 		tags.push({name: 'album', val: tf_l.EvalWithMetadb(handles)});
 		const artist = tags[0].val.toUpperCase();
 		if (artist !== a_o) {
-			a_o = artist;
+			a_o = artist; // NOSONAR
 			if (p.tag[6].enabled || p.tag[7].enabled || p.tag[8].enabled && p.tag[8].enabled < 7) {
 				const lfmBio = p.cleanPth(p.pth.lfmBio, handles, 'tag') + artist.clean() + '.txt';
 				if (s.file(lfmBio)) {
@@ -70,4 +70,5 @@ if (typeof on_notify_data !== 'undefined') {
 		oldFunc(name, info);
 		onNotifyData(name, info);
 	};
-} else {var on_notify_data = onNotifyData;} // eslint-disable-line no-redeclare
+	// eslint-disable-next-line no-redeclare
+} else {var on_notify_data = onNotifyData;} // NOSONAR

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/12/23
+//20/12/23
 
 /*
 	Biography Mod v 1.2.0 Beta
@@ -13,7 +13,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 
 function onNotifyData(name, info) {
 	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
-	switch (name) {
+	switch (name) { // NOSONAR
 		case 'bio_focusPpt':
 			/* eslint-disable no-undef */
 			// Mimics setsDisplay()
@@ -33,4 +33,5 @@ if (typeof on_notify_data !== 'undefined') {
 		oldFunc(name, info);
 		onNotifyData(name, info);
 	};
-} else {var on_notify_data = onNotifyData;} // eslint-disable-line no-redeclare
+	// eslint-disable-next-line no-redeclare
+} else {var on_notify_data = onNotifyData;} // NOSONAR
