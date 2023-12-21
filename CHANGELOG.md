@@ -45,6 +45,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: optimized repainting to use less resources on statistics mode.
 - Code cleanup.
 ### Removed
 ### Fixed
