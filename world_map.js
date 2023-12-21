@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/23
+//21/12/23
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -575,8 +575,15 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 addEventListener('on_paint', (gr) => {
 	// extendGR(gr, {Repaint: true}); // helpers_xxx_prototypes_smp.js
 	background.paint(gr);
-	if (!worldMap.properties.bEnabled[1]) { worldMap.paintBg(gr); return; }
-	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) {
+		worldMap.paintBg(gr);
+		if (window.debugPainting) { window.drawDebugRectAreas(gr); }
+		return;
+	}
+	if (worldMap.properties.panelMode[1] === 2) {
+		if (window.debugPainting) { window.drawDebugRectAreas(gr); }
+		return;
+	}
 	if (worldMap.properties.panelMode[1] === 1 || worldMap.properties.panelMode[1] === 3) { // Display entire library
 		if (libraryPoints && libraryPoints.length) {
 			if (!worldMap.idSelected.length) { worldMap.idSelected = 'ALL'; }

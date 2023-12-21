@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/12/23
+//20/12/23
 
 /* exported ImageMap */
 
@@ -46,7 +46,7 @@ function ImageMap({
 	const debouncedRepaint = {};
 	this.repaint = (delay = this.delay) => {
 		if (delay > 0) {
-			if (!Object.prototype.hasOwnProperty.call(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
+			if (!Object.hasOwn(debouncedRepaint, delay)) {debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window);}
 			debouncedRepaint[delay](this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
 		} else {
 			window.RepaintRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
@@ -139,7 +139,7 @@ function ImageMap({
 			const id = toPaint.id;
 			if (id.length) {
 				// Is a new point? Calculate it
-				if (!this.bStaticCoord || !Object.prototype.hasOwnProperty.call(this.point, id)) {
+				if (!this.bStaticCoord || !Object.hasOwn(this.point, id)) {
 					let [xPos , yPos] = this.findCoordinates({
 						id,
 						mapWidth: this.imageMap.Width,
@@ -230,7 +230,7 @@ function ImageMap({
 				}
 			}
 			// Or external
-			if (byKey.length && Object.prototype.hasOwnProperty.call(this.tagValue, byKey)) {
+			if (byKey.length && Object.hasOwn(this.tagValue, byKey)) {
 				// Set by other script or forced by other panel
 				if (!mapTagValue.length || this.mapTag === 'External Script') {mapTagValue = this.tagValue[byKey];}
 				else if (mapTagValue.length) {this.setTag(mapTagValue, byKey);} // Cache for later use
@@ -245,7 +245,7 @@ function ImageMap({
 	this.findPointFunc = ({x, y, mapWidth, mapHeight, factorX, factorY}) => {return [];}; // [{key, simil}] Could be overwritten
 	this.isNearPointFunc = null; /* ({id, x, y,precision}) => {return false;}; // Boolean Could be overwritten */ // NOSONAR
 	this.matchId = (id) => {
-		return (Object.prototype.hasOwnProperty.call(this.point, id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
+		return (Object.hasOwn(this.point, id) ? id : Object.keys(this.point).find((key) => key.toLowerCase() === id.toLowerCase()));
 	};
 	// Selection
 	// eslint-disable-next-line no-unused-vars
@@ -498,19 +498,19 @@ function ImageMap({
 			}
 			// Or overwrite args if properties are not empty
 			if (Object.keys(this.properties).length) {
-				if (Object.prototype.hasOwnProperty.call(this.properties, 'imageMapPath') && this.properties['imageMapPath'][1].length) {
+				if (Object.hasOwn(this.properties, 'imageMapPath') && this.properties['imageMapPath'][1].length) {
 					this.imageMapPath = this.properties['imageMapPath'][1];
 				}
-				if (Object.prototype.hasOwnProperty.call(this.properties, 'mapTag') && this.properties['mapTag'][1].length) {
+				if (Object.hasOwn(this.properties, 'mapTag') && this.properties['mapTag'][1].length) {
 					this.mapTag = this.properties['mapTag'][1];
 				}
-				if (Object.prototype.hasOwnProperty.call(this.properties, 'fileName') && this.properties['fileName'][1].length) {
+				if (Object.hasOwn(this.properties, 'fileName') && this.properties['fileName'][1].length) {
 					this.jsonPath = this.properties['fileName'][1];
 				}
-				if (Object.prototype.hasOwnProperty.call(this.properties, 'factorX') && this.properties['factorX'][1] !== 100) {
+				if (Object.hasOwn(this.properties, 'factorX') && this.properties['factorX'][1] !== 100) {
 					this.factorX = this.properties['factorX'][1];
 				}
-				if (Object.prototype.hasOwnProperty.call(this.properties, 'factorY') && this.properties['factorY'][1] !== 100) {
+				if (Object.hasOwn(this.properties, 'factorY') && this.properties['factorY'][1] !== 100) {
 					this.factorY = this.properties['factorY'][1];
 				}
 			}
