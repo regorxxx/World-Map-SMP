@@ -46,6 +46,7 @@
 ### Added
 ### Changed
 - UI: optimized repainting to use less resources on statistics mode.
+- Helpers: updated helpers.
 - Code cleanup.
 ### Removed
 ### Fixed
