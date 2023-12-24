@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/12/23
+//24/12/23
 
 /* exported _mapStatistics */
 
@@ -90,7 +90,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					}
 				});
 				if (bCheck) {
-					menu.newCheckMenu(menuName, option.entryText, void (0), () => {
+					menu.newCheckMenuLast(() => {
 						const val = subKey
 							? Array.isArray(subKey)
 								? subKey.reduce((acc, curr) => acc[curr], this[key])
@@ -296,7 +296,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					return { isEq: null, key: this.dataManipulation.filter, value: null, newValue: filtGreat(val), entryText: val };
 				}).forEach(function (option, i) {
 					createMenuOption('dataManipulation', 'filter', subMenuGreat, false)(option);
-					menu.newCheckMenu(subMenuGreat, option.entryText, void (0), () => {
+					menu.newCheckMenuLast(() => {
 						const filter = this.dataManipulation.filter;
 						return !!(filter && filter({ y: options[i] + 1 }) && !filter({ y: options[i] })); // Just a hack to check the current value is the filter
 					});
@@ -305,7 +305,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					return { isEq: null, key: this.dataManipulation.filter, value: null, newValue: filtLow(val), entryText: val };
 				}).forEach(function (option, i) {
 					createMenuOption('dataManipulation', 'filter', subMenuLow, false)(option);
-					menu.newCheckMenu(subMenuLow, option.entryText, void (0), () => {
+					menu.newCheckMenuLast(() => {
 						const filter = this.dataManipulation.filter;
 						return !!(filter && filter({ y: options[i] + 1 }) && !filter({ y: options[i] })); // Just a hack to check the current value is the filter
 					});
