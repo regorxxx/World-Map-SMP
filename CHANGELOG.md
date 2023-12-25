@@ -44,6 +44,7 @@
 
 ## [Unreleased][]
 ### Added
+- Added integrity checks to global user settings files, found at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\[...].json'. In particular queries are now check to ensure they are valid and will throw a popup at init otherwise. Other settings are check to ensure they contain valid values too.
 ### Changed
 - UI: optimized repainting to use less resources on statistics mode.
 - Helpers: updated helpers.
