@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/12/23
+//27/12/23
 
 /* exported createMenu */
 
@@ -401,7 +401,9 @@ function createMenu() {
 			menu.newMenu('Background...', menuUI);
 			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
 			{
-				const getColorName = (val) => { return (val !== -1 ? ntc.name(Chroma(val).hex())[1] : '-none-'); }; // NOSONAR
+				const getColorName = (val) => {
+					return (val !== -1 ? (ntc.name(Chroma(val).hex())[1] || '').toString() || 'unknown' : '-none-');
+				};
 				const menuName = menu.newMenu('Colors...', menuUI);
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
