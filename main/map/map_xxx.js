@@ -1,15 +1,11 @@
 ﻿'use strict';
-//20/12/23
+//28/12/23
 
 /* exported ImageMap */
 
 /*
 	Helper to create arbitrary map objects. Defaults to world map if no properties or argument is given.
 	imageMap.findCoordinates must be specified using 'findCoordinatesFunc' if creating the map with any argument.
-	TODO:
-		- Create arbitrary map images using a graph or tag cloud?
-		- Allow multiple tags to paint multiple points
-			- Merge near enough locations into 'zones', to draw the points for multiple artists.
  */
 
 include('..\\..\\helpers\\helpers_xxx.js');
