@@ -7,7 +7,7 @@
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable */
+/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -675,7 +675,7 @@ function createMenu() {
 			const menuName = menu.newMenu('Tags...');
 			menu.newEntry({
 				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
-					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.Name, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))');
+					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.Name, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
 					if (input === null) { return; }
 					properties.mapTag[1] = input;
 					overwriteProperties(properties);
@@ -683,7 +683,7 @@ function createMenu() {
 			});
 			menu.newEntry({
 				menuName, entryText: 'Write country\'s data to...' + '\t' + _b(properties.writeToTag[1]), func: () => {
-					let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', window.Name, 'LOCALE LAST.FM');
+					let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', window.Name, globTags.locale);
 					if (input === null) { return; }
 					properties.writeToTag[1] = input;
 					overwriteProperties(properties);

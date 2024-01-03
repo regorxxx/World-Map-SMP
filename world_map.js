@@ -45,7 +45,7 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.9.0', features: { drag_n_drop: false } }); }
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globSettings:readable, globSettings:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable */
 include('helpers\\helpers_xxx_prototypes.js');
 /* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
 include('helpers\\helpers_xxx_properties.js');
@@ -83,11 +83,11 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE' }
 ];
 const worldMap_properties = {
-	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(LOCALE LAST.FM,$sub($meta_num(LOCALE LAST.FM),1))', { func: isString }, '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'],
+	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
 	imageMapAlpha: ['Map image transparency', 217, { func: isInt, range: [[0, 255]] }, 217],
 	iWriteTags: ['When used along Biography script, tags may be written to files (if not present)', 0, { func: isInt, range: [[0, 2]] }, 0],
-	writeToTag: ['Tag name to write artist\'s country', 'Locale Last.fm', { func: isString }, 'LOCALE LAST.FM'],
+	writeToTag: ['Tag name to write artist\'s country', globTags.locale, { func: isString }, globTags.locale],
 	selection: ['Follow selection or playback? (must match Biography script!)', selMode[0], { eq: selMode }, selMode[0]],
 	bEnabled: ['Enable panel', true, { func: isBoolean }, true],
 	bEnabledBiography: ['Enable WilB\'s Biography script integration', false, { func: isBoolean }, false],
@@ -118,7 +118,7 @@ const worldMap_properties = {
 		background: { color: null },
 		margin: { left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15) },
 		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
-		// axis = {x: {/* show, color, width, ticks, labels, key *, singleLabels/}, y: {/* ... */}}
+		// axis = {x: {/* show, color, width, ticks, labels, key, bSingleLabels */}, y: {/* ... */}}
 	})],
 	bSplitTags: ['Allow multi-locale tags split by \'|\'?', false, { func: isBoolean }, false],
 	bAutoUpdateCheck: ['Automatically check updates?', globSettings.bAutoUpdateCheck, { func: isBoolean }, globSettings.bAutoUpdateCheck],

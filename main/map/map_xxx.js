@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/12/23
+//03/01/24
 
 /* exported ImageMap */
 
@@ -9,7 +9,7 @@
  */
 
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global debounce:readable, folders:readable */
+/* global debounce:readable, folders:readable, globTags:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
 /* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
@@ -454,7 +454,7 @@ function ImageMap({
 				this.findCoordinates = findCountryCoords; // Default is country coordinates
 			}
 			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap.jpg'; // Default is world map
-			this.mapTag = '$meta(locale last.fm,$sub($meta_num(locale last.fm),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
+			this.mapTag = '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
 			bfuncSet = true;
 		} else {
 			// Or use arguments
