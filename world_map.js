@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/12/23
+//03/01/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
