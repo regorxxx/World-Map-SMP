@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/12/23
+//07/01/24
 
 /* exported selPoint, tooltip, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -11,7 +11,7 @@ include('..\\..\\helpers\\helpers_xxx_playlists.js');
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global query_combinations:readable, query_join:readable, checkQuery:readable, getTagsValuesV3:readable */
+/* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getTagsValuesV3:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, */
 
@@ -38,15 +38,15 @@ function selPoint(point, mask) {
 	worldMap.getData().forEach((item) => {
 		if (item.val[item.val.length - 1] === point.id) { jsonQuery.push(item[dataId]); }
 	});
-	if (jsonQuery.length) { query.push(query_combinations(jsonQuery, _t(dataIdTag), 'OR')); }
+	if (jsonQuery.length) { query.push(queryCombinations(jsonQuery, _t(dataIdTag), 'OR')); }
 	// What about current tracks (from selected point)? -> Always a match
 	const selPointData = worldMap.getLastPoint().find((last) => { return (last.id === point.id); }); // Has list of artist on every paint
 	if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 		const currentMatchData = [...selPointData.jsonId];
-		query.push(query_combinations(currentMatchData, dataIdTag, 'OR'));
+		query.push(queryCombinations(currentMatchData, dataIdTag, 'OR'));
 	}
 	// Merges all queries with OR
-	query = [query_join(query, 'OR')];
+	query = [queryJoin(query, 'OR')];
 	// Add query with keyboard modifiers
 	const currentModifier = modifiers.find((mod) => { return mod.mask === mask; });
 	if (currentModifier) { // When using ctrl + click, Shift, ...
@@ -70,13 +70,13 @@ function selPoint(point, mask) {
 								const tag_i = tagValues[i].filter((tag) => { return !tagFilter.has(tag); });
 								const tagId_i = tag_i.join(',');
 								if (tag_i.length && !valSet.has(tagId_i)) {
-									modifierQuery.push(query_combinations(tag_i, [modTag], 'AND'));
+									modifierQuery.push(queryCombinations(tag_i, [modTag], 'AND'));
 									valSet.add(tagId_i);
 								}
 							}
 						}
 					});
-					if (modifierQuery.length > 1) { modifierQuery = query_join(modifierQuery, 'AND'); }
+					if (modifierQuery.length > 1) { modifierQuery = queryJoin(modifierQuery, 'AND'); }
 					if (modifierQuery.length) { query.push(modifierQuery); }
 				}
 			}
@@ -86,7 +86,7 @@ function selPoint(point, mask) {
 	const forcedQuery = worldMap.properties.forcedQuery[1];
 	if (forcedQuery.length) { query.push(forcedQuery); }
 	// Merge all with AND
-	query = query_join(query, 'AND');
+	query = queryJoin(query, 'AND');
 	// Create autoplaylist
 	if (checkQuery(query)) {
 		console.log('World Map: playlist created ' + (query.length > 300 ? query.slice(0, 300) + '...' : query));

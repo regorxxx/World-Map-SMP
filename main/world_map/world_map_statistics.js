@@ -1,9 +1,9 @@
 ﻿'use strict';
-//24/12/23
+//07/01/24
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, query_combinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable , repaint:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable , repaint:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -389,20 +389,20 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			worldMap.getData().forEach((item) => {
 				if (item.val[item.val.length - 1] === countryName) { jsonQuery.push(item[dataId]); }
 			});
-			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(query_combinations(jsonQuery, dataIdTag, 'OR')); }
+			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(queryCombinations(jsonQuery, dataIdTag, 'OR')); }
 			return query;
 		};
 		const queryByRegion = (regionName) => {
 			let query = '';
 			const isoArr = music_graph_descriptors_countries.getNodesFromRegion(regionName);
 			const isoSet = new Set(isoArr);
-			query = _p(query_combinations(isoArr, queryNapTag, 'OR'));
+			query = _p(queryCombinations(isoArr, queryNapTag, 'OR'));
 			const jsonQuery = [];
 			worldMap.getData().forEach((item) => {
 				const dataIso = getCountryISO(item.val[item.val.length - 1]);
 				if (isoSet.has(dataIso)) { jsonQuery.push(item[dataId]); }
 			});
-			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(query_combinations(jsonQuery, dataIdTag, 'OR')); }
+			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(queryCombinations(jsonQuery, dataIdTag, 'OR')); }
 			return query;
 		};
 		let query = '';
