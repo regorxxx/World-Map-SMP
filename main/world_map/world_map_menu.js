@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/01/24
+//10/01/24
 
 /* exported createMenu */
 
@@ -11,7 +11,7 @@ include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global getTagsValuesV3:readable */
+/* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global sendToPlaylist:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
@@ -814,7 +814,7 @@ function createMenu() {
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
 						const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
-						const tag = getTagsValuesV3(handleList, [properties.writeToTag[1]], true); // locale
+						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
 						handleList.Convert().forEach((handle, i) => {
 							if (jsonId[i] && jsonId[i].length) {
 								if (tag[i] && tag[i].length && tag[i].filter(Boolean).length) { // Only merge if not empty
@@ -844,7 +844,7 @@ function createMenu() {
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
 						const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
-						const tag = getTagsValuesV3(handleList, [properties.writeToTag[1]], true); // locale
+						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
 						const newData = worldMap.getData();
 						if (newData && newData.length) {
 							handleList.Convert().forEach((handle, i) => {

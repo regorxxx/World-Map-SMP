@@ -11,7 +11,7 @@ include('..\\..\\helpers\\helpers_xxx_playlists.js');
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getTagsValuesV3:readable */
+/* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, */
 
@@ -54,7 +54,7 @@ function selPoint(point, mask) {
 		if (sel && sel.Count) {
 			if (selPointData.jsonId.size) { // Data is a set, so no duplicates
 				let selPoint = new FbMetadbHandleList();
-				const selJsonId = getTagsValuesV3(sel, [dataIdTag], true).filter(Boolean);
+				const selJsonId = getHandleListTags(sel, [dataIdTag], { bMerged: true }).filter(Boolean);
 				selJsonId.forEach((jsonId, index) => {
 					if (selPointData.jsonId.intersectionSize(new Set(jsonId))) { selPoint.Add(sel[index]); }
 				});
@@ -63,7 +63,7 @@ function selPoint(point, mask) {
 					let modifierQuery = [];
 					modifierTags.forEach((modTag) => {
 						const tagFilter = worldMap.properties.tagFilter[1].length ? new Set(worldMap.properties.tagFilter[1].split(',').concat('')) : null;
-						const tagValues = getTagsValuesV3(selPoint, [modTag], true).filter(Boolean);
+						const tagValues = getHandleListTags(selPoint, [modTag], { bMerged: true }).filter(Boolean);
 						let valSet = new Set(); // Don't add the same thing multiple times to the query, just for readability
 						if (tagValues.length) {
 							for (let i = 0; i < selPoint.Count; i++) {
