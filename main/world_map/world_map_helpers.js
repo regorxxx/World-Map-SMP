@@ -172,7 +172,7 @@ function tooltip(point) {
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(getCountryISO(point.id));
 	const continent = music_graph_descriptors_countries.getMainRegion(region);
 	let text = 'From: ' + point.id + ' (' + count + ')' + '\t - ' + region + ' ' + _p(continent) + ' - ';
-	text += '\n(L. Click to create Autoplaylist from same country)\n';
+	text += '\n(L. Click to create AutoPlaylist from same country)\n';
 	if (!worldMap.properties.panelMode[1]) {
 		modifiers.forEach((mod) => {
 			const tags = capitalizeAll(mod.val.split(',').filter(Boolean).join('/'), '/');
