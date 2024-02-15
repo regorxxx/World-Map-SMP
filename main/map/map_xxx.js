@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/01/24
+//15/02/24
 
 /* exported ImageMap */
 
@@ -9,7 +9,7 @@
  */
 
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global debounce:readable, folders:readable, globTags:readable */
+/* global debounce:readable, folders:readable, globTags:readable, globProfiler:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
 /* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
@@ -549,6 +549,7 @@ function ImageMap({
 		this.loadData();
 		this.clearPointCache();
 		this.colorsChanged();
+		globProfiler.Print('wordlmap.init');
 	};
 
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)

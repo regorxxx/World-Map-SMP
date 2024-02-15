@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/01/24
+//15/02/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -43,9 +43,10 @@
  */
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.9.0', features: { drag_n_drop: false } }); }
+
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globSettings:readable, globSettings:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable */
 include('helpers\\helpers_xxx_prototypes.js');
 /* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
 include('helpers\\helpers_xxx_properties.js');
@@ -71,6 +72,7 @@ include('main\\filter_and_query\\remove_duplicates.js');
 include('main\\window\\window_xxx_background.js');
 /* global _background:readable, createBackgroundMenu:readable */
 
+globProfiler.Print('helpers');
 checkCompatible('1.6.1', 'smp');
 
 /*
@@ -168,6 +170,8 @@ const worldMapImages = [
 		else { img.path = prefix + 'hires\\' + img.path; }
 	});
 }
+
+globProfiler.Print('init');
 
 /*
 	Map
@@ -312,6 +316,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	}
 	return true;
 }
+globProfiler.Print('settings');
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
@@ -895,3 +900,4 @@ addEventListener('on_notify_data', (name, info) => {
 });
 
 stats.attachCallbacks();
+globProfiler.Print('callbacks');
