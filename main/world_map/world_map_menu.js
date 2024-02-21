@@ -144,9 +144,9 @@ function createMenu() {
 					let foundArr = [];
 					// Biography 1.2.X
 					// There are 2 paths here: beta versions require some file changes, while the 1.2.0+ releases work as is
-					const modPackageTextV12 = '\ninclude(\'' + file1_2_0_beta + '\');';
 					let packageFile = '';
 					const file1_2_0_beta = 'biography_mod_1_2_0_beta_xxx.js';
+					const modPackageTextV12 = '\ninclude(\'' + file1_2_0_beta + '\');';
 					{
 						const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
 						let packagePath;

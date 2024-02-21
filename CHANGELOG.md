@@ -57,6 +57,7 @@
 - Code cleanup.
 ### Removed
 ### Fixed
+- Biography Integration: crash applying integration in some cases.
 - Minor fixes.
 
 ## [3.9.0] - 2023-12-17
