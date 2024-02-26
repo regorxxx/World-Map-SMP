@@ -874,7 +874,7 @@ addEventListener('on_notify_data', (name, info) => {
 				repaint();
 			}
 		}
-	}// Follow WilB's Biography script selection mode
+	} // Follow WilB's Biography script selection mode
 	if (name === 'biographyTags') { // Biography 1.2.0
 		if (Object.hasOwn(info, 'selectionMode')) {
 			let bDone = false;
