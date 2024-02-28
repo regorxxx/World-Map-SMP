@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.10.0](#3100---2024-02-28)
 - [3.9.0](#390---2023-12-17)
 - [3.8.0](#380---2023-12-11)
 - [3.7.0](#370---2023-12-08)
@@ -43,6 +44,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.10.0] - 2024-02-28
 ### Added
 - Configuration: added COMPOSER to the list of global tags.
 - Configuration: added LOCALE LAST.FM to the list of global tags.
@@ -505,7 +512,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.9.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.10.0...HEAD
+[3.10.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.8.0...v3.9.0
 [3.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...v3.8.0
 [3.7.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.6.0...v3.7.0
