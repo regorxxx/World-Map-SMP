@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/02/24
+//01/03/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -45,10 +45,12 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.10.0', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globSettings:readable, globSettings:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
 /* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable */
 include('helpers\\helpers_xxx_prototypes.js');
 /* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
+include('helpers\\helpers_xxx_prototypes_smp.js');
+/* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
 /* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable */
 include('helpers\\helpers_xxx_tags.js');
@@ -578,7 +580,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 };
 
 addEventListener('on_paint', (gr) => {
-	// extendGR(gr, {Repaint: true}); // helpers_xxx_prototypes_smp.js
+	if (globSettings.bDebugPaint) { extendGR(gr, { Repaint: true }); }
 	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {
 		worldMap.paintBg(gr);
