@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/01/24
+//04/03/24
 
 /* exported createMenu */
 
@@ -55,15 +55,46 @@ function createMenu() {
 				}
 			});
 			menu.newEntry({ menuName, entryText: 'sep' });
-			menu.newEntry({
-				menuName, entryText: 'Low memory mode', func: () => {
-					properties.bLowMemMode[1] = !properties.bLowMemMode[1];
-					overwriteProperties(properties);
-					fb.ShowPopupMessage('In low memory mode, country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, in big libraries SMP may crash in such modes while using country layers. As downside, it may affec quality in really high resolutions and big panel sizes.', window.Name);
-					window.Reload();
-				}
-			});
-			menu.newCheckMenuLast(() => properties.bLowMemMode[1]);
+			{
+				const subMenuName = menu.newMenu('Memory mode', menuName);
+				menu.newEntry({
+					menuName: subMenuName, entryText: 'High', func: () => {
+						if (properties.memMode[1] !== 0) {
+							properties.memMode[1] = 0;
+							if (properties.pointMode[1] < 1) { properties.pointMode[1] = 1; }
+							properties.iLimitSelection[1] = 500;
+							overwriteProperties(properties);
+							window.Reload();
+						}
+					}
+				});
+				menu.newEntry({
+					menuName: subMenuName, entryText: 'Normal', func: () => {
+						fb.ShowPopupMessage('Country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, in big libraries SMP may crash in such modes while using country layers. As downside, it may affec quality in really high resolutions and big panel sizes.', window.Name);
+						if (properties.memMode[1] !== 1) {
+							properties.memMode[1] = 1;
+							if (properties.pointMode[1] < 1) { properties.pointMode[1] = 1; }
+							properties.iLimitSelection[1] = 5;
+							overwriteProperties(properties);
+							window.Reload();
+						}
+					}
+				});
+				menu.newEntry({
+					menuName: subMenuName, entryText: 'Low', func: () => {
+						fb.ShowPopupMessage('Country layers are disabled and only points are used.\n\nThe background is set to only use colors, and all album art optons are disabled.', window.Name);
+						if (properties.memMode[1] !== 2) {
+							properties.memMode[1] = 2;
+							properties.pointMode[1] = 0;
+							properties.iLimitSelection[1] = 2;
+							background.changeConfig({ config: { coverMode: 'none', transparency: 100 }, callbackArgs: { bSaveProperties: true } });
+							overwriteProperties(properties);
+							window.Reload();
+						}
+					}
+				});
+				menu.newCheckMenuLast(() => properties.memMode[1], 3);
+			}
 			menu.newEntry({ menuName, entryText: 'sep' });
 			menu.newEntry({
 				menuName, entryText: 'Automatically check for updates', func: () => {
@@ -298,7 +329,7 @@ function createMenu() {
 			menu.newCheckMenuLast(() => { return options.indexOf(properties.selection[1]); }, options);
 			menu.newEntry({ menuName, entryText: 'sep' });
 			menu.newEntry({
-				menuName, entryText: properties.iLimitSelection[0], func: () => {
+				menuName, entryText: properties.iLimitSelection[0] + '\t' + _b(properties.iLimitSelection[1]), func: () => {
 					let input;
 					try { input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true)); }
 					catch (e) { return; }
@@ -664,7 +695,8 @@ function createMenu() {
 							properties.pointMode[1] = i;
 							repaint(void (0), true);
 							overwriteProperties(properties);
-						}
+						},
+						flags: properties.memMode[1] >= 2 ? MF_GRAYED : MF_STRING
 					});
 				});
 				menu.newCheckMenuLast(() => { return properties.pointMode[1]; }, options);

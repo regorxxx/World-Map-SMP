@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.11.0](#3110---2024-03-04)
 - [3.10.0](#3100---2024-02-28)
 - [3.9.0](#390---2023-12-17)
 - [3.8.0](#380---2023-12-11)
@@ -45,8 +46,15 @@
 
 ## [Unreleased][]
 ### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.11.0] - 2024-03-04
+### Added
 - Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting for panel repaint debugging purpose. Disabled by default.
 ### Changed
+- UI: low memory mode is now integrated into a new 'Memory mode' submenu which contains multiple settings to further fine-tune RAM usage by the panel.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
@@ -514,7 +522,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.10.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.11.0...HEAD
+[3.11.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.10.0...v3.11.0
 [3.10.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.9.0...v3.10.0
 [3.9.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.8.0...v3.9.0
 [3.8.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.7.0...v3.8.0

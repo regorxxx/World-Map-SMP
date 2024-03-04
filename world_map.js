@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/03/24
+//04/03/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -46,7 +46,7 @@ if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: '
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable , MF_GRAYED:readable */
 include('helpers\\helpers_xxx_prototypes.js');
 /* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
 include('helpers\\helpers_xxx_prototypes_smp.js');
@@ -99,7 +99,7 @@ const worldMap_properties = {
 	fileName: ['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
 	firstPopup: ['World Map: Fired once', false, { func: isBoolean }, false],
 	tagFilter: ['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', { func: isStringWeak }, 'Instrumental'],
-	iLimitSelection: ['Repaint panel only if selecting less than...', 500, { func: isInt, range: [[2, 25000]] }, 5],
+	iLimitSelection: ['Repaint panel only if selecting less than...', 5, { func: isInt, range: [[2, 25000]] }, 5],
 	factorX: ['Percentage applied to X coordinates', 100, { func: isInt, range: [[50, 200]] }, 100],
 	factorY: ['Percentage applied to Y coordinates', 137, { func: isInt, range: [[50, 200]] }, 137],
 	bInstalledBiography: ['Is installed biography mod?', false, { func: isBoolean }, false],
@@ -131,7 +131,7 @@ const worldMap_properties = {
 	customShapeAlpha: ['Country layer transparency', 191, { func: isInt, range: [[0, 255]] }, 191],
 	bProfile: ['Enable profiler', false, { func: isBoolean }, false],
 	customGradientColor: ['Custom country layer gradient color', '', { func: isStringWeak }, ''],
-	bLowMemMode: ['Low memory mode', true, { func: isBoolean }, true],
+	memMode: ['Memory mode. High (0), normal (1), low (2)', 1, { func: isInt, range: [[0, 2]] }, 1],
 	layerFillMode: ['Country layer fill mode', '', { func: isStringWeak }, ''],
 	background: ['Background options', JSON.stringify(deepAssign()(
 		(new _background).defaults(),
@@ -155,7 +155,7 @@ const worldMapImages = [
 {
 	const properties = getPropertiesPairs(worldMap_properties, '', 0);
 	const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
-	const bLowMemMode = properties.bLowMemMode[1];
+	const bLowMemMode = properties.memMode[1] > 0;
 	worldMapImages.forEach((img) => {
 		const prefix = (bPortable
 			? folders.xxx.replace(fb.ProfilePath, '.\\profile\\')
@@ -379,13 +379,14 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 	const profile = bProfile ? new FbProfiler('paintLayers') : null;
 	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
 	const idSel = worldMap.idSelected;
+	const bLowMemMode = worldMap.properties.memMode[1] > 0;
 	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
 		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
 		const bFullImg = bStatsModes && imgAsync.fullImg;
 		if (bFullImg) {
-			const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-			const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-			const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
+			const offsetX = bLowMemMode ? 50 : 100;
+			const offsetY = bLowMemMode ? 50 : 100;
+			const offsetYAntarc = bLowMemMode ? 310 : 620;
 			const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
@@ -411,9 +412,9 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 				}
 				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
 				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
+				const offsetX = bLowMemMode ? 50 : 100;
+				const offsetY = bLowMemMode ? 50 : 100;
+				const offsetYAntarc = bLowMemMode ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
@@ -460,9 +461,9 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 			} else {
 				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
 				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-				const offsetY = worldMap.properties.bLowMemMode[1] ? 50 : 100;
-				const offsetYAntarc = worldMap.properties.bLowMemMode[1] ? 310 : 620;
+				const offsetX = bLowMemMode ? 50 : 100;
+				const offsetY = bLowMemMode ? 50 : 100;
+				const offsetYAntarc = bLowMemMode ? 310 : 620;
 				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
 				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
 				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
@@ -494,7 +495,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					if (bSel && bFullImg) { break; }
 				}
 				if (grFullImg) {
-					if (worldMap.properties.bLowMemMode[1]) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
+					if (bLowMemMode) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
 					window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
@@ -519,7 +520,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 								if (imgAsync.layers.processedIso.has(iso)) { resolve(); }
 								gdi.LoadImageAsyncV2(void (0), file).then((img) => {
 									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
-										if (worldMap.properties.bLowMemMode[1]) {
+										if (bLowMemMode) {
 											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
 											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
 										}
@@ -799,7 +800,21 @@ addEventListener('on_mouse_leave', () => {
 addEventListener('on_mouse_rbtn_up', (x, y) => {
 	if (worldMap.properties.panelMode[1] === 2) { return true; }
 	const menu = createMenu();
-	createBackgroundMenu.call(background, { menuName: 'Background...', subMenuFrom: 'UI' }, menu, { nameColors: true });
+	createBackgroundMenu.call(
+		background,
+		{ menuName: 'Background...', subMenuFrom: 'UI' },
+		menu,
+		{
+			nameColors: true,
+			onInit: (menu) => {
+				if (worldMap.properties.memMode[1] >= 2) {
+					const menuEntry = menu.getEntries()
+						.find((entry) => entry.menuName.startsWith('Cover mode') && entry.subMenuFrom.startsWith('Background'));
+					if (menuEntry) { menuEntry.flags = MF_GRAYED; }
+				}
+			}
+		}
+	);
 	menu.btn_up(x, y);
 	return true; // Disable right button menu
 });
