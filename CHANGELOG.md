@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.13.0](#3130---2024-03-21)
 - [3.12.0](#3120---2024-03-15)
 - [3.11.0](#3110---2024-03-04)
 - [3.10.0](#3100---2024-02-28)
@@ -48,6 +49,13 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [3.13.0] - 2024-03-21
+### Added
+### Changed
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
@@ -532,7 +540,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.12.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.13.0...HEAD
+[3.13.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.11.0...v3.12.0
 [3.11.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.10.0...v3.11.0
 [3.10.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.9.0...v3.10.0
