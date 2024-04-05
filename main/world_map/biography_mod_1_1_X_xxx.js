@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/12/23
+//21/03/24
 
 /*
 	Biography Mod v 1.1.X
@@ -37,7 +37,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 							ix = lfm_a.lastIndexOf(loc);
 							if (ix !== -1) {
 								locale = lfm_a.substring(ix + loc.length);
-								locale = locale.split('\n')[0].trim().split(', ');
+								locale = locale.split(/\r\n|\n\r|\n|\r/)[0].trim().split(', ');
 							}
 						}
 					}

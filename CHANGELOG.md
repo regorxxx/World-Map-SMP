@@ -49,6 +49,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Helpers: json data files are now saved with Windows EOL for compatibility improvements with Windows text editors.
 ### Removed
 ### Fixed
 

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/03/24
+//05/04/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -201,7 +201,7 @@ worldMap.save = (path = worldMap.jsonPath) => {
 			return { artist: obj[worldMap.jsonId], val: obj.val };
 		});
 	}
-	_save(path, JSON.stringify(data, null, '\t'));
+	_save(path, JSON.stringify(data, null, '\t').replace(/\n/g,'\r\n'));
 };
 
 worldMap.loadData = (path = worldMap.jsonPath) => {

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/01/24
+//05/04/24
 
 /* exported selPoint, tooltip, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -231,6 +231,6 @@ function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
 function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.properties.fileNameLibrary[1], jsonId = worldMap.jsonId, dataObj = worldMap
 	const libraryTags = getLibraryTags(jsonId, dataObj);
 	if (libraryTags && libraryTags.length) {
-		_save(dataPath, JSON.stringify(libraryTags, null, '\t'));
+		_save(dataPath, JSON.stringify(libraryTags, null, '\t').replace(/\n/g,'\r\n'));
 	}
 }
