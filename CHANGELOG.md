@@ -50,6 +50,7 @@
 ### Added
 ### Changed
 - Helpers: json data files are now saved with Windows EOL for compatibility improvements with Windows text editors.
+- Configuration: expanded user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json' with a new setting for console logging to file. Disabled by default. Now this is a change from the previous behavior, where console was always logged to 'console.log' file at the [FOOBAR PROFILE FOLDER]. It can now be switched, but since it's probably not useful for most users is disabled by default.
 ### Removed
 ### Fixed
 
