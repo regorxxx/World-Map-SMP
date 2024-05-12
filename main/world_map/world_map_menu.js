@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/03/24
+//07/05/24
 
 /* exported createMenu */
 
@@ -268,7 +268,7 @@ function createMenu() {
 								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return; }
 							}
 						} else { // Biography 1.2.0 Beta 1 & 2
-							if (!properties.bInstalledBiography[1]) {
+							if (!properties.bInstalledBiography[1]) { // NOSONAR
 								if (!_isFile(file + backupExt)) {
 									bDone = _copyFile(file, file + backupExt);
 								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return; }
@@ -941,7 +941,9 @@ function syncBio(bReload = false) {
 	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties.selection[1] === selMode[0]); // synchronize selection property
 	// Biograpy 1.2.X
 	window.NotifyOthers('bio_focusPpt', properties.selection[1] === selMode[0]);  // synchronize selection property 1.2.0 Beta
-	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0]);  // synchronize selection property 1.2.X
+	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0]);  // synchronize selection property
+	window.NotifyOthers('bio_newCfg', {notifyTags_internal: true}); // notify tags
+	// Biograpy 2.X.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
@@ -951,5 +953,4 @@ function syncBio(bReload = false) {
 			if (bReload) { window.NotifyOthers('bio_refresh', null); }  // Reload Biograpy panel
 		}
 	}
-	// window.NotifyOthers('bio_newCfg', {notifyTags_internal: true}); // notify tags
 }
