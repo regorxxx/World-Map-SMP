@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/01/24
+//09/05/24
 
 /* exported _mapStatistics */
 
@@ -11,7 +11,7 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global sendToPlaylist:readable */
 include('..\\filter_and_query\\remove_duplicates.js');
-/* global removeDuplicatesV2:readable */
+/* global removeDuplicates:readable */
 
 
 function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
@@ -444,7 +444,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			entryText: 'Create playlist...', func: () => {
 				if (checkQuery(query)) {
 					let handleList = fb.GetQueryItems(fb.GetLibraryItems(), query);
-					handleList = removeDuplicatesV2({ handleList, sortOutput: '', checkKeys: globTags.remDupl, sortBias: globQuery.remDuplBias, bAdvTitle: true, bPreserveSort: false });
+					handleList = removeDuplicates({ handleList, sortOutput: '', checkKeys: globTags.remDupl, sortBias: globQuery.remDuplBias, bAdvTitle: true, bMultiple: true, bPreserveSort: false });
 					sendToPlaylist(handleList, 'World Map: ' + point.x);
 				}
 			}

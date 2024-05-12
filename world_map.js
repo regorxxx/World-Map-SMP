@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/24
+//07/05/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -70,7 +70,7 @@ include('main\\world_map\\world_map_flags.js');
 include('main\\world_map\\world_map_statistics.js');
 /* global Chroma:readable, _mapStatistics:readable */
 include('main\\filter_and_query\\remove_duplicates.js');
-/* global removeDuplicatesV2:readable */
+/* global removeDuplicates:readable */
 include('main\\window\\window_xxx_background.js');
 /* global _background:readable, createBackgroundMenu:readable */
 
@@ -479,7 +479,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					} else {
 						// Without masks, only transparency can be changed. It works fine except on library mode,
 						// since the background already has the layer painted...
-						if (worldMap.properties.panelMode[1] === 1 && bSel) {
+						if (worldMap.properties.panelMode[1] === 1 && bSel) { // NOSONAR
 							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
 						} else {
 							const alpha = bSel
@@ -607,7 +607,7 @@ addEventListener('on_paint', (gr) => {
 		}
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
 		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		sel = removeDuplicatesV2({ handleList: sel, checkKeys: [worldMap.jsonId] });
+		sel = removeDuplicates({ handleList: sel, checkKeys: [worldMap.jsonId] });
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) { sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1); }
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
@@ -797,7 +797,7 @@ addEventListener('on_mouse_leave', () => {
 	worldMap.move(-1, -1);
 });
 
-addEventListener('on_mouse_rbtn_up', (x, y) => {
+addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 	if (worldMap.properties.panelMode[1] === 2) { return true; }
 	const menu = createMenu();
 	createBackgroundMenu.call(
