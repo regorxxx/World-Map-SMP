@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/05/24
+//03/06/24
 
 /* exported createMenu */
 
@@ -282,7 +282,7 @@ function createMenu() {
 								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, window.Name); return; }
 							} else {
 								if (_isFile(packageFile + backupExt)) {
-									bDone = _recycleFile(packageFile);
+									bDone = _recycleFile(packageFile, true);
 								} else { bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + packageFile, window.Name); return; }
 								if (bDone) {
 									bDone = _renameFile(packageFile + backupExt, packageFile);
