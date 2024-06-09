@@ -48,6 +48,8 @@
 
 ## [Unreleased][]
 ### Added
+- UI: header color is now configurable.
+- UI: header size is now configurable (full panel/map size).
 ### Changed
 - Helpers: improved performance of duplicates removal in multiple places.
 - Helpers: json data files are now saved with Windows EOL for compatibility improvements with Windows text editors.
@@ -56,6 +58,7 @@
 - Improved compatibility when running foobar2000 on drives without recycle bin.
 ### Removed
 ### Fixed
+- UI: minor UI refresh fixes.
 
 ## [3.13.0] - 2024-03-21
 ### Added

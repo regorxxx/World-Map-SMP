@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/05/24
+//09/06/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -137,6 +137,8 @@ const worldMap_properties = {
 		(new _background).defaults(),
 		{ colorMode: 'gradient', colorModeOptions: { color: [RGB(270, 270, 270), RGB(300, 300, 300)] }, coverMode: 'front' }
 	))],
+	headerColor: ['Custom header color', -1, { func: isInt }, -1],
+	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true]
 };
 modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
 worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
@@ -637,9 +639,13 @@ addEventListener('on_paint', (gr) => {
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
-			const posX = worldMap.posX;
+			const posX = worldMap.properties.bFullHeader[1]
+				? 0
+				: worldMap.posX;
 			const posY = worldMap.posY;
-			const w = worldMap.imageMap.Width * worldMap.scale;
+			const w = worldMap.properties.bFullHeader[1]
+				? window.Width
+				: worldMap.imageMap.Width * worldMap.scale;
 			const h = worldMap.imageMap.Height * worldMap.scale;
 			let countryName = '- none -';
 			if (worldMap.properties.bShowLocale[1]) {
@@ -654,7 +660,10 @@ addEventListener('on_paint', (gr) => {
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
 			// Header
-			gr.FillSolidRect(posX, posY, w, textH, RGBA(...toRGB(worldMap.panelColor), 150));
+			const headerColor = worldMap.properties.headerColor[1] !== -1
+				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
+				: RGBA(...toRGB(worldMap.panelColor), 150);
+			gr.FillSolidRect(posX, posY, w, textH, headerColor);
 			// Flag
 			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length === 1) {
 				const id = worldMap.lastPoint[0].id;

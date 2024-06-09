@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/06/24
+//09/06/24
 
 /* exported createMenu */
 
@@ -7,7 +7,7 @@
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable */
+/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -436,6 +436,8 @@ function createMenu() {
 					return (val !== -1 ? (ntc.name(Chroma(val).hex())[1] || '').toString() || 'unknown' : '-none-');
 				};
 				const menuName = menu.newMenu('Colors...', menuUI);
+				menu.newEntry({ menuName, entryText: 'UI colors: (Ctrl + Click to reset)', flags: MF_GRAYED });
+				menu.newEntry({ menuName, entryText: 'sep' });
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
 					const options = ['Default', 'Custom...'];
@@ -540,11 +542,26 @@ function createMenu() {
 				{	// NOSONAR Text color
 					menu.newEntry({
 						menuName, entryText: 'Text...' + '\t' + _b(getColorName(worldMap.textColor)), func: () => {
-							worldMap.textColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
+							worldMap.textColor =  utils.IsKeyPressed(VK_CONTROL)
+								? worldMap.defaultColor
+								: utils.ColourPicker(window.ID, worldMap.defaultColor);
 							// Update property to save between reloads
 							properties.customLocaleColor[1] = worldMap.textColor;
 							overwriteProperties(properties);
 							repaint(void (0), true);
+						}
+					});
+				}
+				{
+					menu.newEntry({
+						menuName, entryText: 'Header...' + '\t' + _b(getColorName(worldMap.properties.headerColor[1])), func: () => {
+							worldMap.properties.headerColor[1] = utils.IsKeyPressed(VK_CONTROL)
+								? -1
+								: utils.ColourPicker(window.ID, worldMap.properties.headerColor[1]);
+							// Update property to save between reloads
+							overwriteProperties(properties);
+							if (properties.bFullHeader[1]) { window.Repaint(); }
+							else { repaint(void (0), true); }
 						}
 					});
 				}
@@ -662,28 +679,39 @@ function createMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show header', func: () => {
 						properties.bShowHeader[1] = !properties.bShowHeader[1];
-						repaint(void (0), true);
+						if (properties.bFullHeader[1]) { window.Repaint(); }
+						else { repaint(void (0), true); }
 						overwriteProperties(properties);
 					}
 				});
-				menu.newCheckMenuLast(() => { return properties.bShowHeader[1]; });
+				menu.newCheckMenuLast(() => properties.bShowHeader[1]);
 				menu.newEntry({ menuName, entryText: 'sep' });
 				menu.newEntry({
 					menuName, entryText: 'Show current country', func: () => {
 						properties.bShowLocale[1] = !properties.bShowLocale[1];
-						repaint(void (0), true);
+						if (properties.bFullHeader[1]) { window.Repaint(); }
+						else { repaint(void (0), true); }
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
-				menu.newCheckMenuLast(() => { return properties.bShowLocale[1]; });
+				menu.newCheckMenuLast(() => properties.bShowLocale[1]);
 				menu.newEntry({
 					menuName, entryText: 'Show flag', func: () => {
 						properties.bShowFlag[1] = !properties.bShowFlag[1];
-						repaint(void (0), true);
+						if (properties.bFullHeader[1]) { window.Repaint(); }
+						else { repaint(void (0), true); }
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
-				menu.newCheckMenuLast(() => { return properties.bShowFlag[1]; });
+				menu.newCheckMenuLast(() => properties.bShowFlag[1]);
+				menu.newEntry({
+					menuName, entryText: 'Header full panel size', func: () => {
+						properties.bFullHeader[1] = !properties.bFullHeader[1];
+						repaint(void (0), true);
+						overwriteProperties(properties);
+					}, flags: properties.bFullHeader[1] ? MF_STRING : MF_GRAYED
+				});
+				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
 			}
 			{	// Layers
 				const menuName = menu.newMenu('Country highlighting...', menuUI);
@@ -753,7 +781,11 @@ function createMenu() {
 				const subMenuName = menu.newMenu('Write tags on playback...', menuName, properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 				menu.newEntry({ menuName: subMenuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED });
 				menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
-				const options = [{ text: 'No (read only from tags, online or json)', val: 0 }, { text: 'Yes, when tag has not been already set on track', val: 1 }, { text: 'Yes, as json (for internal use on the script)', val: 2 }];
+				const options = [
+					{ text: 'No (read only from tags, online or json)', val: 0 },
+					{ text: 'Yes, to track files if tag is missing', val: 1 },
+					{ text: 'Yes, use JSON database (for internal use)', val: 2 }
+				];
 				options.forEach((mode) => {
 					menu.newEntry({
 						menuName: subMenuName, entryText: mode.text, func: () => {
@@ -777,7 +809,11 @@ function createMenu() {
 			}
 		}
 		{	// Database
-			const menuDatabase = menu.newMenu('Database', void (0), () => { return (properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED); });
+			const menuDatabase = menu.newMenu(
+				'Database' + (properties.iWriteTags[1] >= 1 ? '' : '\t[JSON disabled]'),
+				void (0),
+				() => properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED
+			);
 			{ // NOSONAR
 				menu.newEntry({ menuName: menuDatabase, entryText: 'Current database: ' + (properties.iWriteTags[1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED });
 				menu.newEntry({ menuName: menuDatabase, entryText: 'sep' });
@@ -942,7 +978,7 @@ function syncBio(bReload = false) {
 	// Biograpy 1.2.X
 	window.NotifyOthers('bio_focusPpt', properties.selection[1] === selMode[0]);  // synchronize selection property 1.2.0 Beta
 	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0]);  // synchronize selection property
-	window.NotifyOthers('bio_newCfg', {notifyTags_internal: true}); // notify tags
+	window.NotifyOthers('bio_newCfg', { notifyTags_internal: true }); // notify tags
 	// Biograpy 2.X.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
