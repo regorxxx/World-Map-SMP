@@ -754,7 +754,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		parent.bEnabled = !parent.bEnabled;
 		worldMap.properties['panelMode'][1] = 0;
 		overwriteProperties(worldMap.properties);
-		window.Repaint();
+		repaint(void (0), true);
 	};
 
 	this.bEnabled = bEnabled;

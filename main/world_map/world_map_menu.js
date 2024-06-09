@@ -560,8 +560,7 @@ function createMenu() {
 								: utils.ColourPicker(window.ID, worldMap.properties.headerColor[1]);
 							// Update property to save between reloads
 							overwriteProperties(properties);
-							if (properties.bFullHeader[1]) { window.Repaint(); }
-							else { repaint(void (0), true); }
+							repaint(void (0), true);
 						}
 					});
 				}
@@ -679,8 +678,7 @@ function createMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show header', func: () => {
 						properties.bShowHeader[1] = !properties.bShowHeader[1];
-						if (properties.bFullHeader[1]) { window.Repaint(); }
-						else { repaint(void (0), true); }
+						repaint(void (0), true);
 						overwriteProperties(properties);
 					}
 				});
@@ -689,8 +687,7 @@ function createMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show current country', func: () => {
 						properties.bShowLocale[1] = !properties.bShowLocale[1];
-						if (properties.bFullHeader[1]) { window.Repaint(); }
-						else { repaint(void (0), true); }
+						repaint(void (0), true);
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
@@ -698,8 +695,7 @@ function createMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show flag', func: () => {
 						properties.bShowFlag[1] = !properties.bShowFlag[1];
-						if (properties.bFullHeader[1]) { window.Repaint(); }
-						else { repaint(void (0), true); }
+						repaint(void (0), true);
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
@@ -707,9 +703,9 @@ function createMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Header full panel size', func: () => {
 						properties.bFullHeader[1] = !properties.bFullHeader[1];
-						repaint(void (0), true);
+						window.Repaint();
 						overwriteProperties(properties);
-					}, flags: properties.bFullHeader[1] ? MF_STRING : MF_GRAYED
+					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
 			}

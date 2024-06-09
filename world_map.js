@@ -314,9 +314,17 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
 		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
-		debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		if (worldMap.properties.bFullHeader[1]) {
+			debouncedRepaint[delay](0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
+		} else {
+			debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		}
 	} else {
-		window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		if (worldMap.properties.bFullHeader[1]) {
+			window.RepaintRect(0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
+		} else {
+			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		}
 	}
 	return true;
 }
