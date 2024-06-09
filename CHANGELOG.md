@@ -58,6 +58,7 @@
 - Improved compatibility when running foobar2000 on drives without recycle bin.
 ### Removed
 ### Fixed
+- UI: locale tag not retrieved in some cases from bio panel due to tag name case not matching.
 - UI: minor UI refresh fixes.
 
 ## [3.13.0] - 2024-03-21

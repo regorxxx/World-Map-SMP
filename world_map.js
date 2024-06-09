@@ -861,8 +861,12 @@ addEventListener('on_notify_data', (name, info) => {
 				let locale = [];
 				if (isArray(info.tags)) { // Biography 1.1.3
 					locale = [...info.tags.find((tag) => { return tag.name === 'locale'; }).val]; // Find the tag with name === locale in the array of tags
-				} else if (Object.hasOwn(info.tags, tagName)) { // Biography 1.2.0
-					locale = [...info.tags[tagName]]; // or  object key
+				} else { // Biography 1.2.0+
+					const tag = Object.keys(info.tags)
+						.find((key) => key.toUpperCase() === tagName.toUpperCase());
+					if (tag) {
+						locale = [...info.tags[tag]]; // or  object key
+					}
 				}
 				const len = locale.length;
 				if (len) {
