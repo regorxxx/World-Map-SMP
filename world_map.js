@@ -659,8 +659,15 @@ addEventListener('on_paint', (gr) => {
 			if (worldMap.properties.bShowLocale[1]) {
 				if (worldMap.lastPoint.length === 1) {
 					let id = worldMap.lastPoint[0].id;
-					if (getCountryISO(id) === id) { id = formatCountry(getCountryName(id)); } // Tag has ISO codes instead of country names
-					countryName = nameShortRev.has(id.toLowerCase()) ? formatCountry(nameShortRev.get(id.toLowerCase())) : id; // Prefer replacement since its usually shorter...
+					if (id) {
+						const idLen = id.length;
+						if ((idLen === 3 && getCountryISO(id) === id) || (idLen === 2 && getCountryISO(id, true) === id)) { // Tag has ISO codes instead of country names
+							id = formatCountry(getCountryName(id));
+						}
+						countryName = nameShortRev.has(id.toLowerCase())
+							? formatCountry(nameShortRev.get(id.toLowerCase()))
+							: id; // Prefer replacement since its usually shorter...
+					}
 				} else if (worldMap.lastPoint.length > 1) {
 					countryName = 'Multiple countries...';
 				}
