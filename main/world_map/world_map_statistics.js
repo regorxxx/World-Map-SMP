@@ -1,9 +1,9 @@
 ﻿'use strict';
-//09/05/24
+//09/06/24
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable , repaint:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -754,7 +754,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		parent.bEnabled = !parent.bEnabled;
 		worldMap.properties['panelMode'][1] = 0;
 		overwriteProperties(worldMap.properties);
-		repaint(void (0), true);
+		window.Repaint();
 	};
 
 	this.bEnabled = bEnabled;
