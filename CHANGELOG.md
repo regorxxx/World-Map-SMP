@@ -51,6 +51,7 @@
 - UI: header color is now configurable.
 - UI: header size is now configurable (full panel/map size).
 ### Changed
+- UI: better compatibility when locale tag contains the ISO 3166 2-letter code, instead of a country name. Header now displays the country name associated instead of the ISO code or none.
 - Helpers: improved performance of duplicates removal in multiple places.
 - Helpers: json data files are now saved with Windows EOL for compatibility improvements with Windows text editors.
 - Configuration: changed the remove duplicates bias to prefer lossless tracks with 16 bits per sample, 44.1 Khz sample rate and greater %DYNAMIC RANGE% values.
@@ -463,7 +464,7 @@
 - Installation: Installation path may now be changed by editing 'folders.xxxName' variable at '.\helpers\helpers_xxx.js'. This is a workaround for some SMP limitations when working with relative paths and text files, images or dynamic file loading.
 - UI: All UI configuration moved to its own submenu.
 - Header: Name is shortened if it's too long for the current width and font size combination. It also takes into account flag size if it's enabled.
-- Tags: Added some common variations for a few country names to enhance matching (points and flags) even if they are not the standard iso names or have swapped prefixes. Note this "expands" [Georgia theme's](https://kbuffington.github.io/Georgia/) flag feature since it should match better country names now (for ex. 'Tanzania', 'Tanzania, United Republic of' and 'United Republic of Tanzania'). This is also used for displaying the country name at header (shorter version is preferred) and for tagging files and json (the full iso standard name is preferred).
+- Tags: Added some common variations for a few country names to enhance matching (points and flags) even if they are not the standard ISO names or have swapped prefixes. Note this "expands" [Georgia theme's](https://kbuffington.github.io/Georgia/) flag feature since it should match better country names now (for ex. 'Tanzania', 'Tanzania, United Republic of' and 'United Republic of Tanzania'). This is also used for displaying the country name at header (shorter version is preferred) and for tagging files and json (the full iso standard name is preferred).
 - Helpers: updated. Whenever a folder needs to be created to save a new file, the entire tree is now created if needed. Previously it would fail as soon as any folder did not exist. This greatly speeds up setting panels since now the final folder does not need to exists at all to work, since it will be created on the fly.
 - Helpers: additional checks at json loading on all scripts. Warnings via popup when a corrupted file is found.
 - All json files are now saved as UTF-8 without BOM. All json files are now read as UTF-8 (forced).
