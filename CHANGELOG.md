@@ -50,6 +50,7 @@
 ### Added
 - UI: header color is now configurable.
 - UI: header size is now configurable (full panel/map size).
+- UI: added album art caching for panel background whenever selecting/playing track changes but belongs to the same album. It checks for same album name and parent directory. 
 ### Changed
 - UI: better compatibility when locale tag contains the ISO 3166 2-letter code, instead of a country name. Header now displays the country name associated instead of the ISO code or none.
 - Helpers: improved performance of duplicates removal in multiple places.
