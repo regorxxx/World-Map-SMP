@@ -62,6 +62,7 @@
 ### Fixed
 - UI: locale tag not retrieved in some cases from bio panel due to tag name case not matching.
 - UI: minor UI refresh fixes.
+- Configuration: .json files at 'foobar2000\js_data\presets\global' not being saved with the calculated properties based on user values from other files.
 
 ## [3.13.0] - 2024-03-21
 ### Added
