@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.14.0](#3130---2024-07-24)
 - [3.13.0](#3130---2024-03-21)
 - [3.12.0](#3120---2024-03-15)
 - [3.11.0](#3110---2024-03-04)
@@ -48,6 +49,12 @@
 
 ## [Unreleased][]
 ### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.14.0] - 2024-07-24
+### Added
 - UI: header color is now configurable.
 - UI: header size is now configurable (full panel/map size).
 - UI: added album art caching for panel background whenever selecting/playing track changes but belongs to the same album. It checks for same album name and parent directory. 
@@ -63,7 +70,6 @@
 - UI: locale tag not retrieved in some cases from bio panel due to tag name case not matching.
 - UI: minor UI refresh fixes.
 - Configuration: .json files at 'foobar2000\js_data\presets\global' not being saved with the calculated properties based on user values from other files.
-
 ## [3.13.0] - 2024-03-21
 ### Added
 ### Changed
@@ -552,7 +558,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.13.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.0...HEAD
+[3.14.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.13.0...v3.14.0
 [3.13.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.11.0...v3.12.0
 [3.11.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.10.0...v3.11.0
