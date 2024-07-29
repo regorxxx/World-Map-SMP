@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/07/24
+//26/07/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -733,7 +733,7 @@ addEventListener('on_playlist_switch', () => {
 	repaint();
 });
 
-addEventListener('on_playback_stop', (reason) => {
+addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (reason !== 2) { // Invoked by user or Starting another track
 		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
@@ -810,7 +810,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 	}
 });
 
-addEventListener('on_key_up', (vKey) => { // Repaint after pressing shift to reset
+addEventListener('on_key_up', (/** @type {number} */ vKey) => { // Repaint after pressing shift to reset
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 });
