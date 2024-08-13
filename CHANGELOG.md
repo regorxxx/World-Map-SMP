@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.14.1](#3141---2024-08-13)
 - [3.14.0](#3140---2024-07-24)
 - [3.13.0](#3130---2024-03-21)
 - [3.12.0](#3120---2024-03-15)
@@ -50,9 +51,16 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+### Removed
+### Fixed
+
+## [3.14.1] - 2024-08-13
+### Added
+### Changed
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- Statistics: crash opening the point menu on libraries not fully tagged.
 
 ## [3.14.0] - 2024-07-24
 ### Added
@@ -559,7 +567,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.1...HEAD
+[3.14.1]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.0...v3.14.1
 [3.14.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.13.0...v3.14.0
 [3.13.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.12.0...v3.13.0
 [3.12.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.11.0...v3.12.0
