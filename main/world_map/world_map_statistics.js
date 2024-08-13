@@ -1,9 +1,9 @@
 ﻿'use strict';
-//09/06/24
+//09/08/24
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -506,7 +506,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 									else { tagCount.set(id, tagCount.get(id) + point.val); }
 								}
 							});
-							data = [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+							data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						}
 						break;
 					}
@@ -538,7 +538,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								}
 							}
 						});
-						data = [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+						data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						break;
 					}
 					case 'listens region normalized':
@@ -570,7 +570,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 						keyCount.forEach((value, key) => {
 							if (tagCount.has(key)) { tagCount.set(key, Math.round(tagCount.get(key) / keyCount.get(key))); }
 						});
-						data = [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+						data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						break;
 					}
 				}
@@ -606,7 +606,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 									else { tagCount.set(id, tagCount.get(id) + point.val); }
 								}
 							});
-							data = [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+							data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						}
 						break;
 					}
@@ -638,7 +638,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								}
 							});
 						}, 10).then(() => {
-							return [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+							return [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						});
 					}
 					case 'listens region normalized':
@@ -670,7 +670,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 							keyCount.forEach((value, key) => {
 								if (tagCount.has(key)) { tagCount.set(key, Math.round(tagCount.get(key) / keyCount.get(key))); }
 							});
-							return [[...tagCount].map((point) => { return { x: point[0], y: point[1] }; })];
+							return [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						});
 					}
 				}
@@ -735,8 +735,9 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		];
 		rows = newConfig.length;
 		columns = newConfig[0].length;
-		nCharts = new Array(rows).fill(1).map(() => { return new Array(columns).fill(1); }).map((row, i) => {
-			return row.map((cell, j) => {
+
+		nCharts = Array.from({length: rows}, (row, i) => {
+			return Array.from({length: columns}, (cell, j) => {
 				const w = window.Width / columns;
 				const h = window.Height / rows * (i + 1);
 				const x = w * j;
