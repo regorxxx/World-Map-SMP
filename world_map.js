@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/24
+//09/10/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -42,7 +42,7 @@
 		- helpers\map_xxx.js  (arbitrary map object)
  */
 
-if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.14.1', features: { drag_n_drop: false } }); }
+if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.15.0', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
