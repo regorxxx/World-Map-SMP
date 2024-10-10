@@ -53,6 +53,7 @@
 ### Added
 ### Changed
 - Readme:  updated readme with tip about 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
+- UI: minor adjustments to menu entries.
 ### Removed
 ### Fixed
 

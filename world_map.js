@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/10/24
+//10/10/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -263,7 +263,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	const readme = _open(readmePath, utf8);
-	if (readme.length) { fb.ShowPopupMessage(readme, window.Name); }
+	if (readme.length) { fb.ShowPopupMessage(readme, 'World-Map-SMP'); }
 }
 
 // Update check
@@ -826,7 +826,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 	const menu = createMenu();
 	createBackgroundMenu.call(
 		background,
-		{ menuName: 'Background...', subMenuFrom: 'UI' },
+		{ menuName: 'Background', subMenuFrom: 'UI' },
 		menu,
 		{
 			nameColors: true,

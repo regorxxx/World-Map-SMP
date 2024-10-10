@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/06/24
+//10/10/24
 
 /* exported createMenu */
 
@@ -356,9 +356,10 @@ function createMenu() {
 				menu.newEntry({ menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED });
 				menu.newEntry({ menuName, entryText: 'sep' });
 				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
-				const options = [...worldMapImages, { text: 'Custom...' }];
+				const options = [...worldMapImages, {text: 'sep'}, { text: 'Custom...' }];
 				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx, '.\\profile\\') : worldMap.imageMapPath).replace('hires\\', '');
 				options.forEach((map, index) => {
+					map.entryText = map.text; // For menu compatibility later
 					menu.newEntry({
 						menuName, entryText: map.text, func: () => {
 							if (index === options.length - 1) {
@@ -386,12 +387,13 @@ function createMenu() {
 					});
 				});
 				menu.newCheckMenuLast(() => {
-					let idx = options.findIndex((opt) => { return opt.path === worldMap.imageMapPath; }); // Uses abs paths
+					const opts = options.filter(menu.isNotSeparator);
+					let idx = opts.findIndex((opt) => opt.path === worldMap.imageMapPath); // Uses abs paths
 					return (idx !== -1)
 						? idx
 						: properties.imageMapPath[1].length // Replace current abs path with relative path when there is no custom image
-							? options.length - 1
-							: options.findIndex((opt) => { return opt.path === defPath; });
+							? opts.length - 1
+							: opts.findIndex((opt) => opt.path === defPath);
 				}, options);
 				menu.newEntry({ menuName, entryText: 'sep' });
 				menu.newEntry({
@@ -429,13 +431,13 @@ function createMenu() {
 				});
 			}
 			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
-			menu.newMenu('Background...', menuUI);
+			menu.newMenu('Background', menuUI);
 			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
 			{
 				const getColorName = (val) => {
 					return (val !== -1 ? (ntc.name(Chroma(val).hex())[1] || '').toString() || 'unknown' : '-none-');
 				};
-				const menuName = menu.newMenu('Colors...', menuUI);
+				const menuName = menu.newMenu('Colors', menuUI);
 				menu.newEntry({ menuName, entryText: 'UI colors: (Ctrl + Click to reset)', flags: MF_GRAYED });
 				menu.newEntry({ menuName, entryText: 'sep' });
 				{	// Point color
@@ -477,7 +479,7 @@ function createMenu() {
 					}
 					menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
 					{
-						const subMenuNameTwo = menu.newMenu('Layer fill...' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] !== -1 ? MF_STRING : MF_GRAYED);
+						const subMenuNameTwo = menu.newMenu('Layer fill' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] !== -1 ? MF_STRING : MF_GRAYED);
 						const options = [
 							{ name: 'None', val: '' },
 							{ name: 'Flag color', val: 'color' },
@@ -497,7 +499,7 @@ function createMenu() {
 					}
 					menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
 					{
-						const subMenuNameTwo = menu.newMenu('Statistics mode...', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
+						const subMenuNameTwo = menu.newMenu('Statistics mode', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
 						menu.newEntry({
 							menuName: subMenuNameTwo, entryText: 'Gradient from color', func: () => {
 								properties.customGradientColor[1] = '';
@@ -507,7 +509,7 @@ function createMenu() {
 						});
 						menu.newCheckMenuLast(() => { return properties.customGradientColor[1].length === 0; });
 						{
-							const subMenuNameThree = menu.newMenu('Gradient from scheme...', subMenuNameTwo);
+							const subMenuNameThree = menu.newMenu('Gradient from scheme', subMenuNameTwo);
 							let j = 0;
 							for (let key in colorbrewer) {
 								if (key === 'colorBlind') { continue; }
@@ -566,7 +568,7 @@ function createMenu() {
 				}
 				menu.newEntry({ menuName, entryText: 'sep' });
 				{	// Presets
-					const subMenuName = menu.newMenu('Presets...', menuName);
+					const subMenuName = menu.newMenu('Presets', menuName);
 					const presets = [ /*[text, points, background ]*/
 						{ name: 'Color Blindness (light)', colors: [colorBlind.black[2], colorBlind.yellow[1], colorBlind.white[0]] },
 						{ name: 'Color Blindness (dark)', colors: [colorBlind.white[0], colorBlind.yellow[1], colorBlind.black[2]] },
@@ -608,8 +610,8 @@ function createMenu() {
 			}
 			{ // NOSONAR
 				{	// Point size
-					const menuName = menu.newMenu('Points size...', menuUI, properties.pointMode[1] === 1 && !worldMap.properties.panelMode[1] ? MF_GRAYED : MF_STRING);
-					const options = [7, 10, 12, 14, 16, 20, 30, 'Custom...'];
+					const menuName = menu.newMenu('Points size', menuUI, properties.pointMode[1] === 1 && !worldMap.properties.panelMode[1] ? MF_GRAYED : MF_STRING);
+					const options = [7, 10, 12, 14, 16, 20, 30, 'sep', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({
@@ -630,8 +632,9 @@ function createMenu() {
 						});
 					});
 					menu.newCheckMenuLast(() => {
-						const idx = options.indexOf(worldMap.pointSize);
-						return (idx !== -1 ? idx : optionsLength - 1);
+						const opts = options.filter(menu.isNotSeparator);
+						const idx = opts.indexOf(worldMap.pointSize);
+						return (idx !== -1 ? idx : opts.length - 1);
 					}, options);
 					menu.newEntry({ menuName, entryText: 'sep' });
 					menu.newEntry({
@@ -645,8 +648,8 @@ function createMenu() {
 					menu.newCheckMenuLast(() => { return properties.bPointFill[1]; });
 				}
 				{	// Text size
-					const menuName = menu.newMenu('Text size...', menuUI);
-					const options = [7, 8, 9, 10, 11, 12, 'Custom...'];
+					const menuName = menu.newMenu('Text size', menuUI);
+					const options = [7, 8, 9, 10, 11, 12, 'sep', 'Custom...'];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({
@@ -667,14 +670,15 @@ function createMenu() {
 						});
 					});
 					menu.newCheckMenuLast(() => {
-						const idx = options.indexOf(properties.fontSize[1]);
-						return (idx !== -1 ? idx : optionsLength - 1);
+						const opts = options.filter(menu.isNotSeparator);
+						const idx = opts.indexOf(properties.fontSize[1]);
+						return (idx !== -1 ? idx : opts.length - 1);
 					}, options);
 				}
 			}
 			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
 			{	// Header
-				const menuName = menu.newMenu('Header...', menuUI);
+				const menuName = menu.newMenu('Header', menuUI);
 				menu.newEntry({
 					menuName, entryText: 'Show header', func: () => {
 						properties.bShowHeader[1] = !properties.bShowHeader[1];
@@ -710,7 +714,7 @@ function createMenu() {
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
 			}
 			{	// Layers
-				const menuName = menu.newMenu('Country highlighting...', menuUI);
+				const menuName = menu.newMenu('Country highlighting', menuUI);
 				const options = ['Use points', 'Use country layers', 'Use both'];
 				options.forEach((option, i) => {
 					menu.newEntry({
@@ -728,7 +732,7 @@ function createMenu() {
 		}
 		menu.newEntry({ entryText: 'sep' });
 		{	// Tags
-			const menuName = menu.newMenu('Tags...');
+			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
 				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
 					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.Name, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
@@ -774,7 +778,7 @@ function createMenu() {
 			}
 			menu.newEntry({ menuName, entryText: 'sep' });
 			{	// Write tags?
-				const subMenuName = menu.newMenu('Write tags on playback...', menuName, properties.panelMode[1] ? MF_GRAYED : MF_STRING);
+				const subMenuName = menu.newMenu('Write tags on playback', menuName, properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 				menu.newEntry({ menuName: subMenuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED });
 				menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
 				const options = [
@@ -958,7 +962,7 @@ function createMenu() {
 			menu.newEntry({
 				entryText: 'Open readme...', func: () => {
 					const readme = _open(readmePath, utf8); // Executed on script load
-					if (readme.length) { fb.ShowPopupMessage(readme, window.Name); }
+					if (readme.length) { fb.ShowPopupMessage(readme, 'World-Map-SMP'); }
 					else { console.log('Readme not found: ' + readmePath); }
 				}
 			});
