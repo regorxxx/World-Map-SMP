@@ -110,3 +110,8 @@ SMP may throw "Out of memory" errors in some settings or when
 using too many panels at the same time. To minimize RAM usage,
 there are multiple memory modes available (with explanations
 about the changes).
+
+Other UI usage:
+---------------
+Press Shift + Win + R. Click to open SMP/JSpliter panel menu 
+(which works globally on any script and panel, at any position).
