@@ -52,15 +52,16 @@
 ## [Unreleased][]
 ### Added
 ### Changed
-- Readme:  updated readme with tip about 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
-- UI: minor adjustments to menu entries.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
+- UI: '&' being displayed as '_' on tooltips.
 
 ## [3.15.0] - 2024-10-09
 ### Added
 ### Changed
+- Readme:  updated readme with tip about 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
+- UI: minor adjustments to menu entries.
 - Configuration: changed the remove duplicates bias to prefer tracks containing 'BEST' within a 'TRACKDSP' tag.
 - [JSplitter (SMP)](https://foobar2000.ru/forum/viewtopic.php?t=6378&start=360) support and ES2021 compatibility.
 - Helpers: in case saving a file throws an error due to long paths (+255 chars) a warning popup will be shown.
