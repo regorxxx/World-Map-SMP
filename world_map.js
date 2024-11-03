@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/10/24
+//03/11/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -82,9 +82,9 @@ checkCompatible('1.6.1', 'smp');
 */
 const selMode = ['Follow selected track(s) (playlist)', 'Prefer now playing'];
 const modifiers = [ // Easily expandable. Used at helpers and menu too
-	{ mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: 'GENRE' },
-	{ mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: 'STYLE' },
-	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: 'STYLE,GENRE' }
+	{ mask: MK_CONTROL, tag: 'modFirstTag', description: 'Control', val: globTags.genre },
+	{ mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: globTags.style },
+	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: [globTags.genre, globTags.style].join(',') }
 ];
 const worldMap_properties = {
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
