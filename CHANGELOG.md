@@ -51,6 +51,9 @@
 
 ## [Unreleased][]
 ### Added
+- Statistics: X-Axis shown values at display menu now allows any custom value.
+- Statistics: Y-Axis filter at display menu now allows any custom value for 'greater than'/'lower than' filters.
+- Statistics: option to filter data between 2 custom values on Y-Axis at display menu.
 ### Changed
 - [JSplitter (SMP)](https://foobar2000.ru/forum/viewtopic.php?t=6378&start=360) support for locked playlists.
 - Statistics: scrolling cursor is displayed when scrolling using mouse + dragging.
@@ -63,6 +66,7 @@
 - Statistics: X-axis keys are now shown even when not all keys can be displayed, omitting some of the values. This ensures that charts displaying numbers at the axis at least show the initial and some middle values. This applies for bars, lines, scatter, fill and timeline charts.
 - Statistics: left scrolling button position is now adjusted following Y-Axis display (except for doughnut and pie charts).
 - Statistics: scrolling buttons are now shown only when the chart is not showing all data (no zoom).
+- Statistics: multiple menu entries at 'Display settings' have been renamed for clarity's sake.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
