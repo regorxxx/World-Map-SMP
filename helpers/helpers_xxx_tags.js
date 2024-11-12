@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/10/24
+//12/11/24
 
 /* exported dynamicTags, numericTags, cyclicTags, keyTags, sanitizeTagIds, sanitizeTagValIds, queryCombinations, queryReplaceWithCurrent, checkQuery, getHandleTags, getHandleListTags ,getHandleListTagsV2, getHandleListTagsTyped, cyclicTagsDescriptor, isQuery */
 
@@ -128,8 +128,8 @@ function sanitizeTagValIds(val, bSpace = true) {
  * @param {{ bToLowerCase: boolean, bDebug: boolean }} options - bToLowerCase: value from #strTF# will use lowercase
  * @returns {?string}
  */
-function queryReplaceWithCurrent(query, handle, tags = {}, options = { bToLowerCase: false, bDebug: false }) {
-	options = { bToLowerCase: false, bDebug: false, ...options };
+function queryReplaceWithCurrent(query, handle, tags = {}, options = { expansionBy: 'AND', bToLowerCase: false, bDebug: false }) {
+	options = { expansionBy: 'AND', bToLowerCase: false, bDebug: false, ...options };
 	if (options.bDebug) { console.log('Initial query:', query); }
 	if (!query.length) { console.log('queryReplaceWithCurrent(): query is empty'); return ''; }
 	// global queries without handle required
@@ -195,6 +195,10 @@ function queryReplaceWithCurrent(query, handle, tags = {}, options = { bToLowerC
 					tfo = fb.TitleFormat(tfo.Expression.slice(1, -1));
 					tfoVal = sanitizeTagTfo(handle ? tfo.EvalWithMetadb(handle) : tfo.Eval(true));
 				}
+				// Another workaround for album artist, don't split
+				if(/%ALBUM ARTIST% (IS|HAS)/gi.test(query) && tagKey.toUpperCase() === 'ALBUM ARTIST') {
+					tfoVal = tfoVal.replaceAll('#', ', ');
+				}
 				if (options.bDebug) { console.log('tfoVal:', tfoVal); }
 				if (tfoVal.indexOf('#') !== -1 && !/G#m|Abm|D#m|A#m|F#m|C#m|F#|C#|G#|D#|A#/i.test(tfoVal)) { // Split multivalue tags if possible!
 					const interText = query.slice((i > 0 ? idx[i - 1] + 1 : (startQuery.length ? startQuery.length : 0)), idx[i]);
@@ -205,7 +209,7 @@ function queryReplaceWithCurrent(query, handle, tags = {}, options = { bToLowerC
 					const multiQuery = tfoVal.split('#').map((val) => {
 						return query.slice((i > 0 ? idx[i - 1] + interQuery.length + 1 : (startQuery.length ? startQuery.length : 0)), idx[i]) + (!bIsWithinFunc ? sanitizeQueryVal(val) : val);
 					});
-					tempQuery += interQuery + queryJoin(multiQuery, 'AND');
+					tempQuery += interQuery + queryJoin(multiQuery, options.expansionBy);
 				} else {
 					if (options.bDebug) { console.log(i > 0, startQuery.length, idx[i]); }
 					tempQuery += query.slice((i > 0 ? idx[i - 1] + 1 : (startQuery.length ? startQuery.length : 0)), idx[i]) + (!bIsWithinFunc ? sanitizeQueryVal(tfoVal) : tfoVal).trim();
