@@ -70,9 +70,6 @@
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
--- Helpers: updated helpers.
-### Removed
-### Fixed
 - Statistics: minor fixes.
 - UI: '&' being displayed as '_' on tooltips.
 
