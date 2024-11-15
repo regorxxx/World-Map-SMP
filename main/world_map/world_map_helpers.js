@@ -120,7 +120,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 		// Menu to select country from list
 		const menu = new _menu();
 		menu.newEntry({ entryText: 'Countries near clicked point:', func: null, flags: MF_GRAYED });
-		menu.newEntry({ entryText: 'sep' });
+		menu.newSeparator();
 		foundPoints.forEach((point) => {
 			let country = formatCountry(point.key);
 			menu.newEntry({

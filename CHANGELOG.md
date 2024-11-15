@@ -67,7 +67,9 @@
 - Statistics: left scrolling button position is now adjusted following Y-Axis display (except for doughnut and pie charts).
 - Statistics: scrolling buttons are now shown only when the chart is not showing all data (no zoom).
 - Statistics: multiple menu entries at 'Display settings' have been renamed for clarity's sake.
+- Statistics: buttons are now smoothly hidden when panel is not on focus. Transparency may be adjusted from 0 to 255 by setting buttons.alpha, timer to hide them by setting buttons.timer.
 - Helpers: updated helpers.
+- Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed
 ### Fixed
 - Statistics: minor fixes.

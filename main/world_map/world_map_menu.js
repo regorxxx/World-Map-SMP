@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/10/24
+//15/11/24
 
 /* exported createMenu */
 
@@ -32,7 +32,7 @@ function createMenu() {
 			const menuName = menu.newMenu('Map panel functionality');
 			const options = [{ text: 'Enabled', val: true }, { text: 'Disabled', val: false }];
 			menu.newEntry({ menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED });
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			options.forEach((mode) => {
 				menu.newEntry({
 					menuName, entryText: mode.text, func: () => {
@@ -43,8 +43,8 @@ function createMenu() {
 					}
 				});
 			});
-			menu.newCheckMenuLast(() => { return (properties.bEnabled[1] ? 0 : 1); }, options);
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newCheckMenuLast(() => properties.bEnabled[1] ? 0 : 1, options);
+			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
 					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.Name, 1000);
@@ -54,7 +54,7 @@ function createMenu() {
 					overwriteProperties(properties);
 				}
 			});
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			{
 				const subMenuName = menu.newMenu('Memory mode', menuName);
 				menu.newEntry({
@@ -95,7 +95,7 @@ function createMenu() {
 				});
 				menu.newCheckMenuLast(() => properties.memMode[1], 3);
 			}
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Automatically check for updates', func: () => {
 					properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
@@ -112,7 +112,7 @@ function createMenu() {
 			const menuName = menu.newMenu('Map panel mode');
 			const options = ['Standard mode (selection & playback)', 'Library mode (all artist on library)', 'Statistics mode (chart)', 'Statistics mode (gradient map)'];
 			menu.newEntry({ menuName, entryText: 'Switch panel mode:', func: null, flags: MF_GRAYED });
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			options.forEach((mode, idx) => {
 				menu.newEntry({
 					menuName, entryText: mode, func: () => {
@@ -146,13 +146,13 @@ function createMenu() {
 					}
 				});
 			});
-			menu.newCheckMenuLast(() => { return properties.panelMode[1]; }, options);
+			menu.newCheckMenuLast(() => properties.panelMode[1], options);
 		}
 		{	// Enabled Biography?
 			const menuName = menu.newMenu('WilB\'s Biography integration', void (0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			const options = [{ text: 'Enabled', val: true }, { text: 'Disabled', val: false }];
 			menu.newEntry({ menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED });
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			options.forEach((mode) => {
 				menu.newEntry({
 					menuName, entryText: mode.text, func: () => {
@@ -168,8 +168,8 @@ function createMenu() {
 					}, flags: () => { return (properties.bInstalledBiography[1] ? MF_STRING : MF_GRAYED); }
 				});
 			});
-			menu.newCheckMenuLast(() => { return (properties.bEnabledBiography[1] ? 0 : 1); }, options);
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newCheckMenuLast(() => properties.bEnabledBiography[1] ? 0 : 1, options);
+			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: () => { return (properties.bInstalledBiography[1] ? 'Uninstall (revert changes)' : 'Check installation (required to enable)'); }, func: () => {
 					let foundArr = [];
@@ -304,7 +304,7 @@ function createMenu() {
 				}
 			});
 		}
-		menu.newEntry({ entryText: 'sep' });
+		menu.newSeparator();
 		{	// Selection mode
 			const menuName = menu.newMenu('Selection mode', void (0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			const options = selMode;
@@ -326,8 +326,8 @@ function createMenu() {
 					}
 				});
 			});
-			menu.newCheckMenuLast(() => { return options.indexOf(properties.selection[1]); }, options);
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newCheckMenuLast(() => options.indexOf(properties.selection[1]), options);
+			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: properties.iLimitSelection[0] + '\t' + _b(properties.iLimitSelection[1]), func: () => {
 					let input;
@@ -346,15 +346,15 @@ function createMenu() {
 					overwriteProperties(properties);
 				}
 			});
-			menu.newCheckMenuLast(() => { return properties.bShowSelModePopup[1]; });
+			menu.newCheckMenuLast(() => properties.bShowSelModePopup[1]);
 		}
-		menu.newEntry({ entryText: 'sep' });
+		menu.newSeparator();
 		{	// UI
 			const menuUI = menu.newMenu('UI');
 			{	// Map image
 				const menuName = menu.newMenu('Map image', menuUI);
 				menu.newEntry({ menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED });
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
 				const options = [...worldMapImages, {text: 'sep'}, { text: 'Custom...' }];
 				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx, '.\\profile\\') : worldMap.imageMapPath).replace('hires\\', '');
@@ -386,16 +386,15 @@ function createMenu() {
 						}
 					});
 				});
-				menu.newCheckMenuLast(() => {
-					const opts = options.filter(menu.isNotSeparator);
-					let idx = opts.findIndex((opt) => opt.path === worldMap.imageMapPath); // Uses abs paths
+				menu.newCheckMenuLast((o, len) => {
+					let idx = o.findIndex((opt) => opt.path === worldMap.imageMapPath); // Uses abs paths
 					return (idx !== -1)
 						? idx
 						: properties.imageMapPath[1].length // Replace current abs path with relative path when there is no custom image
-							? opts.length - 1
-							: opts.findIndex((opt) => opt.path === defPath);
+							? len - 1
+							: o.findIndex((opt) => opt.path === defPath);
 				}, options);
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				menu.newEntry({
 					menuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.imageMapAlpha[1] * 100 / 255) + ']', func: () => {
 						const input = Input.number('int positive', Math.round(properties.imageMapAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
@@ -410,7 +409,7 @@ function createMenu() {
 			{	// Coordinates factor
 				const menuName = menu.newMenu('Coordinates transformation', menuUI);
 				menu.newEntry({ menuName, entryText: 'Apply a factor to any axis:', func: null, flags: MF_GRAYED });
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				const options = [{ text: 'X factor', val: 'factorX' }, { text: 'Y factor', val: 'factorY' }];
 				if (worldMap.factorX !== 100) { options[0].text += '\t ' + _b(worldMap.factorX); }
 				if (worldMap.factorY !== 100) { options[1].text += '\t ' + _b(worldMap.factorY); }
@@ -430,16 +429,16 @@ function createMenu() {
 					});
 				});
 			}
-			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
+			menu.newSeparator(menuUI);
 			menu.newMenu('Background', menuUI);
-			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
+			menu.newSeparator(menuUI);
 			{
 				const getColorName = (val) => {
 					return (val !== -1 ? (ntc.name(Chroma(val).hex())[1] || '').toString() || 'unknown' : '-none-');
 				};
 				const menuName = menu.newMenu('Colors', menuUI);
 				menu.newEntry({ menuName, entryText: 'UI colors: (Ctrl + Click to reset)', flags: MF_GRAYED });
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				{	// Point color
 					const subMenuName = menu.newMenu('Points', menuName);
 					const options = ['Default', 'Custom...'];
@@ -457,7 +456,7 @@ function createMenu() {
 							}
 						});
 					});
-					menu.newCheckMenuLast(() => { return properties.customPointColorMode[1]; }, options);
+					menu.newCheckMenuLast(() => properties.customPointColorMode[1], options);
 				}
 				{	// Country color
 					const subMenuName = menu.newMenu('Country layers', menuName, properties.pointMode[1] > 0 ? MF_STRING : MF_GRAYED);
@@ -475,9 +474,9 @@ function createMenu() {
 								}, flags: i === 1 && properties.layerFillMode[1].length ? MF_GRAYED : MF_STRING
 							});
 						});
-						menu.newCheckMenuLast(() => { return properties.customShapeColor[1] === -1 ? 0 : 1; }, options);
+						menu.newCheckMenuLast(() => properties.customShapeColor[1] === -1 ? 0 : 1, options);
 					}
-					menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
+					menu.newSeparator(subMenuName);
 					{
 						const subMenuNameTwo = menu.newMenu('Layer fill' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] !== -1 ? MF_STRING : MF_GRAYED);
 						const options = [
@@ -495,9 +494,9 @@ function createMenu() {
 								}
 							});
 						});
-						menu.newCheckMenuLast(() => { return options.findIndex((o) => o.val === properties.layerFillMode[1]); }, options);
+						menu.newCheckMenuLast(() => options.findIndex((o) => o.val === properties.layerFillMode[1]), options);
 					}
-					menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
+					menu.newSeparator(subMenuName);
 					{
 						const subMenuNameTwo = menu.newMenu('Statistics mode', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
 						menu.newEntry({
@@ -507,7 +506,7 @@ function createMenu() {
 								repaint(void (0), true, true);
 							}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED
 						});
-						menu.newCheckMenuLast(() => { return properties.customGradientColor[1].length === 0; });
+						menu.newCheckMenuLast(() => properties.customGradientColor[1].length === 0);
 						{
 							const subMenuNameThree = menu.newMenu('Gradient from scheme', subMenuNameTwo);
 							let j = 0;
@@ -516,7 +515,7 @@ function createMenu() {
 								colorbrewer[key].forEach((scheme, i) => {
 									if (i === 0) {
 										menu.newEntry({ menuName: subMenuNameThree, entryText: key.charAt(0).toUpperCase() + key.slice(1), flags: (j === 0 ? MF_GRAYED : MF_GRAYED | MF_MENUBARBREAK) });
-										menu.newEntry({ menuName: subMenuNameThree, entryText: 'sep' });
+										menu.newSeparator(subMenuNameThree);
 									}
 									menu.newEntry({
 										menuName: subMenuNameThree, entryText: scheme, func: () => {
@@ -530,7 +529,7 @@ function createMenu() {
 							}
 						}
 					}
-					menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
+					menu.newSeparator(subMenuName);
 					menu.newEntry({
 						menuName: subMenuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
 							const input = Input.number('int positive', Math.round(properties.customShapeAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
@@ -566,7 +565,7 @@ function createMenu() {
 						}
 					});
 				}
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				{	// Presets
 					const subMenuName = menu.newMenu('Presets', menuName);
 					const presets = [ /*[text, points, background ]*/
@@ -580,7 +579,7 @@ function createMenu() {
 						{ name: 'Default', colors: [RGB(255, 255, 255)] }
 					];
 					presets.forEach((preset) => {
-						if (preset.name.toLowerCase() === 'sep') { menu.newEntry({ menuName: subMenuName, entryText: 'sep' }); return; }
+						if (menu.isSeparator(preset)) { menu.newSeparator(subMenuName); return; }
 						menu.newEntry({
 							menuName: subMenuName, entryText: preset.name, func: () => {
 								if (preset.name.toLowerCase() === 'default') {
@@ -631,12 +630,11 @@ function createMenu() {
 							}
 						});
 					});
-					menu.newCheckMenuLast(() => {
-						const opts = options.filter(menu.isNotSeparator);
-						const idx = opts.indexOf(worldMap.pointSize);
-						return (idx !== -1 ? idx : opts.length - 1);
+					menu.newCheckMenuLast((o, len) => {
+						const idx = o.indexOf(worldMap.pointSize);
+						return (idx !== -1 ? idx : len - 1);
 					}, options);
-					menu.newEntry({ menuName, entryText: 'sep' });
+					menu.newSeparator(menuName);
 					menu.newEntry({
 						menuName, entryText: 'Fill the circle? (point shape)', func: () => {
 							properties.bPointFill[1] = !properties.bPointFill[1];
@@ -645,7 +643,7 @@ function createMenu() {
 							overwriteProperties(properties);
 						}
 					});
-					menu.newCheckMenuLast(() => { return properties.bPointFill[1]; });
+					menu.newCheckMenuLast(() => properties.bPointFill[1]);
 				}
 				{	// Text size
 					const menuName = menu.newMenu('Text size', menuUI);
@@ -669,14 +667,13 @@ function createMenu() {
 							}
 						});
 					});
-					menu.newCheckMenuLast(() => {
-						const opts = options.filter(menu.isNotSeparator);
-						const idx = opts.indexOf(properties.fontSize[1]);
-						return (idx !== -1 ? idx : opts.length - 1);
+					menu.newCheckMenuLast((o, len) => {
+						const idx = o.indexOf(properties.fontSize[1]);
+						return (idx !== -1 ? idx : len - 1);
 					}, options);
 				}
 			}
-			menu.newEntry({ menuName: menuUI, entryText: 'sep' });
+			menu.newSeparator(menuUI);
 			{	// Header
 				const menuName = menu.newMenu('Header', menuUI);
 				menu.newEntry({
@@ -687,7 +684,7 @@ function createMenu() {
 					}
 				});
 				menu.newCheckMenuLast(() => properties.bShowHeader[1]);
-				menu.newEntry({ menuName, entryText: 'sep' });
+				menu.newSeparator(menuName);
 				menu.newEntry({
 					menuName, entryText: 'Show current country', func: () => {
 						properties.bShowLocale[1] = !properties.bShowLocale[1];
@@ -730,7 +727,7 @@ function createMenu() {
 				menu.newCheckMenuLast(() => { return properties.pointMode[1]; }, options);
 			}
 		}
-		menu.newEntry({ entryText: 'sep' });
+		menu.newSeparator();
 		{	// Tags
 			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
@@ -758,11 +755,11 @@ function createMenu() {
 				}
 			});
 			menu.newCheckMenuLast(() => properties.bSplitTags[1]);
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			{	// Modifier tags
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);
 				menu.newEntry({ menuName: subMenuName, entryText: 'Used with (Key) + L. Click:', func: null, flags: MF_GRAYED });
-				menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
+				menu.newSeparator(subMenuName);
 				modifiers.forEach((mod) => {
 					menu.newEntry({
 						menuName: subMenuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
@@ -776,11 +773,11 @@ function createMenu() {
 					});
 				});
 			}
-			menu.newEntry({ menuName, entryText: 'sep' });
+			menu.newSeparator(menuName);
 			{	// Write tags?
 				const subMenuName = menu.newMenu('Write tags on playback', menuName, properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 				menu.newEntry({ menuName: subMenuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED });
-				menu.newEntry({ menuName: subMenuName, entryText: 'sep' });
+				menu.newSeparator(subMenuName);
 				const options = [
 					{ text: 'No (read only from tags, online or json)', val: 0 },
 					{ text: 'Yes, to track files if tag is missing', val: 1 },
@@ -800,7 +797,7 @@ function createMenu() {
 					});
 				});
 				menu.newCheckMenuLast(() => { return properties.iWriteTags[1]; }, options);
-				menu.newEntry({ menuName: subMenuName, entryText: 'sep', func: null });
+				menu.newSeparator(subMenuName);
 				menu.newEntry({
 					menuName: subMenuName, entryText: 'Show data folder', func: () => {
 						_explorer(properties.fileName[1]);
@@ -816,7 +813,7 @@ function createMenu() {
 			);
 			{ // NOSONAR
 				menu.newEntry({ menuName: menuDatabase, entryText: 'Current database: ' + (properties.iWriteTags[1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED });
-				menu.newEntry({ menuName: menuDatabase, entryText: 'sep' });
+				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Find artists without locale tags...', func: () => {
 						const notFoundList = new FbMetadbHandleList();
@@ -845,7 +842,7 @@ function createMenu() {
 						}
 					}
 				});
-				menu.newEntry({ menuName: menuDatabase, entryText: 'sep' });
+				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Merge JSON databases...', func: () => {
 						let input = '';
@@ -935,7 +932,7 @@ function createMenu() {
 						console.log('World Map: writing back database tags to files done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
 					}
 				});
-				menu.newEntry({ menuName: menuDatabase, entryText: 'sep' });
+				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Update library database...', func: () => {
 						fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
@@ -944,7 +941,7 @@ function createMenu() {
 						if (worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3) { repaint(void (0), true, true); }
 					}, flags: () => { return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED); }
 				});
-				menu.newEntry({ entryText: 'sep' });
+				menu.newSeparator();
 			}
 		}
 		{ // NOSONAR
@@ -956,7 +953,7 @@ function createMenu() {
 				}
 			});
 		}
-		menu.newEntry({ entryText: 'sep' });
+		menu.newSeparator();
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({
