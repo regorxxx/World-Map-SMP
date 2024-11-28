@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/24
+//25/11/24
 
 /* exported selPoint, tooltip, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -31,7 +31,7 @@ function selPoint(point, mask) {
 	const dataId = worldMap.jsonId; // Set before. The tag used to match data
 	const dataIdTag = dataId.toUpperCase(); // for readability
 	// Any track with same locale tag
-	const tag = worldMap.properties.mapTag[1].indexOf('$') !== -1 ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
+	const tag = worldMap.properties.mapTag[1].includes('$') ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
 	if (tag.length) { query.push(tag + ' IS ' + point.id); }
 	// What about JSON data? -> List of artists with same value
 	let jsonQuery = [];
@@ -218,7 +218,7 @@ function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
 				const idx = libraryTags.findIndex((libTag) => { return libTag.id === tagVal; });
 				if (idx !== -1) {
 					libraryTags[idx].val++;
-					if (libraryTags[idx].jsonId.indexOf(jsonId) === -1) { libraryTags[idx].jsonId.push(jsonId); }
+					if (!libraryTags[idx].jsonId.includes(jsonId)) { libraryTags[idx].jsonId.push(jsonId); }
 				} else {
 					libraryTags.push({ id: tagVal, val: 1, jsonId: [jsonId] });
 				}

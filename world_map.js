@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/11/24
+//25/11/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -769,7 +769,9 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	handleListClone.Sort();
 	sel.MakeIntersection(handleListClone);
 	if (sel && sel.Count) {
-		const mapTag = worldMap.properties.mapTag[1].indexOf('$') === -1 && worldMap.properties.mapTag[1].indexOf('%') === -1 ? '%' + worldMap.properties.mapTag[1] + '%' : worldMap.properties.mapTag[1];
+		const mapTag = !worldMap.properties.mapTag[1].includes('$') && !worldMap.properties.mapTag[1].includes('%')
+			? '%' + worldMap.properties.mapTag[1] + '%'
+			: worldMap.properties.mapTag[1];
 		const tags = fb.TitleFormat('[' + mapTag + ']').EvalWithMetadbs(sel);
 		if (tags.some((value) => { return worldMap.getLastPoint().some((last) => { return last.val !== value; }); })) {
 			repaint();

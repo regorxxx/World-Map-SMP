@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/11/24
+//25/11/24
 
 /* exported createMenu */
 
@@ -191,8 +191,8 @@ function createMenu() {
 									const fileText = _open(packageFile);
 									if (!fileText.length) { return; }
 									if (!properties.bInstalledBiography[1]) {
-										if (fileText.indexOf(modPackageTextV12) === -1) { foundArr.push({ path: packageFile, ver: packageText.version }); } // When installing, look for not modified script
-									} else if (fileText.indexOf(modPackageTextV12) !== -1) { foundArr.push({ path: packageFile, ver: packageText.version }); } // Otherwise, look for the mod string
+										if (!fileText.includes(modPackageTextV12)) { foundArr.push({ path: packageFile, ver: packageText.version }); } // When installing, look for not modified script
+									} else if (fileText.includes(modPackageTextV12)) { foundArr.push({ path: packageFile, ver: packageText.version }); } // Otherwise, look for the mod string
 								} else { // 1.2.0+: requires no further changes
 									let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
 									if (answer === popup.yes) {
@@ -217,10 +217,10 @@ function createMenu() {
 						fileArr.forEach((file) => {
 							const fileText = _open(file);
 							if (!fileText.length) { return; }
-							if (fileText.indexOf(idText) !== -1 && fileText.indexOf('omit this same script') === -1) { // Omit this one from the list!
+							if (fileText.includes(idText) && !fileText.includes('omit this same script')) { // Omit this one from the list!
 								if (!properties.bInstalledBiography[1]) {
-									if (fileText.indexOf(modText) === -1) { foundArr.push({ path: file, ver: '1.1.X' }); } // When installing, look for not modified script
-								} else if (fileText.indexOf(modText) !== -1) { foundArr.push({ path: file, ver: '1.1.X' }); } // Otherwise, look for the mod string
+									if (!fileText.includes(modText)) { foundArr.push({ path: file, ver: '1.1.X' }); } // When installing, look for not modified script
+								} else if (fileText.includes(modText)) { foundArr.push({ path: file, ver: '1.1.X' }); } // Otherwise, look for the mod string
 							}
 						});
 					}

@@ -381,7 +381,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		const dataId = worldMap.jsonId; // The tag used to match data
 		const dataIdTag = _t(dataId.toUpperCase()); // for readability
 		const mapTag = worldMap.properties.mapTag[1];
-		const queryNapTag = (mapTag.indexOf('$') !== -1 ? _q(mapTag) : mapTag);
+		const queryNapTag = (mapTag.includes('$') ? _q(mapTag) : mapTag);
 		const queryByCountry = (countryName) => {
 			let query = '';
 			query = queryNapTag + ' IS ' + countryName + ' OR ' + queryNapTag + ' IS ' + getCountryISO(countryName);
