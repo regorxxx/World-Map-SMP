@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/02/24
+//25/11/24
 
 /* exported ImageMap */
 
@@ -215,7 +215,7 @@ function ImageMap({
 		let mapTagValue = '';
 		if (sel) {
 			// Get from tags
-			const tfo = (this.mapTag.indexOf('$') === -1) ? _bt(this.mapTag) : _b(this.mapTag); // It's a function?
+			const tfo = !this.mapTag.includes('$') ? _bt(this.mapTag) : _b(this.mapTag); // It's a function?
 			mapTagValue = fb.TitleFormat(tfo).EvalWithMetadb(sel);
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
@@ -409,7 +409,7 @@ function ImageMap({
 		this.save(path);
 	};
 	this.save = (path = this.jsonPath) => {
-		_save(path, JSON.stringify(this.jsonData, null, '\t'));
+		_save(path, JSON.stringify(this.jsonData, null, '\t').replace(/\n/g, '\r\n'));
 	};
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => { return (obj[byKey] === data[byKey]); }) : false);
