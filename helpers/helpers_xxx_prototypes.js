@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/11/24
+//28/11/24
 
 /* exported compareObjects, compareKeys, isJSON, roughSizeOfObject, deepAssign, BiMap, isFunction, $args, isPromise, matchCase, capitalizePartial, capitalizeAll, _p, _bt, _qCond, _ascii, _asciify, isArrayStrings, isArrayNumbers, isArrayEqual, zeroOrVal, emptyOrVal, isInt, isFloat, cyclicOffset, range, round, isUUID, isBoolean, regExBool, cartesian */
 
@@ -164,7 +164,7 @@ function roughSizeOfObject(object) {
 		} else if (type === 'object' && value instanceof FbTitleFormat) {
 			bytes += 8;
 			bytes += value.Expression.length * 2;
-		} else if (type === 'object' && value && value.RawPath && value.Path) {
+		} else if (type === 'object' && toType(value) === 'FbMetadbHandle') {
 			bytes += 24;
 			bytes += value.Path.length * 2;
 			bytes += value.RawPath.length * 2;
@@ -518,7 +518,7 @@ function _b(value) {
 }
 
 function _t(tag) {
-	return tag.indexOf('%') !== -1 || tag.indexOf('$') !== -1 ? tag : '%' + tag + '%';
+	return (tag.includes('%') || tag.includes('$') ? tag : '%' + tag + '%');
 }
 
 function _bt(tag) {
