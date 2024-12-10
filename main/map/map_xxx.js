@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/24
+//07/12/24
 
 /* exported ImageMap */
 
@@ -549,7 +549,7 @@ function ImageMap({
 		this.loadData();
 		this.clearPointCache();
 		this.colorsChanged();
-		globProfiler.Print('wordlmap.init');
+		globProfiler.Print('worldmap.init');
 	};
 
 	this.properties = properties; // Load once! [0] = descriptions, [1] = values set by user (not defaults!)
