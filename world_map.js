@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/24
+//23/12/24
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -48,7 +48,7 @@ include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
 /* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable , MF_GRAYED:readable */
 include('helpers\\helpers_xxx_prototypes.js');
-/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, isArray:readable, _bt:readable */
+/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, _bt:readable */
 include('helpers\\helpers_xxx_prototypes_smp.js');
 /* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
@@ -868,7 +868,7 @@ addEventListener('on_notify_data', (name, info) => {
 			const tagName = worldMap.properties.writeToTag[1];
 			if (tagName.length) {
 				let locale = [];
-				if (isArray(info.tags)) { // Biography 1.1.3
+				if (Array.isArray(info.tags)) { // Biography 1.1.3
 					locale = [...info.tags.find((tag) => { return tag.name === 'locale'; }).val]; // Find the tag with name === locale in the array of tags
 				} else { // Biography 1.2.0+
 					const tag = Object.keys(info.tags)

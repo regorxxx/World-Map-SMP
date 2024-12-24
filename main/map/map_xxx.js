@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/12/24
+//23/12/24
 
 /* exported ImageMap */
 
@@ -17,7 +17,7 @@ include('..\\..\\helpers\\helpers_xxx_file.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _bt:readable, _b:readable, isArray:readable */
+/* global _bt:readable, _b:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
 /* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
 
@@ -401,7 +401,7 @@ function ImageMap({
 		}
 	};
 	this.saveData = (data, path = this.jsonPath) => { // Does not check for duplication!
-		if (isArray(data)) {
+		if (Array.isArray(data)) {
 			data.forEach((val) => { this.jsonData.push(val); });
 		} else {
 			this.jsonData.push(data);
