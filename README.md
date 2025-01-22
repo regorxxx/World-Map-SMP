@@ -3,7 +3,7 @@
 [![CodeFactor][codefactor_badge]](https://www.codefactor.io/repository/github/regorxxx/world-map-smp/overview/main)
 [![Codacy Badge][codacy_badge]](https://www.codacy.com/gh/regorxxx/World-Map-SMP/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=regorxxx/World-Map-SMP&amp;utm_campaign=Badge_Grade)
 ![GitHub](https://img.shields.io/github/license/regorxxx/World-Map-SMP)  
-A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://github.com/Wil-B/Biography). 
+A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel)/[JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://github.com/Wil-B/Biography). 
 
 ![Animation4](https://user-images.githubusercontent.com/83307074/116752367-002d9100-a9f5-11eb-8a03-0ee323634742.gif)
 
@@ -36,9 +36,19 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 
 ![Animation6](https://user-images.githubusercontent.com/83307074/116752378-03c11800-a9f5-11eb-9971-b3eff6e8d0fa.gif)
 
+## Requirements
+ 1. [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel): Component required to install this javaScript addon. Only x32.
+ 2. [JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378): Component required to install this javaScript addon. Both x32 and x64.
+ 3. FontAwesome: found at ’.\ resources\fontawesome-webfont.ttf’. See installation notes.
+
 # Installation
-See [_TIPS and INSTALLATION (txt)](https://github.com/regorxxx/World-Map-SMP/blob/main/_TIPS%20and%20INSTALLATION.txt) and the [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki/Installation).
+See [_INSTALLATION (txt)](https://github.com/regorxxx/World-Map-SMP/blob/main/_INSTALLATION.txt) and the [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki/Installation).
 Not properly following the installation instructions will result in scripts not working as intended. Please don't report errors before checking this.
+
+## Support
+ 1. [Issues tracker](https://github.com/regorxxx/World-Map-SMP/issues).
+ 2. [Hydrogenaudio forum](https://hydrogenaud.io/index.php/topic,120980.0.html).
+ 3. [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki).
 
 ## Nightly releases
 Automatic package [built from GitHub](https://nightly.link/regorxxx/World-Map-SMP/workflows/build/main/file.zip) (using the latest commit).
