@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/24
+//25/01/25
 
 /* exported createMenu */
 
@@ -430,8 +430,6 @@ function createMenu() {
 				});
 			}
 			menu.newSeparator(menuUI);
-			menu.newMenu('Background', menuUI);
-			menu.newSeparator(menuUI);
 			{
 				const getColorName = (val) => {
 					return (val !== -1 ? (ntc.name(Chroma(val).hex())[1] || '').toString() || 'unknown' : '-none-');
@@ -673,6 +671,8 @@ function createMenu() {
 					}, options);
 				}
 			}
+			menu.newSeparator(menuUI);
+			menu.newMenu('Background', menuUI);
 			menu.newSeparator(menuUI);
 			{	// Header
 				const menuName = menu.newMenu('Header', menuUI);
