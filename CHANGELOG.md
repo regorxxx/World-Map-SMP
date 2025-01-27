@@ -54,6 +54,7 @@
 - Statistics: X-Axis shown values at display menu now allows any custom value.
 - Statistics: Y-Axis filter at display menu now allows any custom value for 'greater than'/'lower than' filters.
 - Statistics: option to filter data between 2 custom values on Y-Axis at display menu.
+- UI: added dynamic colors support based on track's artwork. It follows the background cover mode settings and must be enabled on 'colors' submenu.
 ### Changed
 - [JSplitter (SMP)](https://foobar2000.ru/forum/viewtopic.php?t=6378&start=360) support for locked playlists.
 - Statistics: scrolling cursor is displayed when scrolling using mouse + dragging.
@@ -68,6 +69,7 @@
 - Statistics: scrolling buttons are now shown only when the chart is not showing all data (no zoom).
 - Statistics: multiple menu entries at 'Display settings' have been renamed for clarity's sake.
 - Statistics: buttons are now smoothly hidden when panel is not on focus. Transparency may be adjusted from 0 to 255 by setting buttons.alpha, timer to hide them by setting buttons.timer.
+- UI: 'shapes' map images are inverted if the contrast is not great enough against the background color set.
 - Helpers: updated helpers.
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed

@@ -1,9 +1,9 @@
 ﻿'use strict';
-//25/01/25
+//27/01/25
 
 /* exported createMenu */
 
-/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
+/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, getPropertiesPairs:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -242,7 +242,7 @@ function createMenu() {
 						if (!bDone) { return; }
 						const file = selected.path;
 						const folderPath = utils.SplitFilePath(file)[0];
-						console.log('World Map: Editing file ' + file);
+						console.log('World Map: Editing file\n\t ' + file);
 						if (selected.ver === '1.1.X') { // Biography 1.1.X
 							if (!properties.bInstalledBiography[1]) {
 								if (!_isFile(file + backupExt)) {
@@ -356,7 +356,7 @@ function createMenu() {
 				menu.newEntry({ menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED });
 				menu.newSeparator(menuName);
 				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
-				const options = [...worldMapImages, {text: 'sep'}, { text: 'Custom...' }];
+				const options = [...worldMapImages, { text: 'sep' }, { text: 'Custom...' }];
 				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx, '.\\profile\\') : worldMap.imageMapPath).replace('hires\\', '');
 				options.forEach((map, index) => {
 					map.entryText = map.text; // For menu compatibility later
@@ -443,11 +443,14 @@ function createMenu() {
 					options.forEach((item, i) => {
 						menu.newEntry({
 							menuName: subMenuName, entryText: item + ('\t' + _b(getColorName(worldMap.defaultColor))), func: () => {
-								worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : 0xFF00FFFF;
+								worldMap.defaultColor = i === 1 ? properties.customPointColor[1] : worldMap.defaultColor;
 								// Update property to save between reloads
 								properties.customPointColorMode[1] = i;
 								if (i === 1) {
-									properties.customPointColor[1] = worldMap.defaultColor = utils.ColourPicker(window.ID, worldMap.defaultColor);
+									properties.customPointColor[1] = worldMap.defaultColor = utils.IsKeyPressed(VK_CONTROL)
+										? properties.customPointColor[3]
+										: utils.ColourPicker(window.ID, worldMap.defaultColor);
+									console.log('World Map: Selected color ->\n\t Android: ' + properties.customPointColor[1] + ' - RGB: ' + Chroma(properties.customPointColor[1]).rgb());
 								}
 								overwriteProperties(properties);
 								repaint(void (0), true);
@@ -463,10 +466,15 @@ function createMenu() {
 						options.forEach((item, i) => {
 							const tip = i === 1 && properties.layerFillMode[1].length
 								? '(Only None fill)'
-								: _b(getColorName(i === 1 ? properties.customShapeColor[1] : RGB(199, 233, 192)));
+								: _b(getColorName(i === 1 ? properties.customShapeColor[1] : properties.customShapeColor[3]));
 							menu.newEntry({
 								menuName: subMenuName, entryText: item + '\t' + tip, func: () => {
-									properties.customShapeColor[1] = i === 0 ? -1 : utils.ColourPicker(window.ID, properties.customShapeColor[1]);
+									properties.customShapeColor[1] = i === 0
+										? -1
+										: utils.IsKeyPressed(VK_CONTROL)
+											? properties.customShapeColor[3]
+											: utils.ColourPicker(window.ID, properties.customShapeColor[1]);
+									if (i !== 0) { console.log('World Map: Selected color ->\n\t Android: ' + properties.customShapeColor[1] + ' - RGB: ' + Chroma(properties.customShapeColor[1]).rgb()); }
 									overwriteProperties(properties);
 									repaint(void (0), true, true);
 								}, flags: i === 1 && properties.layerFillMode[1].length ? MF_GRAYED : MF_STRING
@@ -541,9 +549,10 @@ function createMenu() {
 				{	// NOSONAR Text color
 					menu.newEntry({
 						menuName, entryText: 'Text...' + '\t' + _b(getColorName(worldMap.textColor)), func: () => {
-							worldMap.textColor =  utils.IsKeyPressed(VK_CONTROL)
-								? worldMap.defaultColor
+							worldMap.textColor = utils.IsKeyPressed(VK_CONTROL)
+								? properties.customLocaleColor[3]
 								: utils.ColourPicker(window.ID, worldMap.defaultColor);
+							console.log('World Map: Selected color ->\n\t Android: ' + worldMap.textColor + ' - RGB: ' + Chroma(worldMap.textColor).rgb());
 							// Update property to save between reloads
 							properties.customLocaleColor[1] = worldMap.textColor;
 							overwriteProperties(properties);
@@ -557,6 +566,7 @@ function createMenu() {
 							worldMap.properties.headerColor[1] = utils.IsKeyPressed(VK_CONTROL)
 								? -1
 								: utils.ColourPicker(window.ID, worldMap.properties.headerColor[1]);
+							if (properties.headerColor[1] !== -1) { console.log('World Map: Selected color ->\n\t Android: ' + properties.headerColor[1] + ' - RGB: ' + Chroma(properties.headerColor[1]).rgb()); }
 							// Update property to save between reloads
 							overwriteProperties(properties);
 							repaint(void (0), true);
@@ -590,11 +600,11 @@ function createMenu() {
 									[worldMap.textColor, worldMap.defaultColor, bgColor] = preset.colors;
 									properties.customPointColorMode[1] = 1;
 									properties.customPointColor[1] = worldMap.defaultColor;
-									if (background.colorMode !== 'single') {
+									if (background.colorMode !== 'none') {
 										const gradient = [Chroma(bgColor).saturate(2).luminance(0.005).android(), bgColor];
 										bgColor = Chroma.scale(gradient).mode('lrgb').colors(background.colorModeOptions.color.length, 'android');
+										background.changeConfig({ config: { colorModeOptions: { color: bgColor } }, callbackArgs: { bSaveProperties: true } });
 									}
-									background.changeConfig({ config: { colorModeOptions: { color: bgColor } }, callbackArgs: { bSaveProperties: true } });
 								}
 								properties.customLocaleColor[1] = worldMap.textColor;
 								overwriteProperties(properties);
@@ -604,6 +614,43 @@ function createMenu() {
 						});
 					});
 				}
+				menu.newSeparator(menuName);
+				menu.newEntry({
+					menuName, entryText: 'Dynamic (background cover mode)', func: () => {
+						properties.bDynamicColors[1] = !properties.bDynamicColors[1];
+						if (properties.bDynamicColors[1]) {
+							overwriteProperties(properties);
+							// Ensure it's applied with compatible settings
+							if (background.coverMode === 'none') {
+								background.coverModeOptions.alpha = 0;
+								background.coverMode = 'front';
+							}
+							background.updateImageBg(true);
+						} else {
+							overwriteProperties({ bDynamicColors: properties.bDynamicColors });
+							worldMap.properties = getPropertiesPairs(properties, '', 0);
+							worldMap.textColor = worldMap.properties.customLocaleColor[1];
+							worldMap.defaultColor = worldMap.properties.customPointColor[1];
+							background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+						}
+						worldMap.colorsChanged();
+						repaint(void (0), true);
+					}
+				});
+				menu.newCheckMenuLast(() => properties.bDynamicColors[1]);
+				menu.newEntry({
+					menuName, entryText: 'Also apply to background', func: () => {
+						properties.bDynamicColorsBg[1] = !properties.bDynamicColorsBg[1];
+						if (!properties.bDynamicColorsBg[1]) {
+							background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+						}
+						overwriteProperties(properties);
+						background.updateImageBg(true);
+						worldMap.colorsChanged();
+						repaint(void (0), true);
+					}, flags: properties.bDynamicColors[1] ? MF_STRING : MF_GRAYED
+				});
+				menu.newCheckMenuLast(() => properties.bDynamicColorsBg[1]);
 			}
 			{ // NOSONAR
 				{	// Point size
@@ -960,7 +1007,7 @@ function createMenu() {
 				entryText: 'Open readme...', func: () => {
 					const readme = _open(readmePath, utf8); // Executed on script load
 					if (readme.length) { fb.ShowPopupMessage(readme, 'World-Map-SMP'); }
-					else { console.log('Readme not found: ' + readmePath); }
+					else { console.log('World Map: Readme not found\n\t ' + readmePath); }
 				}
 			});
 		}

@@ -48,17 +48,17 @@ function ImageMap({
 			window.RepaintRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale);
 		}
 	};
-	this.paintBg = (gr, bOnlyPanel = false) => {
+	this.paintBg = (gr, bOnlyPanel = false, bInvertMap = false) => {
 		if (this.customPanelColorMode !== 1 && this.panelColor) { gr.FillSolidRect(0, 0, window.Width, window.Height, this.panelColor); }
 		if (bOnlyPanel) { return; }
 		if (this.imageMapPath === 'background') {
 			gr.FillSolidRect(this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, this.backgroundColor);
 		} else if (this.imageMapAlpha !== 0) {
-			gr.DrawImage(this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height, 0, this.imageMapAlpha);
+			gr.DrawImage(bInvertMap ? this.imageMap.InvertColours() : this.imageMap, this.posX, this.posY, this.imageMap.Width * this.scale, this.imageMap.Height * this.scale, 0, 0, this.imageMap.Width, this.imageMap.Height, 0, this.imageMapAlpha);
 		}
 	};
-	this.paint = ({ gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false, bClearCachedValues = false }) => { // on_paint
-		this.paintBg(gr);
+	this.paint = ({ gr, sel, selMulti, color = this.defaultColor, selectionColor = this.selectionColor, bOverridePaintSel = false, bClearCachedValues = false, bInvertMap = false }) => { // on_paint
+		this.paintBg(gr, false, bInvertMap);
 		const toPaintArr = [];
 		// When moving mouse, retrieve last points
 		if (this.idSelected.length) {

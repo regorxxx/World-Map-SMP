@@ -1,45 +1,9 @@
 ﻿'use strict';
-//23/12/24
+//27/01/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
-	Show artist's country drawing a circle over the world map. To get the country,
-	'mapTag' set on properties is used. It may be a tag name or a TF expression.
-	Therefore data must be previously on tracks or the database.
-
-	'mapTag' may contain ISO values (ARG) or full names (Argentina). Capitalization
-	doesn't matter. Full names are converted to ISO values before coordinates lookup.
-
-	Country tags can be manually fetched:
-		- Using Picard + Plugin (also created by me) (TODO)
-		https://picard.musicbrainz.org/
-		https://picard.musicbrainz.org/plugins/ (Look for -> Artist's Country)
-
-		- WilB's Biography script:
-			+ shift Right Click / Write tags to selected tracks / Proceed
-			+ Be sure 'Locale last.fm' is checked. Is the only tag needed.
-			+ Check 'Images folder' for instructions. (you can use foo_preview as alternative)
-		https://hydrogenaud.io/index.php?topic=112913.75
-
-		- Using web scrappers and saving the data as json:
-			[{artist: _artist_name_ , val: [_locale_tags_]}, ...]
-
-	On playback the panel fetches tags from (by order of preference):
-		- Track's tags.
-		- Json database
-		- WilB's Biography script integration (*):
-		  https://hydrogenaud.io/index.php?topic=112913.75
-
-	Panel is updated when playback changes, switching playlists, selecting tracks, ...
-	Requires a full world map using Mercator projection to work. One is given
-	for convenience, but can be changed if desired at properties.
-
-	(*) Must use modified version provided at folder 'Biography 1.1.3_Mod' (not original one)
-	Required until the author updates it.
-
-	See also:
-		- helpers\world_map_tables.js (coordinates and country lookup logic)
-		- helpers\map_xxx.js  (arbitrary map object)
+	Shows artist's country over a world map.
  */
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.15.0', features: { drag_n_drop: false } }); }
@@ -73,6 +37,8 @@ include('main\\filter_and_query\\remove_duplicates.js');
 /* global removeDuplicates:readable */
 include('main\\window\\window_xxx_background.js');
 /* global _background:readable, createBackgroundMenu:readable */
+include('main\\window\\window_xxx_dynamic_colors.js');
+/* global dynamicColors:readable, mostContrastColor:readable */
 
 globProfiler.Print('helpers');
 checkCompatible('1.6.1', 'smp');
@@ -105,7 +71,7 @@ const worldMap_properties = {
 	bInstalledBiography: ['Is installed biography mod?', false, { func: isBoolean }, false],
 	customPointSize: ['Custom point size for the panel', 16, { func: isInt }, 16],
 	customPointColorMode: ['Custom point color mode', 0, { func: isInt, range: [[0, 1]] }, 0],
-	customPointColor: ['Custom point color for the panel', 0xFF00FFFF, { func: isInt }, 0xFF00FFFF],
+	customPointColor: ['Custom point color for the panel', RGB(91, 165, 34), { func: isInt }, RGB(91, 165, 34)],
 	bPointFill: ['Draw a point or a circular corona?', false, { func: isBoolean }, false],
 	customLocaleColor: ['Custom text color', 0xFF000000, { func: isInt }, 0xFF000000],
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
@@ -138,7 +104,9 @@ const worldMap_properties = {
 		{ colorMode: 'gradient', colorModeOptions: { color: [RGB(270, 270, 270), RGB(300, 300, 300)] }, coverMode: 'front' }
 	))],
 	headerColor: ['Custom header color', -1, { func: isInt }, -1],
-	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true]
+	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true],
+	bDynamicColors: ['Adjust colors to artwork', false, { func: isBoolean }],
+	bDynamicColorsBg: ['Adjust colors to artwork (bg)', false, { func: isBoolean }],
 };
 modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
 worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
@@ -203,7 +171,7 @@ worldMap.save = (path = worldMap.jsonPath) => {
 			return { artist: obj[worldMap.jsonId], val: obj.val };
 		});
 	}
-	_save(path, JSON.stringify(data, null, '\t').replace(/\n/g,'\r\n'));
+	_save(path, JSON.stringify(data, null, '\t').replace(/\n/g, '\r\n'));
 };
 
 worldMap.loadData = (path = worldMap.jsonPath) => {
@@ -253,6 +221,38 @@ const background = new _background({
 				overwriteProperties(worldMap.properties);
 			}
 		},
+		artColors: (colArray) => {
+			if (!worldMap.properties.bDynamicColors[1]) { return; }
+			if (colArray) {
+				const { main, sec, note, secAlt } = dynamicColors(
+					colArray,
+					background.getColors()[0],
+					true
+				);
+				if (worldMap.properties.bShowHeader[1]) {
+					worldMap.properties.headerColor[1] = main;
+					worldMap.textColor = mostContrastColor(main).color;
+				} else {
+					worldMap.textColor = main;
+				}
+				worldMap.defaultColor = sec;
+				worldMap.properties.customShapeColor[1] = secAlt;
+				if (worldMap.properties.bDynamicColorsBg[1] && background.colorMode !== 'none') {
+					const gradient = [Chroma(note).saturate(2).luminance(0.005).android(), note];
+					const bgColor = Chroma.scale(gradient).mode('lrgb')
+						.colors(background.colorModeOptions.color.length, 'android')
+						.reverse();
+					background.changeConfig({ config: { colorModeOptions: { color: bgColor } }, callbackArgs: { bSaveProperties: false } });
+				}
+			} else {
+				worldMap.properties = getPropertiesPairs(worldMap_properties, '', 0);
+				worldMap.textColor = worldMap.properties.customLocaleColor[1];
+				worldMap.defaultColor = worldMap.properties.customPointColor[1];
+				background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+			}
+			worldMap.colorsChanged();
+			repaint(void (0), true);
+		}
 	},
 });
 
@@ -609,7 +609,7 @@ addEventListener('on_paint', (gr) => {
 		}
 		worldMap.paint({ gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 });
 		if (worldMap.properties.pointMode[1] >= 1) {
-			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199, 233, 192); // Green
+			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : worldMap.properties.customShapeColor[3];
 			const gradient = worldMap.properties.panelMode[1] === 3
 				? worldMap.properties.customGradientColor[1] || [Chroma(color).saturate(2).luminance(0.8).android(), Chroma(color).saturate(2).luminance(0.4).android()]
 				: null;
@@ -621,7 +621,10 @@ addEventListener('on_paint', (gr) => {
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) { sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1); }
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
-		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length) });
+		const bInvertMap = RegExp(/shapes/i).exec(worldMap.imageMapPath)
+			? Chroma.contrast(background.getColors()[0], RGB(0, 0, 0)) * worldMap.imageMapAlpha / 255 < 1.25
+			: false;
+		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length), bInvertMap });
 		if (sel.Count) {
 			if (bPressShift && !bPressWin && worldMap.foundPoints.length) {
 				const id = formatCountry(worldMap.foundPoints[0].key || '');
@@ -642,7 +645,7 @@ addEventListener('on_paint', (gr) => {
 					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
 				}
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : RGB(199, 233, 192); // Green
+				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : worldMap.properties.customShapeColor[3];
 				paintLayers({ gr, color, bProfile: worldMap.properties.bProfile[1] });
 			}
 		}
