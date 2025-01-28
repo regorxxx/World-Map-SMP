@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/01/25
+//28/01/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -224,9 +224,10 @@ const background = new _background({
 		artColors: (colArray) => {
 			if (!worldMap.properties.bDynamicColors[1]) { return; }
 			if (colArray) {
+				const bChangeBg = worldMap.properties.bDynamicColorsBg[1];
 				const { main, sec, note, secAlt } = dynamicColors(
 					colArray,
-					background.getColors()[0],
+					bChangeBg ? RGB(122, 122, 122) : background.getColors()[0],
 					true
 				);
 				if (worldMap.properties.bShowHeader[1]) {
@@ -237,7 +238,7 @@ const background = new _background({
 				}
 				worldMap.defaultColor = sec;
 				worldMap.properties.customShapeColor[1] = secAlt;
-				if (worldMap.properties.bDynamicColorsBg[1] && background.colorMode !== 'none') {
+				if (bChangeBg && background.colorMode !== 'none') {
 					const gradient = [Chroma(note).saturate(2).luminance(0.005).android(), note];
 					const bgColor = Chroma.scale(gradient).mode('lrgb')
 						.colors(background.colorModeOptions.color.length, 'android')

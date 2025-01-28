@@ -615,42 +615,45 @@ function createMenu() {
 					});
 				}
 				menu.newSeparator(menuName);
-				menu.newEntry({
-					menuName, entryText: 'Dynamic (background cover mode)', func: () => {
-						properties.bDynamicColors[1] = !properties.bDynamicColors[1];
-						if (properties.bDynamicColors[1]) {
-							overwriteProperties(properties);
-							// Ensure it's applied with compatible settings
-							if (background.coverMode === 'none') {
-								background.coverModeOptions.alpha = 0;
-								background.coverMode = 'front';
+				{
+					const subMenu = menu.newMenu('Dynamic colors', menuName);
+					menu.newEntry({
+						menuName: subMenu, entryText: 'Dynamic (background cover mode)', func: () => {
+							properties.bDynamicColors[1] = !properties.bDynamicColors[1];
+							if (properties.bDynamicColors[1]) {
+								overwriteProperties(properties);
+								// Ensure it's applied with compatible settings
+								if (background.coverMode === 'none') {
+									background.coverModeOptions.alpha = 0;
+									background.coverMode = 'front';
+								}
+								background.updateImageBg(true);
+							} else {
+								overwriteProperties({ bDynamicColors: properties.bDynamicColors });
+								worldMap.properties = getPropertiesPairs(properties, '', 0);
+								worldMap.textColor = worldMap.properties.customLocaleColor[1];
+								worldMap.defaultColor = worldMap.properties.customPointColor[1];
+								background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
 							}
+							worldMap.colorsChanged();
+							repaint(void (0), true);
+						}
+					});
+					menu.newCheckMenuLast(() => properties.bDynamicColors[1]);
+					menu.newEntry({
+						menuName: subMenu, entryText: 'Also apply to background color', func: () => {
+							properties.bDynamicColorsBg[1] = !properties.bDynamicColorsBg[1];
+							if (!properties.bDynamicColorsBg[1]) {
+								background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+							}
+							overwriteProperties(properties);
 							background.updateImageBg(true);
-						} else {
-							overwriteProperties({ bDynamicColors: properties.bDynamicColors });
-							worldMap.properties = getPropertiesPairs(properties, '', 0);
-							worldMap.textColor = worldMap.properties.customLocaleColor[1];
-							worldMap.defaultColor = worldMap.properties.customPointColor[1];
-							background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
-						}
-						worldMap.colorsChanged();
-						repaint(void (0), true);
-					}
-				});
-				menu.newCheckMenuLast(() => properties.bDynamicColors[1]);
-				menu.newEntry({
-					menuName, entryText: 'Also apply to background', func: () => {
-						properties.bDynamicColorsBg[1] = !properties.bDynamicColorsBg[1];
-						if (!properties.bDynamicColorsBg[1]) {
-							background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
-						}
-						overwriteProperties(properties);
-						background.updateImageBg(true);
-						worldMap.colorsChanged();
-						repaint(void (0), true);
-					}, flags: properties.bDynamicColors[1] ? MF_STRING : MF_GRAYED
-				});
-				menu.newCheckMenuLast(() => properties.bDynamicColorsBg[1]);
+							worldMap.colorsChanged();
+							repaint(void (0), true);
+						}, flags: properties.bDynamicColors[1] ? MF_STRING : MF_GRAYED
+					});
+					menu.newCheckMenuLast(() => properties.bDynamicColorsBg[1]);
+				}
 			}
 			{ // NOSONAR
 				{	// Point size
