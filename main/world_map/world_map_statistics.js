@@ -600,7 +600,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		parent.bEnabled = !parent.bEnabled;
 		worldMap.properties['panelMode'][1] = 0;
 		overwriteProperties(worldMap.properties);
-		repaint(void (0), true);
+		repaint(void (0), true, true);
 	};
 
 	this.bEnabled = bEnabled;

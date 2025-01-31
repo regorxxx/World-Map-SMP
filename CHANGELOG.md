@@ -76,6 +76,7 @@
 ### Fixed
 - Statistics: minor fixes.
 - Statistics: background not being updated on playback/selection change.
+- Statistics: panel not being completely repainted when exiting statistics mode.
 - UI: '&' being displayed as '_' on tooltips.
 
 ## [3.15.0] - 2024-10-09
