@@ -705,44 +705,49 @@ addEventListener('on_paint', (gr) => {
 });
 
 addEventListener('on_playback_new_track', (metadb) => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none') { background.updateImageBg(); }
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!metadb) { return; }
 	repaint(true);
 });
 
 addEventListener('on_selection_changed', () => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_item_focus_change', () => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
 });
 
 addEventListener('on_playlist_switch', () => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	repaint();
 });
 
+
+addEventListener('on_playlist_switch', () => {
+	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+		background.updateImageBg();
+	}
+});
+
 addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (reason !== 2) { // Invoked by user or Starting another track
 		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
-	}
-	if (reason !== 2) { // Invoked by user or Starting another track
+		if (worldMap.properties.panelMode[1] === 2) { return; }
 		repaint();
 	}
 });

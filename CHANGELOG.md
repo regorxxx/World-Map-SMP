@@ -75,6 +75,7 @@
 ### Removed
 ### Fixed
 - Statistics: minor fixes.
+- Statistics: background not being updated on playback/selection change.
 - UI: '&' being displayed as '_' on tooltips.
 
 ## [3.15.0] - 2024-10-09
