@@ -1,5 +1,5 @@
 ﻿'use strict';
-//31/01/25
+//07/03/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -62,7 +62,7 @@ const worldMap_properties = {
 	bEnabled: ['Enable panel', true, { func: isBoolean }, true],
 	bEnabledBiography: ['Enable WilB\'s Biography script integration', false, { func: isBoolean }, false],
 	forcedQuery: ['Global forced query', globQuery.filter, { func: (query) => { return checkQuery(query, true); } }, globQuery.filter],
-	fileName: ['JSON filename (for tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap.json'],
+	fileName: ['JSON filename (for tags)', '.\\profile\\' + folders.dataName + 'worldMap.json'],
 	firstPopup: ['World Map: Fired once', false, { func: isBoolean }, false],
 	tagFilter: ['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', { func: isStringWeak }, 'Instrumental'],
 	iLimitSelection: ['Repaint panel only if selecting less than...', 5, { func: isInt, range: [[2, 25000]] }, 5],
@@ -77,7 +77,7 @@ const worldMap_properties = {
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
 	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isInt }, globFonts.standardSmall.size],
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
-	fileNameLibrary: ['JSON filename (for library tags)', (_isFile(fb.FoobarPath + 'portable_mode_enabled') ? '.\\profile\\' + folders.dataName : folders.data) + 'worldMap_library.json'],
+	fileNameLibrary: ['JSON filename (for library tags)', '.\\profile\\' + folders.dataName + 'worldMap_library.json'],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
 	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
@@ -279,7 +279,9 @@ overwriteProperties(worldMap.properties); // Updates panel
 
 // Library Mode
 if (!_isFile(worldMap.properties.fileNameLibrary[1])) { saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap); }
-const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1]) ? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, utf8) : null;
+const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1])
+	? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name, utf8)
+	: null;
 
 { // Default database
 	const defDatabase = folders.xxx + 'presets\\World Map\\worldMap.json';
