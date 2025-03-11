@@ -80,6 +80,7 @@
 - Statistics: background not being updated on playback/selection change.
 - Statistics: panel not being completely repainted when exiting statistics mode.
 - UI: '&' being displayed as '_' on tooltips.
+- UI: wrong position on second background gradient using bigradient mode.
 
 ## [3.15.0] - 2024-10-09
 ### Added
