@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/03/25
+//11/03/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -20,7 +20,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
+/* global _isFile:readable, _resolvePath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
@@ -124,22 +124,15 @@ const worldMapImages = [
 // Build the image paths according to portable/low mem options and update current image
 {
 	const properties = getPropertiesPairs(worldMap_properties, '', 0);
-	const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
 	const bLowMemMode = properties.memMode[1] > 0;
 	worldMapImages.forEach((img) => {
-		const prefix = (bPortable
-			? folders.xxx.replace(fb.ProfilePath, '.\\profile\\')
-			: folders.xxx
-		) + 'images\\';
-		if ((prefix + img.path) === properties.imageMapPath[1]) {
-			let path;
-			if (bLowMemMode) { path = prefix + img.path; }
-			else { path = prefix + 'hires\\' + img.path; }
-			properties.imageMapPath[1] = path;
-			overwriteProperties(properties);
-		}
+		const prefix = folders.xxxRootName + 'images\\';
 		if (bLowMemMode) { img.path = prefix + img.path; }
 		else { img.path = prefix + 'hires\\' + img.path; }
+		if (_resolvePath(img.path).toLowerCase() === _resolvePath(properties.imageMapPath[1]).toLowerCase()) {
+			properties.imageMapPath[1] = img.path;
+			overwriteProperties(properties);
+		}
 	});
 }
 

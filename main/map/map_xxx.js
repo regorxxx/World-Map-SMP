@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/12/24
+//11/03/25
 
 /* exported ImageMap */
 
@@ -13,7 +13,7 @@ include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_flags.js');
 /* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
@@ -453,7 +453,7 @@ function ImageMap({
 				// eslint-disable-next-line no-undef
 				this.findCoordinates = findCountryCoords; // Default is country coordinates
 			}
-			this.imageMapPath = folders.xxx + 'images\\MC_WorldMap.jpg'; // Default is world map
+			this.imageMapPath = folders.xxxRootName + 'images\\MC_WorldMap.jpg'; // Default is world map
 			this.mapTag = '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
 			bfuncSet = true;
 		} else {
@@ -530,12 +530,11 @@ function ImageMap({
 			const maxWidth = Math.floor(maxSize * 1.25);
 			if (this.imageMapPath === 'background') {
 				this.imageMap = { Width: maxWidth, Height: maxSize };
-			} else if (!_isFile(this.imageMapPath)) {
-				fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' file does not exists:\n' + this.imageMapPath, window.Name);
-				this.imageMapPath = 'background';
-				this.imageMap = { Width: maxWidth, Height: maxSize };
 			} else {
-				try { this.imageMap = gdi.Image(this.imageMapPath); }
+				try {
+					if (!_isFile(this.imageMapPath)) { throw new Error('File not found.'); }
+					this.imageMap = gdi.Image(_resolvePath(this.imageMapPath));
+				}
 				catch (e) {
 					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath + '\n\n' + e.message, window.Name);
 					this.imageMapPath = 'background';

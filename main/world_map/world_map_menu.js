@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/02/25
+//11/03/25
 
 /* exported createMenu */
 
@@ -9,7 +9,7 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -182,7 +182,7 @@ function createMenu() {
 						const idFolder = '{BA9557CE-7B4B-4E0E-9373-99F511E81252}';
 						let packagePath;
 						try { packagePath = utils.GetPackagePath(idFolder); } // Exception when not found
-						catch (e) { packagePath = ''; }
+						catch (e) { packagePath = ''; } // eslint-disable-line no-unused-vars
 						packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
 						if (_isFile(packageFile)) {
 							const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
@@ -229,7 +229,7 @@ function createMenu() {
 					if (foundArr.length) { fb.ShowPopupMessage('Found these files:\n' + foundArr.map((script, idx) => { return '\n' + (idx + 1) + ': ' + script.path + '  (' + script.ver + ')'; }).join(''), window.Name); }
 					else { fb.ShowPopupMessage('WilB\'s ' + (properties.bInstalledBiography[1] ? 'modified ' : '') + 'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + properties.bInstalledBiography[0] + '\'', window.Name); return; }
 					try { input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, window.Name); }
-					catch (e) { return; }
+					catch (e) { return; } // eslint-disable-line no-unused-vars
 					if (!input.trim().length) { return; }
 					input = input.trim().split(',');
 					if (input.some((idx) => { return idx > foundArr.length; })) { return; }
@@ -332,7 +332,7 @@ function createMenu() {
 				menuName, entryText: properties.iLimitSelection[0] + '\t' + _b(properties.iLimitSelection[1]), func: () => {
 					let input;
 					try { input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true)); }
-					catch (e) { return; }
+					catch (e) { return; } // eslint-disable-line no-unused-vars
 					if (!Number.isSafeInteger(input)) { return; }
 					if (properties.iLimitSelection[1] === input) { return; }
 					properties.iLimitSelection[1] = input;
@@ -355,25 +355,24 @@ function createMenu() {
 				const menuName = menu.newMenu('Map image', menuUI);
 				menu.newEntry({ menuName, entryText: 'Image used as background:', func: null, flags: MF_GRAYED });
 				menu.newSeparator(menuName);
-				const bPortable = _isFile(fb.FoobarPath + 'portable_mode_enabled');
 				const options = [...worldMapImages, { text: 'sep' }, { text: 'Custom...' }];
-				const defPath = (bPortable ? worldMap.imageMapPath.replace(folders.xxx, '.\\profile\\') : worldMap.imageMapPath).replace('hires\\', '');
 				options.forEach((map, index) => {
 					map.entryText = map.text; // For menu compatibility later
 					menu.newEntry({
 						menuName, entryText: map.text, func: () => {
 							if (index === options.length - 1) {
 								let input = '';
-								try { input = utils.InputBox(window.ID, 'Input path to file:', window.Name, defPath, true); }
-								catch (e) { return; }
+								const defPath = worldMap.imageMapPath.replace('hires\\', '');
+								try { input = utils.InputBox(window.ID, 'Input path to file:\n\nPaths starting with \'.\\profile\\\' are relative to foobar profile folder.\nPaths starting with \'' + folders.xxxRootName + '\' are relative to this script\'s folder.', window.Name, defPath, true); }
+								catch (e) { return; } // eslint-disable-line no-unused-vars
 								if (!input.length) { return; }
-								worldMap.imageMapPath = bPortable ? input.replace('.\\profile\\' + folders.xxxName, folders.xxx) : input;
+								worldMap.imageMapPath = input.replace(folders.xxx, folders.xxxRootName);
 								properties.imageMapPath[1] = input;
 								overwriteProperties(properties);
 								menu.btn_up(void (0), void (0), void (0), 'Coordinates transformation\\X factor'); // Call factor input
 								menu.btn_up(void (0), void (0), void (0), 'Coordinates transformation\\Y factor');
 							} else {
-								worldMap.imageMapPath = bPortable ? map.path.replace('.\\profile\\' + folders.xxxName, folders.xxx) : map.path;
+								worldMap.imageMapPath = map.path.replace(folders.xxx, folders.xxxRootName);
 								worldMap.factorX = map.factorX;
 								worldMap.factorY = map.factorY;
 								properties.imageMapPath[1] = map.path;
@@ -387,12 +386,8 @@ function createMenu() {
 					});
 				});
 				menu.newCheckMenuLast((o, len) => {
-					let idx = o.findIndex((opt) => opt.path === worldMap.imageMapPath); // Uses abs paths
-					return (idx !== -1)
-						? idx
-						: properties.imageMapPath[1].length // Replace current abs path with relative path when there is no custom image
-							? len - 1
-							: o.findIndex((opt) => opt.path === defPath);
+					const idx = o.findIndex((opt) => _resolvePath(opt.path || '').toLowerCase() === _resolvePath(worldMap.imageMapPath).toLowerCase());
+					return idx !== -1 ? idx	: len - 1;
 				}, options);
 				menu.newSeparator(menuName);
 				menu.newEntry({
@@ -418,7 +413,7 @@ function createMenu() {
 						menuName, entryText: coord.text, func: () => {
 							let input = -1;
 							try { input = Number(utils.InputBox(window.ID, coord.text[0] + ' axis scale. Input a number (percentage):', window.Name, properties[coord.val][1], true)); }
-							catch (e) { return; }
+							catch (e) { return; } // eslint-disable-line no-unused-vars
 							if (!Number.isSafeInteger(input)) { return; }
 							worldMap[coord.val] = input;
 							properties[coord.val][1] = input;
@@ -666,7 +661,7 @@ function createMenu() {
 								if (i === optionsLength - 1) {
 									let input = '';
 									try { input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true)); }
-									catch (e) { return; }
+									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
 									properties.customPointSize[1] = input;
 								} else { properties.customPointSize[1] = item; }
@@ -703,7 +698,7 @@ function createMenu() {
 								if (i === optionsLength - 1) {
 									let input = '';
 									try { input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true)); }
-									catch (e) { return; }
+									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
 									properties.fontSize[1] = input;
 								} else { properties.fontSize[1] = item; }
@@ -815,7 +810,7 @@ function createMenu() {
 						menuName: subMenuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
 							let input = '';
 							try { input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true); }
-							catch (e) { return; }
+							catch (e) { return; } // eslint-disable-line no-unused-vars
 							if (!input.length) { return; }
 							properties[mod.tag][1] = input;
 							overwriteProperties(properties);
@@ -897,7 +892,7 @@ function createMenu() {
 					menuName: menuDatabase, entryText: 'Merge JSON databases...', func: () => {
 						let input = '';
 						try { input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.Name, folders.data + 'worldMap.json', true); }
-						catch (e) { return; }
+						catch (e) { return; } // eslint-disable-line no-unused-vars
 						if (!input.length) { return; }
 						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
 						let countN = 0;
