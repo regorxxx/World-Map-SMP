@@ -73,6 +73,7 @@
 - Statistics: scrolling buttons are now shown only when the chart is not showing all data (no zoom).
 - Statistics: multiple menu entries at 'Display settings' have been renamed for clarity's sake.
 - Statistics: buttons are now smoothly hidden when panel is not on focus. Transparency may be adjusted from 0 to 255 by setting buttons.alpha, timer to hide them by setting buttons.timer.
+- UI: unified script updates settings across all my scripts, look for 'Updates' submenu.
 - UI: 'shapes' map images are inverted if the contrast is not great enough against the background color set.
 - Helpers: updated helpers.
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.

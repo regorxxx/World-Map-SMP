@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/03/25
+//09/05/25
 
 /* exported createMenu */
 
@@ -29,21 +29,16 @@ function createMenu() {
 	menu.clear(true); // Reset on every call
 	{ // NOSONAR
 		{	// Enabled?
-			const menuName = menu.newMenu('Map panel functionality');
-			const options = [{ text: 'Enabled', val: true }, { text: 'Disabled', val: false }];
-			menu.newEntry({ menuName, entryText: 'Switch all functionality:', func: null, flags: MF_GRAYED });
+			const menuName = menu.newMenu('Panel settings');
 			menu.newSeparator(menuName);
-			options.forEach((mode) => {
-				menu.newEntry({
-					menuName, entryText: mode.text, func: () => {
-						if (properties.bEnabled[1] === mode.val) { return; }
-						properties.bEnabled[1] = mode.val;
-						overwriteProperties(properties);
-						repaint(false, true, true) || window.Repaint();
-					}
-				});
+			menu.newEntry({
+				menuName, entryText: 'Panel enabled', func: () => {
+					properties.bEnabled[1] = !properties.bEnabled[1];
+					overwriteProperties(properties);
+					repaint(false, true, true) || window.Repaint();
+				}
 			});
-			menu.newCheckMenuLast(() => properties.bEnabled[1] ? 0 : 1, options);
+			menu.newCheckMenuLast(() => properties.bEnabled[1]);
 			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
@@ -95,21 +90,9 @@ function createMenu() {
 				});
 				menu.newCheckMenuLast(() => properties.memMode[1], 3);
 			}
-			menu.newSeparator(menuName);
-			menu.newEntry({
-				menuName, entryText: 'Automatically check for updates', func: () => {
-					properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
-					overwriteProperties(properties);
-					if (properties.bAutoUpdateCheck[1]) {
-						if (typeof checkUpdate === 'undefined') { include('helpers\\helpers_xxx_web_update.js'); }
-						setTimeout(checkUpdate, 1000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false });
-					}
-				}
-			});
-			menu.newCheckMenuLast(() => properties.bAutoUpdateCheck[1]);
 		}
 		{	// Panel mode
-			const menuName = menu.newMenu('Map panel mode');
+			const menuName = menu.newMenu('Display mode');
 			const options = ['Standard mode (selection & playback)', 'Library mode (all artist on library)', 'Statistics mode (chart)', 'Statistics mode (gradient map)'];
 			menu.newEntry({ menuName, entryText: 'Switch panel mode:', func: null, flags: MF_GRAYED });
 			menu.newSeparator(menuName);
@@ -149,9 +132,9 @@ function createMenu() {
 			menu.newCheckMenuLast(() => properties.panelMode[1], options);
 		}
 		{	// Enabled Biography?
-			const menuName = menu.newMenu('WilB\'s Biography integration', void (0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
+			const menuName = menu.newMenu('Biography integration', void (0), properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 			const options = [{ text: 'Enabled', val: true }, { text: 'Disabled', val: false }];
-			menu.newEntry({ menuName, entryText: 'Switch Biography functionality:', func: null, flags: MF_GRAYED });
+			menu.newEntry({ menuName, entryText: 'WilB\'s Biography functionality:', func: null, flags: MF_GRAYED });
 			menu.newSeparator(menuName);
 			options.forEach((mode) => {
 				menu.newEntry({
@@ -990,8 +973,21 @@ function createMenu() {
 			}
 		}
 		{ // NOSONAR
+			const menuName = menu.newMenu('Updates');
 			menu.newEntry({
-				entryText: 'Check for updates...', func: () => {
+				menuName, entryText: 'Automatically check for updates', func: () => {
+					properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
+					overwriteProperties(properties);
+					if (properties.bAutoUpdateCheck[1]) {
+						if (typeof checkUpdate === 'undefined') { include('helpers\\helpers_xxx_web_update.js'); }
+						setTimeout(checkUpdate, 1000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false });
+					}
+				}
+			});
+			menu.newCheckMenuLast(() => properties.bAutoUpdateCheck[1]);
+			menu.newSeparator(menuName);
+			menu.newEntry({
+				menuName, entryText: 'Check for updates...', func: () => {
 					if (typeof checkUpdate === 'undefined') { include('helpers\\helpers_xxx_web_update.js'); }
 					checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
 						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.Name));
