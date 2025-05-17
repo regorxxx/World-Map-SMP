@@ -85,6 +85,7 @@
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed
 ### Fixed
+- Data: 'Find artists without locale tags' tool was not checking the read tag TF setting but the write tag setting, which would lead to wrong results if the tag was sourced from Biography (since it writes multiple values).
 - Statistics: minor fixes.
 - Statistics: background not being updated on playback/selection change.
 - Statistics: panel not being completely repainted when exiting statistics mode.
