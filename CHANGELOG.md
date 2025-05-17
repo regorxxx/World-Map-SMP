@@ -54,6 +54,8 @@
 - Statistics: X-Axis shown values at display menu now allows any custom value.
 - Statistics: Y-Axis filter at display menu now allows any custom value for 'greater than'/'lower than' filters.
 - Statistics: option to filter data between 2 custom values on Y-Axis at display menu.
+- Installation: new panel menu, accessed through 'Ctrl + Win + R. Click' (which works globally on any script and panel, at any position), used to export/import panel settings and any other associated data. These entries may be used to fully backup the panel data, help when moving between different JS components (JSplitter <-> SMP) or even foobar2000 installations, without needing to manually backup the panel properties or other external files (like .json, countries databases, etc.).
+- UI: new menu entry to share current UI settings across all available World Map panels within foobar2000. It can be found at the settings menu 'UI' submenu (and also at the panel menu, see above). Every other panel will be highlighted and show a popup asking to import or ignore the new settings.
 - UI: added dynamic colors support based on track's artwork. It follows the background cover mode settings and must be enabled on 'colors' submenu.
 - UI: exposed background gradient focus setting, i.e. where the center color will be at its highest intensity.
 ### Changed
@@ -73,6 +75,10 @@
 - Statistics: scrolling buttons are now shown only when the chart is not showing all data (no zoom).
 - Statistics: multiple menu entries at 'Display settings' have been renamed for clarity's sake.
 - Statistics: buttons are now smoothly hidden when panel is not on focus. Transparency may be adjusted from 0 to 255 by setting buttons.alpha, timer to hide them by setting buttons.timer.
+- Data: it's now possible to use some of the database tools when using tags/JSON sources on read-only mode.
+- Data: 'Find artists without locale tags' tool now checks both file tags and JSON database in case the tags/JSON sources are on read-only mode.
+- UI: it's now possible to use the different statistics modes when using tags/JSON sources on read-only mode. Note some data may be missing since artists without country tags will never be automatically tagged. In case the library has never been analyzed, the panel will do it automatically on first run of any of those modes.
+- UI: cleanup of menu entries and popups, settings should now be better explained.
 - UI: unified script updates settings across all my scripts, look for 'Updates' submenu.
 - UI: 'shapes' map images are inverted if the contrast is not great enough against the background color set.
 - Helpers: updated helpers.
