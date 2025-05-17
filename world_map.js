@@ -1,16 +1,18 @@
 ﻿'use strict';
-//11/03/25
+//14/05/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
 	Shows artist's country over a world map.
  */
 
-if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.15.0', features: { drag_n_drop: false } }); }
+if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.16.0', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_RWIN:readable, VK_LWIN:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable , MF_GRAYED:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable */
+include('helpers\\helpers_xxx_flags.js');
+/* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
 /* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, _bt:readable */
 include('helpers\\helpers_xxx_prototypes_smp.js');
@@ -26,7 +28,7 @@ include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
 include('main\\world_map\\world_map_menu.js');
-/* global createMenu:readable */
+/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable  */
 include('main\\world_map\\world_map_helpers.js');
 /* global selPoint:readable, selFindPoint:readable, tooltip:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable */
 include('main\\world_map\\world_map_flags.js');
@@ -65,7 +67,7 @@ const worldMap_properties = {
 	fileName: ['JSON filename (for tags)', '.\\profile\\' + folders.dataName + 'worldMap.json'],
 	firstPopup: ['World Map: Fired once', false, { func: isBoolean }, false],
 	tagFilter: ['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', { func: isStringWeak }, 'Instrumental'],
-	iLimitSelection: ['Repaint panel only if selecting less than...', 5, { func: isInt, range: [[2, 25000]] }, 5],
+	iLimitSelection: ['Selection limit', 5, { func: isInt, range: [[2, 25000]] }, 5],
 	factorX: ['Percentage applied to X coordinates', 100, { func: isInt, range: [[50, 200]] }, 100],
 	factorY: ['Percentage applied to Y coordinates', 137, { func: isInt, range: [[50, 200]] }, 137],
 	bInstalledBiography: ['Is installed biography mod?', false, { func: isBoolean }, false],
@@ -157,22 +159,22 @@ const worldMap = new ImageMap({
 });
 
 // Replace save/load code to ensure artist is always the id
-worldMap.save = (path = worldMap.jsonPath) => {
-	let data = clone(worldMap.jsonData);
-	if (worldMap.jsonId !== 'artist') {
+worldMap.save = (function (path = this.jsonPath) {
+	let data = clone(this.jsonData);
+	if (this.jsonId !== 'artist') {
 		data = data.map((obj) => {
-			return { artist: obj[worldMap.jsonId], val: obj.val };
+			return { artist: obj[this.jsonId], val: obj.val };
 		});
 	}
 	_save(path, JSON.stringify(data, null, '\t').replace(/\n/g, '\r\n'));
-};
+}).bind(worldMap);
 
-worldMap.loadData = (path = worldMap.jsonPath) => {
+worldMap.loadData = (function (path = this.jsonPath) {
 	if (_isFile(path)) {
-		worldMap.jsonData = [];
+		this.jsonData = [];
 		let data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
 		if (!data) { return; }
-		if (worldMap.jsonId !== 'artist') {
+		if (this.jsonId !== 'artist') {
 			const dic = new Map();
 			data = data.map((obj) => {
 				obj.val = obj.val.map((v) => {
@@ -183,12 +185,75 @@ worldMap.loadData = (path = worldMap.jsonPath) => {
 					}
 					return nV;
 				});
-				return { [worldMap.jsonId]: obj.artist, val: obj.val };
+				return { [this.jsonId]: obj.artist, val: obj.val };
 			});
 		}
-		data.forEach((item) => { worldMap.jsonData.push(item); });
+		data.forEach((item) => this.jsonData.push(item));
 	}
-};
+}).bind(worldMap);
+
+worldMap.shareUiSettings = (function (mode = 'popup') {
+	const settings = Object.fromEntries(
+		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg']
+			.map((key) => [key, clone(this.properties[key].slice(0, 2))])
+	);
+	switch (mode.toLowerCase()) {
+		case 'popup': {
+			const keys = ['Colors', 'Fonts', 'Background', 'Map', 'Points & layers'];
+			const answer = WshShell.Popup('Share current UI settings with other panels?\nSettings which will be copied:\n\n' + keys.join(', '), 0, window.Name, popup.question + popup.yes_no);
+			if (answer === popup.yes) {
+				window.NotifyOthers('World Map: share UI settings', settings);
+				return true;
+			}
+			return false;
+		}
+		case 'path': {
+			const input = Input.string('file', folders.data + 'ui_settings_' + window.Name + '.json', 'File name name:', 'World Map: export UI settings', folders.data + 'ui_settings.json', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
+			if (input === null) { return null; }
+			return _save(input, JSON.stringify(settings, null, '\t').replace(/\n/g, '\r\n'))
+				? input
+				: null;
+		}
+		default:
+			return settings;
+	}
+}).bind(worldMap);
+
+worldMap.applyUiSettings = (function (settings, bForce) {
+	const answer = bForce
+		? popup.yes
+		: WshShell.Popup('Apply current settings to highlighted panel?\nCheck UI.', 0, window.Name + ': World Map', popup.question + popup.yes_no);
+	if (answer === popup.yes) {
+		['bPointFill', 'bShowFlag', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg'].forEach((key) => {
+			this.properties[key][1] = !!settings[key][1];
+			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
+		});
+		['background', 'statsConfig'].forEach((key) => {
+			this.properties[key][1] = String(settings[key][1]);
+		});
+		['imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'customLocaleColor', 'fontSize', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'memMode', 'headerColor'].forEach((key) => {
+			this.properties[key][1] = Number(settings[key][1]);
+			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
+		});
+		this.pointSize = this.properties.customPointSize[1];
+		this.pointLineSize = this.pointSize * 2 + 5;
+		if (this.properties.customPointColorMode[1] === 1) { this.defaultColor = this.properties.customPointColor[1]; }
+		this.pointLineSize = this.properties.bPointFill[1] ? this.pointSize : this.pointSize * 2 + 5;
+		this.textColor = this.properties.customLocaleColor[1];
+		['imageMapPath', 'customGradientColor', 'layerFillMode'].forEach((key) => {
+			this.properties[key][1] = String(settings[key][1]);
+			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
+		});
+		this.imageMapPath = this.properties.imageMapPath[1];
+		background.changeConfig({ config: JSON.parse(this.properties.background[1]), bRepaint: true });
+		if (stats.bEnabled) { stats.exit(); stats.init(); }
+		// Save
+		overwriteProperties(this.properties);
+		this.init();
+		this.colorsChanged();
+		repaint(void (0), true, true);
+	}
+}).bind(worldMap);
 
 // Init with changes
 worldMap.init();
@@ -828,8 +893,11 @@ addEventListener('on_mouse_leave', () => {
 });
 
 addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
+	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_LWIN)) {
+		return importSettingsMenu().btn_up(x, y);
+	}
 	if (worldMap.properties.panelMode[1] === 2) { return true; }
-	const menu = createMenu();
+	const menu = settingsMenu();
 	createBackgroundMenu.call(
 		background,
 		{ menuName: 'Background', subMenuFrom: 'UI' },
@@ -856,6 +924,9 @@ addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 const bioCache = { rawPath: null, subSong: null };
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') { return; }
+	if (name === 'World Map: share UI settings') {
+		if (info) { worldMap.applyUiSettings(clone(info)); }
+	}
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.bEnabledBiography[1]) { return; }
