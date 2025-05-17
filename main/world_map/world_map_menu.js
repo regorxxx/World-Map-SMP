@@ -1,7 +1,7 @@
 ﻿'use strict';
-//09/05/25
+//14/05/25
 
-/* exported createMenu */
+/* exported settingsMenu, importSettingsMenu */
 
 /* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, getPropertiesPairs:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -9,7 +9,9 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable, _deleteFolder:readable */
+include('..\\..\\helpers\\helpers_xxx_file_zip.js');
+/* global _zip:readable, _unzip:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -24,9 +26,10 @@ include('..\\..\\helpers-external\\namethatcolor\\ntc.js');
 
 const menu = new _menu();
 
-function createMenu() {
+function settingsMenu() {
 	const properties = worldMap.properties;
 	menu.clear(true); // Reset on every call
+	const selLimitLow = 5;
 	{ // NOSONAR
 		{	// Enabled?
 			const menuName = menu.newMenu('Panel settings');
@@ -42,7 +45,7 @@ function createMenu() {
 			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
-					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.Name, 1000);
+					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', 'World Map: Refresh rate', 1000);
 					if (input === null) { return; }
 					if (!Number.isFinite(input)) { input = 0; }
 					properties.iRepaintDelay[1] = input;
@@ -64,8 +67,8 @@ function createMenu() {
 					}
 				});
 				menu.newEntry({
-					menuName: subMenuName, entryText: 'Normal', func: () => {
-						fb.ShowPopupMessage('Country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, in big libraries SMP may crash in such modes while using country layers. As downside, it may affec quality in really high resolutions and big panel sizes.', window.Name);
+					menuName: subMenuName, entryText: 'Standard', func: () => {
+						fb.ShowPopupMessage('Country layer images are internally resized to ' + imgAsync.lowMemMode.maxSize + ' px before drawing to minimize memory usage in library and statistics (gradient map) modes.\n\nWithout it, big libraries may crash the JS engine while using country layers. As downside, it may affect quality in really high resolutions and big panel sizes.', 'World Map: Standard memory mode');
 						if (properties.memMode[1] !== 1) {
 							properties.memMode[1] = 1;
 							if (properties.pointMode[1] < 1) { properties.pointMode[1] = 1; }
@@ -77,7 +80,7 @@ function createMenu() {
 				});
 				menu.newEntry({
 					menuName: subMenuName, entryText: 'Low', func: () => {
-						fb.ShowPopupMessage('Country layers are disabled and only points are used.\n\nThe background is set to only use colors, and all album art optons are disabled.', window.Name);
+						fb.ShowPopupMessage('Country layers are disabled and only points are used.\n\nThe background will only use colors and all album art optons are disabled.', 'World Map: Low memory mode');
 						if (properties.memMode[1] !== 2) {
 							properties.memMode[1] = 2;
 							properties.pointMode[1] = 0;
@@ -104,21 +107,25 @@ function createMenu() {
 						overwriteProperties(properties);
 						switch (properties.panelMode[1]) {
 							case 1:
-								fb.ShowPopupMessage('Instead of showing the country of the currently selected or playing track(s), shows all countries found on the library.\n\nEvery point will show num of artists per country (and points are clickable to creat playlists the same than standard mode).\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+								fb.ShowPopupMessage('This mode shows all countries with at least an artist found on the library, instead of following the selected or playing track(s).\n\nEvery point will show number of artists per country via tooltips and they can be clicked to create regional playlists.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
+								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = false;
 								break;
 							case 2:
-								fb.ShowPopupMessage('Displays statistics about current database using charts.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+								fb.ShowPopupMessage('This mode displays regional statistics from your library using highly customizable and interactive charts.\n\nDisplay and data settings can be changed using the right buttons (which are hidden when mouse is not over). To exit this mode, just click on the close button. \n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
 								imgAsync.layers.bStop = true;
+								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = true;
 								stats.init();
 								break;
 							case 3:
-								fb.ShowPopupMessage('Displays statistics about current database using a gradient map.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', window.Name);
+								fb.ShowPopupMessage('This mode displays a gradient map of the artists per country on your library.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
+								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = false;
 								break;
+							case 0:
 							default:
-								fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched at 	menus. Following selected tracks has a selection limit set at properties to not display too many points at once while processing large lists.', window.Name);
+								fb.ShowPopupMessage('Standard mode, showing the country of the currently selected or playing track(s), the same than Bio panel would do.\n\nSelection mode may be switched via menus.\n\nWhen using "Follow selected track(s)" mode, this script may display multiple selections too, but there is a limit setting available to not display too many points at once while processing large selections.', 'World Map: ' + mode);
 								imgAsync.layers.bStop = true;
 								stats.bEnabled = false;
 								break;
@@ -141,7 +148,7 @@ function createMenu() {
 					menuName, entryText: mode.text, func: () => {
 						if (properties.bEnabledBiography[1] === mode.val) { return; }
 						if (mode.val) { // Warning check
-							let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. So everytime a tag is not found locally, the online tag is used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
+							let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. Everytime a tag is not found locally, the online tag will be used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 							if (answer === popup.no) { return; }
 						}
 						properties.bEnabledBiography[1] = mode.val;
@@ -168,7 +175,7 @@ function createMenu() {
 						catch (e) { packagePath = ''; } // eslint-disable-line no-unused-vars
 						packageFile = packagePath.length ? packagePath + '\\scripts\\callbacks.js' : '';
 						if (_isFile(packageFile)) {
-							const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', window.Name);
+							const packageText = _jsonParseFileCheck(packagePath + '\\package.json', 'Package json', 'World Map: Biography integration');
 							if (packageText) {
 								if (packageText.version === '1.2.0-Beta.1' || packageText.version === '1.2.0-Beta.2') {
 									const fileText = _open(packageFile);
@@ -177,7 +184,7 @@ function createMenu() {
 										if (!fileText.includes(modPackageTextV12)) { foundArr.push({ path: packageFile, ver: packageText.version }); } // When installing, look for not modified script
 									} else if (fileText.includes(modPackageTextV12)) { foundArr.push({ path: packageFile, ver: packageText.version }); } // Otherwise, look for the mod string
 								} else { // 1.2.0+: requires no further changes
-									let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, window.Name, popup.question + popup.yes_no);
+									let answer = WshShell.Popup('Found WilB\'s Biography greater than 1.2.0 which works \'as is\' without file modifications.\nIntegration will continue to work even in future updates without further action.\n' + (properties.bInstalledBiography[1] ? 'Disable installation?' : 'Enable installation?'), 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 									if (answer === popup.yes) {
 										// Change config
 										properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
@@ -209,9 +216,9 @@ function createMenu() {
 					}
 					// Select files to edit
 					let input = '';
-					if (foundArr.length) { fb.ShowPopupMessage('Found these files:\n' + foundArr.map((script, idx) => { return '\n' + (idx + 1) + ': ' + script.path + '  (' + script.ver + ')'; }).join(''), window.Name); }
-					else { fb.ShowPopupMessage('WilB\'s ' + (properties.bInstalledBiography[1] ? 'modified ' : '') + 'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + properties.bInstalledBiography[0] + '\'', window.Name); return; }
-					try { input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, window.Name); }
+					if (foundArr.length) { fb.ShowPopupMessage('Found these files:\n' + foundArr.map((script, idx) => { return '\n' + (idx + 1) + ': ' + script.path + '  (' + script.ver + ')'; }).join(''), 'World Map: Biography integration'); }
+					else { fb.ShowPopupMessage('WilB\'s ' + (properties.bInstalledBiography[1] ? 'modified ' : '') + 'Biography script not found neither in the profile nor in the component folder.\nIf you are doing a manual install, edit or replace the files and change the property on this panel manually:\n\'' + properties.bInstalledBiography[0] + '\'', 'World Map: Biography integration'); return; }
+					try { input = utils.InputBox(window.ID, 'Select by number the files to edit (sep by comma).\nCheck new window for paths' + '\nNumber of files: ' + foundArr.length, 'World Map: Biography integration'); }
 					catch (e) { return; } // eslint-disable-line no-unused-vars
 					if (!input.trim().length) { return; }
 					input = input.trim().split(',');
@@ -230,53 +237,53 @@ function createMenu() {
 							if (!properties.bInstalledBiography[1]) {
 								if (!_isFile(file + backupExt)) {
 									bDone = _copyFile(file, file + backupExt);
-								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return; }
+								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									bDone = _copyFile(folders.xxx + 'main\\world_map\\' + file1_1_X, folderPath + file1_1_X);
-								} else { fb.ShowPopupMessage('Error creating a backup.\n' + file, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error creating a backup.\n' + file, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									let fileText = _open(file);
 									fileText += modText;
 									bDone = fileText.length && _save(file, fileText);
-								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_1_X, window.Name); return; }
-								if (!bDone) { fb.ShowPopupMessage('Error editing the file.\n' + file, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_1_X, 'World Map: Biography integration'); return; }
+								if (!bDone) { fb.ShowPopupMessage('Error editing the file.\n' + file, 'World Map: Biography integration'); return; }
 							} else {
 								let bDone = false;
 								if (_isFile(file + backupExt)) {
 									bDone = _recycleFile(file, true);
-								} else { fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.Name); return; }
+								} else { fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									bDone = _renameFile(file + backupExt, file);
-								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.Name); return; }
-								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + file, 'World Map: Biography integration'); return; }
+								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + file, 'World Map: Biography integration'); return; }
 							}
 						} else { // Biography 1.2.0 Beta 1 & 2
 							if (!properties.bInstalledBiography[1]) { // NOSONAR
 								if (!_isFile(file + backupExt)) {
 									bDone = _copyFile(file, file + backupExt);
-								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.Name); return; }
+								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									bDone = _copyFile(folders.xxx + 'main\\world_map\\' + file1_2_0_beta, folderPath + file1_2_0_beta);
-								} else { fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									let fileText = _open(packageFile);
 									fileText += modPackageTextV12;
 									bDone = fileText.length && _save(packageFile, fileText);
-								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_2_0_beta, 'World Map: Biography integration'); return; }
 							} else {
 								if (_isFile(packageFile + backupExt)) {
 									bDone = _recycleFile(packageFile, true);
-								} else { bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + packageFile, window.Name); return; }
+								} else { bDone = false; fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + packageFile, 'World Map: Biography integration'); return; }
 								if (bDone) {
 									bDone = _renameFile(packageFile + backupExt, packageFile);
-								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + packageFile, window.Name); return; }
-								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + packageFile, window.Name); return; }
+								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + packageFile, 'World Map: Biography integration'); return; }
+								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + packageFile, 'World Map: Biography integration'); return; }
 							}
 						}
 					});
 					// Report
-					if (bDone) { fb.ShowPopupMessage('Script(s) modified successfully:\n' + selectFound.map((script) => { return script.path + '  (' + script.ver + ')'; }).join('\n') + '\nBiography panel will be automatically reloaded.', window.Name); }
-					else { fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', window.Name); return; }
+					if (bDone) { fb.ShowPopupMessage('Script(s) modified successfully:\n' + selectFound.map((script) => { return script.path + '  (' + script.ver + ')'; }).join('\n') + '\nBiography panel will be automatically reloaded.', 'World Map: Biography integration'); }
+					else { fb.ShowPopupMessage('There were some errors during script modification. Check the other windows.', 'World Map: Biography integration'); return; }
 					// Change config
 					properties.bInstalledBiography[1] = !properties.bInstalledBiography[1];
 					properties.bEnabledBiography[1] = properties.bInstalledBiography[1];
@@ -296,7 +303,7 @@ function createMenu() {
 					menuName, entryText: mode, func: () => {
 						if (properties.selection[1] === mode) { return; }
 						if (properties.bInstalledBiography[1] && properties.bEnabledBiography[1] && properties.bShowSelModePopup[1]) { // Warning check
-							let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
+							let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 							if (answer === popup.no) { return; }
 						}
 						properties.selection[1] = mode;
@@ -312,19 +319,19 @@ function createMenu() {
 			menu.newCheckMenuLast(() => options.indexOf(properties.selection[1]), options);
 			menu.newSeparator(menuName);
 			menu.newEntry({
-				menuName, entryText: properties.iLimitSelection[0] + '\t' + _b(properties.iLimitSelection[1]), func: () => {
+				menuName, entryText: 'Selection limit ' + _p(worldMap.jsonId.toUpperCase()) + '\t' + _b(properties.iLimitSelection[1]), func: () => {
 					let input;
-					try { input = Number(utils.InputBox(window.ID, 'Enter max number of tracks:\n(up to X different ' + worldMap.jsonId + ' and skip the rest)', window.Name, properties.iLimitSelection[1], true)); }
+					try { input = Number(utils.InputBox(window.ID, 'Enter max number of different \'' + worldMap.jsonId.toUpperCase + '\' to display:\n(the rest is skipped for drawing purposes)', 'World Map: Selection limit', properties.iLimitSelection[1], true)); }
 					catch (e) { return; } // eslint-disable-line no-unused-vars
 					if (!Number.isSafeInteger(input)) { return; }
 					if (properties.iLimitSelection[1] === input) { return; }
 					properties.iLimitSelection[1] = input;
 					overwriteProperties(properties);
-					if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > 5) { fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country layers, since they take a lot of time and memory to load.', window.Name); }
+					if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a low value when using country layers (\'UI\\Country hihglighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
 				}, flags: properties.selection[1] === selMode[0] ? MF_STRING : MF_GRAYED
 			});
 			menu.newEntry({
-				menuName, entryText: properties.bShowSelModePopup[0], func: () => {
+				menuName, entryText: 'Warning on external changes', func: () => {
 					properties.bShowSelModePopup[1] = !properties.bShowSelModePopup[1];
 					overwriteProperties(properties);
 				}
@@ -346,7 +353,7 @@ function createMenu() {
 							if (index === options.length - 1) {
 								let input = '';
 								const defPath = worldMap.imageMapPath.replace('hires\\', '');
-								try { input = utils.InputBox(window.ID, 'Input path to file:\n\nPaths starting with \'.\\profile\\\' are relative to foobar profile folder.\nPaths starting with \'' + folders.xxxRootName + '\' are relative to this script\'s folder.', window.Name, defPath, true); }
+								try { input = utils.InputBox(window.ID, 'Input path to file:\n\nPaths starting with \'.\\profile\\\' are relative to foobar profile folder.\nPaths starting with \'' + folders.xxxRootName + '\' are relative to this script\'s folder.', 'World Map: Map image', defPath, true); }
 								catch (e) { return; } // eslint-disable-line no-unused-vars
 								if (!input.length) { return; }
 								worldMap.imageMapPath = input.replace(folders.xxx, folders.xxxRootName);
@@ -370,7 +377,7 @@ function createMenu() {
 				});
 				menu.newCheckMenuLast((o, len) => {
 					const idx = o.findIndex((opt) => _resolvePath(opt.path || '').toLowerCase() === _resolvePath(worldMap.imageMapPath).toLowerCase());
-					return idx !== -1 ? idx	: len - 1;
+					return idx !== -1 ? idx : len - 1;
 				}, options);
 				menu.newSeparator(menuName);
 				menu.newEntry({
@@ -395,7 +402,7 @@ function createMenu() {
 					menu.newEntry({
 						menuName, entryText: coord.text, func: () => {
 							let input = -1;
-							try { input = Number(utils.InputBox(window.ID, coord.text[0] + ' axis scale. Input a number (percentage):', window.Name, properties[coord.val][1], true)); }
+							try { input = Number(utils.InputBox(window.ID, coord.text[0] + ' axis scale. Input a number (percentage):', 'World Map: ' + coord.text[0] + '-axis scaling', properties[coord.val][1], true)); }
 							catch (e) { return; } // eslint-disable-line no-unused-vars
 							if (!Number.isSafeInteger(input)) { return; }
 							worldMap[coord.val] = input;
@@ -643,7 +650,7 @@ function createMenu() {
 							menuName, entryText: item, func: () => {
 								if (i === optionsLength - 1) {
 									let input = '';
-									try { input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true)); }
+									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Country points size', properties.customPointSize[1], true)); }
 									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
 									properties.customPointSize[1] = input;
@@ -680,7 +687,7 @@ function createMenu() {
 							menuName, entryText: item, func: () => {
 								if (i === optionsLength - 1) {
 									let input = '';
-									try { input = Number(utils.InputBox(window.ID, 'Input size:', window.Name, properties.customPointSize[1], true)); }
+									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Text size', properties.customPointSize[1], true)); }
 									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
 									properties.fontSize[1] = input;
@@ -744,7 +751,7 @@ function createMenu() {
 				options.forEach((option, i) => {
 					menu.newEntry({
 						menuName, entryText: option, func: () => {
-							if (i >= 1 && properties.iLimitSelection[1] > 5) { fb.ShowPopupMessage('It\'s strongly recommended to set the max number of countries to draw to a low value when using country layers, since they take a lot of time and memory to load.', window.Name); }
+							if (i >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a selection limit low value when using country layers (\'UI\\Country hihglighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
 							properties.pointMode[1] = i;
 							repaint(void (0), true);
 							overwriteProperties(properties);
@@ -754,13 +761,19 @@ function createMenu() {
 				});
 				menu.newCheckMenuLast(() => { return properties.pointMode[1]; }, options);
 			}
+			menu.newSeparator(menuUI);
+			menu.newEntry({
+				menuName: menuUI, entryText: 'Share UI settings...', func: () => {
+					worldMap.shareUiSettings('popup');
+				}
+			});
 		}
 		menu.newSeparator();
 		{	// Tags
 			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
 				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
-					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.Name, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
+					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', 'World Map: Locale tag reading', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
 					if (input === null) { return; }
 					properties.mapTag[1] = input;
 					overwriteProperties(properties);
@@ -768,7 +781,7 @@ function createMenu() {
 			});
 			menu.newEntry({
 				menuName, entryText: 'Write country\'s data to...' + '\t' + _b(properties.writeToTag[1]), func: () => {
-					let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', window.Name, globTags.locale);
+					let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', 'World Map: Locale tag writing', globTags.locale);
 					if (input === null) { return; }
 					properties.writeToTag[1] = input;
 					overwriteProperties(properties);
@@ -792,7 +805,7 @@ function createMenu() {
 					menu.newEntry({
 						menuName: subMenuName, entryText: _p(mod.description) + ' tag(s)' + '\t' + _b(properties[mod.tag][1]), func: () => {
 							let input = '';
-							try { input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', window.Name, properties[mod.tag][1], true); }
+							try { input = utils.InputBox(window.ID, 'Input tag name(s) (sep by \',\')', 'World Map: Playlist tags', properties[mod.tag][1], true); }
 							catch (e) { return; } // eslint-disable-line no-unused-vars
 							if (!input.length) { return; }
 							properties[mod.tag][1] = input;
@@ -807,7 +820,7 @@ function createMenu() {
 				menu.newEntry({ menuName: subMenuName, entryText: 'Used along WilB\'s Biography script:', func: null, flags: MF_GRAYED });
 				menu.newSeparator(subMenuName);
 				const options = [
-					{ text: 'No (read only from tags, online or json)', val: 0 },
+					{ text: 'No (read only from tags, Biography or JSON)', val: 0 },
 					{ text: 'Yes, to track files if tag is missing', val: 1 },
 					{ text: 'Yes, use JSON database (for internal use)', val: 2 }
 				];
@@ -816,7 +829,7 @@ function createMenu() {
 						menuName: subMenuName, entryText: mode.text, func: () => {
 							if (properties.iWriteTags[1] === mode.val) { return; }
 							if (mode.val) { // Warning check
-								let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (and script loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, window.Name, popup.question + popup.yes_no);
+								let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 								if (answer === popup.no) { return; }
 							}
 							properties.iWriteTags[1] = mode.val;
@@ -835,12 +848,15 @@ function createMenu() {
 		}
 		{	// Database
 			const menuDatabase = menu.newMenu(
-				'Database' + (properties.iWriteTags[1] >= 1 ? '' : '\t[JSON disabled]'),
-				void (0),
-				() => properties.iWriteTags[1] >= 1 ? MF_STRING : MF_GRAYED
+				'Database'
 			);
 			{ // NOSONAR
-				menu.newEntry({ menuName: menuDatabase, entryText: 'Current database: ' + (properties.iWriteTags[1] === 2 ? 'JSON' : 'Tags'), flags: MF_GRAYED });
+				const sources = properties.iWriteTags[1] === 2
+					? 'Tags (read) + JSON (write)'
+					: properties.iWriteTags[1] === 1
+						? 'Tags (write) + JSON (read)'
+						: 'Tags (read) + JSON (read)';
+				menu.newEntry({ menuName: menuDatabase, entryText: 'Sources: ' + sources, flags: MF_GRAYED });
 				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Find artists without locale tags...', func: () => {
@@ -850,11 +866,21 @@ function createMenu() {
 						handleList.Convert().forEach((handle) => {
 							const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
 							if (jsonId.length && !jsonIdList.has(jsonId)) {
-								if (properties.iWriteTags[1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
+								if (properties.iWriteTags[1] === 0) {
+									if (worldMap.hasDataById(jsonId)) { return; }
+									else {
+										const tagName = properties.mapTag[1];
+										const tfo = _bt(tagName);
+										if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
+											notFoundList.Add(handle);
+											jsonIdList.add(jsonId);
+										}
+									}
+								} else if (properties.iWriteTags[1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
 									notFoundList.Add(handle);
 									jsonIdList.add(jsonId);
 								} else if (properties.iWriteTags[1] === 1) { // Check if tag exists on file
-									const tagName = properties.writeToTag[1];
+									const tagName = properties.mapTag[1];
 									const tfo = _bt(tagName);
 									if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
 										notFoundList.Add(handle);
@@ -866,7 +892,7 @@ function createMenu() {
 						if (notFoundList.Count) {
 							sendToPlaylist(notFoundList, 'World Map missing tags');
 						} else {
-							fb.ShowPopupMessage('All artists on library have a locale tag associated.', window.Name);
+							fb.ShowPopupMessage('All artists on library have a locale tag associated.', 'World Map: Database update');
 						}
 					}
 				});
@@ -874,13 +900,13 @@ function createMenu() {
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Merge JSON databases...', func: () => {
 						let input = '';
-						try { input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.Name, folders.data + 'worldMap.json', true); }
+						try { input = utils.InputBox(window.ID, 'Enter path to JSON file:', 'World Map: Merge JSON database', folders.data + 'worldMap.json', true); }
 						catch (e) { return; } // eslint-disable-line no-unused-vars
 						if (!input.length) { return; }
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, 'World Map: Merge JSON database', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
-						const newData = _jsonParseFileCheck(input, 'Database json', window.Name, utf8);
+						const newData = _jsonParseFileCheck(input, 'Database json', 'World Map: Merge JSON database', utf8);
 						if (newData) {
 							newData.forEach((data) => {
 								if (!worldMap.hasDataById(data[worldMap.jsonId])) {
@@ -898,11 +924,11 @@ function createMenu() {
 							repaint(void (0), true);
 						}
 						console.log('World Map: merging database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
-					}, flags: () => { return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED); }
+					}
 				});
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, 'World Map: Merge tags into database', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
@@ -931,8 +957,8 @@ function createMenu() {
 					}
 				});
 				menu.newEntry({
-					menuName: menuDatabase, entryText: 'Write JSON tags to files...', func: () => {
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.Name, popup.question + popup.yes_no);
+					menuName: menuDatabase, entryText: 'Write JSON tags to tracks...', func: () => {
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, 'World Map: Write tags to tracks', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
@@ -963,11 +989,11 @@ function createMenu() {
 				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Update library database...', func: () => {
-						fb.ShowPopupMessage('Updates the statistics of artists per country according to the current library.\nMeant to be used on \'Library mode\'.', window.Name);
+						fb.ShowPopupMessage('The statistics of artists per country from your tracked library have been updated (see console log for more info).\n\nThis data is then used on \'Library\' and \'Statistics\' display modes.' + (properties.iWriteTags[1] === 0 ? '\n\nWarning: when using tags/JSON sources on read-only mode, any artist with missing data will be indefinitely skipped unless you manually tag such tracks.' : ''), 'World Map: Update JSON library database');
 						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 						console.log('World Map: saving library database done. Switch panel mode to \'Library mode\' to use it.');
 						if (worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3) { repaint(void (0), true, true); }
-					}, flags: () => { return (properties.iWriteTags[1] === 2 ? MF_STRING : MF_GRAYED); }
+					}
 				});
 				menu.newSeparator();
 			}
@@ -990,7 +1016,7 @@ function createMenu() {
 				menuName, entryText: 'Check for updates...', func: () => {
 					if (typeof checkUpdate === 'undefined') { include('helpers\\helpers_xxx_web_update.js'); }
 					checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
-						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.Name));
+						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', 'World Map: Update check'));
 				}
 			});
 		}
@@ -1009,6 +1035,117 @@ function createMenu() {
 	return menu;
 }
 
+function importSettingsMenu() {
+	const menu = new _menu();
+	menu.newEntry({ entryText: 'Panel menu: ' + window.Name, flags: MF_GRAYED });
+	menu.newSeparator();
+	menu.newEntry({
+		entryText: 'Export panel settings...', func: () => {
+			const bData = WshShell.Popup('Also export database files?', 0, 'World Map: Export panel settings', popup.question + popup.yes_no);
+			const input = Input.string('file', folders.data + 'settings_' + window.Name.replace(/\s/g, '_') + (bData ? '_' + new Date().toISOString().split('.')[0].replace(/[ :,]/g, '_') + '.zip' : '.json'), 'File name:', 'World Map: Export panel settings', folders.data + 'settings' + (bData ? '.zip' : '.json'), void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
+			if (input === null) { return null; }
+			const settings = JSON.stringify(
+				worldMap.properties,
+				(key, val) => {
+					if (Array.isArray(val)) {
+						val.length = 2;
+					}
+					return val;
+				},
+				'\t'
+			).replace(/\n/g, '\r\n');
+			let bDone;
+			if (bData) {
+				bDone = _save(folders.temp + 'settings.json', settings);
+				if (bDone) {
+					_zip(
+						[folders.temp + 'settings.json', worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]],
+						input,
+						false
+					);
+					bDone = _isFile(input);
+				}
+			} else if (_save(input, settings)) { bDone = true; }
+			if (bDone) {
+				console.log('World Map: exported panel settings to\n\t ' + input);
+				_explorer(input);
+			} else {
+				console.popup('World Map: failed exporting panel settings.', window.Name);
+			}
+		}
+	});
+	menu.newEntry({
+		entryText: 'Import panel settings...', func: () => {
+			const input = Input.string('file', '', 'File name:\n\nPanel settings must be provided in a .json file, if including also database files provide a .zip file instead.\n\nNote existing databases will be overwritten.', 'World Map: import settings', 'C:\\foobar2000\\profile\\js_data\\settings_World_Map_2025-05-09T11_06_50.zip', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
+			if (input === null) { return null; }
+			let bDone;
+			if (/\.zip$/i.test(input)) {
+				_deleteFolder(folders.temp + 'import\\');
+				_unzip(input, folders.temp + 'import\\');
+				let databasePaths = new Set();
+				if (_isFile(folders.temp + 'import\\settings.json')) {
+					const settings = JSON.parse(
+						_open(folders.temp + 'import\\settings.json', utf8),
+						(key, val) => {
+							return val === null
+								? Infinity
+								: val;
+						}
+					);
+					databasePaths.add(settings.fileName[1]).add(settings.fileNameLibrary[1]);
+					overwriteProperties(settings);
+					_deleteFile(folders.temp + 'import\\settings.json');
+					console.log('World Map: imported panel settings');
+				} else {
+					databasePaths.add(worldMap.properties.fileName[1]).add(worldMap.properties.fileNameLibrary[1]);
+					console.log('World Map: no panel settings file found (settings.json)');
+					console.log('World Map: importing only database files\n\t ' + [...databasePaths].join('\n\t '));
+				}
+				bDone = getFiles(folders.temp + 'import\\', new Set(['.json']))
+					.map((file) => {
+						const newFile = [...databasePaths].find((path) => path.endsWith(file.replace(folders.temp + 'import\\', '')));
+						if (newFile) {
+							databasePaths.delete(newFile);
+							if (_isFile(newFile)) { _deleteFile(newFile); }
+							return _renameFile(file, newFile);
+						}
+						return false;
+					})
+					.every((done) => {
+						if (!done) {
+							console.popup('World Map: failed importing database files.', window.Name);
+							return false;
+						}
+						return true;
+					});
+				if (bDone) { console.log('World Map: imported database files'); }
+				_deleteFolder(folders.temp + 'import\\');
+				if (bDone) { console.log('World Map: imported panel settings + database data from\n\t ' + input); }
+			} else {
+				const settings = JSON.parse(
+					_open(input, utf8),
+					(key, val) => {
+						return val === null
+							? Infinity
+							: val;
+					}
+				);
+				overwriteProperties(settings);
+				if (bDone) { console.log('World Map: imported panel settings from\n\t ' + input); }
+			}
+			console.log('World Map: reloading panel...');
+			window.Reload();
+		}
+	});
+	menu.newSeparator();
+	menu.newEntry({
+		entryText: 'Share UI settings...', func: () => {
+			worldMap.shareUiSettings('popup');
+		}
+	});
+	return menu;
+}
+
 function syncBio(bReload = false) {
 	const properties = worldMap.properties;
 	// Biograpy 1.1.X
@@ -1020,7 +1157,7 @@ function syncBio(bReload = false) {
 	// Biograpy 2.X.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
-		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.Name);
+		const config = _jsonParseFileCheck(configPath, 'Configuration json', 'World Map: Biography integration');
 		if (config && Object.hasOwn(config, 'notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
 			_save(configPath, JSON.stringify(config, null, '\t'));
