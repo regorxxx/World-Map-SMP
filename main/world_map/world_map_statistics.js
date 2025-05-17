@@ -1,5 +1,5 @@
 ﻿'use strict';
-//31/01/25
+//14/05/25
 
 /* exported _mapStatistics */
 
@@ -151,7 +151,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		menu.newEntry({ entryText: this.title, flags: MF_GRAYED });
 		menu.newSeparator();
 		{	// Data
-			const subMenu = menu.newMenu('Data...');
+			const subMenu = menu.newMenu('Data');
 			const data = parent.bAsync ? this.data : this.dataAsync;
 			const slice = this.dataManipulation.slice;
 			[
