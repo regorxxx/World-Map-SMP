@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/25
+//20/05/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -1131,7 +1131,7 @@ function importSettingsMenu() {
 					}
 				);
 				overwriteProperties(settings);
-				if (bDone) { console.log('World Map: imported panel settings from\n\t ' + input); }
+				console.log('World Map: imported panel settings from\n\t ' + input);
 			}
 			console.log('World Map: reloading panel...');
 			window.Reload();

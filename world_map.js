@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/25
+//20/05/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -28,7 +28,7 @@ include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
 include('main\\world_map\\world_map_menu.js');
-/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable  */
+/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
 /* global selPoint:readable, selFindPoint:readable, tooltip:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable */
 include('main\\world_map\\world_map_flags.js');
@@ -159,7 +159,7 @@ const worldMap = new ImageMap({
 });
 
 // Replace save/load code to ensure artist is always the id
-worldMap.save = (function (path = this.jsonPath) {
+worldMap.save = function (path = this.jsonPath) {
 	let data = clone(this.jsonData);
 	if (this.jsonId !== 'artist') {
 		data = data.map((obj) => {
@@ -167,9 +167,9 @@ worldMap.save = (function (path = this.jsonPath) {
 		});
 	}
 	_save(path, JSON.stringify(data, null, '\t').replace(/\n/g, '\r\n'));
-}).bind(worldMap);
+};
 
-worldMap.loadData = (function (path = this.jsonPath) {
+worldMap.loadData = function (path = this.jsonPath) {
 	if (_isFile(path)) {
 		this.jsonData = [];
 		let data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
@@ -190,9 +190,9 @@ worldMap.loadData = (function (path = this.jsonPath) {
 		}
 		data.forEach((item) => this.jsonData.push(item));
 	}
-}).bind(worldMap);
+};
 
-worldMap.shareUiSettings = (function (mode = 'popup') {
+worldMap.shareUiSettings = function (mode = 'popup') {
 	const settings = Object.fromEntries(
 		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg']
 			.map((key) => [key, clone(this.properties[key].slice(0, 2))])
@@ -200,7 +200,7 @@ worldMap.shareUiSettings = (function (mode = 'popup') {
 	switch (mode.toLowerCase()) {
 		case 'popup': {
 			const keys = ['Colors', 'Fonts', 'Background', 'Map', 'Points & layers'];
-			const answer = WshShell.Popup('Share current UI settings with other panels?\nSettings which will be copied:\n\n' + keys.join(', '), 0, window.Name, popup.question + popup.yes_no);
+			const answer = WshShell.Popup('Share current UI settings with other panels?\nSettings which will be copied:\n\n' + keys.join(', '), 0, 'World Map: share UI settings', popup.question + popup.yes_no);
 			if (answer === popup.yes) {
 				window.NotifyOthers('World Map: share UI settings', settings);
 				return true;
@@ -217,23 +217,27 @@ worldMap.shareUiSettings = (function (mode = 'popup') {
 		default:
 			return settings;
 	}
-}).bind(worldMap);
+};
 
-worldMap.applyUiSettings = (function (settings, bForce) {
+worldMap.applyUiSettings = function (settings, bForce) {
+	window.highlight = true;
+	window.Repaint();
 	const answer = bForce
 		? popup.yes
 		: WshShell.Popup('Apply current settings to highlighted panel?\nCheck UI.', 0, window.Name + ': World Map', popup.question + popup.yes_no);
 	if (answer === popup.yes) {
+		const newBg = JSON.parse(String(settings.background[1]));
+		['x', 'y', 'w', 'h', 'callbacks'].forEach((key) => delete newBg[key]);
 		['bPointFill', 'bShowFlag', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg'].forEach((key) => {
 			this.properties[key][1] = !!settings[key][1];
 			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
 		});
-		['background', 'statsConfig'].forEach((key) => {
+		['statsConfig'].forEach((key) => {
 			this.properties[key][1] = String(settings[key][1]);
 		});
 		['imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'customLocaleColor', 'fontSize', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'memMode', 'headerColor'].forEach((key) => {
 			this.properties[key][1] = Number(settings[key][1]);
-			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
+			if (Object.hasOwn(this, key)) { this[key] = Number(this.properties[key][1]); }
 		});
 		this.pointSize = this.properties.customPointSize[1];
 		this.pointLineSize = this.pointSize * 2 + 5;
@@ -245,15 +249,17 @@ worldMap.applyUiSettings = (function (settings, bForce) {
 			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
 		});
 		this.imageMapPath = this.properties.imageMapPath[1];
-		background.changeConfig({ config: JSON.parse(this.properties.background[1]), bRepaint: true });
+		background.changeConfig({ config: newBg, bRepaint: false, callbackArgs: { bSaveProperties: true } });
 		if (stats.bEnabled) { stats.exit(); stats.init(); }
-		// Save
-		overwriteProperties(this.properties);
 		this.init();
 		this.colorsChanged();
+		window.highlight = false;
 		repaint(void (0), true, true);
+	} else {
+		window.highlight = false;
+		window.Repaint();
 	}
-}).bind(worldMap);
+};
 
 // Init with changes
 worldMap.init();
@@ -271,10 +277,11 @@ worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
 */
 const background = new _background({
 	...JSON.parse(worldMap.properties.background[1]),
+	x: 0, y: 0, w: window.Width, h: window.Height,
 	callbacks: {
 		change: function (config, changeArgs, callbackArgs) {
 			if (callbackArgs && callbackArgs.bSaveProperties) {
-				['x', 'y', 'w', 'h'].forEach((key) => delete config[key]);
+				['x', 'y', 'w', 'h', 'callbacks'].forEach((key) => delete config[key]);
 				worldMap.properties.background[1] = JSON.stringify(config);
 				overwriteProperties(worldMap.properties);
 			}
@@ -656,6 +663,7 @@ addEventListener('on_paint', (gr) => {
 	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {
 		worldMap.paintBg(gr);
+		if (window.highlight) { extendGR(gr, { Highlight: true }); }
 		if (window.debugPainting) { window.drawDebugRectAreas(gr); }
 		return;
 	}
@@ -761,6 +769,7 @@ addEventListener('on_paint', (gr) => {
 			}
 		}
 	}
+	if (window.highlight) { extendGR(gr, { Highlight: true }); }
 	if (window.debugPainting) { window.drawDebugRectAreas(gr); }
 });
 
