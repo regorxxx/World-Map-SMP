@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/05/25
+//12/06/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -9,9 +9,7 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable, _deleteFolder:readable */
-include('..\\..\\helpers\\helpers_xxx_file_zip.js');
-/* global _zip:readable, _unzip:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -20,6 +18,8 @@ include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _bt:readable, _b:readable, _p:readable, isArrayEqual:readable */
 include('..\\..\\helpers\\helpers_xxx_input.js');
 /* global Input:readable */
+include('..\\..\\helpers\\helpers_xxx_export.js');
+/* global exportSettings:readable, importSettings:readable */
 include('..\\window\\window_xxx_background_menu.js');
 include('..\\..\\helpers-external\\namethatcolor\\ntc.js');
 /* global ntc:readable */
@@ -1042,99 +1042,53 @@ function importSettingsMenu() {
 	menu.newEntry({
 		entryText: 'Export panel settings...', func: () => {
 			const bData = WshShell.Popup('Also export database files?', 0, 'World Map: Export panel settings', popup.question + popup.yes_no);
-			const input = Input.string('file', folders.data + 'settings_' + window.Name.replace(/\s/g, '_') + (bData ? '_' + new Date().toISOString().split('.')[0].replace(/[ :,]/g, '_') + '.zip' : '.json'), 'File name:', 'World Map: Export panel settings', folders.data + 'settings' + (bData ? '.zip' : '.json'), void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
-			if (input === null) { return null; }
-			const settings = JSON.stringify(
+			exportSettings(
 				worldMap.properties,
-				(key, val) => {
-					if (Array.isArray(val)) {
-						val.length = 2;
-					}
-					return val;
-				},
-				'\t'
-			).replace(/\n/g, '\r\n');
-			let bDone;
-			if (bData) {
-				bDone = _save(folders.temp + 'settings.json', settings);
-				if (bDone) {
-					_zip(
-						[folders.temp + 'settings.json', worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]],
-						input,
-						false
-					);
-					bDone = _isFile(input);
-				}
-			} else if (_save(input, settings)) { bDone = true; }
-			if (bDone) {
-				console.log('World Map: exported panel settings to\n\t ' + input);
-				_explorer(input);
-			} else {
-				console.popup('World Map: failed exporting panel settings.', window.Name);
-			}
+				bData
+					? [folders.temp + 'settings.json', worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]]
+					: [],
+				'World Map'
+			);
 		}
 	});
 	menu.newEntry({
 		entryText: 'Import panel settings...', func: () => {
-			const input = Input.string('file', '', 'File name:\n\nPanel settings must be provided in a .json file, if including also database files provide a .zip file instead.\n\nNote existing databases will be overwritten.', 'World Map: import settings', 'C:\\foobar2000\\profile\\js_data\\settings_World_Map_2025-05-09T11_06_50.zip', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
-			if (input === null) { return null; }
-			let bDone;
-			if (/\.zip$/i.test(input)) {
-				_deleteFolder(folders.temp + 'import\\');
-				_unzip(input, folders.temp + 'import\\');
-				let databasePaths = new Set();
-				if (_isFile(folders.temp + 'import\\settings.json')) {
-					const settings = JSON.parse(
-						_open(folders.temp + 'import\\settings.json', utf8),
-						(key, val) => {
-							return val === null
-								? Infinity
-								: val;
-						}
-					);
-					databasePaths.add(settings.fileName[1]).add(settings.fileNameLibrary[1]);
-					overwriteProperties(settings);
-					_deleteFile(folders.temp + 'import\\settings.json');
-					console.log('World Map: imported panel settings');
-				} else {
-					databasePaths.add(worldMap.properties.fileName[1]).add(worldMap.properties.fileNameLibrary[1]);
-					console.log('World Map: no panel settings file found (settings.json)');
-					console.log('World Map: importing only database files\n\t ' + [...databasePaths].join('\n\t '));
-				}
-				bDone = getFiles(folders.temp + 'import\\', new Set(['.json']))
-					.map((file) => {
-						const newFile = [...databasePaths].find((path) => path.endsWith(file.replace(folders.temp + 'import\\', '')));
-						if (newFile) {
-							databasePaths.delete(newFile);
-							if (_isFile(newFile)) { _deleteFile(newFile); }
-							return _renameFile(file, newFile);
+			const dataPaths = new Set();
+			importSettings(
+				{
+					onUnzipSettings: (settings, bFound, panelName) => { // eslint-disable-line no-unused-vars
+						if (settings) {
+							dataPaths.add(settings.fileName[1]).add(settings.fileNameLibrary[1]);
+							console.log(panelName + ': importing data files\n\t ' + [...dataPaths].join('\n\t '));
+							return true;
 						}
 						return false;
-					})
-					.every((done) => {
-						if (!done) {
-							console.popup('World Map: failed importing database files.', window.Name);
-							return false;
-						}
-						return true;
-					});
-				if (bDone) { console.log('World Map: imported database files'); }
-				_deleteFolder(folders.temp + 'import\\');
-				if (bDone) { console.log('World Map: imported panel settings + database data from\n\t ' + input); }
-			} else {
-				const settings = JSON.parse(
-					_open(input, utf8),
-					(key, val) => {
-						return val === null
-							? Infinity
-							: val;
+					},
+					onUnzipData: (importPath, panelName) => { // eslint-disable-line no-unused-vars
+						const bDone = getFiles(importPath, new Set(['.json']))
+							.map((file) => {
+								const newFile = [...dataPaths].find((path) => path.endsWith(file.replace(importPath, '')));
+								if (newFile) {
+									dataPaths.delete(newFile);
+									if (_isFile(newFile)) { _deleteFile(newFile); }
+									return _renameFile(file, newFile);
+								}
+								return false;
+							})
+							.every((done) => {
+								if (!done) {
+									console.popup(panelName + ': failed importing database files.', window.Name);
+									return false;
+								}
+								return true;
+							});
+						if (bDone) { console.log(panelName + ': imported database files'); }
+						return bDone;
 					}
-				);
-				overwriteProperties(settings);
-				console.log('World Map: imported panel settings from\n\t ' + input);
-			}
-			console.log('World Map: reloading panel...');
-			window.Reload();
+				},
+				worldMap.properties,
+				'World Map'
+			);
 		}
 	});
 	menu.newSeparator();
