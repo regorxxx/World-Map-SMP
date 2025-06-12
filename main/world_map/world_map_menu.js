@@ -1045,7 +1045,7 @@ function importSettingsMenu() {
 			exportSettings(
 				worldMap.properties,
 				bData
-					? [folders.temp + 'settings.json', worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]]
+					? [worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]]
 					: [],
 				'World Map'
 			);
