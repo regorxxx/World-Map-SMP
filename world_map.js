@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/06/25
+//24/06/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -9,7 +9,7 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World Map', { author: 'regorxxx', version: '3.16.0', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable */
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable , globNoSplitArtist:readable*/
 /* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
@@ -157,7 +157,8 @@ const worldMap = new ImageMap({
 	tooltipPanelFunc: tooltiPanel, // What happens when mouse is over panel, helpers\world_map_helpers.js
 	tooltipFindPointFunc: tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
 	font: globFonts.standard.name,
-	bSkiptInit: true
+	bSkiptInit: true,
+	splitExcludeId: globNoSplitArtist.list
 });
 
 // Replace save/load code to ensure artist is always the id
@@ -878,7 +879,7 @@ addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 	// If an artist from current selection is missing country data, give preference to tagging
 	let bForceTag;
 	if (mask === MK_SHIFT) {
-		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
+		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId });
 		if (jsonId.some((idArr, i) => idArr.some((val) => !worldMap.findTag(sel[i], val)))) {
 			bForceTag = true;
 		}
@@ -894,7 +895,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 			? (fb.IsPlaying
 				? new FbMetadbHandleList(fb.GetNowPlaying())
 				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
-			): plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 		if (!sel || !sel.Count) { return; }
 	}
 	const cache = {
@@ -992,7 +993,7 @@ addEventListener('on_notify_data', (name, info) => {
 					if (nameReplacers.has(country)) { locale[len - 1] = formatCountry(nameReplacers.get(country)); }
 					// worldMap.jsonId = artist
 					const jsonIds = info.handle
-						? getHandleListTagsV2(new FbMetadbHandleList(info.handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null }).flat(Infinity)
+						? getHandleListTagsV2(new FbMetadbHandleList(info.handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId }).flat(Infinity)
 						: [];
 					const jsonId = jsonIds.find((id) => info.artist === id.toUpperCase()) || '';
 					if (jsonId.length && info.artist === jsonId.toUpperCase()) {

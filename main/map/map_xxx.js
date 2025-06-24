@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/06/25
+//26/06/25
 
 /* exported ImageMap */
 
@@ -15,7 +15,7 @@ include('..\\..\\helpers\\helpers_xxx_flags.js');
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global getHandleListTags:readable, getHandleListTagsV2:readable */
+/* global getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _bt:readable, _b:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
@@ -33,6 +33,7 @@ function ImageMap({
 	pointLineSize = 25,
 	bSplitTags = false, // By '|' when jsonId and mapTag are different
 	bSplitIds = false, // By '|' when jsonId and mapTag are different
+	splitExcludeId = null,
 	bSkipInit = false
 } = {}) {
 	// Constants
@@ -73,7 +74,7 @@ function ImageMap({
 			if (selMulti.Count >= 0) {
 				if (selMulti.Count === 0) { return; }
 				let added = new Set();
-				const currentMatch = getHandleListTags(selMulti, [this.jsonId], { bMerged: true });
+				const currentMatch = getHandleListTagsV2(selMulti, [this.jsonId], { bMerged: true, splitBy: this.bSplitIds ? ', ' : null, splitExclude: splitExcludeId });
 				currentMatch.forEach((tagArr) => {
 					tagArr.forEach((tag) => {
 						const id = tag;
@@ -100,7 +101,7 @@ function ImageMap({
 				if (sel.Count === 0) { return; }
 				sel.Convert().forEach((handle) => {
 					const currentMatch = handle
-						? getHandleListTagsV2(new FbMetadbHandleList(handle), [this.jsonId], { bMerged: true, splitBy: this.bSplitIds ? ', ' : null }).flat(Infinity)
+						? getHandleListTagsV2(new FbMetadbHandleList(handle), [this.jsonId], { bMerged: true, splitBy: this.bSplitIds ? ', ' : null, splitExclude: splitExcludeId }).flat(Infinity)
 						: [];
 					const ids = handle
 						? currentMatch.map((val) => this.findTag(handle, val).split(this.bSplitTags ? '|' : void (0)))
@@ -598,6 +599,7 @@ function ImageMap({
 	this.pointLineSize = pointLineSize;
 	this.bSplitTags = typeof this.properties.bSplitTags !== 'undefined' ? this.properties.bSplitTags[1] : bSplitTags;
 	this.bSplitIds = typeof this.properties.bSplitIds !== 'undefined' ? this.properties.bSplitIds[1] : bSplitIds;
+	this.splitExcludeId = typeof this.properties.splitExcludeId !== 'undefined' ? this.properties.splitExcludeId[1] : splitExcludeId;
 	this.delay = 30;
 	if (!bSkipInit) { this.init(); }
 }

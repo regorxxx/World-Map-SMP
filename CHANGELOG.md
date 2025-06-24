@@ -60,6 +60,7 @@
 - UI: added dynamic colors support based on track's artwork. It follows the background cover mode settings and must be enabled on 'colors' submenu.
 - UI: exposed background gradient focus setting, i.e. where the center color will be at its highest intensity.
 - UI: added tooltip on blank panel.
+- Configuration: added user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globNoSplitArtist.json' with a list of artists which should not be split.
 ### Changed
 - Tagging: Shift + R. Click on a country now always shows the tagging menu in case an artist from selection is not tagged, even if clicking on a currently displayed point. Previously it would create a playlist (since the click was over a point). This applies to both multiple selection and multi-valued artist tracks (if enabled). Note there is not any special handling of file tags for multi-value artists, i.e. if a track with 2 artists has 2 associated countries, they will be properly handled at the JSON database but if using the 'Write to track files' option, there is no way to know to which artist every country value is associated to. In such case it's assumed that all countries apply to all artists.
 - Tagging: tagging menu will now show submenus per country in case of multiple artists being selected. Clicking on an artist will only tag tracks/database associated to it.
