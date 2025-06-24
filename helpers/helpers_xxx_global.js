@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/06/25
+//24/06/25
 
 /* exported loadUserDefFile, addGlobValues, globFonts, globSettings, globNoSplitArtist */
 
