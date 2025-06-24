@@ -7,7 +7,7 @@
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable */
+/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable, saveUserDefFile:readable, globNoSplitArtist:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -30,6 +30,10 @@ function settingsMenu() {
 	const properties = worldMap.properties;
 	menu.clear(true); // Reset on every call
 	const selLimitLow = 5;
+	const sel = worldMap.getSelection();
+	const selJsonId = sel
+		? new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: null }).flat(Infinity))
+		: new Set();
 	{ // NOSONAR
 		{	// Enabled?
 			const menuName = menu.newMenu('Panel settings');
@@ -781,16 +785,6 @@ function settingsMenu() {
 		{	// Tags
 			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
-				menuName, entryText: 'Split multi-value artist tag by \', \'', func: () => {
-					properties.bSplitIds[1] = !properties.bSplitIds[1];
-					overwriteProperties(properties);
-					worldMap.bSplitIds = properties.bSplitIds[1];
-					repaint(void (0), true);
-				}
-			});
-			menu.newCheckMenuLast(() => properties.bSplitIds[1]);
-			menu.newSeparator(menuName);
-			menu.newEntry({
 				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
 					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', 'World Map: Locale tag reading', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
 					if (input === null) { return; }
@@ -815,6 +809,27 @@ function settingsMenu() {
 				}
 			});
 			menu.newCheckMenuLast(() => properties.bSplitTags[1]);
+			menu.newSeparator(menuName);
+			menu.newEntry({
+				menuName, entryText: 'Split multi-value artist tag by \', \'', func: () => {
+					properties.bSplitIds[1] = !properties.bSplitIds[1];
+					overwriteProperties(properties);
+					worldMap.bSplitIds = properties.bSplitIds[1];
+					repaint(void (0), true);
+				}
+			});
+			menu.newCheckMenuLast(() => properties.bSplitIds[1]);
+			menu.newEntry({
+				menuName, entryText: 'Don\'t split currently displayed artist', func: () => {
+					if (worldMap.splitExcludeId.isSuperset(selJsonId)) {
+						selJsonId.forEach((id) => worldMap.splitExcludeId.delete(id));
+					} else {
+						selJsonId.forEach((id) => worldMap.splitExcludeId.add(id));
+					}
+					saveUserDefFile(globNoSplitArtist);
+				}, flags: worldMap.lastPoint.length === 1 && selJsonId.size === 1 ? MF_STRING : MF_GRAYED
+			});
+			menu.newCheckMenuLast(() => selJsonId.size === 1 && worldMap.splitExcludeId.isSuperset(selJsonId));
 			menu.newSeparator(menuName);
 			{	// Modifier tags
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);

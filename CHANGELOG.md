@@ -52,6 +52,7 @@
 ## [Unreleased][]
 ### Added
 - Data: added support for multi-value artist tags, now enabled by default. Can be tweaked at the 'Tags' submenu. If a track has multiple artists, the panel will try to draw a point per artist (similar to how multiple selection works). Biography integration remains the same, i.e. it will try to only match the first artist found. Note this change implies that some artists may now be missing a country (since they were previously merged into a single value); you may use the 'Find artists without locale tag...' entry to tag them.
+- Data: added menu entry to add/remove an artist to a black list for splitting. So above functionality can be easily tweaked for specific artists which should never be split (like 'Crosby, Stills & Nash').
 - Statistics: X-Axis shown values at display menu now allows any custom value.
 - Statistics: Y-Axis filter at display menu now allows any custom value for 'greater than'/'lower than' filters.
 - Statistics: option to filter data between 2 custom values on Y-Axis at display menu.
@@ -61,7 +62,7 @@
 - UI: exposed background gradient focus setting, i.e. where the center color will be at its highest intensity.
 - UI: added tooltip on blank panel.
 - UI: added option to apply a gradient mask at borders (so they mix better with the background). Enabled by default.
-- Configuration: added user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globNoSplitArtist.json' with a list of artists which should not be split.
+- Configuration: added user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globNoSplitArtist.json' with a list of artists which should not be split. This list can be modified by directly editing the file or using the menu entry (see above).
 ### Changed
 - Tagging: Shift + R. Click on a country now always shows the tagging menu in case an artist from selection is not tagged, even if clicking on a currently displayed point. Previously it would create a playlist (since the click was over a point). This applies to both multiple selection and multi-valued artist tracks (if enabled). Note there is not any special handling of file tags for multi-value artists, i.e. if a track with 2 artists has 2 associated countries, they will be properly handled at the JSON database but if using the 'Write to track files' option, there is no way to know to which artist every country value is associated to. In such case it's assumed that all countries apply to all artists.
 - Tagging: tagging menu will now show submenus per country in case of multiple artists being selected. Clicking on an artist will only tag tracks/database associated to it.
@@ -103,7 +104,7 @@
 ## [3.15.0] - 2024-10-09
 ### Added
 ### Changed
-- Readme:  updated readme with tip about 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
+- Readme: updated readme with tip about 'Shift + Win + R. Click' shortcut to open SMP/JSpliter panel menu (which works globally on any script and panel, at any position).
 - UI: minor adjustments to menu entries.
 - Configuration: changed the remove duplicates bias to prefer tracks containing 'BEST' within a 'TRACKDSP' tag.
 - [JSplitter (SMP)](https://foobar2000.ru/forum/viewtopic.php?t=6378&start=360) support and ES2021 compatibility.
