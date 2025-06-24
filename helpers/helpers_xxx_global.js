@@ -117,16 +117,20 @@ function loadUserDefFile(def) {
 		}
 	} else { addGlobValues(def._type); bSave = true; }
 	if (bSave) {
-		const { _type, _file, ...rest } = def; // eslint-disable-line no-unused-vars
-		_save(
-			_file,
-			JSON.stringify(rest, (key, value) => {
-				if (value instanceof RegExp) { return value.toSource(); }
-				else if (value instanceof Set) { return [...value]; }
-				else { return value; }
-			}, '\t').replace(/\n/g, '\r\n')
-		);
+		saveUserDefFile(def);
 	}
+}
+
+function saveUserDefFile(def) {
+	const { _type, _file, ...rest } = def; // eslint-disable-line no-unused-vars
+	_save(
+		_file,
+		JSON.stringify(rest, (key, value) => {
+			if (value instanceof RegExp) { return value.toSource(); }
+			else if (value instanceof Set) { return [...value]; }
+			else { return value; }
+		}, '\t').replace(/\n/g, '\r\n')
+	);
 }
 
 /* eslint-disable no-useless-escape */

@@ -17,7 +17,7 @@ include('..\\..\\helpers\\helpers_xxx_file.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _bt:readable, _b:readable */
+/* global _bt:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
 /* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
 
@@ -215,8 +215,7 @@ function ImageMap({
 		let mapTagValue = '';
 		if (sel) {
 			// Get from tags
-			const tfo = !this.mapTag.includes('$') ? _bt(this.mapTag) : _b(this.mapTag); // It's a function?
-			mapTagValue = fb.TitleFormat(tfo).EvalWithMetadb(sel);
+			mapTagValue = fb.TitleFormat(_bt(this.mapTag)).EvalWithMetadb(sel);
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
 				const id = byKey.length

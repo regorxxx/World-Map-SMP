@@ -265,6 +265,14 @@ worldMap.applyUiSettings = function (settings, bForce) {
 	}
 };
 
+worldMap.getSelection = function () {
+	return this.properties.selection[1] === selMode[1]
+		? fb.IsPlaying
+			? new FbMetadbHandleList(fb.GetNowPlaying())
+			: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+		: plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+};
+
 // Additional config
 worldMap.pointSize = worldMap.properties.customPointSize[1];
 worldMap.pointLineSize = worldMap.pointSize * 2 + 5;
@@ -691,7 +699,7 @@ addEventListener('on_paint', (gr) => {
 			paintLayers({ gr, color, gradient, bProfile: worldMap.properties.bProfile[1] });
 		}
 	} else { // Get only X first tracks from selection, x = worldMap.properties.iLimitSelection[1]
-		let sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		let sel = worldMap.getSelection();
 		sel = removeDuplicates({ handleList: sel, checkKeys: [worldMap.jsonId] });
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) { sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1); }
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
@@ -845,7 +853,7 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (fromHook) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
-	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+	const sel = worldMap.getSelection();
 	sel.Sort();
 	const handleListClone = handleList.Clone();
 	handleListClone.Sort();
@@ -867,14 +875,9 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
-	let sel;
-	if (mask === MK_SHIFT || !worldMap.properties.panelMode[1]) {
-		sel = worldMap.properties.selection[1] === selMode[1]
-			? (fb.IsPlaying
-				? new FbMetadbHandleList(fb.GetNowPlaying())
-				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
-			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
-	}
+	const sel = mask === MK_SHIFT || !worldMap.properties.panelMode[1]
+		? worldMap.getSelection()
+		: null;
 	// On track mode disable point menu without selection
 	if (!worldMap.properties.panelMode[1] && (!sel || !sel.Count)) { return; }
 	// If an artist from current selection is missing country data, give preference to tagging
@@ -892,11 +895,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
-		const sel = worldMap.properties.selection[1] === selMode[1]
-			? (fb.IsPlaying
-				? new FbMetadbHandleList(fb.GetNowPlaying())
-				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
-			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+		const sel = worldMap.getSelection();
 		if (!sel || !sel.Count) { return; }
 	}
 	const cache = {
@@ -969,11 +968,7 @@ addEventListener('on_notify_data', (name, info) => {
 			bioCache.handleRawPath = info.handle.RawPath;
 			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
-			const sel = worldMap.properties.selection[1] === selMode[1]
-				? (fb.IsPlaying
-					? new FbMetadbHandleList(fb.GetNowPlaying())
-					: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
-				) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+			const sel = worldMap.getSelection();
 			// Get Tags
 			const tagName = worldMap.properties.writeToTag[1];
 			if (tagName.length) {
