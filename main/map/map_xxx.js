@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/06/25
+//24/06/25
 
 /* exported ImageMap */
 
@@ -25,7 +25,7 @@ include('..\\..\\helpers\\helpers_xxx_UI.js');
 function ImageMap({
 	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
 	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, isNearPointFunc = null,
-	tooltipFunc = null,  tooltipFindPointFunc = null, tooltipPanelFunc = null,
+	tooltipFunc = null, tooltipFindPointFunc = null, tooltipPanelFunc = null,
 	jsonPath = '', jsonId = '',
 	bStaticCoord = true,
 	pointShape = 'circle', // string, circle
@@ -543,6 +543,14 @@ function ImageMap({
 				try {
 					if (!_isFile(this.imageMapPath)) { throw new Error('File not found.'); }
 					this.imageMap = gdi.Image(_resolvePath(this.imageMapPath));
+					if (this.bImageMapMask) {
+						const imageMapMask = gdi.CreateImage(this.imageMap.Width, this.imageMap.Height);
+						const gr = imageMapMask.GetGraphics();
+						gr.FillGradRect(0, 0, this.imageMap.Width / 10, this.imageMap.Height, 0, 0xffffffff, 0xff000000);
+						gr.FillGradRect(this.imageMap.Width * 9 / 10, 0, this.imageMap.Width / 10, this.imageMap.Height, 0, 0xff000000, 0xffffffff);
+						imageMapMask.ReleaseGraphics(gr);
+						this.imageMap.ApplyMask(imageMapMask);
+					}
 				}
 				catch (e) {
 					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath + '\n\n' + e.message, window.Name);
@@ -566,6 +574,7 @@ function ImageMap({
 	this.imageMap = null;
 	this.imageMapPath = '';
 	this.imageMapAlpha = 255;
+	this.bImageMapMask = true;
 	this.jsonData = [];
 	this.jsonId = ''; // UUID key for the data
 	this.jsonPath = '';

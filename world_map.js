@@ -58,6 +58,7 @@ const worldMap_properties = {
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
 	imageMapAlpha: ['Map image transparency', 217, { func: isInt, range: [[0, 255]] }, 217],
+	bImageMapMask: ['Apply a gradient mask at borders', true, { func: isBoolean }, true],
 	iWriteTags: ['When used along Biography script, tags may be written to files (if not present)', 0, { func: isInt, range: [[0, 2]] }, 0],
 	writeToTag: ['Tag name to write artist\'s country', globTags.locale, { func: isString }, globTags.locale],
 	selection: ['Follow selection or playback? (must match Biography script!)', selMode[0], { eq: selMode }, selMode[0]],
@@ -264,9 +265,6 @@ worldMap.applyUiSettings = function (settings, bForce) {
 	}
 };
 
-// Init with changes
-worldMap.init();
-
 // Additional config
 worldMap.pointSize = worldMap.properties.customPointSize[1];
 worldMap.pointLineSize = worldMap.pointSize * 2 + 5;
@@ -274,6 +272,11 @@ if (worldMap.properties.customPointColorMode[1] === 1) { worldMap.defaultColor =
 worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 worldMap.textColor = worldMap.properties.customLocaleColor[1];
 worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
+worldMap.bImageMapMask = worldMap.properties.bImageMapMask[1];
+
+// Init with changes
+worldMap.init();
+
 
 /*
 	Panel background

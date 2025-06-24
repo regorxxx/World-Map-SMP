@@ -390,6 +390,15 @@ function settingsMenu() {
 						repaint(void (0), true);
 					}
 				});
+				menu.newEntry({
+					menuName, entryText: 'Apply gradient mask at borders', func: () => {
+						properties.bImageMapMask[1] = !properties.bImageMapMask[1];
+						worldMap.bImageMapMask = properties.bImageMapMask[1];
+						worldMap.init();
+						window.Repaint();
+					}
+				});
+				menu.newCheckMenuLast(() => worldMap.bImageMapMask);
 			}
 			{	// Coordinates factor
 				const menuName = menu.newMenu('Coordinates transformation', menuUI);
