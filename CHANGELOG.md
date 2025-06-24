@@ -93,7 +93,7 @@
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed
 ### Fixed
-- Biography Integration: unnecessary panel and data update when the artist already had a country set. This change also ensures manually set countries (either by tag or JSON) are not overriden any Biography tag.
+- Biography Integration: unnecessary panel and data update when the artist already had a country set. This change also ensures manually set countries (either by tag or JSON) are not overridden by the Biography tag.
 - Data: 'Find artists without locale tags' tool was not checking the read tag TF setting but the write tag setting, which would lead to wrong results if the tag was sourced from Biography (since it writes multiple values).
 - Statistics: minor fixes.
 - Statistics: background not being updated on playback/selection change.
