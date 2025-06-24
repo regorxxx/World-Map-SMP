@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/25
+//19/06/25
 
 /* exported _mapStatistics */
 
@@ -14,6 +14,7 @@ include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global sendToPlaylist:readable */
 include('..\\filter_and_query\\remove_duplicates.js');
 /* global removeDuplicates:readable */
+/* global getHandleListTagsV2:readable */
 
 
 function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
@@ -363,25 +364,27 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'listens region':
 					case 'listens': {
 						const handleList = fb.GetLibraryItems();
-						const libraryTags = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList);
+						const libraryTags = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
 						const playCount = fb.TitleFormat(globTags.playCount).EvalWithMetadbs(handleList);
 						const tagCount = new Map();
-						libraryTags.forEach((tag, i) => {
-							const idData = worldMap.getDataById(tag);
-							if (idData) {
-								const country = idData.val[idData.val.length - 1];
-								const isoCode = getCountryISO(country);
-								if (isoCode) {
-									const id = idData
-										? arg === 'listens region'
-											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-											: idData.val[idData.val.length - 1]
-										: null;
-									if (!id) { return; }
-									if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-									else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+						libraryTags.forEach((tagArr, i) => {
+							tagArr.forEach((tag) => {
+								const idData = worldMap.getDataById(tag);
+								if (idData) {
+									const country = idData.val[idData.val.length - 1];
+									const isoCode = getCountryISO(country);
+									if (isoCode) {
+										const id = idData
+											? arg === 'listens region'
+												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+												: idData.val[idData.val.length - 1]
+											: null;
+										if (!id) { return; }
+										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
+										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+									}
 								}
-							}
+							});
 						});
 						data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
 						break;
@@ -389,28 +392,30 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'listens region normalized':
 					case 'listens normalized': {
 						const handleList = fb.GetLibraryItems();
-						const libraryTags = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList);
+						const libraryTags = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
 						const playCount = fb.TitleFormat(globTags.playCount).EvalWithMetadbs(handleList);
 						const tagCount = new Map();
 						const keyCount = new Map();
-						libraryTags.forEach((tag, i) => {
-							const idData = worldMap.getDataById(tag);
-							if (idData) {
-								const country = idData.val[idData.val.length - 1];
-								const isoCode = getCountryISO(country);
-								if (isoCode) {
-									const id = idData
-										? arg === 'listens region normalized'
-											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-											: idData.val[idData.val.length - 1]
-										: null;
-									if (!id) { return; }
-									if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-									else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
-									if (!keyCount.has(id)) { keyCount.set(id, 1); }
-									else { keyCount.set(id, keyCount.get(id) + 1); }
+						libraryTags.forEach((tagArr, i) => {
+							tagArr.forEach((tag) => {
+								const idData = worldMap.getDataById(tag);
+								if (idData) {
+									const country = idData.val[idData.val.length - 1];
+									const isoCode = getCountryISO(country);
+									if (isoCode) {
+										const id = idData
+											? arg === 'listens region normalized'
+												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+												: idData.val[idData.val.length - 1]
+											: null;
+										if (!id) { return; }
+										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
+										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+										if (!keyCount.has(id)) { keyCount.set(id, 1); }
+										else { keyCount.set(id, keyCount.get(id) + 1); }
+									}
 								}
-							}
+							});
 						});
 						keyCount.forEach((value, key) => {
 							if (tagCount.has(key)) { tagCount.set(key, Math.round(tagCount.get(key) / keyCount.get(key))); }
@@ -464,23 +469,26 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'listens': {
 						const handleList = fb.GetLibraryItems();
 						const libraryTags = await fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbsAsync(handleList);
+						libraryTags.forEach((tag, i, thisArr) => thisArr[i] = worldMap.bSplitIds ? tag.split(', ') : [tag]);
 						const playCount = await fb.TitleFormat(globTags.playCount).EvalWithMetadbsAsync(handleList);
 						const tagCount = new Map();
 						return Promise.serial(libraryTags.chunk(1000), async (tags) => {
-							return tags.forEach((tag, i) => {
-								const idData = worldMap.getDataById(tag);
-								if (idData) {
-									const country = idData.val[idData.val.length - 1];
-									const isoCode = getCountryISO(country);
-									if (isoCode) {
-										const id = arg === 'listens region'
-											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-											: country;
-										if (!id) { return; }
-										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+							return tags.forEach((tagArr, i) => {
+								tagArr.forEach((tag) => {
+									const idData = worldMap.getDataById(tag);
+									if (idData) {
+										const country = idData.val[idData.val.length - 1];
+										const isoCode = getCountryISO(country);
+										if (isoCode) {
+											const id = arg === 'listens region'
+												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+												: country;
+											if (!id) { return; }
+											if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
+											else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+										}
 									}
-								}
+								});
 							});
 						}, 10).then(() => {
 							return [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
@@ -490,26 +498,29 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					case 'listens normalized': {
 						const handleList = fb.GetLibraryItems();
 						const libraryTags = await fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbsAsync(handleList);
+						libraryTags.forEach((tag, i, thisArr) => thisArr[i] = worldMap.bSplitIds ? tag.split(', ') : [tag]);
 						const playCount = await fb.TitleFormat(globTags.playCount).EvalWithMetadbsAsync(handleList);
 						const tagCount = new Map();
 						const keyCount = new Map();
 						return Promise.serial(libraryTags.chunk(1000), async (tags) => {
-							return tags.forEach((tag, i) => {
-								const idData = worldMap.getDataById(tag);
-								if (idData) {
-									const country = idData.val[idData.val.length - 1];
-									const isoCode = getCountryISO(country);
-									if (isoCode) {
-										const id = arg === 'listens region normalized'
-											? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
-											: country;
-										if (!id) { console.log(isoCode, id); return; }
-										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
-										if (!keyCount.has(id)) { keyCount.set(id, 1); }
-										else { keyCount.set(id, keyCount.get(id) + 1); }
+							return tags.forEach((tagArr, i) => {
+								tagArr.forEach((tag) => {
+									const idData = worldMap.getDataById(tag);
+									if (idData) {
+										const country = idData.val[idData.val.length - 1];
+										const isoCode = getCountryISO(country);
+										if (isoCode) {
+											const id = arg === 'listens region normalized'
+												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
+												: country;
+											if (!id) { console.log(isoCode, id); return; }
+											if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
+											else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+											if (!keyCount.has(id)) { keyCount.set(id, 1); }
+											else { keyCount.set(id, keyCount.get(id) + 1); }
+										}
 									}
-								}
+								});
 							});
 						}, 10).then(() => {
 							keyCount.forEach((value, key) => {

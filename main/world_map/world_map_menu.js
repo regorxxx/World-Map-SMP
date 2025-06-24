@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/06/25
+//24/06/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -11,7 +11,7 @@ include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global getHandleListTags:readable */
+/* global getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global sendToPlaylist:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
@@ -148,7 +148,7 @@ function settingsMenu() {
 					menuName, entryText: mode.text, func: () => {
 						if (properties.bEnabledBiography[1] === mode.val) { return; }
 						if (mode.val) { // Warning check
-							let answer = WshShell.Popup('Warning! Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. Everytime a tag is not found locally, the online tag will be used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
+							let answer = WshShell.Popup('Warning: Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. Everytime a tag is not found locally, the online tag will be used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 							if (answer === popup.no) { return; }
 						}
 						properties.bEnabledBiography[1] = mode.val;
@@ -303,7 +303,7 @@ function settingsMenu() {
 					menuName, entryText: mode, func: () => {
 						if (properties.selection[1] === mode) { return; }
 						if (properties.bInstalledBiography[1] && properties.bEnabledBiography[1] && properties.bShowSelModePopup[1]) { // Warning check
-							let answer = WshShell.Popup('Warning! WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
+							let answer = WshShell.Popup('Warning: WilB\'s Biography integration is enabled. This setting will be applied on both panels!\n\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 							if (answer === popup.no) { return; }
 						}
 						properties.selection[1] = mode;
@@ -772,6 +772,16 @@ function settingsMenu() {
 		{	// Tags
 			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
+				menuName, entryText: 'Split multi-value artist tag by \', \'', func: () => {
+					properties.bSplitIds[1] = !properties.bSplitIds[1];
+					overwriteProperties(properties);
+					worldMap.bSplitIds = properties.bSplitIds[1];
+					repaint(void (0), true);
+				}
+			});
+			menu.newCheckMenuLast(() => properties.bSplitIds[1]);
+			menu.newSeparator(menuName);
+			menu.newEntry({
 				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
 					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', 'World Map: Locale tag reading', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
 					if (input === null) { return; }
@@ -829,7 +839,7 @@ function settingsMenu() {
 						menuName: subMenuName, entryText: mode.text, func: () => {
 							if (properties.iWriteTags[1] === mode.val) { return; }
 							if (mode.val) { // Warning check
-								let answer = WshShell.Popup('Warning! Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
+								let answer = WshShell.Popup('Warning: Writing tags on playback has 2 requirements:\n- WilB\'s Biography mod installed (loaded on another panel).\n- Both configured with the same selection mode (done automatically when mod is installed).\n\nNot following these requisites will make the feature to not work or work unexpectedly.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 								if (answer === popup.no) { return; }
 							}
 							properties.iWriteTags[1] = mode.val;
@@ -864,30 +874,34 @@ function settingsMenu() {
 						const jsonIdList = new Set(); // only one track per artist
 						const handleList = fb.GetLibraryItems();
 						handleList.Convert().forEach((handle) => {
-							const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
-							if (jsonId.length && !jsonIdList.has(jsonId)) {
-								if (properties.iWriteTags[1] === 0) {
-									if (worldMap.hasDataById(jsonId)) { return; }
-									else {
+							// worldMap.jsonId = artist
+							const jsonId = getHandleListTagsV2(new FbMetadbHandleList(handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null }).flat(Infinity);
+							let bAdded = false;
+							jsonId.forEach((id) => {
+								if (!jsonIdList.has(id)) {
+									if (properties.iWriteTags[1] === 0) {
+										if (worldMap.hasDataById(id)) { return; }
+										else {
+											const tagName = properties.mapTag[1];
+											const tfo = _bt(tagName);
+											if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
+												if (!bAdded) { notFoundList.Add(handle); bAdded = true; }
+												jsonIdList.add(id);
+											}
+										}
+									} else if (properties.iWriteTags[1] === 2 && !worldMap.hasDataById(id)) { // Check if tag exists on json
+										if (!bAdded) { notFoundList.Add(handle); bAdded = true; }
+										jsonIdList.add(id);
+									} else if (properties.iWriteTags[1] === 1) { // Check if tag exists on file
 										const tagName = properties.mapTag[1];
 										const tfo = _bt(tagName);
 										if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
-											notFoundList.Add(handle);
-											jsonIdList.add(jsonId);
+											if (!bAdded) { notFoundList.Add(handle); bAdded = true; }
+											jsonIdList.add(id);
 										}
 									}
-								} else if (properties.iWriteTags[1] === 2 && !worldMap.hasDataById(jsonId)) { // Check if tag exists on json
-									notFoundList.Add(handle);
-									jsonIdList.add(jsonId);
-								} else if (properties.iWriteTags[1] === 1) { // Check if tag exists on file
-									const tagName = properties.mapTag[1];
-									const tfo = _bt(tagName);
-									if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length) {
-										notFoundList.Add(handle);
-										jsonIdList.add(jsonId);
-									}
 								}
-							}
+							});
 						});
 						if (notFoundList.Count) {
 							sendToPlaylist(notFoundList, 'World Map missing tags');
@@ -932,21 +946,23 @@ function settingsMenu() {
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
-						const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+						const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
 						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
 						handleList.Convert().forEach((handle, i) => {
-							if (jsonId[i] && jsonId[i].length) {
-								if (tag[i] && tag[i].length && tag[i].filter(Boolean).length) { // Only merge if not empty
-									const data = { [worldMap.jsonId]: jsonId[i], val: tag[i] };
-									if (!worldMap.hasDataById(jsonId[i])) {
-										worldMap.saveData(data);
-										countN++;
-									} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(jsonId[i]).val, tag[i])) {
-										worldMap.deleteDataById(jsonId[i]);
-										worldMap.saveData(data);
-										countO++;
+							if (jsonId[i].length) {
+								jsonId[i].forEach((id) => {
+									if (tag[i] && tag[i].length && tag[i].filter(Boolean).length) { // Only merge if not empty
+										const data = { [worldMap.jsonId]: id, val: tag[i] };
+										if (!worldMap.hasDataById(id)) {
+											worldMap.saveData(data);
+											countN++;
+										} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(jsonId[i]).val, tag[i])) {
+											worldMap.deleteDataById(id);
+											worldMap.saveData(data);
+											countO++;
+										}
 									}
-								}
+								});
 							}
 						});
 						if (countN || countO) {
@@ -962,26 +978,38 @@ function settingsMenu() {
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
-						const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadbs(handleList); // worldMap.jsonId = artist
+						const toTagList = new FbMetadbHandleList();
+						const toTagValues = [];
+						// worldMap.jsonId = artist
+						const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
 						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
 						const newData = worldMap.getData();
 						if (newData && newData.length) {
 							handleList.Convert().forEach((handle, i) => {
-								if (jsonId[i] && jsonId[i].length) {
-									newData.forEach((data) => {
-										if (data[worldMap.jsonId] === jsonId[i] && data.val && data.val.length && data.val.filter(Boolean).length) {
-											if (!tag[i] || !tag[i].length || !tag[i].filter(Boolean).length) {
-												new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{ [properties.writeToTag[1]]: data.val }]));
-												countN++;
-											} else if (answer === popup.yes && !isArrayEqual(data.val, tag[i])) {
-												new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{ [properties.writeToTag[1]]: data.val }]));
-												countO++;
+								if (jsonId[i].length) {
+									jsonId[i].forEach((id) => {
+										newData.forEach((data) => {
+											if (data[worldMap.jsonId] === id && data.val && data.val.length && data.val.filter(Boolean).length) {
+												const iTag = tag[i];
+												let bDone;
+												if (!iTag || !iTag.length || !iTag.filter(Boolean).length) {
+													bDone = true;
+													countN++;
+												} else if (answer === popup.yes && !isArrayEqual(data.val, iTag)) {
+													bDone = true;
+													countO++;
+												}
+												if (bDone) {
+													toTagList.Add(handle);
+													toTagValues.push({ [properties.writeToTag[1]]: data.val });
+												}
 											}
-										}
+										});
 									});
 								}
 							});
 						}
+						if (toTagList.Count) { toTagList.UpdateFileInfoFromJSON(JSON.stringify(toTagValues)); }
 						if (countN || countO) { repaint(void (0), true); }
 						console.log('World Map: writing back database tags to files done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
 					}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/05/25
+//22/06/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -20,7 +20,7 @@ include('helpers\\helpers_xxx_prototypes_smp.js');
 include('helpers\\helpers_xxx_properties.js');
 /* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable */
 include('helpers\\helpers_xxx_tags.js');
-/* global checkQuery:readable, */
+/* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
 /* global _isFile:readable, _resolvePath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
@@ -30,7 +30,7 @@ include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltip:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltiPanel:readable */
 include('main\\world_map\\world_map_flags.js');
 /* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
@@ -92,7 +92,8 @@ const worldMap_properties = {
 		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
 		// axis = {x: {/* show, color, width, ticks, labels, key, bSingleLabels */}, y: {/* ... */}}
 	})],
-	bSplitTags: ['Allow multi-locale tags split by \'|\'?', false, { func: isBoolean }, false],
+	bSplitTags: ['Split multi-value country tag by \'|\'', false, { func: isBoolean }, false],
+	bSplitIds: ['Split multi-value artist tag by \', \'', true, { func: isBoolean }, true],
 	bAutoUpdateCheck: ['Automatically check updates?', globSettings.bAutoUpdateCheck, { func: isBoolean }, globSettings.bAutoUpdateCheck],
 	bShowHeader: ['Show header', true, { func: isBoolean }, true],
 	customShapeColor: ['Custom country layer color', RGB(0, 53, 89), { func: isInt }, RGB(0, 53, 89)],
@@ -145,14 +146,15 @@ globProfiler.Print('init');
 */
 const worldMap = new ImageMap({
 	imagePath: worldMapImages.find((img) => img.bDefault).path,
-	properties: getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes and bSplitTags
+	properties: getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes, bSplitIds and bSplitTags
 	jsonId: 'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc: findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc: findCountry, // Function at helpers\world_map_tables.js
 	isNearPointFunc: isNearCountry, // Function at helpers\world_map_tables.js
 	selPointFunc: selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
 	selFindPointFunc: selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
-	tooltipFunc: tooltip, // What happens when mouse is over point, helpers\world_map_helpers.js
+	tooltipFunc: tooltipPoint, // What happens when mouse is over point, helpers\world_map_helpers.js
+	tooltipPanelFunc: tooltiPanel, // What happens when mouse is over panel, helpers\world_map_helpers.js
 	tooltipFindPointFunc: tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
 	font: globFonts.standard.name,
 	bSkiptInit: true
@@ -863,18 +865,36 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
-	if (!worldMap.properties.panelMode[1]) { // On track mode disable point menu without selection
-		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		if (!sel || !sel.Count) { return; }
+	let sel;
+	if (mask === MK_SHIFT || !worldMap.properties.panelMode[1]) {
+		sel = worldMap.properties.selection[1] === selMode[1]
+			? (fb.IsPlaying
+				? new FbMetadbHandleList(fb.GetNowPlaying())
+				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 	}
-	worldMap.btn_up(x, y, worldMap.properties.panelMode[1] ? null : mask); // Disable shift on library mode
+	// On track mode disable point menu without selection
+	if (!worldMap.properties.panelMode[1] && (!sel || !sel.Count)) { return; }
+	// If an artist from current selection is missing country data, give preference to tagging
+	let bForceTag;
+	if (mask === MK_SHIFT) {
+		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
+		if (jsonId.some((idArr, i) => idArr.some((val) => !worldMap.findTag(sel[i], val)))) {
+			bForceTag = true;
+		}
+	}
+	worldMap.btn_up(x, y, worldMap.properties.panelMode[1] ? null : mask, bForceTag); // Disable shift on library mode
 });
 
 addEventListener('on_mouse_move', (x, y, mask) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
-		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+		const sel = worldMap.properties.selection[1] === selMode[1]
+			? (fb.IsPlaying
+				? new FbMetadbHandleList(fb.GetNowPlaying())
+				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+			): plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 		if (!sel || !sel.Count) { return; }
 	}
 	const cache = {
@@ -947,7 +967,11 @@ addEventListener('on_notify_data', (name, info) => {
 			bioCache.handleRawPath = info.handle.RawPath;
 			bioCache.subSong = info.handle.SubSong;
 			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
-			const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
+			const sel = worldMap.properties.selection[1] === selMode[1]
+				? (fb.IsPlaying
+					? new FbMetadbHandleList(fb.GetNowPlaying())
+					: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+				) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 			// Get Tags
 			const tagName = worldMap.properties.writeToTag[1];
 			if (tagName.length) {
@@ -966,13 +990,19 @@ addEventListener('on_notify_data', (name, info) => {
 					// Replace country name with ISO standard name if it's a known variation
 					const country = (locale[len - 1] || '').toLowerCase();
 					if (nameReplacers.has(country)) { locale[len - 1] = formatCountry(nameReplacers.get(country)); }
-					const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(info.handle); // worldMap.jsonId = artist
-					if (jsonId.length) {
+					// worldMap.jsonId = artist
+					const jsonIds = info.handle
+						? getHandleListTagsV2(new FbMetadbHandleList(info.handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null }).flat(Infinity)
+						: [];
+					const jsonId = jsonIds.find((id) => info.artist === id.toUpperCase()) || '';
+					if (jsonId.length && info.artist === jsonId.toUpperCase()) {
 						// Set tag on map for drawing if found
 						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-							worldMap.setTag(locale[len - 1], jsonId);
-							if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
-								repaint();
+							if (!worldMap.findTag(info.handle, jsonId)) {
+								worldMap.setTag(locale[len - 1], jsonId);
+								if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
+									repaint();
+								}
 							}
 						}
 						// Update tags or json if needed (even if the handle was not within the selection)

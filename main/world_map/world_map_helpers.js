@@ -1,17 +1,17 @@
 ﻿'use strict';
-//25/11/24
+//22/06/25
 
-/* exported selPoint, tooltip, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
+/* exported selPoint, tooltipPoint, tooltiPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
 /* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global MF_GRAYED:readable */
+/* global MF_GRAYED:readable, WshShell:readable, popup:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable */
+/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable */
+/* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, */
 
@@ -48,7 +48,7 @@ function selPoint(point, mask) {
 	// Merges all queries with OR
 	query = [queryJoin(query, 'OR')];
 	// Add query with keyboard modifiers
-	const currentModifier = modifiers.find((mod) => { return mod.mask === mask; });
+	const currentModifier = modifiers.find((mod) => mod.mask === mask);
 	if (currentModifier) { // When using ctrl + click, Shift, ...
 		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 		if (sel && sel.Count) {
@@ -116,58 +116,98 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 	// Any track with same locale tag
 	const tagName = worldMap.properties.writeToTag[1];
 	if (tagName.length) {
+		const sel = worldMap.properties.selection[1] === selMode[1]
+			? (fb.IsPlaying
+				? new FbMetadbHandleList(fb.GetNowPlaying())
+				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
+			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+		if (!sel && !sel.Count) { return bDone; }
+		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
+		const jsonIdFlat = new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null }).flat(Infinity));
+		const countries = jsonId.map((idArr, i) => idArr.map((val) => this.findTag(sel[i], val).split(this.bSplitTags ? '|' : void (0))));
 		let locale = [];
+		let tagId = '';
 		// Menu to select country from list
 		const menu = new _menu();
-		menu.newEntry({ entryText: 'Countries near clicked point:', func: null, flags: MF_GRAYED });
-		menu.newSeparator();
-		foundPoints.forEach((point) => {
-			let country = formatCountry(point.key);
-			menu.newEntry({
-				entryText: country, func: () => {
-					locale = [country];
-				}
-			});
-		});
-		menu.btn_up(x, y);
-		if (!locale.length) { return; }
-		const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
-		if (sel && sel.Count) {
-			const jsonIdDone = new Set();
-			sel.Convert().forEach((handle) => {
-				const jsonId = fb.TitleFormat(_bt(worldMap.jsonId)).EvalWithMetadb(handle); // worldMap.jsonId = artist
-				if (jsonId && jsonId.length) {
-					// Set tag on map for drawing
-					worldMap.setTag(locale[locale.length - 1], jsonId);
-					window.Repaint();
-					// Update tags or json if needed (even if the handle was not within the selection)
-					if (worldMap.properties.iWriteTags[1] > 0) {
-						const tfo = _bt(tagName);
-						if (!fb.TitleFormat(tfo).EvalWithMetadb(handle).length || bForce) { // Check if tag already exists
-							if (worldMap.properties.iWriteTags[1] === 1) {
-								new FbMetadbHandleList(handle).UpdateFileInfoFromJSON(JSON.stringify([{ [tagName]: locale }])); // Uses tagName var as key here
-							} else if (worldMap.properties.iWriteTags[1] === 2) {
-								if (!jsonIdDone.has(jsonId)) {
-									jsonIdDone.add(jsonId);
-									const newData = { [worldMap.jsonId]: jsonId, val: locale };
-									if (!worldMap.hasDataById(jsonId)) { worldMap.saveData(newData); } // use path at properties
-									else if (bForce) { // Force rewrite
-										worldMap.deleteDataById(jsonId);
-										worldMap.saveData(newData);
-									}
-								}
+		if (jsonIdFlat.size > 1) {
+			menu.newEntry({ entryText: 'Select a country: Multiple artists', func: null, flags: MF_GRAYED });
+			menu.newSeparator();
+			let menuName;
+			foundPoints.forEach((point) => {
+				let country = formatCountry(point.key);
+				menuName = menu.newMenu(country);
+				jsonId.forEach((idArr, i) => idArr.forEach((id, j) => {
+					let visited = new Set(jsonIdFlat);
+					if (visited.has(id)) {
+						menu.newEntry({
+							menuName, entryText: id + (countries[i][j].filter(Boolean).length ? '\t[-tagged-] ' : ''), func: () => {
+								locale = [country];
+								tagId = id;
 							}
-						}
+						});
+						menu.newCheckMenuLast(() => countries[i][j].includes(country));
+						visited.delete(id);
 					}
-				}
+				}));
+			});
+		} else {
+			menu.newEntry({ entryText: 'Select a country: ' + jsonId, func: null, flags: MF_GRAYED });
+			menu.newSeparator();
+			foundPoints.forEach((point) => {
+				let country = formatCountry(point.key);
+				menu.newEntry({
+					entryText: country, func: () => {
+						locale = [country];
+						tagId = [...jsonIdFlat][0];
+					}
+				});
+				menu.newCheckMenuLast(() => countries[0][0].includes(country));
 			});
 		}
+		menu.btn_up(x, y);
+		if (!locale.length || !tagId.length) { return bDone; }
+		// Set tag on map for drawing
+		worldMap.setTag(locale[locale.length - 1], tagId);
+		window.Repaint();
+		// Find all handles with selected artist
+		if (worldMap.properties.iWriteTags[1] > 0) {
+			if (worldMap.properties.iWriteTags[1] === 1) {
+				const toTag = new FbMetadbHandleList();
+				const tfo = fb.TitleFormat(_bt(tagName));
+				const answer = WshShell.Popup('Do you want to tag all tracks from selected artist?\nArtist: ' + tagId + '\n\nClicking "No" will only use the current selection.', 0, 'World Map: tag ' + tagId, popup.question + popup.yes_no);
+				if (answer === popup.no) {
+					jsonId.forEach((idArr, idx) => {
+						if (idArr.includes(tagId) && (!tfo.EvalWithMetadb(sel[idx]).length || bForce)) { // Check if tag already exists
+							toTag.Add(sel[idx]);
+						}
+					});
+				} else {
+					console.log(worldMap.jsonId + ' IS ' + tagId);
+					const query = worldMap.jsonId.toUpperCase() === 'ALBUM ARTIST'
+						? queryJoin([
+							'ARTIST IS ' + tagId,
+							'%ALBUM ARTIST% IS ' + tagId,
+						], 'OR')
+						: _qCond(worldMap.jsonId) + ' IS ' + tagId;
+					toTag.AddRange(fb.GetQueryItems(fb.GetLibraryItems(), query));
+				}
+				if (toTag.Count) { toTag.UpdateFileInfoFromJSON(JSON.stringify({ [tagName]: locale })); }
+			} else {
+				const newData = { [worldMap.jsonId]: tagId, val: locale };
+				if (!worldMap.hasDataById(tagId)) { worldMap.saveData(newData); } // use path at properties
+				else if (bForce) { // Force rewrite
+					worldMap.deleteDataById(tagId);
+					worldMap.saveData(newData);
+				}
+			}
+		}
+		bDone = true;
 	}
 	return bDone;
 }
 
 // When mouse is over point
-function tooltip(point) {
+function tooltipPoint(point) {
 	const count = worldMap.lastPoint.find((last) => { return last.id === point.id; }).val;
 	const region = music_graph_descriptors_countries.getFirstNodeRegion(getCountryISO(point.id));
 	const continent = music_graph_descriptors_countries.getMainRegion(region);
@@ -184,12 +224,22 @@ function tooltip(point) {
 	return (point && Object.hasOwn(point, 'id') ? text : null);
 }
 
-// When mouse is over point
+// When mouse is over point on tagging mode
 function tooltipFindPoint(foundPoints) {
 	const sel = (worldMap.properties.selection[1] === selMode[1] ? (fb.IsPlaying ? new FbMetadbHandleList(fb.GetNowPlaying()) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist)) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist));
 	if (!sel || !sel.Count) { return; }
 	let text = foundPoints.map((point) => { return formatCountry(point.key) + ' ' + _p(point.prox + '%'); }).join(', ');
 	text += '\n(L. Click to add locale tag to current track(s))';
+	return text;
+}
+
+// When mouse is over panel
+function tooltiPanel() {
+	let text = 'Move over a point to see playlist creation options.';
+	text += '\n(R. Click to open settings menu)';
+	text += '\n(Shift + L. Click on map rewrites locale tag)';
+	text += '\n' + '-'.repeat(60);
+	text += '\n(Shift + Win + R. Click for SMP panel menu)';
 	return text;
 }
 
@@ -231,6 +281,6 @@ function getLibraryTags(jsonId, dataObj) { // worldMap.jsonId = artist
 function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.properties.fileNameLibrary[1], jsonId = worldMap.jsonId, dataObj = worldMap
 	const libraryTags = getLibraryTags(jsonId, dataObj);
 	if (libraryTags && libraryTags.length) {
-		_save(dataPath, JSON.stringify(libraryTags, null, '\t').replace(/\n/g,'\r\n'));
+		_save(dataPath, JSON.stringify(libraryTags, null, '\t').replace(/\n/g, '\r\n'));
 	}
 }

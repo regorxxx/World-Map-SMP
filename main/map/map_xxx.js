@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/03/25
+//22/06/25
 
 /* exported ImageMap */
 
@@ -15,7 +15,7 @@ include('..\\..\\helpers\\helpers_xxx_flags.js');
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
-/* global getHandleListTags:readable */
+/* global getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _bt:readable, _b:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
@@ -24,13 +24,15 @@ include('..\\..\\helpers\\helpers_xxx_UI.js');
 // Map object
 function ImageMap({
 	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
-	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, tooltipFunc = null, isNearPointFunc = null, tooltipFindPointFunc = null,
+	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, isNearPointFunc = null,
+	tooltipFunc = null,  tooltipFindPointFunc = null, tooltipPanelFunc = null,
 	jsonPath = '', jsonId = '',
 	bStaticCoord = true,
 	pointShape = 'circle', // string, circle
 	pointSize = 10,
 	pointLineSize = 25,
 	bSplitTags = false, // By '|' when jsonId and mapTag are different
+	bSplitIds = false, // By '|' when jsonId and mapTag are different
 	bSkipInit = false
 } = {}) {
 	// Constants
@@ -88,38 +90,35 @@ function ImageMap({
 				});
 				// Handle
 			} else {
-				const currentMatch = selMulti ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(selMulti) : '';
-				const id = this.idSelected.length ? this.lastPoint[0] : (selMulti ? this.findTag(selMulti, currentMatch) : '');
+				const currentMatch = fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(selMulti);
+				const id = this.idSelected.length ? this.lastPoint[0] : this.findTag(selMulti, currentMatch);
 				if (id.length) { toPaintArr.push({ id, val: 1, jsonId: new Set([currentMatch]) }); }
 			}
-		} else if (sel) { // 1 point per handle, id and tag value are different: handle -> id -> tag Value
+		} else if (sel) { // multiple points per handle, id and tag value are different: handle -> [...id] -> [...tag Value]
 			// Handle list
 			if (sel.Count >= 0) {
 				if (sel.Count === 0) { return; }
-				else if (sel.Count === 1) {
-					const currentMatch = sel[0] ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel[0]) : '';
-					const ids = sel[0] ? this.findTag(sel[0], currentMatch).split(this.bSplitTags ? '|' : void (0)) : [];
-					ids.forEach((id) => {
-						if (id.length) { toPaintArr.push({ id, val: 1, jsonId: new Set([currentMatch]) }); }
-					});
-				} else {
-					sel.Convert().forEach((handle) => {
-						const currentMatch = handle ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(handle) : '';
-						const ids = handle ? this.findTag(handle, currentMatch).split(this.bSplitTags ? '|' : void (0)) : [];
-						ids.forEach((id) => {
+				sel.Convert().forEach((handle) => {
+					const currentMatch = handle
+						? getHandleListTagsV2(new FbMetadbHandleList(handle), [this.jsonId], { bMerged: true, splitBy: this.bSplitIds ? ', ' : null }).flat(Infinity)
+						: [];
+					const ids = handle
+						? currentMatch.map((val) => this.findTag(handle, val).split(this.bSplitTags ? '|' : void (0)))
+						: [];
+					ids.forEach((idArr, i) => {
+						idArr.forEach((id) => {
 							if (id.length) {
-								const idx = toPaintArr.findIndex((point) => { return (point.id === id); });
-								if (idx === -1) {
-									toPaintArr.push({ id, val: 1, jsonId: new Set([currentMatch]) });
-								}
-								else {
-									toPaintArr[idx].val++;
-									toPaintArr[idx].jsonId.add(currentMatch);
+								const point = toPaintArr.find((point) => point.id === id);
+								if (point) {
+									point.val++;
+									point.jsonId.add(currentMatch[i]);
+								} else {
+									toPaintArr.push({ id, val: 1, jsonId: new Set([currentMatch[i]]) });
 								}
 							}
 						});
 					});
-				}
+				});
 				// Handle
 			} else {
 				const currentMatch = sel ? fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel) : '';
@@ -219,7 +218,9 @@ function ImageMap({
 			mapTagValue = fb.TitleFormat(tfo).EvalWithMetadb(sel);
 			// Or Json
 			if (!mapTagValue.length && this.jsonData.length && this.jsonId.length) {
-				const id = fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel);
+				const id = byKey.length
+					? byKey
+					: fb.TitleFormat(_bt(this.jsonId)).EvalWithMetadb(sel);
 				const data = this.getDataById(id);
 				if (data && data.val && data.val.length) {
 					mapTagValue = data.val[data.val.length - 1];
@@ -325,13 +326,13 @@ function ImageMap({
 				} else {
 					this.idSelected = 'none';
 					if (bPaint) { this.repaint(); }
-					this.tooltip.SetValue(null);
+					this.tooltip.SetValue(this.tooltipPanelText());
 				}
 			} else {  // No point
 				if (this.idSelected.length) {
 					this.idSelected = 'none';
 					if (bPaint) { this.repaint(); }
-					this.tooltip.SetValue(null);
+					this.tooltip.SetValue(this.tooltipPanelText());
 				}
 				const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 				if (!this.lastPoint.length || (mask === MK_SHIFT && !bPressWin)) {  // Add tag selecting directly from map (can be forced with shift)
@@ -349,26 +350,28 @@ function ImageMap({
 						if (ttText && ttText.length) {
 							this.tooltip.SetValue(ttText, true);
 						}
-					} else { this.tooltip.SetValue(null); this.foundPoints = []; }
+					} else { this.tooltip.SetValue(this.tooltipPanelText()); this.foundPoints = []; }
 				}
 			}
 		} else if (this.idSelected.length && this.idSelected !== 'none') {
 			this.idSelected = 'none';
 			if (bPaint) { this.repaint(); }
-			this.tooltip.SetValue(null);
-		} else { this.clearIdSelected(); this.tooltip.SetValue(null); this.foundPoints = []; }
+			this.tooltip.SetValue(this.tooltipPanelText());
+		} else { this.clearIdSelected(); this.tooltip.SetValue(this.tooltipPanelText()); this.foundPoints = []; }
 		if (x === -1 && y === -1 && mask === MK_SHIFT) {
 			this.foundPoints = []; this.clearIdSelected();
 			if (bPaint) { this.repaint(); }
 		}
 	};
-	this.btn_up = (x, y, mask) => { // on_mouse_lbtn_up
+	this.btn_up = (x, y, mask, bForceTag) => { // on_mouse_lbtn_up
 		this.mX = x;
 		this.mY = y;
-		const foundPoint = this.point[this.tracePoint(x, y)];
+		const foundPoint = bForceTag
+			? null
+			: this.point[this.tracePoint(x, y)];
 		if (foundPoint) { // Over a point
 			return this.selPoint(foundPoint, mask, x, y);
-		} else if (this.trace(x, y) && (!this.lastPoint.length || mask === MK_SHIFT)) {  // Add tag selecting directly from map (can be forced with shift)
+		} else if (this.trace(x, y) && (!this.lastPoint.length || mask === MK_SHIFT || bForceTag)) {  // Add tag selecting directly from map (can be forced with shift)
 			const found = this.findPointFunc({
 				x: x - this.posX,
 				y: y - this.posY,
@@ -384,6 +387,8 @@ function ImageMap({
 	};
 	// eslint-disable-next-line no-unused-vars
 	this.tooltipText = (point) => { return ''; }; // Could be overwritten, return a string
+	// eslint-disable-next-line no-unused-vars
+	this.tooltipPanelText = () => { return null; }; // Could be overwritten, return a string or null
 	// eslint-disable-next-line no-unused-vars
 	this.tooltipFindPointText = (foundPoints) => { return ''; }; // Could be overwritten, return a string
 	// Clear
@@ -476,6 +481,9 @@ function ImageMap({
 			}
 			if (typeof tooltipFunc !== 'undefined' && tooltipFunc) { // Not always required
 				this.tooltipText = tooltipFunc;
+			}
+			if (typeof tooltipPanelFunc !== 'undefined' && tooltipPanelFunc) { // Not always required
+				this.tooltipPanelText = tooltipPanelFunc;
 			}
 			if (typeof tooltipFindPointFunc !== 'undefined' && tooltipFindPointFunc) { // Not always required
 				this.tooltipFindPointText = tooltipFindPointFunc;
@@ -589,6 +597,7 @@ function ImageMap({
 	this.pointSize = pointSize;
 	this.pointLineSize = pointLineSize;
 	this.bSplitTags = typeof this.properties.bSplitTags !== 'undefined' ? this.properties.bSplitTags[1] : bSplitTags;
+	this.bSplitIds = typeof this.properties.bSplitIds !== 'undefined' ? this.properties.bSplitIds[1] : bSplitIds;
 	this.delay = 30;
 	if (!bSkipInit) { this.init(); }
 }

@@ -51,6 +51,7 @@
 
 ## [Unreleased][]
 ### Added
+- Data: added support for multi-value artist tags, now enabled by default. Can be tweaked at the 'Tags' submenu. If a track has multiple artists, the panel will try to draw a point per artist (similar to how multiple selection works). Biography integration remains the same, i.e. it will try to only match the first artist found. Note this change implies that some artists may now be missing a country (since they were previously merged into a single value); you may use the 'Find artists without locale tag...' entry to tag them.
 - Statistics: X-Axis shown values at display menu now allows any custom value.
 - Statistics: Y-Axis filter at display menu now allows any custom value for 'greater than'/'lower than' filters.
 - Statistics: option to filter data between 2 custom values on Y-Axis at display menu.
@@ -58,7 +59,10 @@
 - UI: new menu entry to share current UI settings across all available World Map panels within foobar2000. It can be found at the settings menu 'UI' submenu (and also at the panel menu, see above). Every other panel will be highlighted and show a popup asking to import or ignore the new settings.
 - UI: added dynamic colors support based on track's artwork. It follows the background cover mode settings and must be enabled on 'colors' submenu.
 - UI: exposed background gradient focus setting, i.e. where the center color will be at its highest intensity.
+- UI: added tooltip on blank panel.
 ### Changed
+- Tagging: Shift + R. Click on a country now always shows the tagging menu in case an artist from selection is not tagged, even if clicking on a currently displayed point. Previously it would create a playlist (since the click was over a point). This applies to both multiple selection and multi-valued artist tracks (if enabled). Note there is not any special handling of file tags for multi-value artists, i.e. if a track with 2 artists has 2 associated countries, they will be properly handled at the JSON database but if using the 'Write to track files' option, there is no way to know to which artist every country value is associated to. In such case it's assumed that all countries apply to all artists.
+- Tagging: tagging menu will now show submenus per country in case of multiple artists being selected. Clicking on an artist will only tag tracks/database associated to it.
 - Installation: added popup warnings when scripts are installed outside foobar2000 profile folder. These checks can be tweaked at globSettings.json.
 - Installation: script may now be installed at any path within the foobar profile folder, no longer limited to '[FOOBAR PROFILE FOLDER]\scripts\SMP\xxx-scripts\' folder. Obviously it may still be installed at such place, which may be preferred if updating an older version.
 - Installation: multiple improvements to path handling for portable and non-portable installations. By default scripts will always try to use only relative paths to the profile folder, so scripts will work without any change when exporting the profile to any other installation. This change obviously doesn't apply to already existing installations unless restoring defaults.
@@ -85,6 +89,7 @@
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed
 ### Fixed
+- Biography Integration: unnecessary panel and data update when the artist already had a country set. This change also ensures manually set countries (either by tag or JSON) are not overriden any Biography tag.
 - Data: 'Find artists without locale tags' tool was not checking the read tag TF setting but the write tag setting, which would lead to wrong results if the tag was sourced from Biography (since it writes multiple values).
 - Statistics: minor fixes.
 - Statistics: background not being updated on playback/selection change.
