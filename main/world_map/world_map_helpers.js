@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/06/25
+//26/06/25
 
 /* exported selPoint, tooltipPoint, tooltiPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -122,8 +122,8 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
 			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
 		if (!sel && !sel.Count) { return bDone; }
-		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
-		const jsonIdFlat = new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null }).flat(Infinity));
+		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId });
+		const jsonIdFlat = new Set(jsonId.flat(Infinity));
 		const countries = jsonId.map((idArr, i) => idArr.map((val) => this.findTag(sel[i], val).split(this.bSplitTags ? '|' : void (0))));
 		let locale = [];
 		let tagId = '';
@@ -164,6 +164,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 				menu.newCheckMenuLast(() => countries[0][0].includes(country));
 			});
 		}
+		worldMap.tooltip.SetValue(null);
 		menu.btn_up(x, y);
 		if (!locale.length || !tagId.length) { return bDone; }
 		// Set tag on map for drawing
