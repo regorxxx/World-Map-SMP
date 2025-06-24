@@ -87,6 +87,7 @@
 - UI: cleanup of menu entries and popups, settings should now be better explained.
 - UI: unified script updates settings across all my scripts, look for 'Updates' submenu.
 - UI: 'shapes' map images are inverted if the contrast is not great enough against the background color set.
+- UI: header now shows the list of currently displayed countries instead of 'Multiple countries'. List is cut at 30 chars.
 - Helpers: updated helpers.
 - Helpers: general code cleanup on menus internal code. Please report any bug on extra separators or menu entries not working as expected.
 ### Removed

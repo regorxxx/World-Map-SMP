@@ -735,20 +735,18 @@ addEventListener('on_paint', (gr) => {
 			const h = worldMap.imageMap.Height * worldMap.scale;
 			let countryName = '- none -';
 			if (worldMap.properties.bShowLocale[1]) {
-				if (worldMap.lastPoint.length === 1) {
-					let id = worldMap.lastPoint[0].id;
+				countryName = worldMap.lastPoint.map((point) => {
+					let id = point.id;
 					if (id) {
 						const idLen = id.length;
 						if ((idLen === 3 && getCountryISO(id) === id) || (idLen === 2 && getCountryISO(id, true) === id)) { // Tag has ISO codes instead of country names
 							id = formatCountry(getCountryName(id));
 						}
-						countryName = nameShortRev.has(id.toLowerCase())
+						return nameShortRev.has(id.toLowerCase())
 							? formatCountry(nameShortRev.get(id.toLowerCase()))
 							: id; // Prefer replacement since its usually shorter...
 					}
-				} else if (worldMap.lastPoint.length > 1) {
-					countryName = 'Multiple countries...';
-				}
+				}).joinUpToChars(', ').cut(30) || countryName;
 			}
 			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
 			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
