@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/25
+//25/06/25
 
 /* exported dynamicTags, numericTags, cyclicTags, keyTags, sanitizeTagIds, sanitizeTagValIds, queryCombinations, queryReplaceWithCurrent, checkQuery, getHandleTags, getHandleListTags ,getHandleListTagsV2, getHandleListTagsTyped, cyclicTagsDescriptor, isQuery, fallbackTagsQuery, isSubsong, isSubsongPath, fileRegex */
 
@@ -302,7 +302,7 @@ function queryReplaceWithStatic(query, options = { bDebug: false, bBooleanForce:
 		query = query.replace(/#YESTERDAY_TS#/gi, Math.round(date.getTime() / 1000));
 	}
 	// System
-	if (/#(VOLUME|VOLUMEDB|VERSION|ISPLAYING|ISPAUSED|SAC|PLSCOUNT)#/i.test(query)) {
+	if (/#(VOLUME|VOLUMEDB|VERSION|ISPLAYING|ISPAUSED|PLAYSTATE|SAC|PLSCOUNT)#/i.test(query)) {
 		query = query.replace(/#VOLUME#/gi, Math.round(100 + fb.Volume));
 		query = query.replace(/#VOLUMEDB#/gi, fb.Volume.toFixed(2) + ' dB');
 		query = query.replace(/#VERSION#/gi, fb.Version);
