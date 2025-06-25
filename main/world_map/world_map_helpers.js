@@ -236,12 +236,12 @@ function tooltipFindPoint(foundPoints) {
 
 // When mouse is over panel
 function tooltiPanel() {
-	let text = 'Move over a point to see playlist creation options.';
-	text += '\n(R. Click to open settings menu)';
-	text += '\n(Shift + L. Click on map rewrites locale tag)';
-	text += '\n' + '-'.repeat(60);
-	text += '\n(Shift + Win + R. Click for SMP panel menu)';
-	return text;
+	return 'Move over a point to see playlist creation options.' +
+		'\n(R. Click to open settings menu)' +
+		'\n(Shift + L. Click on map rewrites locale tag)' +
+		'\n' + '-'.repeat(60) +
+		'\n(Shift + Win + R. Click for SMP panel menu)' +
+		'\n(Ctrl + Win + R. Click for script panel menu)';
 }
 
 // Property check

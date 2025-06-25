@@ -61,6 +61,7 @@
 - UI: added dynamic colors support based on track's artwork. It follows the background cover mode settings and must be enabled on 'colors' submenu.
 - UI: exposed background gradient focus setting, i.e. where the center color will be at its highest intensity.
 - UI: added tooltip on blank panel.
+- UI: toolbar tooltip now shows 'Ctrl + Win + R. Click' shortcut to script panel menu (see above at 'installation').
 - UI: added option to apply a gradient mask at borders (so they mix better with the background). Enabled by default.
 - Configuration: added user configurable file at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globNoSplitArtist.json' with a list of artists which should not be split. This list can be modified by directly editing the file or using the menu entry (see above).
 ### Changed
