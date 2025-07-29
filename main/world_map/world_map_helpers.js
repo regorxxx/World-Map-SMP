@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/25
+//29/07/25
 
 /* exported selPoint, tooltipPoint, tooltiPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -96,8 +96,7 @@ function selPoint(point, mask) {
 			plman.ActivePlaylist = duplicPl[0];
 		} else {
 			if (duplicPl.length > 1) { removePlaylistByName(name); }
-			plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
-			plman.ActivePlaylist = plman.PlaylistCount - 1;
+			plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
 		}
 		bDone = true;
 		return bDone;
