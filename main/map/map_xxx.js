@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/25
+//06/08/25
 
 /* exported ImageMap */
 
@@ -450,7 +450,7 @@ function ImageMap({
 	};
 	// Init
 	this.init = () => {
-		let bfuncSet = false;
+		let bFuncSet = false;
 		// When no properties are given and no args, then use a world map as default
 		if (!Object.keys(this.properties).length && !imagePath.length && !findCoordinatesFunc && !mapTag.length) {
 			if (_isFile(folders.xxx + 'main\\world_map\\world_map_tables.js')) {
@@ -460,12 +460,12 @@ function ImageMap({
 			}
 			this.imageMapPath = folders.xxxRootName + 'images\\MC_WorldMap.jpg'; // Default is world map
 			this.mapTag = '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'; // Default is country tag from last.fm tags (WilB's Biography script)
-			bfuncSet = true;
+			bFuncSet = true;
 		} else {
 			// Or use arguments
 			if (typeof findCoordinatesFunc !== 'undefined' && findCoordinatesFunc) {
 				this.findCoordinates = findCoordinatesFunc;
-				bfuncSet = true;
+				bFuncSet = true;
 			}
 			if (typeof findPointFunc !== 'undefined' && findPointFunc) { // Not always required
 				this.findPointFunc = findPointFunc;
@@ -520,7 +520,7 @@ function ImageMap({
 			}
 		}
 		// Sanity checks
-		if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bfuncSet || JSON.stringify(this.findCoordinates()) !== JSON.stringify([-1, -1])) {
+		if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet || JSON.stringify(this.findCoordinates()) !== JSON.stringify([-1, -1])) {
 			// function must exist, had been set and return [-1,-1] for arbitrary or null input to be considered valid
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.Name);
 		}

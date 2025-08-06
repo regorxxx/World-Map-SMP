@@ -1,7 +1,7 @@
 ﻿'use strict';
-//29/07/25
+//06/08/25
 
-/* exported selPoint, tooltipPoint, tooltiPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
+/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
 /* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -87,15 +87,15 @@ function selPoint(point, mask) {
 	if (forcedQuery.length) { query.push(forcedQuery); }
 	// Merge all with AND
 	query = queryJoin(query, 'AND');
-	// Create autoplaylist
+	// Create AutoPlaylist
 	if (checkQuery(query)) {
 		console.log('World Map: playlist created ' + (query.length > 300 ? query.slice(0, 300) + '...' : query));
 		const name = capitalize(dataId) + ' from ' + point.id + (currentModifier ? ' (+' + capitalizeAll(currentModifier.val.split(',').filter(Boolean).join('/'), '/') + ')' : '');
-		const duplicPl = getPlaylistIndexArray(name);
-		if (duplicPl.length === 1) {
-			plman.ActivePlaylist = duplicPl[0];
+		const duplicatePls = getPlaylistIndexArray(name);
+		if (duplicatePls.length === 1) {
+			plman.ActivePlaylist = duplicatePls[0];
 		} else {
-			if (duplicPl.length > 1) { removePlaylistByName(name); }
+			if (duplicatePls.length > 1) { removePlaylistByName(name); }
 			plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.PlaylistCount, name, query);
 		}
 		bDone = true;
@@ -234,7 +234,7 @@ function tooltipFindPoint(foundPoints) {
 }
 
 // When mouse is over panel
-function tooltiPanel() {
+function tooltipPanel() {
 	return 'Move over a point to see playlist creation options.' +
 		'\n(R. Click to open settings menu)' +
 		'\n(Shift + L. Click on map rewrites locale tag)' +

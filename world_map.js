@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/25
+//06/08/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -30,7 +30,7 @@ include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltiPanel:readable */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable */
 include('main\\world_map\\world_map_flags.js');
 /* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
@@ -155,10 +155,10 @@ const worldMap = new ImageMap({
 	selPointFunc: selPoint, // What happens when clicking on a point, helpers\world_map_helpers.js
 	selFindPointFunc: selFindPoint, // What happens when clicking on the map, if current track has no tags, helpers\world_map_helpers.js
 	tooltipFunc: tooltipPoint, // What happens when mouse is over point, helpers\world_map_helpers.js
-	tooltipPanelFunc: tooltiPanel, // What happens when mouse is over panel, helpers\world_map_helpers.js
+	tooltipPanelFunc: tooltipPanel, // What happens when mouse is over panel, helpers\world_map_helpers.js
 	tooltipFindPointFunc: tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
 	font: globFonts.standard.name,
-	bSkiptInit: true,
+	bSkipInit: true,
 	splitExcludeId: globNoSplitArtist.list
 });
 
@@ -371,7 +371,7 @@ const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1])
 	}
 }
 
-// Statisctics mode
+// Statistics mode
 const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] === 2, JSON.parse(worldMap.properties.statsConfig[1]));
 
 /*
@@ -380,7 +380,7 @@ const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] ==
 const debouncedRepaint = {
 	'60': debounce(window.RepaintRect, 60, false, window),
 };
-function repaint(bPlayback = false, bInmediate = false, bForce = false) {
+function repaint(bPlayback = false, bImmediate = false, bForce = false) {
 	if (!worldMap.properties.bEnabled[1]) { return false; }
 	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return false; }
@@ -393,7 +393,7 @@ function repaint(bPlayback = false, bInmediate = false, bForce = false) {
 	imgAsync.layers.bPaint = false;
 	imgAsync.layers.bStop = true;
 	imgAsync.layers.bCreated = false;
-	const delay = bInmediate ? 0 : worldMap.properties.iRepaintDelay[1];
+	const delay = bImmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
 		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
 		if (worldMap.properties.bFullHeader[1]) {
@@ -478,10 +478,10 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 		if (bFullImg) {
 			const offsetX = bLowMemMode ? 50 : 100;
 			const offsetY = bLowMemMode ? 50 : 100;
-			const offsetYAntarc = bLowMemMode ? 310 : 620;
-			const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+			const offsetYAntarctic = bLowMemMode ? 310 : 620;
+			const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
+			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
 			const x = worldMap.posX - offsetX * worldMap.scale;
 			const y = worldMap.posY - offsetY * worldMap.scale;
 			gr.DrawImage(imgAsync.fullImg, x, y, w, h, 0, 0, imgAsync.fullImg.Width, imgAsync.fullImg.Height, 0, worldMap.properties.customShapeAlpha[1]);
@@ -503,14 +503,22 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
 				}
 				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 				const offsetX = bLowMemMode ? 50 : 100;
 				const offsetY = bLowMemMode ? 50 : 100;
-				const offsetYAntarc = bLowMemMode ? 310 : 620;
-				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
-				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
-				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
+				const offsetYAntarctic = bLowMemMode ? 310 : 620;
+				const w = grFullImg
+					? layerW
+					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg
+					? layerH
+					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
+				const x = grFullImg
+					? 0
+					: worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg
+					? 0
+					: worldMap.posY - offsetY * worldMap.scale;
 				const layerFill = worldMap.properties.layerFillMode[1];
 				let i = 0;
 				for (const imgObj of imgAsync.layers.imgs) {
@@ -552,14 +560,22 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 				if (bProfile) { profile.Print('Layers'); }
 			} else {
 				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
-				const bAntr = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
 				const offsetX = bLowMemMode ? 50 : 100;
 				const offsetY = bLowMemMode ? 50 : 100;
-				const offsetYAntarc = bLowMemMode ? 310 : 620;
-				const w = grFullImg ? layerW : (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg ? layerH : (worldMap.imageMap.Height + offsetY * 2 + (bAntr ? offsetYAntarc : 0)) * worldMap.scale;
-				const x = grFullImg ? 0 : worldMap.posX - offsetX * worldMap.scale;
-				const y = grFullImg ? 0 : worldMap.posY - offsetY * worldMap.scale;
+				const offsetYAntarcTic = bLowMemMode ? 310 : 620;
+				const w = grFullImg
+					? layerW
+					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg
+					? layerH
+					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarcTic : 0)) * worldMap.scale;
+				const x = grFullImg
+					? 0
+					: worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg
+					? 0
+					: worldMap.posY - offsetY * worldMap.scale;
 				let i = 0;
 				for (const imgObj of imgAsync.layers.imgs) {
 					const id = imgAsync.layers.id[i++];
@@ -1022,7 +1038,7 @@ addEventListener('on_notify_data', (name, info) => {
 	// Follow WilB's Biography script selection mode
 	if (name === 'Biography notifySelectionProperty') { // Biography 1.1.3
 		if (Object.hasOwn(info, 'property') && Object.hasOwn(info, 'val')) {
-			// When ppt.focus is true, then selmode is selMode[0]
+			// When ppt.focus is true, then selMode is selMode[0]
 			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 				worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
 				if (worldMap.properties.bShowSelModePopup[1]) {

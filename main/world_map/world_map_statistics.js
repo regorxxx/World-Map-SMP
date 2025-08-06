@@ -560,7 +560,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			w: 0,
 			y: 0,
 			h: 0,
-			tooltipText: function (point, serie, mask) { return '\n\n(L. click to create playlist by ' + this.axis.x.key + ')'; }, // eslint-disable-line no-unused-vars
+			tooltipText: function (point, series, mask) { return '\n\n(L. click to create playlist by ' + this.axis.x.key + ')'; }, // eslint-disable-line no-unused-vars
 			configuration: { bPopupBackground: true },
 			callbacks: {
 				point: { onLbtnUp: parent.onLbtnUpPoint },

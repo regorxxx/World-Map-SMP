@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/25
+//06/08/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -9,7 +9,7 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable, saveUserDefFile:readable, globNoSplitArtist:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursivefile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursiveFile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -84,7 +84,7 @@ function settingsMenu() {
 				});
 				menu.newEntry({
 					menuName: subMenuName, entryText: 'Low', func: () => {
-						fb.ShowPopupMessage('Country layers are disabled and only points are used.\n\nThe background will only use colors and all album art optons are disabled.', 'World Map: Low memory mode');
+						fb.ShowPopupMessage('Country layers are disabled and only points are used.\n\nThe background will only use colors and all album art options are disabled.', 'World Map: Low memory mode');
 						if (properties.memMode[1] !== 2) {
 							properties.memMode[1] = 2;
 							properties.pointMode[1] = 0;
@@ -111,19 +111,19 @@ function settingsMenu() {
 						overwriteProperties(properties);
 						switch (properties.panelMode[1]) {
 							case 1:
-								fb.ShowPopupMessage('This mode shows all countries with at least an artist found on the library, instead of following the selected or playing track(s).\n\nEvery point will show number of artists per country via tooltips and they can be clicked to create regional playlists.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
+								fb.ShowPopupMessage('This mode shows all countries with at least an artist found on the library, instead of following the selected or playing track(s).\n\nEvery point will show number of artists per country via tooltips and they can be clicked to create regional playlists.\n\nStatistics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
 								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = false;
 								break;
 							case 2:
-								fb.ShowPopupMessage('This mode displays regional statistics from your library using highly customizable and interactive charts.\n\nDisplay and data settings can be changed using the right buttons (which are hidden when mouse is not over). To exit this mode, just click on the close button. \n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
+								fb.ShowPopupMessage('This mode displays regional statistics from your library using highly customizable and interactive charts.\n\nDisplay and data settings can be changed using the right buttons (which are hidden when mouse is not over). To exit this mode, just click on the close button. \n\nStatistics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
 								imgAsync.layers.bStop = true;
 								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = true;
 								stats.init();
 								break;
 							case 3:
-								fb.ShowPopupMessage('This mode displays a gradient map of the artists per country on your library.\n\nStatisttics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
+								fb.ShowPopupMessage('This mode displays a gradient map of the artists per country on your library.\n\nStatistics data is not calculated on real time but uses a cached database which may be updated on demand (\'Database\\Update library database...\')', 'World Map: ' + mode);
 								if (!_isFile(properties.fileNameLibrary[1])) { menu.btn_up(void (0), void (0), void (0), 'Database\\Update library database...'); }
 								stats.bEnabled = false;
 								break;
@@ -152,7 +152,7 @@ function settingsMenu() {
 					menuName, entryText: mode.text, func: () => {
 						if (properties.bEnabledBiography[1] === mode.val) { return; }
 						if (mode.val) { // Warning check
-							let answer = WshShell.Popup('Warning: Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. Everytime a tag is not found locally, the online tag will be used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
+							let answer = WshShell.Popup('Warning: Enabling WilB\'s Biography integration requires selection mode to be set the same on both panels. Every time a tag is not found locally, the online tag will be used instead.\n\nSelection mode will be synchronized automatically whenever one of the panels change it.\nDo you want to continue?', 0, 'World Map: Biography integration', popup.question + popup.yes_no);
 							if (answer === popup.no) { return; }
 						}
 						properties.bEnabledBiography[1] = mode.val;
@@ -206,7 +206,7 @@ function settingsMenu() {
 					const file1_1_X = 'biography_mod_1_1_X_xxx.js';
 					const modText = '\ninclude(\'' + file1_1_X + '\');';
 					{
-						const fileArr = findRecursivefile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
+						const fileArr = findRecursiveFile('*.js', [fb.ProfilePath, fb.ComponentPath]); // All possible paths for the scripts
 						const idText = 'window.DefinePanel(\'Biography\', {author:\'WilB\', version: \'1.1.'; // 1.1.3 or 1.1.2
 						fileArr.forEach((file) => {
 							const fileText = _open(file);
@@ -312,7 +312,7 @@ function settingsMenu() {
 						}
 						properties.selection[1] = mode;
 						overwriteProperties(properties);
-						// When ppt.focus is true, then selmode is selMode[0]
+						// When ppt.focus is true, then selMode is selMode[0]
 						if (properties.bEnabledBiography[1]) { // synchronize selection property
 							syncBio(true); // Sync selection and enable notify tags
 						}
@@ -331,7 +331,7 @@ function settingsMenu() {
 					if (properties.iLimitSelection[1] === input) { return; }
 					properties.iLimitSelection[1] = input;
 					overwriteProperties(properties);
-					if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a low value when using country layers (\'UI\\Country hihglighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
+					if (properties.pointMode[1] >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a low value when using country layers (\'UI\\Country highlighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
 				}, flags: properties.selection[1] === selMode[0] ? MF_STRING : MF_GRAYED
 			});
 			menu.newEntry({
@@ -764,7 +764,7 @@ function settingsMenu() {
 				options.forEach((option, i) => {
 					menu.newEntry({
 						menuName, entryText: option, func: () => {
-							if (i >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a selection limit low value when using country layers (\'UI\\Country hihglighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
+							if (i >= 1 && properties.iLimitSelection[1] > selLimitLow) { fb.ShowPopupMessage('It\'s strongly recommended to use a selection limit low value when using country layers (\'UI\\Country highlighting\'), since they have high processing and memory requirements.\n\nIf you experience slowdowns, reduce it (recommended <= ' + selLimitLow + ').', 'World Map: Selection limit'); }
 							properties.pointMode[1] = i;
 							repaint(void (0), true);
 							overwriteProperties(properties);
@@ -1154,20 +1154,20 @@ function importSettingsMenu() {
 
 function syncBio(bReload = false) {
 	const properties = worldMap.properties;
-	// Biograpy 1.1.X
+	// Biography 1.1.X
 	window.NotifyOthers(window.Name + ' notifySelectionProperty', properties.selection[1] === selMode[0]); // synchronize selection property
-	// Biograpy 1.2.X
+	// Biography 1.2.X
 	window.NotifyOthers('bio_focusPpt', properties.selection[1] === selMode[0]);  // synchronize selection property 1.2.0 Beta
 	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0]);  // synchronize selection property
 	window.NotifyOthers('bio_newCfg', { notifyTags_internal: true }); // notify tags
-	// Biograpy 2.X.X
+	// Biography 2.X.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
 		const config = _jsonParseFileCheck(configPath, 'Configuration json', 'World Map: Biography integration');
 		if (config && Object.hasOwn(config, 'notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
 			_save(configPath, JSON.stringify(config, null, '\t'));
-			if (bReload) { window.NotifyOthers('bio_refresh', null); }  // Reload Biograpy panel
+			if (bReload) { window.NotifyOthers('bio_refresh', null); }  // Reload Biography panel
 		}
 	}
 }
