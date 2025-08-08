@@ -1,15 +1,15 @@
-﻿UI panel which displays current artist's country on the world map 
-and lets you generate AutoPlaylists based on selection and locale 
+﻿UI panel which displays current artist's country on the world map
+and lets you generate AutoPlaylists based on selection and locale
 tag saving when integrated along WilB's Biography Script.
-UI is fully configurable: colors, sizes, headers, flags (like the 
+UI is fully configurable: colors, sizes, headers, flags (like the
 ones found at Georgia Theme), etc.
 
 Tags:
 -----
-The map uses locale tag (*) from the tracks currently playing or 
+The map uses locale tag (*) from the tracks currently playing or
 on selection (*). It may be a tag name or a TF expression, and may
 contain ISO values (ARG) or full names (Argentina). Capitalization
-doesn't matter. Full names are converted to ISO values before 
+doesn't matter. Full names are converted to ISO values before
 coordinates lookup.
 
 Tag may be fetched using any of these 3 method (on this order):
@@ -17,76 +17,76 @@ Tag may be fetched using any of these 3 method (on this order):
 - Tags from JSON data file (if available).
 - Tags from WilB's Biography Script (if enabled). (*) (**) (***)
 
-When tags are not available on the tracks, they can be written 
-directly on the files or on the JSON data file (*), using the info 
+When tags are not available on the tracks, they can be written
+directly on the files or on the JSON data file (*), using the info
 shared by Biography Script.
 
-Note that once the JSON file contains some artist's data, Internet 
-connection -and thus Biography Script too- is no longer needed... 
+Note that once the JSON file contains some artist's data, Internet
+connection -and thus Biography Script too- is no longer needed...
 acting as a local database for the tags related to those artists.
-An example database is provided for that purpose, you may use it 
+An example database is provided for that purpose, you may use it
 as an starting point (look at 'presets' folder).
 
 (*) Configurable.
 
-(**) Requires a modified version of the script. It may be 
-installed manually or using the appropriate menu, which 
+(**) Requires a modified version of the script. It may be
+installed manually or using the appropriate menu, which
 automatically adds the required code to the original script.
 
-- 1.2.0-Beta.1 or 1.2.0-Beta.2: 'Notify tags' must be enabled on 
-Bio's config panel too. When doing an automatic installation, it 
+- 1.2.0-Beta.1 or 1.2.0-Beta.2: 'Notify tags' must be enabled on
+Bio's config panel too. When doing an automatic installation, it
 will be automatically enabled too.
 
-(***) Manual installation requires adding this line at THE END of 
-WilB's Biography Script (or the panel where it's loaded) and 
+(***) Manual installation requires adding this line at THE END of
+WilB's Biography Script (or the panel where it's loaded) and
 copying the mod file to the same path where bio script resides:
 - 1.1.X: (add line to the main -and only- file)
 	include('biography_mod_1_1_X_xxx.js');
 
-- 1.2.0-Beta.1 & 2: (add line to '.\scripts\callbacks.js') 
+- 1.2.0-Beta.1 & 2: (add line to '.\scripts\callbacks.js')
 (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-
 7B4B-4E0E-9373-99F511E81252}')
 	include('biography_mod_1_2_0_beta_xxx.js');
 
 Map:
 -----
-Panel is updated when playback changes, switching playlists, 
-selecting tracks, ... and requires a full world map using Mercator 
-projection to work. Two are given for convenience, but can be 
-changed if desired at properties. Note different maps may require 
-different coordinates factors (since h/w proportions may change), 
-there is a configuration menu for that purpose. An example of use 
-may be found switching from 'Full' map to 'No Antarctica' Map, 
-where the map is simply cropped and the coordinates adjusted with 
+Panel is updated when playback changes, switching playlists,
+selecting tracks, ... and requires a full world map using Mercator
+projection to work. Two are given for convenience, but can be
+changed if desired at properties. Note different maps may require
+different coordinates factors (since h/w proportions may change),
+there is a configuration menu for that purpose. An example of use
+may be found switching from 'Full' map to 'No Antarctica' Map,
+where the map is simply cropped and the coordinates adjusted with
 an Y factor.
 
 Library Mode:
 -------------
-There is another mode to display countries (apart from 
-selection/playing now) named 'library mode'. In this mode all the 
-countries from the entire library artists database are shown 
-instead of following selection/playback. Clicking on a point 
-creates playlists from that country (+genre, styles, etc.  
-according to keys pressed). Tooltip shows all artist on library 
-from that country, therefore being a way to see the current 
-statistics for every country. Note this is not equivalent to 
-selecting the entire library and using the 'follow selection' mode 
+There is another mode to display countries (apart from
+selection/playing now) named 'library mode'. In this mode all the
+countries from the entire library artists database are shown
+instead of following selection/playback. Clicking on a point
+creates playlists from that country (+genre, styles, etc.
+according to keys pressed). Tooltip shows all artist on library
+from that country, therefore being a way to see the current
+statistics for every country. Note this is not equivalent to
+selecting the entire library and using the 'follow selection' mode
 for two reasons:
-	- There is an imposed limit on point painting when selection 
-	size reaches a value (currently 5000). You may change that on 
-	the properties panel though. This is done to reduce calculation 
-	time on big selections (note it takes some time to retrieve so 
+	- There is an imposed limit on point painting when selection
+	size reaches a value (currently 5000). You may change that on
+	the properties panel though. This is done to reduce calculation
+	time on big selections (note it takes some time to retrieve so
 	many tags and adjusting them on the map).
-	
-	- Library mode is not calculated on real time, but using a 
-	cache. That means it's not really retrieving the tags from all 
-	tracks but just using their last known value (much faster). 
-	This cache may be updated on demand though ('Database\Update 
+
+	- Library mode is not calculated on real time, but using a
+	cache. That means it's not really retrieving the tags from all
+	tracks but just using their last known value (much faster).
+	This cache may be updated on demand though ('Database\Update
 	library database').
 
 Statistics Mode (chart):
 ------------------------
-In this mode, full library stats are displayed in a chart: both 
+In this mode, full library stats are displayed in a chart: both
 data and display settings are fully configurable using the buttons.
 Clicking on any point allows to create playlists or further stats
 via menus.
@@ -99,9 +99,9 @@ to the number of artists from that country.
 
 Other tools:
 -------------
-An additional set of tools has been added to make it easier to 
-merge different json databases, write tags to json or back from 
-json to files, finding items in the library without the locale 
+An additional set of tools has been added to make it easier to
+merge different json databases, write tags to json or back from
+json to files, finding items in the library without the locale
 tags or not present on database, etc.
 
 RAM usage:
@@ -113,5 +113,5 @@ about the changes).
 
 Other UI usage:
 ---------------
-Press Shift + Win + R. Click to open SMP/JSpliter panel menu 
+Press Shift + Win + R. Click to open SMP/JSplitter panel menu
 (which works globally on any script and panel, at any position).
