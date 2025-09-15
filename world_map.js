@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/09/25
+//16/09/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -300,8 +300,8 @@ const background = new _background({
 				overwriteProperties(worldMap.properties);
 			}
 		},
-		artColors: (colArray) => {
-			if (!worldMap.properties.bDynamicColors[1]) { return; }
+		artColors: (colArray, bForced) => {
+			if (!bForced && !worldMap.properties.bDynamicColors[1]) { return; }
 			if (colArray) {
 				const bChangeBg = worldMap.properties.bDynamicColorsBg[1];
 				const { main, sec, note, secAlt } = dynamicColors(
@@ -970,105 +970,138 @@ addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 const bioCache = { rawPath: null, subSong: null };
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') { return; }
-	if (name === 'World Map: share UI settings') {
-		if (info) { worldMap.applyUiSettings(clone(info)); }
+	switch (name) {
+		case 'World Map: share UI settings': {
+			if (info) { worldMap.applyUiSettings(clone(info)); }
+			break;
+		}
+		case 'World Map: set colors': {  // Needs an array of 4 colors or an object {background, text, default, shape}
+			if (info) {
+				const colors = clone(info);
+				const getColor = (key) => Object.hasOwn(colors, key) ? colors.background : colors[['background', 'text', 'default', 'shape'].indexOf(key)];
+				const hasColor = (key) => typeof getColor(key) !== 'undefined';
+				if (background.colorMode !== 'none' && hasColor('background')) {
+					background.changeConfig({ config: { colorModeOptions: { color: getColor('background') } }, callbackArgs: { bSaveProperties: false } });
+				}
+				if (hasColor('text')) {
+					if (worldMap.properties.bShowHeader[1]) {
+						worldMap.properties.headerColor[1] = getColor('text');
+						worldMap.textColor = mostContrastColor(getColor('text')).color;
+					} else {
+						worldMap.textColor = getColor('text');
+					}
+				}
+				if (hasColor('default')) { worldMap.defaultColor = getColor('default'); }
+				if (hasColor('shape')) { worldMap.properties.customShapeColor[1] = getColor('shape'); }
+			}
+			break;
+		}
+		case 'Colors: set color scheme': // Needs an array of at least 6 colors to automatically adjust dynamic colors
+		case 'World Map: set color scheme': {
+			if (info) { background.artColors(clone(info), true); }
+			break;
+		}
 	}
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (!worldMap.properties.bEnabledBiography[1]) { return; }
-	// WilB's Biography script has a limitation, it only works with 1 track at once...
-	// So when selecting more than 1 track, this only gets the focused/playing track's tag
-	// If both panels don't have the same selection mode, it will not work
-	if (name === 'Biography notifyCountry' || name === 'biographyTags') {
-		if (Object.hasOwn(info, 'handle') && Object.hasOwn(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
-			bioCache.handleRawPath = info.handle.RawPath;
-			bioCache.subSong = info.handle.SubSong;
-			// Find the biography track on the entire selection, since it may not be just the first track of the sel list
-			const sel = worldMap.getSelection();
-			// Get Tags
-			const tagName = worldMap.properties.writeToTag[1];
-			if (tagName.length) {
-				let locale = [];
-				if (Array.isArray(info.tags)) { // Biography 1.1.3
-					locale = [...info.tags.find((tag) => { return tag.name === 'locale'; }).val]; // Find the tag with name === locale in the array of tags
-				} else { // Biography 1.2.0+
-					const tag = Object.keys(info.tags)
-						.find((key) => key.toUpperCase() === tagName.toUpperCase());
-					if (tag) {
-						locale = [...info.tags[tag]]; // or  object key
+	switch (name) {
+		// WilB's Biography script has a limitation, it only works with 1 track at once...
+		// So when selecting more than 1 track, this only gets the focused/playing track's tag
+		// If both panels don't have the same selection mode, it will not work
+		case 'Biography notifyCountry':
+		case 'biographyTags': {
+			if (Object.hasOwn(info, 'handle') && Object.hasOwn(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
+				bioCache.handleRawPath = info.handle.RawPath;
+				bioCache.subSong = info.handle.SubSong;
+				// Find the biography track on the entire selection, since it may not be just the first track of the sel list
+				const sel = worldMap.getSelection();
+				// Get Tags
+				const tagName = worldMap.properties.writeToTag[1];
+				if (tagName.length) {
+					let locale = [];
+					if (Array.isArray(info.tags)) { // Biography 1.1.3
+						locale = [...info.tags.find((tag) => { return tag.name === 'locale'; }).val]; // Find the tag with name === locale in the array of tags
+					} else { // Biography 1.2.0+
+						const tag = Object.keys(info.tags)
+							.find((key) => key.toUpperCase() === tagName.toUpperCase());
+						if (tag) {
+							locale = [...info.tags[tag]]; // or  object key
+						}
 					}
-				}
-				const len = locale.length;
-				if (len) {
-					// Replace country name with ISO standard name if it's a known variation
-					const country = (locale[len - 1] || '').toLowerCase();
-					if (nameReplacers.has(country)) { locale[len - 1] = formatCountry(nameReplacers.get(country)); }
-					// worldMap.jsonId = artist
-					const jsonIds = info.handle
-						? getHandleListTagsV2(new FbMetadbHandleList(info.handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId }).flat(Infinity)
-						: [];
-					const jsonId = jsonIds.find((id) => info.artist === id.toUpperCase()) || '';
-					if (jsonId.length && info.artist === jsonId.toUpperCase()) {
-						// Set tag on map for drawing if found
-						if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-							if (!worldMap.findTag(info.handle, jsonId)) {
-								worldMap.setTag(locale[len - 1], jsonId);
-								if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
-									repaint();
+					const len = locale.length;
+					if (len) {
+						// Replace country name with ISO standard name if it's a known variation
+						const country = (locale[len - 1] || '').toLowerCase();
+						if (nameReplacers.has(country)) { locale[len - 1] = formatCountry(nameReplacers.get(country)); }
+						// worldMap.jsonId = artist
+						const jsonIds = info.handle
+							? getHandleListTagsV2(new FbMetadbHandleList(info.handle), [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId }).flat(Infinity)
+							: [];
+						const jsonId = jsonIds.find((id) => info.artist === id.toUpperCase()) || '';
+						if (jsonId.length && info.artist === jsonId.toUpperCase()) {
+							// Set tag on map for drawing if found
+							if (sel && sel.Count && sel.Find(info.handle) !== -1) {
+								if (!worldMap.findTag(info.handle, jsonId)) {
+									worldMap.setTag(locale[len - 1], jsonId);
+									if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
+										repaint();
+									}
+								}
+							}
+							// Update tags or json if needed (even if the handle was not within the selection)
+							if (worldMap.properties.iWriteTags[1] > 0) {
+								const tfo = _bt(tagName);
+								if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
+									if (worldMap.properties.iWriteTags[1] === 1) {
+										new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{ [tagName]: locale }])); // Uses tagName var as key here
+									} else if (worldMap.properties.iWriteTags[1] === 2) {
+										const newData = { [worldMap.jsonId]: jsonId, val: locale };
+										if (!worldMap.hasDataById(jsonId)) { worldMap.saveData(newData); } // use path at properties
+									}
 								}
 							}
 						}
-						// Update tags or json if needed (even if the handle was not within the selection)
-						if (worldMap.properties.iWriteTags[1] > 0) {
-							const tfo = _bt(tagName);
-							if (!fb.TitleFormat(tfo).EvalWithMetadb(info.handle).length) { // Check if tag already exists
-								if (worldMap.properties.iWriteTags[1] === 1) {
-									new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{ [tagName]: locale }])); // Uses tagName var as key here
-								} else if (worldMap.properties.iWriteTags[1] === 2) {
-									const newData = { [worldMap.jsonId]: jsonId, val: locale };
-									if (!worldMap.hasDataById(jsonId)) { worldMap.saveData(newData); } // use path at properties
-								}
-							}
-						}
 					}
 				}
 			}
+			if (name === 'biographyTags') { // Follow WilB's Biography script selection mode, Biography 1.2.0
+				if (Object.hasOwn(info, 'selectionMode')) {
+					let bDone = false;
+					switch (info.selectionMode) {
+						case 'Prefer nowplaying': {
+							if (worldMap.properties.selection[1] !== selMode[1]) { worldMap.properties['selection'][1] = selMode[1]; bDone = true; }
+							break;
+						}
+						case 'Follow selected track (playlist)': {
+							if (worldMap.properties.selection[1] !== selMode[0]) { worldMap.properties['selection'][1] = selMode[0]; bDone = true; }
+							break;
+						}
+					}
+					if (bDone) {
+						if (worldMap.properties.bShowSelModePopup[1]) {
+							fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+						}
+						overwriteProperties(worldMap.properties); // Updates panel
+						repaint();
+					}
+				}
+			}
+			break;
 		}
-	}
-	// Follow WilB's Biography script selection mode
-	if (name === 'Biography notifySelectionProperty') { // Biography 1.1.3
-		if (Object.hasOwn(info, 'property') && Object.hasOwn(info, 'val')) {
-			// When ppt.focus is true, then selMode is selMode[0]
-			if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
-				worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
-				if (worldMap.properties.bShowSelModePopup[1]) {
-					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
-				}
-				overwriteProperties(worldMap.properties); // Updates panel
-				repaint();
-			}
-		}
-	} // Follow WilB's Biography script selection mode
-	if (name === 'biographyTags') { // Biography 1.2.0
-		if (Object.hasOwn(info, 'selectionMode')) {
-			let bDone = false;
-			switch (info.selectionMode) {
-				case 'Prefer nowplaying': {
-					if (worldMap.properties.selection[1] !== selMode[1]) { worldMap.properties['selection'][1] = selMode[1]; bDone = true; }
-					break;
-				}
-				case 'Follow selected track (playlist)': {
-					if (worldMap.properties.selection[1] !== selMode[0]) { worldMap.properties['selection'][1] = selMode[0]; bDone = true; }
-					break;
+		case 'Biography notifySelectionProperty': { // Follow WilB's Biography script selection mode, Biography 1.1.3
+			if (Object.hasOwn(info, 'property') && Object.hasOwn(info, 'val')) {
+				// When ppt.focus is true, then selMode is selMode[0]
+				if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
+					worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
+					if (worldMap.properties.bShowSelModePopup[1]) {
+						fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
+					}
+					overwriteProperties(worldMap.properties); // Updates panel
+					repaint();
 				}
 			}
-			if (bDone) {
-				if (worldMap.properties.bShowSelModePopup[1]) {
-					fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name);
-				}
-				overwriteProperties(worldMap.properties); // Updates panel
-				repaint();
-			}
+			break;
 		}
 	}
 });
