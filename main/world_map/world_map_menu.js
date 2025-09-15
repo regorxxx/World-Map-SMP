@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/08/25
+//15/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -1148,6 +1148,17 @@ function importSettingsMenu() {
 		entryText: 'Share UI settings...', func: () => {
 			worldMap.shareUiSettings('popup');
 		}
+	});
+	menu.newSeparator();
+	menu.newEntry({
+		entryText: 'Configure panel...', func: () => window.ShowConfigureV2()
+	});
+	menu.newEntry({
+		entryText: 'Panel properties...', func: () => window.ShowProperties()
+	});
+	menu.newSeparator();
+	menu.newEntry({
+		entryText: 'Reload panel', func: () => window.Reload()
 	});
 	return menu;
 }
