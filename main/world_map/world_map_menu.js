@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/09/25
+//16/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -621,6 +621,7 @@ function settingsMenu() {
 							if (properties.bDynamicColors[1]) {
 								overwriteProperties(properties);
 								// Ensure it's applied with compatible settings
+								background.coverModeOptions.bProcessColors = true;
 								if (background.coverMode === 'none') {
 									background.coverModeOptions.alpha = 0;
 									background.coverMode = 'front';

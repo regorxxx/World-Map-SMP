@@ -109,8 +109,10 @@ const worldMap_properties = {
 	))],
 	headerColor: ['Custom header color', -1, { func: isInt }, -1],
 	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true],
-	bDynamicColors: ['Adjust colors to artwork', false, { func: isBoolean }],
-	bDynamicColorsBg: ['Adjust colors to artwork (bg)', false, { func: isBoolean }],
+	bDynamicColors: ['Adjust colors to artwork', true, { func: isBoolean }],
+	bDynamicColorsBg: ['Adjust colors to artwork (bg)', true, { func: isBoolean }],
+	bOnNotifyColors: ['Adjust colors on panel notify', true, { func: isBoolean }],
+	bNotifyColors: ['Notify colors to other panels', false, { func: isBoolean }]
 };
 modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
 worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
@@ -302,7 +304,7 @@ const background = new _background({
 		},
 		artColors: (colArray, bForced) => {
 			if (!bForced && !worldMap.properties.bDynamicColors[1]) { return; }
-			if (colArray) {
+			else if (colArray) {
 				const bChangeBg = worldMap.properties.bDynamicColorsBg[1];
 				const { main, sec, note, secAlt } = dynamicColors(
 					colArray,
@@ -332,6 +334,12 @@ const background = new _background({
 			}
 			worldMap.colorsChanged();
 			repaint(void (0), true);
+		},
+		artColorsNotify: (colArray, bForced) => {
+			if (!bForced && !worldMap.properties.bNotifyColors[1]) { return; }
+			else if (colArray) {
+				window.NotifyOthers('Colors: set color scheme', colArray);
+			}
 		}
 	},
 });
@@ -976,7 +984,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case 'World Map: set colors': {  // Needs an array of 4 colors or an object {background, text, default, shape}
-			if (info) {
+			if (info && worldMap.properties.bOnNotifyColors[1]) {
 				const colors = clone(info);
 				const getColor = (key) => Object.hasOwn(colors, key) ? colors.background : colors[['background', 'text', 'default', 'shape'].indexOf(key)];
 				const hasColor = (key) => typeof getColor(key) !== 'undefined';
@@ -993,12 +1001,14 @@ addEventListener('on_notify_data', (name, info) => {
 				}
 				if (hasColor('default')) { worldMap.defaultColor = getColor('default'); }
 				if (hasColor('shape')) { worldMap.properties.customShapeColor[1] = getColor('shape'); }
+				worldMap.colorsChanged();
+				repaint(void (0), true);
 			}
 			break;
 		}
 		case 'Colors: set color scheme': // Needs an array of at least 6 colors to automatically adjust dynamic colors
 		case 'World Map: set color scheme': {
-			if (info) { background.artColors(clone(info), true); }
+			if (info && worldMap.properties.bOnNotifyColors[1]) { background.callbacks.artColors(clone(info), true); }
 			break;
 		}
 	}
