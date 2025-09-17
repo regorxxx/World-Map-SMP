@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/09/25
+//17/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -618,17 +618,16 @@ function settingsMenu() {
 					menu.newEntry({
 						menuName: subMenu, entryText: 'Dynamic (background cover mode)', func: () => {
 							properties.bDynamicColors[1] = !properties.bDynamicColors[1];
+							overwriteProperties(properties);
 							if (properties.bDynamicColors[1]) {
-								overwriteProperties(properties);
 								// Ensure it's applied with compatible settings
 								background.coverModeOptions.bProcessColors = true;
+								background.changeConfig({ config: { coverModeOptions: { bProcessColors: true } }, callbackArgs: { bSaveProperties: true } });
 								if (background.coverMode === 'none') {
-									background.coverModeOptions.alpha = 0;
-									background.coverMode = 'front';
+									background.changeConfig({ config: { coverMode: 'front', coverModeOptions: { alpha: 0 } }, callbackArgs: { bSaveProperties: true } });
 								}
 								background.updateImageBg(true);
 							} else {
-								overwriteProperties({ bDynamicColors: properties.bDynamicColors });
 								worldMap.properties = getPropertiesPairs(properties, '', 0);
 								worldMap.textColor = worldMap.properties.customLocaleColor[1];
 								worldMap.defaultColor = worldMap.properties.customPointColor[1];

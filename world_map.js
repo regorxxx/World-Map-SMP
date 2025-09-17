@@ -338,6 +338,7 @@ const background = new _background({
 		artColorsNotify: (colArray, bForced) => {
 			if (!bForced && !worldMap.properties.bNotifyColors[1]) { return; }
 			else if (colArray) {
+				background.scheme = colArray;
 				window.NotifyOthers('Colors: set color scheme', colArray);
 			}
 		}
@@ -1009,6 +1010,12 @@ addEventListener('on_notify_data', (name, info) => {
 		case 'Colors: set color scheme': // Needs an array of at least 6 colors to automatically adjust dynamic colors
 		case 'World Map: set color scheme': {
 			if (info && worldMap.properties.bOnNotifyColors[1]) { background.callbacks.artColors(clone(info), true); }
+			break;
+		}
+		case 'Colors: ask color scheme': {
+			if (info && worldMap.properties.bNotifyColors[1] && background.scheme) {
+				window.NotifyOthers(String(info), background.scheme);
+			}
 			break;
 		}
 	}
