@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/09/25
+//20/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -651,6 +651,28 @@ function settingsMenu() {
 						}, flags: properties.bDynamicColors[1] ? MF_STRING : MF_GRAYED
 					});
 					menu.newCheckMenuLast(() => properties.bDynamicColorsBg[1]);
+					menu.newSeparator(subMenu);
+					menu.newEntry({
+						menuName: subMenu, entryText: 'Listen to color-servers', func: () => {
+							properties.bOnNotifyColors[1] = !properties.bOnNotifyColors[1];
+							overwriteProperties(properties);
+							if (properties.bOnNotifyColors[1]) {
+								window.NotifyOthers('Colors: ask color scheme', 'World Map: set color scheme');
+								window.NotifyOthers('Colors: ask color', 'World Map: set colors');
+							}
+						}
+					});
+					menu.newCheckMenuLast(() => properties.bOnNotifyColors[1]);
+					menu.newEntry({
+						menuName: subMenu, entryText: 'Act as color-server', func: () => {
+							properties.bNotifyColors[1] = !properties.bNotifyColors[1];
+							overwriteProperties(properties);
+							if (properties.bNotifyColors[1] && background.scheme) {
+								window.NotifyOthers('Colors: set color scheme', background.scheme);
+							}
+						}
+					});
+					menu.newCheckMenuLast(() => properties.bNotifyColors[1]);
 				}
 			}
 			{ // NOSONAR

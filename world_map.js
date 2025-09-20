@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/09/25
+//20/09/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -335,7 +335,7 @@ const background = new _background({
 			worldMap.colorsChanged();
 			repaint(void (0), true);
 		},
-		artColorsNotify: (colArray, bForced) => {
+		artColorsNotify: (colArray, bForced = false) => {
 			if (!bForced && !worldMap.properties.bNotifyColors[1]) { return; }
 			else if (colArray) {
 				background.scheme = colArray;
@@ -1124,4 +1124,12 @@ addEventListener('on_notify_data', (name, info) => {
 });
 
 stats.attachCallbacks();
+
+if (worldMap.properties.bOnNotifyColors[1]) { // Ask color-servers at init
+	setTimeout(() => {
+		window.NotifyOthers('Colors: ask color scheme', 'World Map: set color scheme');
+		window.NotifyOthers('Colors: ask color', 'World Map: set colors');
+	}, 1000);
+}
+
 globProfiler.Print('callbacks');
