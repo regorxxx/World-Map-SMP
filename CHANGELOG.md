@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.0.0](#400---2025-09-20)
 - [3.15.0](#3150---2024-10-09)
 - [3.14.1](#3141---2024-08-13)
 - [3.14.0](#3140---2024-07-24)
@@ -50,6 +51,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [4.0.0] - 2025-09-20
 ### Added
 - Data: added support for multi-value artist tags, now enabled by default. Can be tweaked at the 'Tags' submenu. If a track has multiple artists, the panel will try to draw a point per artist (similar to how multiple selection works). Biography integration remains the same, i.e. it will try to only match the first artist found. Note this change implies that some artists may now be missing a country (since they were previously merged into a single value); you may use the 'Find artists without locale tag...' entry to tag them.
 - Data: added menu entry to add/remove an artist to a black list for splitting. So above functionality can be easily tweaked for specific artists which should never be split (like 'Crosby, Stills & Nash').
@@ -630,7 +637,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v3.15.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.15.0...v4.0.0
 [3.15.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.1...v3.15.0
 [3.14.1]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.0...v3.14.1
 [3.14.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.13.0...v3.14.0
