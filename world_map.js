@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/09/25
+//22/09/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -476,6 +476,16 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 	}
 	subLayer.ReleaseGraphics(layerGr);
 };
+
+/**
+ * Paint country layers
+ *
+ * @function
+ * @name paintLayers
+ * @kind variable
+ * @param {{ gr: GdiGraphics, color?: number, gradient?: number[] bProfile?: boolean }} { gr, color, gradient, bProfile }?
+ * @returns {void}
+ */
 const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false } = {}) => {
 	const profile = bProfile ? new FbProfiler('paintLayers') : null;
 	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
@@ -697,7 +707,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 	} else if (bProfile) { profile.Print('End'); }
 };
 
-addEventListener('on_paint', (gr) => {
+addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 	if (globSettings.bDebugPaint) { extendGR(gr, { Repaint: true }); }
 	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {
@@ -787,7 +797,24 @@ addEventListener('on_paint', (gr) => {
 			const headerColor = worldMap.properties.headerColor[1] !== -1
 				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
 				: RGBA(...toRGB(worldMap.panelColor), 150);
-			gr.FillSolidRect(posX, posY, w, textH, headerColor);
+			if (!worldMap.properties.bFullHeader[1]) {
+				const offset = 0.1;
+				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + 1 / 2));
+				let imgGr = img.GetGraphics();
+				imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+				imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90, headerColor, RGBA(0, 0, 0, 0));
+				img.ReleaseGraphics(imgGr);
+				const mask = gdi.CreateImage(img.Width, img.Height);
+				imgGr = mask.GetGraphics();
+				imgGr.FillGradRect(-1, 0, w * (offset / 2), img.Height, 180, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0, RGB(0, 0, 0), RGB(255, 255, 255));
+				mask.ReleaseGraphics(imgGr);
+				img.ApplyMask(mask);
+				gr.DrawImage(img, posX - w * (offset / 2), posY, w + w * (offset / 2), posY + img.Height, 0, 0, img.Width, img.Height);
+			} else {
+				gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90, headerColor, RGBA(0, 0, 0, 0));
+			}
 			// Flag
 			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length === 1) {
 				const id = worldMap.lastPoint[0].id;

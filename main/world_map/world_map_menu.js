@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/09/25
+//22/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -749,7 +749,7 @@ function settingsMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show header', func: () => {
 						properties.bShowHeader[1] = !properties.bShowHeader[1];
-						repaint(void (0), true);
+						repaint(fb.IsPlaying, true);
 						overwriteProperties(properties);
 					}
 				});
@@ -758,7 +758,7 @@ function settingsMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show current country', func: () => {
 						properties.bShowLocale[1] = !properties.bShowLocale[1];
-						repaint(void (0), true);
+						repaint(fb.IsPlaying, true);
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
@@ -766,7 +766,7 @@ function settingsMenu() {
 				menu.newEntry({
 					menuName, entryText: 'Show flag', func: () => {
 						properties.bShowFlag[1] = !properties.bShowFlag[1];
-						repaint(void (0), true);
+						repaint(fb.IsPlaying, true);
 						overwriteProperties(properties);
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});

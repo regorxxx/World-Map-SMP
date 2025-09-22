@@ -53,9 +53,11 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: header borders are now smooth using a transparency gradient.
 - UI: color extraction from background art is now done before blur is applied. Done after blur returned gray tones in so many unintended cases.
 ### Removed
 ### Fixed
+- UI: repaint artifacts when switching header visibility during playback.
 - Auto-update: fix error including a file when enabling auto-updates if it was previously disabled.
 
 ## [4.0.0] - 2025-09-20
