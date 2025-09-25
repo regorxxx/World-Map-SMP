@@ -55,8 +55,8 @@
 ### Changed
 - UI: header borders are now smooth using a transparency gradient.
 - UI: color extraction from background art is now done before blur is applied. Done after blur returned gray tones in so many unintended cases.
-- Installation: fonts are no longer bundled at '_resources' folder, but found at: https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts
 ### Removed
+- Installation: fonts are no longer bundled at '_resources' folder, but found at: https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts
 ### Fixed
 - UI: repaint artifacts when switching header visibility during playback.
 - Auto-update: fix error including a file when enabling auto-updates if it was previously disabled.
