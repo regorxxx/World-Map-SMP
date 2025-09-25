@@ -1,9 +1,9 @@
 ﻿'use strict';
-//19/06/25
+//25/09/25
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable, _ps:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\statistics\\statistics_xxx_menu.js');
@@ -319,7 +319,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					'Average ' + this.axis.y.key + ' (any ' + this.axis.x.key + '): ' + Math.round(avg) + ' ' + _p(round(avg / total * 100, 2) + '%') +
 					'\n' +
 					'Global total ' + this.axis.y.key + ': ' + total
-					, window.Name + ': Point statistics'
+					, window.Name + _ps(window.ScriptInfo.Name) + ': Point statistics'
 				);
 			}
 		});

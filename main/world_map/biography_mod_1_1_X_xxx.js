@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/03/24
+//25/09/25
 
 /*
 	Biography Mod v 1.1.X
@@ -8,7 +8,7 @@
 */
 
 if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') { // Safety check to avoid using it alone
-	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name);
+	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name + ' (' + window.ScriptInfo.Name + ')');
 } else { // Where t = new Text, tag = new Tagger
 	// Rewrite entire function
 	/* eslint-disable no-undef */

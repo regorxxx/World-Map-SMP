@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/09/25
+//25/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -15,7 +15,7 @@ include('..\\..\\helpers\\helpers_xxx_tags.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global sendToPlaylist:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _bt:readable, _b:readable, _p:readable, isArrayEqual:readable */
+/* global _bt:readable, _b:readable, _p:readable, isArrayEqual:readable, _ps:readable */
 include('..\\..\\helpers\\helpers_xxx_input.js');
 /* global Input:readable */
 include('..\\..\\helpers\\helpers_xxx_export.js');
@@ -1151,7 +1151,7 @@ function importSettingsMenu() {
 							})
 							.every((done) => {
 								if (!done) {
-									console.popup(panelName + ': failed importing database files.', window.Name);
+									console.popup(panelName + ': failed importing database files.', window.Name + _ps(window.ScriptInfo.Name));
 									return false;
 								}
 								return true;

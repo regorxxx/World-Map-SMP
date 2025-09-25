@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/08/25
+//25/09/25
 
 /* exported ImageMap */
 
@@ -17,7 +17,7 @@ include('..\\..\\helpers\\helpers_xxx_file.js');
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _bt:readable */
+/* global _bt:readable, _ps:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
 /* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
 
@@ -237,7 +237,7 @@ function ImageMap({
 	};
 	this.setTag = (tagValue, byKey) => { if (byKey.length && typeof tagValue !== 'undefined') { this.tagValue[byKey] = tagValue; } };
 	// eslint-disable-next-line no-unused-vars
-	this.findCoordinates = ({ id, mapWidth, mapHeight, factorX, factorY }) => { fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name); return [-1, -1]; }; // Must be overwritten
+	this.findCoordinates = ({ id, mapWidth, mapHeight, factorX, factorY }) => { fb.ShowPopupMessage('map_xxx.js: imageMap.findCoordinates() has not been set', window.Name + _ps(window.ScriptInfo.Name)); return [-1, -1]; }; // Must be overwritten
 	// eslint-disable-next-line no-unused-vars
 	this.findPointFunc = ({ x, y, mapWidth, mapHeight, factorX, factorY }) => { return []; }; // [{key, simil}] Could be overwritten
 	this.isNearPointFunc = null; /* ({id, x, y,precision}) => {return false;}; // Boolean Could be overwritten */ // NOSONAR
@@ -400,7 +400,7 @@ function ImageMap({
 	this.loadData = (path = this.jsonPath) => {
 		if (_isFile(path)) {
 			this.jsonData = [];
-			const data = _jsonParseFileCheck(path, 'Tags json', window.Name, utf8);
+			const data = _jsonParseFileCheck(path, 'Tags json', window.Name + _ps(window.ScriptInfo.Name), utf8);
 			if (!data) { return; }
 			data.forEach((item) => { this.jsonData.push(item); });
 		}
@@ -522,13 +522,13 @@ function ImageMap({
 		// Sanity checks
 		if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet || JSON.stringify(this.findCoordinates()) !== JSON.stringify([-1, -1])) {
 			// function must exist, had been set and return [-1,-1] for arbitrary or null input to be considered valid
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.Name);
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.Name + _ps(window.ScriptInfo.Name));
 		}
 		if (!this.mapTag.length) {
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.Name);
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.Name + _ps(window.ScriptInfo.Name));
 		}
 		if (!this.imageMapPath.length) {
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.Name);
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.Name + _ps(window.ScriptInfo.Name));
 			this.trace = () => { };
 			this.calcScale = () => { };
 			this.paint = () => { };
@@ -552,7 +552,7 @@ function ImageMap({
 					}
 				}
 				catch (e) {
-					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath + '\n\n' + e.message, window.Name);
+					fb.ShowPopupMessage('map_xxx.js: map was created without an image. \'imageMapPath\' does not point to a valid file:\n' + this.imageMapPath + '\n\n' + e.message, window.Name + _ps(window.ScriptInfo.Name));
 					this.imageMapPath = 'background';
 					this.imageMap = { Width: maxWidth, Height: maxSize };
 				}

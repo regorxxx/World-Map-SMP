@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/08/25
+//25/09/25
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
 
@@ -9,7 +9,7 @@ include('..\\..\\helpers\\helpers_xxx.js');
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable */
+/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable, _ps:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -100,7 +100,7 @@ function selPoint(point, mask) {
 		}
 		bDone = true;
 		return bDone;
-	} else { fb.ShowPopupMessage('Query not valid: ' + query, window.Name); }
+	} else { fb.ShowPopupMessage('Query not valid: ' + query, window.Name + _ps(window.ScriptInfo.Name)); }
 	return bDone;
 }
 

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/12/23
+//25/09/25
 
 /*
 	Biography Mod v 1.2.0 Beta
@@ -8,7 +8,7 @@
 */
 
 if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') { // Safety check to avoid using it alone
-	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name);
+	fb.ShowPopupMessage('This script can only be used along WilB\'s Biography script.', window.Name + ' (' + window.ScriptInfo.Name + ')');
 }
 
 function onNotifyData(name, info) {
