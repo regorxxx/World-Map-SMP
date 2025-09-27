@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/25
+//26/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -7,7 +7,7 @@
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global folders:readable, globSettings:readable, checkUpdate:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable, saveUserDefFile:readable, globNoSplitArtist:readable */
+/* global folders:readable, globSettings:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable, saveUserDefFile:readable, globNoSplitArtist:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursiveFile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -657,8 +657,8 @@ function settingsMenu() {
 							properties.bOnNotifyColors[1] = !properties.bOnNotifyColors[1];
 							overwriteProperties(properties);
 							if (properties.bOnNotifyColors[1]) {
-								window.NotifyOthers('Colors: ask color scheme', 'World Map: set color scheme');
-								window.NotifyOthers('Colors: ask color', 'World Map: set colors');
+								window.NotifyOthers('Colors: ask color scheme', window.ScriptInfo.Name + ': set color scheme');
+								window.NotifyOthers('Colors: ask color', window.ScriptInfo.Name + ': set colors');
 							}
 						}
 					});
@@ -1090,7 +1090,7 @@ function settingsMenu() {
 				menuName, entryText: 'Check for updates...', func: () => {
 					if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web_update.js'); }
 					checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
-						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', 'World Map: Update check'));
+						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.Name + _ps(window.ScriptInfo.Name) + ': Update check'));
 				}
 			});
 		}
@@ -1121,7 +1121,7 @@ function importSettingsMenu() {
 				bData
 					? [worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]]
 					: [],
-				'World Map'
+				window.ScriptInfo.Name
 			);
 		}
 	});
@@ -1161,7 +1161,7 @@ function importSettingsMenu() {
 					}
 				},
 				worldMap.properties,
-				'World Map'
+				window.ScriptInfo.Name
 			);
 		}
 	});

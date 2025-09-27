@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/25
+//26/09/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -10,7 +10,7 @@ if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { autho
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable , globNoSplitArtist:readable*/
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
@@ -28,7 +28,7 @@ include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
 include('main\\world_map\\world_map_menu.js');
-/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, popup:readable, Input:readable */
+/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
 /* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable */
 include('main\\world_map\\world_map_flags.js');
@@ -206,15 +206,15 @@ worldMap.shareUiSettings = function (mode = 'popup') {
 	switch (mode.toLowerCase()) {
 		case 'popup': {
 			const keys = ['Colors', 'Fonts', 'Background', 'Map', 'Points & layers'];
-			const answer = WshShell.Popup('Share current UI settings with other panels?\nSettings which will be copied:\n\n' + keys.join(', '), 0, 'World Map: share UI settings', popup.question + popup.yes_no);
+			const answer = WshShell.Popup('Share current UI settings with other panels?\nSettings which will be copied:\n\n' + keys.join(', '), 0, window.ScriptInfo.Name + ': share UI settings', popup.question + popup.yes_no);
 			if (answer === popup.yes) {
-				window.NotifyOthers('World Map: share UI settings', settings);
+				window.NotifyOthers(window.ScriptInfo.Name + ': share UI settings', settings);
 				return true;
 			}
 			return false;
 		}
 		case 'path': {
-			const input = Input.string('file', folders.data + 'ui_settings_' + window.Name + '.json', 'File name name:', 'World Map: export UI settings', folders.data + 'ui_settings.json', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
+			const input = Input.string('file', folders.data + 'ui_settings_' + window.Name + '.json', 'File name name:', window.ScriptInfo.Name + ': export UI settings', folders.data + 'ui_settings.json', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
 			if (input === null) { return null; }
 			return _save(input, JSON.stringify(settings, null, '\t').replace(/\n/g, '\r\n'))
 				? input
@@ -1007,11 +1007,11 @@ const bioCache = { rawPath: null, subSong: null };
 addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') { return; }
 	switch (name) {
-		case 'World Map: share UI settings': {
+		case window.ScriptInfo.Name + ': share UI settings': {
 			if (info) { worldMap.applyUiSettings(clone(info)); }
 			break;
 		}
-		case 'World Map: set colors': {  // Needs an array of 4 colors or an object {background, text, default, shape}
+		case window.ScriptInfo.Name + ': set colors': {  // Needs an array of 4 colors or an object {background, text, default, shape}
 			if (info && worldMap.properties.bOnNotifyColors[1]) {
 				const colors = clone(info);
 				const getColor = (key) => Object.hasOwn(colors, key) ? colors.background : colors[['background', 'text', 'default', 'shape'].indexOf(key)];
@@ -1035,7 +1035,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case 'Colors: set color scheme': // Needs an array of at least 6 colors to automatically adjust dynamic colors
-		case 'World Map: set color scheme': {
+		case window.ScriptInfo.Name + ': set color scheme': {
 			if (info && worldMap.properties.bOnNotifyColors[1]) { background.callbacks.artColors(clone(info), true); }
 			break;
 		}
@@ -1154,8 +1154,8 @@ stats.attachCallbacks();
 
 if (worldMap.properties.bOnNotifyColors[1]) { // Ask color-servers at init
 	setTimeout(() => {
-		window.NotifyOthers('Colors: ask color scheme', 'World Map: set color scheme');
-		window.NotifyOthers('Colors: ask color', 'World Map: set colors');
+		window.NotifyOthers('Colors: ask color scheme', window.ScriptInfo.Name + ': set color scheme');
+		window.NotifyOthers('Colors: ask color', window.ScriptInfo.Name + ': set colors');
 	}, 1000);
 }
 
