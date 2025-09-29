@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/09/25
+//29/09/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -1100,7 +1100,7 @@ function settingsMenu() {
 			menu.newEntry({
 				entryText: 'Open readme...', func: () => {
 					const readme = _open(readmePath, utf8); // Executed on script load
-					if (readme.length) { fb.ShowPopupMessage(readme, 'World-Map-SMP'); }
+					if (readme.length) { fb.ShowPopupMessage(readme, window.ScriptInfo.Name); }
 					else { console.log('World Map: Readme not found\n\t ' + readmePath); }
 				}
 			});
