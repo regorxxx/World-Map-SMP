@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.1.0](#410---2025-09-29)
 - [4.0.0](#400---2025-09-20)
 - [3.15.0](#3150---2024-10-09)
 - [3.14.1](#3141---2024-08-13)
@@ -51,6 +52,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [4.1.0] - 2025-09-29
 ### Added
 ### Changed
 - UI: header borders are now smooth using a transparency gradient.
@@ -642,7 +649,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.15.0...v4.0.0
 [3.15.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.1...v3.15.0
 [3.14.1]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.0...v3.14.1
