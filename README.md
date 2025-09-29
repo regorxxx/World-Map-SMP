@@ -39,7 +39,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 ## Requirements (only one host component required)
  1. [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel): JavaScript host component required to install this. Only x32. **(host component)**
  2. [JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378): JavaScript host component required to install this. Both x32 and x64. **(host component)**
- 3. FontAwesome: found at ’.\ resources\fontawesome-webfont.ttf’. See installation notes.
+ 3. [Required fonts](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts): FontAwesome, Segoe UI, Arial Unicode MS
 
 # Installation
 See [Wiki](https://github.com/regorxxx/World-Map-SMP/wiki/Installation) or the [_INSTALLATION (txt)](https://github.com/regorxxx/World-Map-SMP/blob/main/_INSTALLATION.txt).
