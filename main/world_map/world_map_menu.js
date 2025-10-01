@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/09/25
+//01/10/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -9,7 +9,7 @@ include('..\\..\\helpers\\menu_xxx.js');
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global folders:readable, globSettings:readable, checkUpdate:readable, globTags:readable, VK_CONTROL:readable, saveUserDefFile:readable, globNoSplitArtist:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
-/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursiveFile:readable, _copyFile:readable, _resolvePath:readable, _deleteFile:readable, getFiles:readable */
+/* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _open:readable, WshShell:readable, _explorer:readable, _recycleFile:readable, _renameFile:readable, _copyFile:readable, findRecursiveFile:readable, _copyFile:readable, _resolvePath:readable, _moveFile:readable, getFiles:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global getHandleListTags:readable, getHandleListTagsV2:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -1130,7 +1130,7 @@ function importSettingsMenu() {
 			const dataPaths = new Set();
 			importSettings(
 				{
-					onUnzipSettings: (settings, bFound, panelName) => { // eslint-disable-line no-unused-vars
+					onLoadSettings: (settings, bFound, panelName) => { // eslint-disable-line no-unused-vars
 						if (settings) {
 							dataPaths.add(settings.fileName[1]).add(settings.fileNameLibrary[1]);
 							console.log(panelName + ': importing data files\n\t ' + [...dataPaths].join('\n\t '));
@@ -1144,8 +1144,7 @@ function importSettingsMenu() {
 								const newFile = [...dataPaths].find((path) => path.endsWith(file.replace(importPath, '')));
 								if (newFile) {
 									dataPaths.delete(newFile);
-									if (_isFile(newFile)) { _deleteFile(newFile); }
-									return _renameFile(file, newFile);
+									return _moveFile(file, newFile);
 								}
 								return false;
 							})
