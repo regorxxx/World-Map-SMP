@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/09/25
+//07/10/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -9,7 +9,7 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.2.0', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable , globNoSplitArtist:readable*/
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
 /* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
@@ -22,7 +22,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _resolvePath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
+/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
@@ -65,7 +65,7 @@ const worldMap_properties = {
 	bEnabled: ['Enable panel', true, { func: isBoolean }, true],
 	bEnabledBiography: ['Enable WilB\'s Biography script integration', false, { func: isBoolean }, false],
 	forcedQuery: ['Global forced query', globQuery.filter, { func: (query) => { return checkQuery(query, true); } }, globQuery.filter],
-	fileName: ['JSON filename (for tags)', '.\\profile\\' + folders.dataName + 'worldMap.json'],
+	fileName: ['JSON filename (for tags)', _foldPath(folders.data + 'worldMap.json')],
 	firstPopup: ['World Map: Fired once', false, { func: isBoolean }, false],
 	tagFilter: ['Filter these values globally for ctrl tags (sep. by comma)', 'Instrumental', { func: isStringWeak }, 'Instrumental'],
 	iLimitSelection: ['Selection limit', 5, { func: isInt, range: [[2, 25000]] }, 5],
@@ -80,7 +80,7 @@ const worldMap_properties = {
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
 	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isInt }, globFonts.standardSmall.size],
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
-	fileNameLibrary: ['JSON filename (for library tags)', '.\\profile\\' + folders.dataName + 'worldMap_library.json'],
+	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
 	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
@@ -214,7 +214,7 @@ worldMap.shareUiSettings = function (mode = 'popup') {
 			return false;
 		}
 		case 'path': {
-			const input = Input.string('file', folders.data + 'ui_settings_' + window.Name + '.json', 'File name name:', window.ScriptInfo.Name + ': export UI settings', folders.data + 'ui_settings.json', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
+			const input = Input.string('file', folders.export + 'ui_settings_' + window.Name + '.json', 'File name name:', window.ScriptInfo.Name + ': export UI settings', folders.export + 'ui_settings.json', void (0), true) || (Input.isLastEqual ? Input.lastInput : null);
 			if (input === null) { return null; }
 			return _save(input, JSON.stringify(settings, null, '\t').replace(/\n/g, '\r\n'))
 				? input
