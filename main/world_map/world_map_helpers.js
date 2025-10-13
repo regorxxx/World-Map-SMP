@@ -32,7 +32,7 @@ function selPoint(point, mask) {
 	const dataIdTag = dataId.toUpperCase(); // for readability
 	// Any track with same locale tag
 	const tag = worldMap.properties.mapTag[1].includes('$') ? '"' + worldMap.properties.mapTag[1] + '"' : worldMap.properties.mapTag[1];
-	if (tag.length) { query.push(tag + ' IS ' + point.id); }
+	if (tag.length) { query.push(tag + ' IS ' + point.id.toString().toLowerCase()); }
 	// What about JSON data? -> List of artists with same value
 	let jsonQuery = [];
 	worldMap.getData().forEach((item) => {
@@ -185,10 +185,10 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 					console.log(worldMap.jsonId + ' IS ' + tagId);
 					const query = worldMap.jsonId.toUpperCase() === 'ALBUM ARTIST'
 						? queryJoin([
-							'ARTIST IS ' + tagId,
-							'%ALBUM ARTIST% IS ' + tagId,
+							'ARTIST IS ' + tagId.toLowerCase(),
+							'%ALBUM ARTIST% IS ' + tagId.toLowerCase(),
 						], 'OR')
-						: _qCond(worldMap.jsonId) + ' IS ' + tagId;
+						: _qCond(worldMap.jsonId) + ' IS ' + tagId.toString().toLowerCase();
 					toTag.AddRange(fb.GetQueryItems(fb.GetLibraryItems(), query));
 				}
 				if (toTag.Count) { toTag.UpdateFileInfoFromJSON(JSON.stringify({ [tagName]: locale })); }

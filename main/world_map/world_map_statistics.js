@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/25
+//13/10/25
 
 /* exported _mapStatistics */
 
@@ -227,13 +227,13 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		const dataId = worldMap.jsonId; // The tag used to match data
 		const dataIdTag = _t(dataId.toUpperCase()); // for readability
 		const mapTag = worldMap.properties.mapTag[1];
-		const queryNapTag = (mapTag.includes('$') ? _q(mapTag) : mapTag);
+		const queryMapTag = (mapTag.includes('$') ? _q(mapTag) : mapTag);
 		const queryByCountry = (countryName) => {
 			let query = '';
-			query = queryNapTag + ' IS ' + countryName + ' OR ' + queryNapTag + ' IS ' + getCountryISO(countryName);
+			query = queryMapTag + ' IS ' + countryName.toLowerCase() + ' OR ' + queryMapTag + ' IS ' + getCountryISO(countryName).toLowerCase();
 			const jsonQuery = [];
 			worldMap.getData().forEach((item) => {
-				if (item.val[item.val.length - 1] === countryName) { jsonQuery.push(item[dataId]); }
+				if (item.val[item.val.length - 1].toLowerCase() === countryName.toLowerCase()) { jsonQuery.push(item[dataId].toLowerCase()); }
 			});
 			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(queryCombinations(jsonQuery, dataIdTag, 'OR')); }
 			return query;
@@ -242,11 +242,11 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			let query = '';
 			const isoArr = music_graph_descriptors_countries.getNodesFromRegion(regionName);
 			const isoSet = new Set(isoArr);
-			query = _p(queryCombinations(isoArr, queryNapTag, 'OR'));
+			query = _p(queryCombinations(isoArr, queryMapTag, 'OR'));
 			const jsonQuery = [];
 			worldMap.getData().forEach((item) => {
 				const dataIso = getCountryISO(item.val[item.val.length - 1]);
-				if (isoSet.has(dataIso)) { jsonQuery.push(item[dataId]); }
+				if (isoSet.has(dataIso)) { jsonQuery.push(item[dataId].toLowerCase()); }
 			});
 			if (jsonQuery.length) { query = _p(query) + ' OR ' + _p(queryCombinations(jsonQuery, dataIdTag, 'OR')); }
 			return query;
