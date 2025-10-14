@@ -56,6 +56,7 @@
 ### Changed
 - Settings: global support for %fb2k_component_path%, %fb2k_profile_path% and %fb2k_path% in any input asking for paths.
 - Export settings: now uses '[FOOBAR PROFILE FOLDER]\js_data\export' folder at exporting.
+- UI: improved informative popup following selection mode by Biography. Disabling the popup now outputs the warning to the console log.
 ### Removed
 ### Fixed
 - UI: repaint artifacts exiting statistics mode during playback.

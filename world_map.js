@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/10/25
+//14/10/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -1124,7 +1124,9 @@ addEventListener('on_notify_data', (name, info) => {
 					}
 					if (bDone) {
 						if (worldMap.properties.bShowSelModePopup[1]) {
-							fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name + _ps(window.ScriptInfo.Name));
+							fb.ShowPopupMessage('Selection mode at Biography panel has been changed (-> \'' + worldMap.properties['selection'][1] + '\'). This panel has been updated to use the new setting.\n\nThis is only an informative popup, you can disable it at the contextual menu (\'Selection mode\' submenu).', window.Name + _ps(window.ScriptInfo.Name));
+						} else {
+							console.log(window.Name + _ps(window.ScriptInfo.Name) + ' Selection mode changed by Biography panel -> ' + worldMap.properties['selection'][1]);
 						}
 						overwriteProperties(worldMap.properties); // Updates panel
 						repaint();
