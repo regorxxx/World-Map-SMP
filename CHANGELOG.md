@@ -58,6 +58,7 @@
 - Export settings: now uses '[FOOBAR PROFILE FOLDER]\js_data\export' folder at exporting.
 ### Removed
 ### Fixed
+- UI: repaint artifacts exiting statistics mode during playback.
 
 ## [4.1.0] - 2025-09-29
 ### Added
