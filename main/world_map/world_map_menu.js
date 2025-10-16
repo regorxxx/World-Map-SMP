@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/10/25
+//16/10/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -35,17 +35,17 @@ function settingsMenu() {
 		? new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: null }).flat(Infinity))
 		: new Set();
 	{ // NOSONAR
-		{	// Enabled?
+		menu.newEntry({
+			entryText: 'Enable world map', func: () => {
+				properties.bEnabled[1] = !properties.bEnabled[1];
+				overwriteProperties(properties);
+				repaint(false, true, true) || window.Repaint();
+			}
+		});
+		menu.newCheckMenuLast(() => properties.bEnabled[1]);
+		menu.newSeparator();
+		{
 			const menuName = menu.newMenu('Panel settings');
-			menu.newSeparator(menuName);
-			menu.newEntry({
-				menuName, entryText: 'Panel enabled', func: () => {
-					properties.bEnabled[1] = !properties.bEnabled[1];
-					overwriteProperties(properties);
-					repaint(false, true, true) || window.Repaint();
-				}
-			});
-			menu.newCheckMenuLast(() => properties.bEnabled[1]);
 			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
