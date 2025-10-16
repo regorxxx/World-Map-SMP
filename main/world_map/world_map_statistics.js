@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/10/25
+//16/10/25
 
 /* exported _mapStatistics */
 
@@ -224,6 +224,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	};
 
 	this.onLbtnUpPoint = function onLbtnUpPoint(point, x, y, mask) { // eslint-disable-line no-unused-vars
+		if (!point) { return; }
 		const dataId = worldMap.jsonId; // The tag used to match data
 		const dataIdTag = _t(dataId.toUpperCase()); // for readability
 		const mapTag = worldMap.properties.mapTag[1];
