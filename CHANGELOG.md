@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.2.0](#420---2025-10-28)
 - [4.1.0](#410---2025-09-29)
 - [4.0.0](#400---2025-09-20)
 - [3.15.0](#3150---2024-10-09)
@@ -52,6 +53,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [4.2.0] - 2025-28-10
 ### Added
 ### Changed
 - Configuration: global support for %fb2k_component_path%, %fb2k_profile_path% and %fb2k_path% in any input asking for paths.
@@ -655,7 +662,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.1.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.0...HEAD
+[4.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.15.0...v4.0.0
 [3.15.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.14.1...v3.15.0
