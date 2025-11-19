@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.2.1](#421---2025-11-19)
 - [4.2.0](#420---2025-10-28)
 - [4.1.0](#410---2025-09-29)
 - [4.0.0](#400---2025-09-20)
@@ -57,6 +58,14 @@
 ### Changed
 ### Removed
 ### Fixed
+
+## [4.2.1] - 2025-11-19
+### Added
+### Changed
+- Helpers: updated helpers.
+### Removed
+### Fixed
+- UI: fixed handling of non string labels in some cases.
 
 ## [4.2.0] - 2025-28-10
 ### Added
@@ -662,7 +671,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.0...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.1...HEAD
+[4.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/regorxxx/World-Map-SMP/compare/v3.15.0...v4.0.0
