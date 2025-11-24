@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/11/25
+//21/11/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -9,8 +9,8 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.2.1', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, isPortable:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable */
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
@@ -22,7 +22,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
+/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable, _gr:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
@@ -72,7 +72,7 @@ const worldMap_properties = {
 	factorX: ['Percentage applied to X coordinates', 100, { func: isInt, range: [[50, 200]] }, 100],
 	factorY: ['Percentage applied to Y coordinates', 137, { func: isInt, range: [[50, 200]] }, 137],
 	bInstalledBiography: ['Is installed biography mod', false, { func: isBoolean }, false],
-	customPointSize: ['Custom point size for the panel', 16, { func: isInt }, 16],
+	pointSize: ['Custom point size for the panel', 16, { func: isInt }, 16],
 	customPointColorMode: ['Custom point color mode', 0, { func: isInt, range: [[0, 1]] }, 0],
 	customPointColor: ['Custom point color for the panel', RGB(91, 165, 34), { func: isInt }, RGB(91, 165, 34)],
 	bPointFill: ['Draw a point (true) or a circular corona (false)', false, { func: isBoolean }, false],
@@ -200,7 +200,7 @@ worldMap.loadData = function (path = this.jsonPath) {
 
 worldMap.shareUiSettings = function (mode = 'popup') {
 	const settings = Object.fromEntries(
-		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg']
+		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'pointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg']
 			.map((key) => [key, clone(this.properties[key].slice(0, 2))])
 	);
 	switch (mode.toLowerCase()) {
@@ -241,14 +241,13 @@ worldMap.applyUiSettings = function (settings, bForce) {
 		['statsConfig'].forEach((key) => {
 			this.properties[key][1] = String(settings[key][1]);
 		});
-		['imageMapAlpha', 'factorX', 'factorY', 'customPointSize', 'customPointColorMode', 'customPointColor', 'customLocaleColor', 'fontSize', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'memMode', 'headerColor'].forEach((key) => {
+		['imageMapAlpha', 'factorX', 'factorY', 'pointSize', 'customPointColorMode', 'customPointColor', 'customLocaleColor', 'fontSize', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'memMode', 'headerColor'].forEach((key) => {
 			this.properties[key][1] = Number(settings[key][1]);
 			if (Object.hasOwn(this, key)) { this[key] = Number(this.properties[key][1]); }
 		});
-		this.pointSize = this.properties.customPointSize[1];
-		this.pointLineSize = this.pointSize * 2 + 5;
-		if (this.properties.customPointColorMode[1] === 1) { this.defaultColor = this.properties.customPointColor[1]; }
+		this.pointSize = this.properties.pointSize[1];
 		this.pointLineSize = this.properties.bPointFill[1] ? this.pointSize : this.pointSize * 2 + 5;
+		if (this.properties.customPointColorMode[1] === 1) { this.defaultColor = this.properties.customPointColor[1]; }
 		this.textColor = this.properties.customLocaleColor[1];
 		['imageMapPath', 'customGradientColor', 'layerFillMode'].forEach((key) => {
 			this.properties[key][1] = String(settings[key][1]);
@@ -276,10 +275,9 @@ worldMap.getSelection = function () {
 };
 
 // Additional config
-worldMap.pointSize = worldMap.properties.customPointSize[1];
-worldMap.pointLineSize = worldMap.pointSize * 2 + 5;
-if (worldMap.properties.customPointColorMode[1] === 1) { worldMap.defaultColor = worldMap.properties.customPointColor[1]; }
+worldMap.pointSize = worldMap.properties.pointSize[1];
 worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+if (worldMap.properties.customPointColorMode[1] === 1) { worldMap.defaultColor = worldMap.properties.customPointColor[1]; }
 worldMap.textColor = worldMap.properties.customLocaleColor[1];
 worldMap.imageMapAlpha = worldMap.properties.imageMapAlpha[1];
 worldMap.bImageMapMask = worldMap.properties.bImageMapMask[1];
@@ -349,7 +347,6 @@ const background = new _background({
 if (!worldMap.properties['firstPopup'][1]) {
 	worldMap.properties['firstPopup'][1] = true;
 	overwriteProperties(worldMap.properties); // Updates panel
-	isPortable([worldMap.properties['fileName'][0], worldMap.properties['imageMapPath'][0]]);
 	const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 	const readme = _open(readmePath, utf8);
 	if (readme.length) { fb.ShowPopupMessage(readme, 'World-Map-SMP'); }
@@ -1148,6 +1145,45 @@ addEventListener('on_notify_data', (name, info) => {
 				}
 			}
 			break;
+		}
+	}
+});
+
+addEventListener('on_mouse_wheel', (s) => {
+	if (!worldMap.properties.bEnabled[1]) { return; }
+	if (stats.bEnabled) { return; }
+	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
+		if (worldMap.trace(worldMap.mX, worldMap.mY)) {
+			const traceHeader = (x, y) => {
+				const posX = worldMap.properties.bFullHeader[1]
+					? 0
+					: worldMap.posX;
+				const posY = worldMap.posY;
+				const w = worldMap.properties.bFullHeader[1]
+					? window.Width
+					: worldMap.imageMap.Width * worldMap.scale;
+				const textH = _gr.CalcTextHeight('test', worldMap.gFont);
+				const offset = worldMap.properties.bFullHeader[1] ? 0.1 : 0;
+				const hx = posX - w * (offset / 2);
+				const hw = w * (1 + offset);
+				const hh = textH * (3 / 4 + (worldMap.properties.bFullHeader[1] ? 1 / 2 : 0));
+				return x >= hx && x <= hx + hw && y >= posY && y <= posY + hh;
+			};
+			let key;
+			switch (true) {
+				case traceHeader(worldMap.mX, worldMap.mY): key = 'fontSize'; break;
+				case worldMap.idSelected.length !== 0: key = 'pointSize'; break;
+			}
+			if (!key) { return; }
+			else {
+				worldMap[key] += Math.sign(s);
+				worldMap[key] = Math.max(5, worldMap[key]);
+				worldMap.properties[key][1] = worldMap[key];
+				worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+				worldMap.calcScale(window.Width, window.Height);
+			}
+			repaint(void (0), true);
+			overwriteProperties(worldMap.properties);
 		}
 	}
 });

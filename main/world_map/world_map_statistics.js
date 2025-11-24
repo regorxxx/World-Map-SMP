@@ -1,9 +1,9 @@
 ﻿'use strict';
-//16/10/25
+//21/11/25
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable, _ps:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable, _ps:readable, VK_CONTROL:readable, VK_ALT:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\statistics\\statistics_xxx_menu.js');
@@ -24,11 +24,23 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 	let nCharts = [];
 	let charts = [];
 
+	const saveSettings = function () { // Must be bound to chart context
+		const config = this.exportConfig();
+		const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin', 'buttons']);
+		Object.keys(config).forEach((key) => {
+			if (!keys.has(key)) { delete config[key]; }
+		});
+		config.dataManipulation.sort = this.exportSortLabel();
+		config.data = { source: parent.source.toLowerCase(), arg: parent.arg.toLowerCase(), bAsync: parent.bAsync }; // Similar to this.exportDataLabels()
+		worldMap.properties['statsConfig'][1] = JSON.stringify(config);
+		overwriteProperties(worldMap.properties);
+	};
+
 	this.attachCallbacks = () => {
 		addEventListener('on_paint', (gr) => {
 			if (!window.ID || !this.bEnabled) { return; }
 			if (!window.Width || !window.Height) { return; }
-			charts.forEach((chart) => { chart.paint(gr); });
+			charts.forEach((chart) => chart.paint(gr));
 		});
 
 		addEventListener('on_size', () => {
@@ -48,22 +60,29 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 
 		addEventListener('on_mouse_move', (x, y, mask) => {
 			if (!window.ID || !this.bEnabled) { return; }
-			return charts.some((chart) => { return chart.move(x, y, mask); });
+			return charts.some((chart) => chart.move(x, y, mask));
 		});
 
 		addEventListener('on_mouse_leave', () => {
 			if (!this.bEnabled) { return; }
-			charts.forEach((chart) => { chart.leave(); });
+			charts.forEach((chart) => chart.leave());
 		});
 
 		addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 			if (!this.bEnabled) { return true; }
-			charts.some((chart) => { return chart.lbtnUp(x, y, mask); });
+			charts.some((chart) => chart.lbtnUp(x, y, mask));
 		});
 
 		addEventListener('on_mouse_lbtn_dblclk', (x, y, mask) => {
 			if (!window.ID || !this.bEnabled) { return; }
-			charts.some((chart) => { return chart.lbtnDblClk(x, y, mask); });
+			charts.some((chart) => chart.lbtnDblClk(x, y, mask));
+		});
+
+		addEventListener('on_mouse_wheel', (step) => {
+			if (!window.ID || !this.bEnabled) { return; }
+			if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
+				charts.some((chart) => chart.mouseWheelResize(step, void(0), { bSaveProperties: true }));
+			} else { charts.some((chart) => chart.mouseWheel(step)); }
 		});
 	};
 
@@ -131,17 +150,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		this.tooltip.SetValue(null);
 		if (!this.settingsMenu) {
 			this.settingsMenu = new _menu({
-				onBtnUp: () => {
-					const config = this.exportConfig();
-					const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin']);
-					Object.keys(config).forEach((key) => {
-						if (!keys.has(key)) { delete config[key]; }
-					});
-					config.dataManipulation.sort = this.exportSortLabel();
-					config.data = { source: parent.source.toLowerCase(), arg: parent.arg.toLowerCase(), bAsync: parent.bAsync }; // Similar to this.exportDataLabels()
-					worldMap.properties['statsConfig'][1] = JSON.stringify(config);
-					overwriteProperties(worldMap.properties);
-				}
+				onBtnUp: saveSettings.bind(this)
 			});
 		}
 		const menu = this.settingsMenu;
@@ -209,17 +218,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			menuKey: 'displayMenu',
 			bShowMulti: false,
 			hideCharts: new Set(['timeline']),
-			onBtnUp: () => {
-				const config = this.exportConfig();
-				const keys = new Set(['graph', 'dataManipulation', 'grid', 'axis', 'margin']);
-				Object.keys(config).forEach((key) => {
-					if (!keys.has(key)) { delete config[key]; }
-				});
-				config.dataManipulation.sort = this.exportSortLabel();
-				config.data = { source: parent.source.toLowerCase(), arg: parent.arg.toLowerCase(), bAsync: parent.bAsync }; // Similar to this.exportDataLabels()
-				worldMap.properties['statsConfig'][1] = JSON.stringify(config);
-				overwriteProperties(worldMap.properties);
-			}
+			onBtnUp: saveSettings.bind(this)
 		});
 	};
 
@@ -569,7 +568,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				display: { onLbtnUp: function (x, y, mask) { onLbtnUpDisplay.call(this).btn_up(x, y); } }, // eslint-disable-line no-unused-vars
 				custom: { onLbtnUp: parent.exit, tooltip: 'Exit statistics mode...' },
 				config: {
-					backgroundColor: () => [worldMap.panelColor]
+					backgroundColor: () => [worldMap.panelColor],
+					change: function (config, changeArgs, callbackArgs) {
+						if (callbackArgs && callbackArgs.bSaveProperties) {	saveSettings.call(this); }
+					},
 				},
 			},
 			buttons: { settings: true, display: true, custom: true }

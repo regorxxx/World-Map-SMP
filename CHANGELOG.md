@@ -55,6 +55,8 @@
 
 ## [Unreleased][]
 ### Added
+- UI: UI elements are now resizable using Alt + Ctrl + Mouse wheel. Equivalent to using text and points size submenus depending on the mouse position (over points or header).
+- UI: added mouse wheel actions (data and resizing) to statistics mode.
 ### Changed
 ### Removed
 ### Fixed

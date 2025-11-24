@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/25
+//21/11/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -678,20 +678,20 @@ function settingsMenu() {
 			{ // NOSONAR
 				{	// Point size
 					const menuName = menu.newMenu('Points size', menuUI, properties.pointMode[1] === 1 && !worldMap.properties.panelMode[1] ? MF_GRAYED : MF_STRING);
-					const options = [7, 10, 12, 14, 16, 20, 30, 'sep', 'Custom...'];
+					const options = [7, 10, 12, 14, 16, 20, 30, 'sep', 'Custom...\t' + _b(properties.pointSize[1])];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({
 							menuName, entryText: item, func: () => {
 								if (i === optionsLength - 1) {
 									let input = '';
-									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Country points size', properties.customPointSize[1], true)); }
+									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Country points size', properties.pointSize[1], true)); }
 									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
-									properties.customPointSize[1] = input;
-								} else { properties.customPointSize[1] = item; }
-								if (properties.customPointSize[1] === worldMap.pointSize) { return; }
-								worldMap.pointSize = properties.customPointSize[1];
+									properties.pointSize[1] = input;
+								} else { properties.pointSize[1] = item; }
+								if (properties.pointSize[1] === worldMap.pointSize) { return; }
+								worldMap.pointSize = properties.pointSize[1];
 								worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
 								repaint(void (0), true);
 								overwriteProperties(properties);
@@ -702,27 +702,17 @@ function settingsMenu() {
 						const idx = o.indexOf(worldMap.pointSize);
 						return (idx !== -1 ? idx : len - 1);
 					}, options);
-					menu.newSeparator(menuName);
-					menu.newEntry({
-						menuName, entryText: 'Fill the circle? (point shape)', func: () => {
-							properties.bPointFill[1] = !properties.bPointFill[1];
-							worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
-							repaint(void (0), true);
-							overwriteProperties(properties);
-						}
-					});
-					menu.newCheckMenuLast(() => properties.bPointFill[1]);
 				}
 				{	// Text size
 					const menuName = menu.newMenu('Text size', menuUI);
-					const options = [7, 8, 9, 10, 11, 12, 'sep', 'Custom...'];
+					const options = [7, 8, 9, 10, 11, 12, 'sep', 'Custom...\t' + _b(properties.fontSize[1])];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
 						menu.newEntry({
 							menuName, entryText: item, func: () => {
 								if (i === optionsLength - 1) {
 									let input = '';
-									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Text size', properties.customPointSize[1], true)); }
+									try { input = Number(utils.InputBox(window.ID, 'Input size:', 'World Map: Text size', properties.pointSize[1], true)); }
 									catch (e) { return; } // eslint-disable-line no-unused-vars
 									if (Number.isNaN(input)) { return; }
 									properties.fontSize[1] = input;
@@ -795,6 +785,16 @@ function settingsMenu() {
 					});
 				});
 				menu.newCheckMenuLast(() => { return properties.pointMode[1]; }, options);
+				menu.newSeparator(menuName);
+				menu.newEntry({
+					menuName, entryText: 'Fill the point', func: () => {
+						properties.bPointFill[1] = !properties.bPointFill[1];
+						worldMap.pointLineSize = properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+						repaint(void (0), true);
+						overwriteProperties(properties);
+					}, flags: properties.pointMode[1] === 0 || properties.pointMode[1] === 2 ? MF_STRING : MF_GRAYED
+				});
+				menu.newCheckMenuLast(() => properties.bPointFill[1]);
 			}
 			menu.newSeparator(menuUI);
 			menu.newEntry({
