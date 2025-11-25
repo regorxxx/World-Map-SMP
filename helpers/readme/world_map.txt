@@ -13,9 +13,9 @@ doesn't matter. Full names are converted to ISO values before
 coordinates lookup.
 
 Tag may be fetched using any of these 3 method (on this order):
-- Tags from tracks.
-- Tags from JSON data file (if available).
-- Tags from WilB's Biography Script (if enabled). (*) (**) (***)
+• Tags from tracks.
+• Tags from JSON data file (if available).
+• Tags from WilB's Biography Script (if enabled). (*) (**) (***)
 
 When tags are not available on the tracks, they can be written
 directly on the files or on the JSON data file (*), using the info
@@ -33,17 +33,17 @@ as an starting point (look at 'presets' folder).
 installed manually or using the appropriate menu, which
 automatically adds the required code to the original script.
 
-- 1.2.0-Beta.1 or 1.2.0-Beta.2: 'Notify tags' must be enabled on
+• 1.2.0-Beta.1 or 1.2.0-Beta.2: 'Notify tags' must be enabled on
 Bio's config panel too. When doing an automatic installation, it
 will be automatically enabled too.
 
 (***) Manual installation requires adding this line at THE END of
 WilB's Biography Script (or the panel where it's loaded) and
 copying the mod file to the same path where bio script resides:
-- 1.1.X: (add line to the main -and only- file)
+• 1.1.X: (add line to the main -and only- file)
 	include('biography_mod_1_1_X_xxx.js');
 
-- 1.2.0-Beta.1 & 2: (add line to '.\scripts\callbacks.js')
+• 1.2.0-Beta.1 & 2: (add line to '.\scripts\callbacks.js')
 (look at '.\profile\foo_spider_monkey_panel\packages\{BA9557CE-
 7B4B-4E0E-9373-99F511E81252}')
 	include('biography_mod_1_2_0_beta_xxx.js');
@@ -72,13 +72,13 @@ from that country, therefore being a way to see the current
 statistics for every country. Note this is not equivalent to
 selecting the entire library and using the 'follow selection' mode
 for two reasons:
-	- There is an imposed limit on point painting when selection
+	• There is an imposed limit on point painting when selection
 	size reaches a value (currently 5000). You may change that on
 	the properties panel though. This is done to reduce calculation
 	time on big selections (note it takes some time to retrieve so
 	many tags and adjusting them on the map).
 
-	- Library mode is not calculated on real time, but using a
+	• Library mode is not calculated on real time, but using a
 	cache. That means it's not really retrieving the tags from all
 	tracks but just using their last known value (much faster).
 	This cache may be updated on demand though ('Database\Update
@@ -113,5 +113,7 @@ about the changes).
 
 Other UI usage:
 ---------------
+Use Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.
+
 Press Shift + Win + R. Click to open SMP/JSplitter panel menu
 (which works globally on any script and panel, at any position).
