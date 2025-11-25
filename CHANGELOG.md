@@ -60,6 +60,7 @@
 ### Changed
 ### Removed
 ### Fixed
+- Statistics: minor fixes.
 
 ## [4.2.1] - 2025-11-19
 ### Added
