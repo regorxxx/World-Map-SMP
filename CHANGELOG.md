@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.3.0](#430---2025-11-36)
 - [4.2.1](#421---2025-11-19)
 - [4.2.0](#420---2025-10-28)
 - [4.1.0](#410---2025-09-29)
@@ -54,6 +55,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [4.3.0] - 2025-11-25
 ### Added
 - UI: UI elements are now resizable using Alt + Ctrl + Mouse wheel. Equivalent to using text and points size submenus depending on the mouse position (over points or header).
 - UI: added mouse wheel actions (data and resizing) to statistics mode.
@@ -674,7 +681,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.1...HEAD
+[Unreleased]: https://github.com/regorxxx/World-Map-SMP/compare/v4.3.0...HEAD
+[4.3.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.1...v4.3.0
 [4.2.1]: https://github.com/regorxxx/World-Map-SMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/regorxxx/World-Map-SMP/compare/v4.0.0...v4.1.0
