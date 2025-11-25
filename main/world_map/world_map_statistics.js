@@ -1,9 +1,9 @@
 ﻿'use strict';
-//21/11/25
+//25/11/25
 
 /* exported _mapStatistics */
 
-/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable, _ps:readable, VK_CONTROL:readable, VK_ALT:readable */
+/* global worldMap:readable, overwriteProperties:readable, MF_GRAYED:readable, _t:readable, _q:readable, getCountryISO:readable, _p:readable, queryCombinations:readable, music_graph_descriptors_countries:readable, globTags:readable, checkQuery:readable, globQuery:readable, round:readable, _bt:readable, libraryPoints:readable, repaint:readable, VK_CONTROL:readable, VK_ALT:readable */
 include('..\\statistics\\statistics_xxx.js');
 /* global _scale:readable, opaqueColor:readable, blendColors:readable, invert:readable, _chart:readable */
 include('..\\statistics\\statistics_xxx_menu.js');
@@ -81,8 +81,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		addEventListener('on_mouse_wheel', (step) => {
 			if (!window.ID || !this.bEnabled) { return; }
 			if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
-				charts.some((chart) => chart.mouseWheelResize(step, void(0), { bSaveProperties: true }));
-			} else { charts.some((chart) => chart.mouseWheel(step)); }
+				charts.some((chart) => chart.wheelResize(step, void(0), { bSaveProperties: true }));
+			} else { charts.some((chart) => chart.wheel(step)); }
 		});
 	};
 
@@ -200,7 +200,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 							y: { key: option.args.axis },
 							x: { key: /\bregion\b/i.test(parent.arg) ? 'Region' : 'Country' }
 						},
-						title: window.Name + ' - ' + option.entryText
+						title: window.PanelName + ' - ' + option.entryText
 					}
 				);
 			}, (option) => { // eslint-disable-line no-unused-vars
@@ -319,7 +319,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 					'Average ' + this.axis.y.key + ' (any ' + this.axis.x.key + '): ' + Math.round(avg) + ' ' + _p(round(avg / total * 100, 2) + '%') +
 					'\n' +
 					'Global total ' + this.axis.y.key + ': ' + total
-					, window.Name + _ps(window.ScriptInfo.Name) + ': Point statistics'
+					, window.PanelName + ': Point statistics'
 				);
 			}
 		});
@@ -603,7 +603,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				const y = window.Height / rows * i;
 				const defaultConfig = this.defaultConfig();
 				const axis = (newConfig[i][j].axis || defaultConfig.axis);
-				const title = window.Name + ' - ' + axis.y.key + ' per ' + axis.x.key;
+				const title = window.PanelName + ' - ' + axis.y.key + ' per ' + axis.x.key;
 				return new _chart({ ...defaultConfig, x, y, w, h }).changeConfig({ ...newConfig[i][j], bPaint: false, title });
 			});
 		});
