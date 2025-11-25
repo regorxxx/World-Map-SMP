@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/09/25
+//25/11/25
 
 /*
 	Biography Mod v 1.1.X
@@ -51,7 +51,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 	const old_t_draw = t.draw;
 	t.draw = function() {
 		tag.notifyCountry(s.handle(ppt.focus)); // tags
-		window.NotifyOthers(window.Name + ' notifySelectionProperty', {property: 'focus', val: ppt.focus}); // selection property
+		window.NotifyOthers('Biography notifySelectionProperty', {property: 'focus', val: ppt.focus}); // selection property
 		return old_t_draw.apply(old_t_draw, arguments);
 	};
 	/* eslint-enable no-undef */
@@ -60,7 +60,7 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 // Retrieve data from other panels
 function onNotifyData(name, info) {
 	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
-	if (name === 'World Map' + ' notifySelectionProperty') {
+	if (name === 'World-Map-SMP notifySelectionProperty') {
 		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track(); // eslint-disable-line no-undef
 	}
 }
