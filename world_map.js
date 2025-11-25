@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/11/25
+//25/11/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -14,7 +14,7 @@ include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
-/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, _bt:readable, _ps:readable */
+/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, _bt:readable */
 include('helpers\\helpers_xxx_prototypes_smp.js');
 /* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
@@ -178,7 +178,7 @@ worldMap.save = function (path = this.jsonPath) {
 worldMap.loadData = function (path = this.jsonPath) {
 	if (_isFile(path)) {
 		this.jsonData = [];
-		let data = _jsonParseFileCheck(path, 'Tags json', window.Name + _ps(window.ScriptInfo.Name), utf8);
+		let data = _jsonParseFileCheck(path, 'Tags json', window.FullPanelName, utf8);
 		if (!data) { return; }
 		if (this.jsonId !== 'artist') {
 			const dic = new Map();
@@ -230,7 +230,7 @@ worldMap.applyUiSettings = function (settings, bForce) {
 	window.Repaint();
 	const answer = bForce
 		? popup.yes
-		: WshShell.Popup('Apply current settings to highlighted panel?\nCheck UI.', 0, window.Name + _ps(window.ScriptInfo.Name), popup.question + popup.yes_no);
+		: WshShell.Popup('Apply current settings to highlighted panel?\nCheck UI.', 0, window.FullPanelName, popup.question + popup.yes_no);
 	if (answer === popup.yes) {
 		const newBg = JSON.parse(String(settings.background[1]));
 		['x', 'y', 'w', 'h', 'callbacks'].forEach((key) => delete newBg[key]);
@@ -365,7 +365,7 @@ overwriteProperties(worldMap.properties); // Updates panel
 // Library Mode
 if (!_isFile(worldMap.properties.fileNameLibrary[1])) { saveLibraryTags(worldMap.properties.fileNameLibrary[1], worldMap.jsonId, worldMap); }
 const libraryPoints = _isFile(worldMap.properties.fileNameLibrary[1])
-	? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.Name + _ps(window.ScriptInfo.Name), utf8)
+	? _jsonParseFileCheck(worldMap.properties.fileNameLibrary[1], 'Library json', window.FullPanelName, utf8)
 	: null;
 
 { // Default database
@@ -1121,9 +1121,9 @@ addEventListener('on_notify_data', (name, info) => {
 					}
 					if (bDone) {
 						if (worldMap.properties.bShowSelModePopup[1]) {
-							fb.ShowPopupMessage('Selection mode at Biography panel has been changed (-> \'' + worldMap.properties['selection'][1] + '\'). This panel has been updated to use the new setting.\n\nThis is only an informative popup, you can disable it at the contextual menu (\'Selection mode\' submenu).', window.Name + _ps(window.ScriptInfo.Name));
+							fb.ShowPopupMessage('Selection mode at Biography panel has been changed (-> \'' + worldMap.properties['selection'][1] + '\'). This panel has been updated to use the new setting.\n\nThis is only an informative popup, you can disable it at the contextual menu (\'Selection mode\' submenu).', window.FullPanelName);
 						} else {
-							console.log(window.Name + _ps(window.ScriptInfo.Name) + ' Selection mode changed by Biography panel -> ' + worldMap.properties['selection'][1]);
+							console.log(window.FullPanelName + ' Selection mode changed by Biography panel -> ' + worldMap.properties['selection'][1]);
 						}
 						overwriteProperties(worldMap.properties); // Updates panel
 						repaint();
@@ -1138,7 +1138,7 @@ addEventListener('on_notify_data', (name, info) => {
 				if ((info.val && worldMap.properties.selection[1] === selMode[1]) || (!info.val && worldMap.properties.selection[1] === selMode[0])) {
 					worldMap.properties.selection[1] = selMode[(info.val ? 0 : 1)]; // Invert value
 					if (worldMap.properties.bShowSelModePopup[1]) {
-						fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.Name + _ps(window.ScriptInfo.Name));
+						fb.ShowPopupMessage('Selection mode at Biography panel has been changed. This is only an informative popup, this panel has been updated properly to follow the change:\n' + '"' + worldMap.properties.selection[1] + '"', window.FullPanelName);
 					}
 					overwriteProperties(worldMap.properties); // Updates panel
 					repaint();
