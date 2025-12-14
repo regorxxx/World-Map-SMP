@@ -58,9 +58,9 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- UI: improvements on dynamic colors handling in some extreme cases with main and secondary colors being almost equal.
 ### Removed
 ### Fixed
-
 
 ## [4.3.1] - 2025-12-12
 ### Added
