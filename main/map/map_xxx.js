@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/25
+//14/12/25
 
 /* exported ImageMap */
 
@@ -23,7 +23,7 @@ include('..\\..\\helpers\\helpers_xxx_UI.js');
 
 // Map object
 function ImageMap({
-	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10,
+	imagePath = '', mapTag = '', properties = {}, font = 'Segoe UI', fontSize = 10, fontStyle = 0,
 	findCoordinatesFunc = null, selPointFunc = null, findPointFunc = null, selFindPointFunc = null, isNearPointFunc = null,
 	tooltipFunc = null, tooltipFindPointFunc = null, tooltipPanelFunc = null,
 	jsonPath = '', jsonId = '',
@@ -202,7 +202,7 @@ function ImageMap({
 		}
 		// Scale font
 		if (this.scale !== 1 && this.scale !== 0 && ww !== 0) {
-			this.gFont = _gdiFont(this.font, Math.ceil(this.fontSize * ww / 300));
+			this.gFont = _gdiFont(this.font, Math.ceil(this.fontSize * ww / 300), this.fontStyle);
 		} // When === 0, crashes
 		// Scale points
 		Object.keys(this.point).forEach((id) => {
@@ -587,9 +587,10 @@ function ImageMap({
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
 	this.foundPoints = []; // [{id: id, val: 1, jsonId: jsonId}]
+	this.fontStyle = (typeof this.properties.fontStyle !== 'undefined' ? this.properties.fontStyle[1] : fontStyle) || 0;
 	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : fontSize;
 	this.font = typeof this.properties.font !== 'undefined' ? this.properties.font[1] : font;
-	this.gFont = _gdiFont(this.font, _scale(this.fontSize));
+	this.gFont = _gdiFont(this.font, _scale(this.fontSize), this.fontStyle);
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
 	this.backgroundColor = 0xFFF0F8FF;

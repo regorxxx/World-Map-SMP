@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/12/25
+//14/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -82,6 +82,7 @@ const worldMap_properties = {
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
 	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
+	flagPosition: ['Flag position', 'center', {func: (s) => ['left', 'right', 'center', 'both'].includes(s)}, 'center'],
 	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
 	iRepaintDelay: ['Panel repaint delay (ms)', 1000, { func: isInt }, 1000],
@@ -150,6 +151,7 @@ globProfiler.Print('init');
 const worldMap = new ImageMap({
 	imagePath: worldMapImages.find((img) => img.bDefault).path,
 	properties: getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes, bSplitIds and bSplitTags
+	fontStyle: 2, // Italic font
 	jsonId: 'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc: findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc: findCountry, // Function at helpers\world_map_tables.js
@@ -765,13 +767,15 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
+			const infoX = worldMap.posX;
+			const infoW = worldMap.imageMap.Width * worldMap.scale;
 			const posX = worldMap.properties.bFullHeader[1]
 				? 0
-				: worldMap.posX;
+				: infoX;
 			const posY = worldMap.posY;
 			const w = worldMap.properties.bFullHeader[1]
 				? window.Width
-				: worldMap.imageMap.Width * worldMap.scale;
+				: infoW;
 			const h = worldMap.imageMap.Height * worldMap.scale;
 			let countryName = '- none -';
 			if (worldMap.properties.bShowLocale[1]) {
@@ -813,20 +817,51 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90, headerColor, RGBA(0, 0, 0, 0));
 			}
 			// Flag
-			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length === 1) {
-				const id = worldMap.lastPoint[0].id;
-				let flag = loadFlagImage(id);
-				const flagScale = flag.Height / textH;
-				flag = flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
-				gr.DrawImage(flag, worldMap.properties.bShowLocale[1] ? posX + 10 : posX + (w - flag.Width) / 2, posY, flag.Width, flag.Height, 0, 0, flag.Width, flag.Height);
-				// Text
-				if (worldMap.properties.bShowLocale[1]) {
-					if (textW + flag.Width < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
-					else { gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
+			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
+				const flagPos = worldMap.properties.flagPosition[1].toLowerCase() || 'center';
+				const loadFlag = (idx) => {
+					const id = worldMap.lastPoint[idx].id;
+					const flag = loadFlagImage(id);
+					const flagScale = flag.Height / textH;
+					return flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
+				};
+				const paintFlag = (img, align) => {
+					switch (align) {
+						case 'right':
+						case 'both':
+						case 'left':
+						default: {
+							if (align !== 'right') { gr.DrawImage(img, infoX + _scale(10), posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
+							if (align !== 'left') { gr.DrawImage(img, infoX + infoW - _scale(10) - img.Width, posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
+							break;
+						}
+						case 'center': {
+							gr.DrawImage(img, worldMap.properties.bShowLocale[1] ? infoX + (infoW - textW) / 2 - img.Width - _scale(10) : infoX + (infoW - img.Width) / 2, posY, img.Width, img.Height, 0, 0, img.Width, img.Height);
+							break;
+						}
+					}
+				};
+				const paintText = (flagsWidth) => {
+					if (infoX + flagsWidth < infoW) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+					else { gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+				};
+				if (flagPos === 'both' && worldMap.lastPoint.length > 1) {
+					let flag;
+					for (let i = 0; i < 2; i++) {
+						flag = loadFlag(i);
+						paintFlag(flag, ['left', 'right'][i]);
+					}
+					// Text
+					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 2); }
+				} else {
+					const flag = loadFlag(0);
+					paintFlag(flag, flagPos);
+					// Text
+					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width); }
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
-				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
-				else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, posX, posY, w, h, DT_CENTER | DT_NOPREFIX); }
+				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+				else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
 			}
 		}
 	}

@@ -57,8 +57,10 @@
 
 ## [Unreleased][]
 ### Added
+- UI: new flag position options (left, right, center, both sides). On both sides mode, it allows to display up to 2 different countries.
 ### Changed
 - UI: improvements on dynamic colors handling in some extreme cases with main and secondary colors being almost equal.
+- UI: header text style is now italic.
 ### Removed
 ### Fixed
 

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/25
+//14/12/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -769,6 +769,25 @@ function settingsMenu() {
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
+				{
+					const subMenuName = menu.newMenu('Flag position', menuName, properties.bShowHeader[1] && properties.bShowFlag[1] ? MF_STRING: MF_GRAYED);
+					const options = [
+						{ val: 'left', entryText: 'Left'},
+						{ val: 'center', entryText: 'Center'},
+						{ val: 'right', entryText: 'Rigth'},
+						{ val: 'both', entryText: 'Both sides'}
+					];
+					options.forEach((opt) => {
+						menu.newEntry({
+							menuName: subMenuName, entryText: opt.entryText, func: () => {
+								properties.flagPosition[1] = opt.val;
+								repaint(fb.IsPlaying, true);
+								overwriteProperties(properties);
+							}, flags: properties.bShowHeader[1] && properties.bShowFlag[1] ? MF_STRING : MF_GRAYED
+						});
+					});
+					menu.newCheckMenuLast(() => options.findIndex((opt) => opt.val === properties.flagPosition[1]), options);
+				}
 			}
 			{	// Layers
 				const menuName = menu.newMenu('Country highlighting', menuUI);
