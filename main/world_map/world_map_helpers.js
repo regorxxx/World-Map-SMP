@@ -1,9 +1,9 @@
 ﻿'use strict';
-//25/11/25
+//15/12/25
 
-/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags */
+/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize */
 
-/* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable */
+/* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _gr:readable, overwriteProperties:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global MF_GRAYED:readable, WshShell:readable, popup:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -282,5 +282,40 @@ function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.pro
 	const libraryTags = getLibraryTags(jsonId, dataObj);
 	if (libraryTags && libraryTags.length) {
 		_save(dataPath, JSON.stringify(libraryTags, null, '\t').replace(/\n/g, '\r\n'));
+	}
+}
+
+function wheelResize(s) {
+	if (worldMap.trace(worldMap.mX, worldMap.mY)) {
+		const traceHeader = (x, y) => {
+			const posX = worldMap.properties.bFullHeader[1]
+				? 0
+				: worldMap.posX;
+			const posY = worldMap.posY;
+			const w = worldMap.properties.bFullHeader[1]
+				? window.Width
+				: worldMap.imageMap.Width * worldMap.scale;
+			const textH = _gr.CalcTextHeight('test', worldMap.gFont);
+			const offset = worldMap.properties.bFullHeader[1] ? 0.1 : 0;
+			const hx = posX - w * (offset / 2);
+			const hw = w * (1 + offset);
+			const hh = textH * (3 / 4 + (worldMap.properties.bFullHeader[1] ? 1 / 2 : 0));
+			return x >= hx && x <= hx + hw && y >= posY && y <= posY + hh;
+		};
+		let key;
+		switch (true) {
+			case traceHeader(worldMap.mX, worldMap.mY): key = 'fontSize'; break;
+			case worldMap.idSelected.length !== 0: key = 'pointSize'; break;
+		}
+		if (!key) { return; }
+		else {
+			worldMap[key] += Math.sign(s);
+			worldMap[key] = Math.max(5, worldMap[key]);
+			worldMap.properties[key][1] = worldMap[key];
+			worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
+			worldMap.calcScale(window.Width, window.Height);
+		}
+		if (key === 'fontSize') { window.Repaint(); } else { repaint(void (0), true, true); }
+		overwriteProperties(worldMap.properties);
 	}
 }

@@ -63,6 +63,8 @@
 - UI: header text style is now italic.
 ### Removed
 ### Fixed
+- UI: fixed SMP artifacts on header gradients at some sizes. 
+- UI: fixed repainting artifacts while using the mouse wheel to resize the header.
 
 ## [4.3.1] - 2025-12-12
 ### Added

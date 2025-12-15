@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/12/25
+//15/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -22,7 +22,7 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable, _gr:readable */
+/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
@@ -30,7 +30,7 @@ include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable */
 include('main\\world_map\\world_map_flags.js');
 /* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
@@ -391,8 +391,8 @@ const debouncedRepaint = {
 function repaint(bPlayback = false, bImmediate = false, bForce = false) {
 	if (!worldMap.properties.bEnabled[1]) { return false; }
 	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
-	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return false; }
-	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying) { return false; }
+	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying && !bForce) { return false; }
+	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying && !bForce) { return false; }
 	imgAsync.fullImg = null;
 	imgAsync.layers.imgs.length = 0;
 	imgAsync.layers.id.length = 0;
@@ -803,18 +803,18 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + 1 / 2));
 				let imgGr = img.GetGraphics();
 				imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-				imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90, headerColor, RGBA(0, 0, 0, 0));
+				imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
 				img.ReleaseGraphics(imgGr);
 				const mask = gdi.CreateImage(img.Width, img.Height);
 				imgGr = mask.GetGraphics();
-				imgGr.FillGradRect(-1, 0, w * (offset / 2), img.Height, 180, RGB(0, 0, 0), RGB(255, 255, 255));
-				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(-1, 0, w * (offset / 2), img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
 				mask.ReleaseGraphics(imgGr);
 				img.ApplyMask(mask);
 				gr.DrawImage(img, posX - w * (offset / 2), posY, w + w * (offset / 2), posY + img.Height, 0, 0, img.Width, img.Height);
 			} else {
 				gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90, headerColor, RGBA(0, 0, 0, 0));
+				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
 			}
 			// Flag
 			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
@@ -1187,40 +1187,7 @@ addEventListener('on_notify_data', (name, info) => {
 addEventListener('on_mouse_wheel', (s) => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (stats.bEnabled) { return; }
-	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
-		if (worldMap.trace(worldMap.mX, worldMap.mY)) {
-			const traceHeader = (x, y) => {
-				const posX = worldMap.properties.bFullHeader[1]
-					? 0
-					: worldMap.posX;
-				const posY = worldMap.posY;
-				const w = worldMap.properties.bFullHeader[1]
-					? window.Width
-					: worldMap.imageMap.Width * worldMap.scale;
-				const textH = _gr.CalcTextHeight('test', worldMap.gFont);
-				const offset = worldMap.properties.bFullHeader[1] ? 0.1 : 0;
-				const hx = posX - w * (offset / 2);
-				const hw = w * (1 + offset);
-				const hh = textH * (3 / 4 + (worldMap.properties.bFullHeader[1] ? 1 / 2 : 0));
-				return x >= hx && x <= hx + hw && y >= posY && y <= posY + hh;
-			};
-			let key;
-			switch (true) {
-				case traceHeader(worldMap.mX, worldMap.mY): key = 'fontSize'; break;
-				case worldMap.idSelected.length !== 0: key = 'pointSize'; break;
-			}
-			if (!key) { return; }
-			else {
-				worldMap[key] += Math.sign(s);
-				worldMap[key] = Math.max(5, worldMap[key]);
-				worldMap.properties[key][1] = worldMap[key];
-				worldMap.pointLineSize = worldMap.properties.bPointFill[1] ? worldMap.pointSize : worldMap.pointSize * 2 + 5;
-				worldMap.calcScale(window.Width, window.Height);
-			}
-			repaint(void (0), true);
-			overwriteProperties(worldMap.properties);
-		}
-	}
+	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) { wheelResize(s); }
 });
 
 stats.attachCallbacks();
