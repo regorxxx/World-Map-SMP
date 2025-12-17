@@ -26,11 +26,11 @@ include('main\\map\\map_xxx.js');
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
-/* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
+/* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable */
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, headerCountryName:readable, headerCoords */
 include('main\\world_map\\world_map_flags.js');
 /* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
@@ -83,6 +83,7 @@ const worldMap_properties = {
 	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
 	flagPosition: ['Flag position', 'center', {func: (s) => ['left', 'right', 'center', 'both'].includes(s)}, 'center'],
+	headerPosition: ['Header position', 'top', { func: (s) => ['top', 'top-map', 'over-map', 'bottom', 'bottom-map', 'below-map'].includes(s) }, 'top'],
 	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
 	iRepaintDelay: ['Panel repaint delay (ms)', 1000, { func: isInt }, 1000],
@@ -764,51 +765,41 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 			}
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
-			const infoX = worldMap.posX;
-			const infoW = worldMap.imageMap.Width * worldMap.scale;
-			const posX = worldMap.properties.bFullHeader[1]
-				? 0
-				: infoX;
-			const posY = worldMap.posY;
-			const w = worldMap.properties.bFullHeader[1]
-				? window.Width
-				: infoW;
-			const h = worldMap.imageMap.Height * worldMap.scale;
-			let countryName = '- none -';
-			if (worldMap.properties.bShowLocale[1]) {
-				countryName = worldMap.lastPoint.map((point) => {
-					let id = point.id;
-					if (id) {
-						const idLen = id.length;
-						if ((idLen === 3 && getCountryISO(id) === id) || (idLen === 2 && getCountryISO(id, true) === id)) { // Tag has ISO codes instead of country names
-							id = formatCountry(getCountryName(id));
-						}
-						return nameShortRev.has(id.toLowerCase())
-							? formatCountry(nameShortRev.get(id.toLowerCase()))
-							: id; // Prefer replacement since its usually shorter...
-					}
-				}).joinUpToChars(', ').cut(30) || countryName;
-			}
-			const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
-			const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
+			const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
+			const { infoX, infoW, posX, posY, w, h, textW, textH} = headerCoords(gr, countryName);
 			// Header
 			const headerColor = worldMap.properties.headerColor[1] !== -1
 				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
 				: RGBA(...toRGB(worldMap.panelColor), 150);
 			if (!worldMap.properties.bFullHeader[1]) {
 				const offset = 0.1;
-				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + 1 / 2));
+				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
 				let imgGr = img.GetGraphics();
-				imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-				imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				if (posY !== 0) {
+					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
+					if (posY !== window.Height - textH) {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
+						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+					}
+					else {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+					}
+				} else {
+					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				}
 				img.ReleaseGraphics(imgGr);
 				const mask = gdi.CreateImage(img.Width, img.Height);
 				imgGr = mask.GetGraphics();
-				imgGr.FillGradRect(-1, 0, w * (offset / 2), img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
 				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
 				mask.ReleaseGraphics(imgGr);
 				img.ApplyMask(mask);
-				gr.DrawImage(img, posX - w * (offset / 2), posY, w + w * (offset / 2), posY + img.Height, 0, 0, img.Width, img.Height);
+				if (posY !== 0) {
+					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2/5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				} else {
+					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				}
 			} else {
 				gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
 				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));

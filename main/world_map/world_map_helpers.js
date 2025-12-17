@@ -1,9 +1,9 @@
 ﻿'use strict';
-//15/12/25
+//17/12/25
 
-/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize */
+/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords */
 
-/* global worldMap:readable, getCountryISO:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _gr:readable, overwriteProperties:readable */
+/* global worldMap:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _gr:readable, overwriteProperties:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global MF_GRAYED:readable, WshShell:readable, popup:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -318,4 +318,44 @@ function wheelResize(s) {
 		if (key === 'fontSize') { window.Repaint(); } else { repaint(void (0), true, true); }
 		overwriteProperties(worldMap.properties);
 	}
+}
+
+function headerCountryName() {
+	return worldMap.lastPoint.map((point) => {
+		let id = point.id;
+		if (id) {
+			const idLen = id.length;
+			if ((idLen === 3 && getCountryISO(id) === id) || (idLen === 2 && getCountryISO(id, true) === id)) { // Tag has ISO codes instead of country names
+				id = formatCountry(getCountryName(id));
+			}
+			return nameShortRev.has(id.toLowerCase())
+				? formatCountry(nameShortRev.get(id.toLowerCase()))
+				: id; // Prefer replacement since its usually shorter...
+		}
+	}).joinUpToChars(', ').cut(30) || '- none -';
+}
+
+function headerCoords(gr, countryName) {
+	const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
+	const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
+	const infoX = worldMap.posX;
+	const infoW = worldMap.imageMap.Width * worldMap.scale;
+	const posX = worldMap.properties.bFullHeader[1]
+		? 0
+		: infoX;
+	let posY;
+	switch (worldMap.properties.headerPosition[1]) {
+		case 'bottom': posY = window.Height - textH; break;
+		case 'bottom-map': posY = Math.min(worldMap.posY + worldMap.imageMap.Height * worldMap.scale, window.Height) - textH; break;
+		case 'below-map': posY = Math.min(worldMap.posY + worldMap.imageMap.Height * worldMap.scale, window.Height - textH); break;
+		case 'top-map': posY = worldMap.posY; break;
+		case 'over-map': posY = Math.max(worldMap.posY - textH, 0); break;
+		case 'top':
+		default: posY = 0; break;
+	}
+	const w = worldMap.properties.bFullHeader[1]
+		? window.Width
+		: infoW;
+	const h = worldMap.imageMap.Height * worldMap.scale;
+	return { infoX, infoW, posX, posY, w, h, textW, textH};
 }

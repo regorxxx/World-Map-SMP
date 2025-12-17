@@ -57,7 +57,8 @@
 
 ## [Unreleased][]
 ### Added
-- UI: new flag position options (left, right, center, both sides). On both sides mode, it allows to display up to 2 different countries.
+- UI: new header position options: top (panel), top (map), over map, bottom (panel), bottom (map), below map.
+- UI: new flag position options: left, right, center, both sides. On both sides mode, it allows to display up to 2 different countries.
 - UI: added new setting to background to skip following selection if follow now playing is active.
 - UI: added new setting to background when using art to apply a special circular blur effect instead of an homogeneous blur.
 ### Changed
@@ -68,6 +69,8 @@
 ### Fixed
 - UI: fixed SMP artifacts on header gradients at some sizes. 
 - UI: fixed repainting artifacts while using the mouse wheel to resize the header.
+- UI: fixed header position not being centered.
+- UI: gradient mask at map borders setting not being saved between sessions.
 
 ## [4.3.1] - 2025-12-12
 ### Added

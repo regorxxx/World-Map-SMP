@@ -400,6 +400,7 @@ function settingsMenu() {
 						worldMap.bImageMapMask = properties.bImageMapMask[1];
 						worldMap.init();
 						window.Repaint();
+						overwriteProperties(properties);
 					}
 				});
 				menu.newCheckMenuLast(() => worldMap.bImageMapMask);
@@ -769,12 +770,34 @@ function settingsMenu() {
 					}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
 				});
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
+				menu.newSeparator(menuName);
+				{
+					const subMenuName = menu.newMenu('Header position', menuName, properties.bShowHeader[1] ? MF_STRING: MF_GRAYED);
+					const options = [
+						{ val: 'top', entryText: 'Top (panel)'},
+						{ val: 'top-map', entryText: 'Top (map)'},
+						{ val: 'over-map', entryText: 'Over map'},
+						{ val: 'bottom', entryText: 'Bottom (panel)'},
+						{ val: 'bottom-map', entryText: 'Bottom (map)'},
+						{ val: 'below-map', entryText: 'Below map'},
+					];
+					options.forEach((opt) => {
+						menu.newEntry({
+							menuName: subMenuName, entryText: opt.entryText, func: () => {
+								properties.headerPosition[1] = opt.val;
+								window.Repaint();
+								overwriteProperties(properties);
+							}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
+						});
+					});
+					menu.newCheckMenuLast(() => options.findIndex((opt) => opt.val === properties.headerPosition[1]), options);
+				}
 				{
 					const subMenuName = menu.newMenu('Flag position', menuName, properties.bShowHeader[1] && properties.bShowFlag[1] ? MF_STRING: MF_GRAYED);
 					const options = [
 						{ val: 'left', entryText: 'Left'},
 						{ val: 'center', entryText: 'Center'},
-						{ val: 'right', entryText: 'Rigth'},
+						{ val: 'right', entryText: 'Right'},
 						{ val: 'both', entryText: 'Both sides'}
 					];
 					options.forEach((opt) => {
