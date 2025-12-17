@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/12/25
+//17/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -14,7 +14,7 @@ include('helpers\\helpers_xxx.js');
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
-/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, deepAssign:readable, _bt:readable */
+/* global isString:readable, isStringWeak:readable, isInt:readable, isBoolean:readable, isJSON:readable, _bt:readable */
 include('helpers\\helpers_xxx_prototypes_smp.js');
 /* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
@@ -104,14 +104,11 @@ const worldMap_properties = {
 	customGradientColor: ['Custom country layer gradient color', '', { func: isStringWeak }, ''],
 	memMode: ['Memory mode. High (0), normal (1), low (2)', 1, { func: isInt, range: [[0, 2]] }, 1],
 	layerFillMode: ['Country layer fill mode', '', { func: isStringWeak }, ''],
-	background: ['Background options', JSON.stringify(deepAssign()(
-		(new _background).defaults(),
-		{ colorMode: 'gradient', colorModeOptions: { color: [RGB(270, 270, 270), RGB(300, 300, 300)] }, coverMode: 'front' }
-	))],
+	background: ['Background options', JSON.stringify(_background.defaults())],
 	headerColor: ['Custom header color', -1, { func: isInt }, -1],
 	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true],
 	bDynamicColors: ['Adjust colors to artwork', true, { func: isBoolean }],
-	bDynamicColorsBg: ['Adjust colors to artwork (bg)', true, { func: isBoolean }],
+	bDynamicColorsBg: ['Adjust colors to artwork (bg)', false, { func: isBoolean }],
 	bOnNotifyColors: ['Adjust colors on panel notify', true, { func: isBoolean }],
 	bNotifyColors: ['Notify colors to other panels', false, { func: isBoolean }]
 };
@@ -119,7 +116,7 @@ modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching
 worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
 worldMap_properties['fileNameLibrary'].push({ portable: true }, worldMap_properties['fileNameLibrary'][1]);
 worldMap_properties['statsConfig'].push({ func: isJSON }, worldMap_properties['statsConfig'][1]);
-worldMap_properties['background'].push({ func: isJSON }, worldMap_properties['background'][1]);
+worldMap_properties['background'].push({ func: isJSON, forceDefaults: true }, worldMap_properties['background'][1]);
 setProperties(worldMap_properties, '', 0);
 
 const worldMapImages = [

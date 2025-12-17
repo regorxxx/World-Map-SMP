@@ -58,7 +58,10 @@
 ## [Unreleased][]
 ### Added
 - UI: new flag position options (left, right, center, both sides). On both sides mode, it allows to display up to 2 different countries.
+- UI: added new setting to background to skip following selection if follow now playing is active.
+- UI: added new setting to background when using art to apply a special circular blur effect instead of an homogeneous blur.
 ### Changed
+- UI: changed default background settings for a more cohesive experience along [Library-Tree-SMP](https://github.com/regorxxx/Library-Tree-SMP/), Biography and dark mode.
 - UI: improvements on dynamic colors handling in some extreme cases with main and secondary colors being almost equal.
 - UI: header text style is now italic.
 ### Removed
