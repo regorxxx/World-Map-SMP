@@ -766,7 +766,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
 			const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
-			const { infoX, infoW, posX, posY, w, h, textW, textH} = headerCoords(gr, countryName);
+			const { infoX, infoW, posX, posY, w, h, textW, textH} = headerCoords(countryName);
 			// Header
 			const headerColor = worldMap.properties.headerColor[1] !== -1
 				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)

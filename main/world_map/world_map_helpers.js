@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/12/25
+//18/12/25
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords */
 
@@ -286,20 +286,13 @@ function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.pro
 }
 
 function wheelResize(s) {
-	if (worldMap.trace(worldMap.mX, worldMap.mY)) {
+	if (worldMap.mX !== -1 && worldMap.mY !== -1) {
 		const traceHeader = (x, y) => {
-			const posX = worldMap.properties.bFullHeader[1]
-				? 0
-				: worldMap.posX;
-			const posY = worldMap.posY;
-			const w = worldMap.properties.bFullHeader[1]
-				? window.Width
-				: worldMap.imageMap.Width * worldMap.scale;
-			const textH = _gr.CalcTextHeight('test', worldMap.gFont);
+			const {posX, posY, w, textH} = headerCoords(headerCountryName());
 			const offset = worldMap.properties.bFullHeader[1] ? 0.1 : 0;
 			const hx = posX - w * (offset / 2);
 			const hw = w * (1 + offset);
-			const hh = textH * (3 / 4 + (worldMap.properties.bFullHeader[1] ? 1 / 2 : 0));
+			const hh = textH * (3 / 4 + (worldMap.properties.bFullHeader[1] ? 1 / 2 : (posY !== 0 ? 1 : 1 / 2)));
 			return x >= hx && x <= hx + hw && y >= posY && y <= posY + hh;
 		};
 		let key;
@@ -335,9 +328,9 @@ function headerCountryName() {
 	}).joinUpToChars(', ').cut(30) || '- none -';
 }
 
-function headerCoords(gr, countryName) {
-	const textW = gr.CalcTextWidth(countryName, worldMap.gFont);
-	const textH = gr.CalcTextHeight(countryName, worldMap.gFont);
+function headerCoords(countryName) {
+	const textW = _gr.CalcTextWidth(countryName, worldMap.gFont);
+	const textH = _gr.CalcTextHeight(countryName, worldMap.gFont);
 	const infoX = worldMap.posX;
 	const infoW = worldMap.imageMap.Width * worldMap.scale;
 	const posX = worldMap.properties.bFullHeader[1]
