@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/12/25
+//19/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -10,7 +10,7 @@ if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { autho
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable, DT_WORD_ELLIPSIS:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
@@ -30,7 +30,7 @@ include('main\\world_map\\world_map_tables.js');
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, headerCountryName:readable, headerCoords */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, headerCountryName:readable, headerCoords:readable */
 include('main\\world_map\\world_map_flags.js');
 /* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
@@ -830,8 +830,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 					}
 				};
 				const paintText = (flagsWidth) => {
-					if (infoX + flagsWidth < infoW) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
-					else { gr.GdiDrawText(countryName.slice(0, Math.floor(20 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+					gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX + flagsWidth, posY, infoW - flagsWidth * 2, h, DT_CENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
 				};
 				if (flagPos === 'both' && worldMap.lastPoint.length > 1) {
 					let flag;
@@ -840,12 +839,12 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 						paintFlag(flag, ['left', 'right'][i]);
 					}
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 2); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 10/9); }
 				} else {
 					const flag = loadFlag(0);
 					paintFlag(flag, flagPos);
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 10/9); }
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
 				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
