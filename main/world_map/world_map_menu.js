@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/12/25
+//19/12/25
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -49,7 +49,7 @@ function settingsMenu() {
 			menu.newSeparator(menuName);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
-					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.ScriptInfo.Name  + ': Refresh rate', 1000);
+					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.ScriptInfo.Name + ': Refresh rate', 1000);
 					if (input === null) { return; }
 					if (!Number.isFinite(input)) { input = 0; }
 					properties.iRepaintDelay[1] = input;
@@ -617,7 +617,7 @@ function settingsMenu() {
 				{
 					const subMenu = menu.newMenu('Dynamic colors', menuName);
 					menu.newEntry({
-						menuName: subMenu, entryText: 'Dynamic (background cover mode)', func: () => {
+						menuName: subMenu, entryText: 'Dynamic (background art mode)', func: () => {
 							properties.bDynamicColors[1] = !properties.bDynamicColors[1];
 							overwriteProperties(properties);
 							if (properties.bDynamicColors[1]) {
@@ -772,14 +772,14 @@ function settingsMenu() {
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
 				menu.newSeparator(menuName);
 				{
-					const subMenuName = menu.newMenu('Header position', menuName, properties.bShowHeader[1] ? MF_STRING: MF_GRAYED);
+					const subMenuName = menu.newMenu('Header position', menuName, properties.bShowHeader[1] ? MF_STRING : MF_GRAYED);
 					const options = [
-						{ val: 'top', entryText: 'Top (panel)'},
-						{ val: 'top-map', entryText: 'Top (map)'},
-						{ val: 'over-map', entryText: 'Over map'},
-						{ val: 'bottom', entryText: 'Bottom (panel)'},
-						{ val: 'bottom-map', entryText: 'Bottom (map)'},
-						{ val: 'below-map', entryText: 'Below map'},
+						{ val: 'top', entryText: 'Top (panel)' },
+						{ val: 'top-map', entryText: 'Top (map)' },
+						{ val: 'over-map', entryText: 'Over map' },
+						{ val: 'bottom', entryText: 'Bottom (panel)' },
+						{ val: 'bottom-map', entryText: 'Bottom (map)' },
+						{ val: 'below-map', entryText: 'Below map' },
 					];
 					options.forEach((opt) => {
 						menu.newEntry({
@@ -793,12 +793,12 @@ function settingsMenu() {
 					menu.newCheckMenuLast(() => options.findIndex((opt) => opt.val === properties.headerPosition[1]), options);
 				}
 				{
-					const subMenuName = menu.newMenu('Flag position', menuName, properties.bShowHeader[1] && properties.bShowFlag[1] ? MF_STRING: MF_GRAYED);
+					const subMenuName = menu.newMenu('Flag position', menuName, properties.bShowHeader[1] && properties.bShowFlag[1] ? MF_STRING : MF_GRAYED);
 					const options = [
-						{ val: 'left', entryText: 'Left'},
-						{ val: 'center', entryText: 'Center'},
-						{ val: 'right', entryText: 'Right'},
-						{ val: 'both', entryText: 'Both sides'}
+						{ val: 'left', entryText: 'Left' },
+						{ val: 'center', entryText: 'Center' },
+						{ val: 'right', entryText: 'Right' },
+						{ val: 'both', entryText: 'Both sides' }
 					];
 					options.forEach((opt) => {
 						menu.newEntry({
@@ -992,7 +992,7 @@ function settingsMenu() {
 							});
 						});
 						if (notFoundList.Count) {
-							sendToPlaylist(notFoundList, window.ScriptInfo.Name  + ' missing tags');
+							sendToPlaylist(notFoundList, window.ScriptInfo.Name + ' missing tags');
 						} else {
 							fb.ShowPopupMessage('All artists on library have a locale tag associated.', window.ScriptInfo.Name + ': Database update');
 						}
@@ -1229,7 +1229,7 @@ function importSettingsMenu() {
 function syncBio(bReload = false) {
 	const properties = worldMap.properties;
 	// Biography 1.1.X
-	window.NotifyOthers(window.ScriptInfo.Name  + ' notifySelectionProperty', properties.selection[1] === selMode[0]); // synchronize selection property
+	window.NotifyOthers(window.ScriptInfo.Name + ' notifySelectionProperty', properties.selection[1] === selMode[0]); // synchronize selection property
 	// Biography 1.2.X
 	window.NotifyOthers('bio_focusPpt', properties.selection[1] === selMode[0]);  // synchronize selection property 1.2.0 Beta
 	window.NotifyOthers('bio_followSelectedTrack', properties.selection[1] === selMode[0]);  // synchronize selection property
@@ -1237,7 +1237,7 @@ function syncBio(bReload = false) {
 	// Biography 2.X.X
 	const configPath = fb.ProfilePath + '\\yttm\\biography.cfg';
 	if (_isFile(configPath)) { // activate notify tags
-		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.ScriptInfo.Name  + ': Biography integration');
+		const config = _jsonParseFileCheck(configPath, 'Configuration json', window.ScriptInfo.Name + ': Biography integration');
 		if (config && Object.hasOwn(config, 'notifyTags') && !config.notifyTags) {
 			config.notifyTags = true;
 			_save(configPath, JSON.stringify(config, null, '\t'));
