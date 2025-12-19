@@ -1008,7 +1008,7 @@ addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 			onInit: (menu) => {
 				if (worldMap.properties.memMode[1] >= 2) {
 					const menuEntry = menu.getEntries()
-						.find((entry) => entry.menuName.startsWith('Cover mode') && entry.subMenuFrom.startsWith('Background'));
+						.find((entry) => entry.menuName.startsWith('Art mode') && entry.subMenuFrom.startsWith('Background'));
 					if (menuEntry) { menuEntry.flags = MF_GRAYED; }
 				}
 			}
