@@ -839,12 +839,12 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 						paintFlag(flag, ['left', 'right'][i]);
 					}
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 10/9); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10/9); }
 				} else {
 					const flag = loadFlag(0);
 					paintFlag(flag, flagPos);
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(flag.Width * 10/9); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10/9); }
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
 				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
