@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [4.4.0](#440---2025-12-23)
 - [4.3.1](#431---2025-12-12)
 - [4.3.0](#430---2025-11-36)
 - [4.2.1](#421---2025-11-19)
@@ -56,6 +57,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [4.4.0] - 2025-12-23
 ### Added
 - UI: new header position options: top (panel), top (map), over map, bottom (panel), bottom (map), below map.
 - UI: new flag position options: left, right, center, both sides. On both sides mode, it allows to display up to 2 different countries.
@@ -701,7 +708,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: ../../compare/v4.3.1...HEAD
+[Unreleased]: ../../compare/v4.4.0...HEAD
+[4.4.0]: ../../compare/v4.3.1...v4.4.0
 [4.3.1]: ../../compare/v4.3.0...v4.3.1
 [4.3.0]: ../../compare/v4.2.1...v4.3.0
 [4.2.1]: ../../compare/v4.2.0...v4.2.1
