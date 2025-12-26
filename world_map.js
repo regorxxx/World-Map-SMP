@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//25/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -88,12 +88,8 @@ const worldMap_properties = {
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
 	iRepaintDelay: ['Panel repaint delay (ms)', 1000, { func: isInt }, 1000],
 	statsConfig: ['Stats mode configuration', JSON.stringify({
-		// graph: {/* type, borderWidth, point */},
-		// dataManipulation = {/* sort, filter, slice, distribution , probabilityPlot*/},
 		background: { color: null },
 		margin: { left: _scale(20), right: _scale(20), top: _scale(10), bottom: _scale(15) },
-		// grid = {x: {/* show, color, width */}, y: {/* ... */}},
-		// axis = {x: {/* show, color, width, ticks, labels, key, bSingleLabels */}, y: {/* ... */}}
 	})],
 	bSplitTags: ['Split multi-value country tag by \'|\'', false, { func: isBoolean }, false],
 	bSplitIds: ['Split multi-value artist tag by \', \'', true, { func: isBoolean }, true],
@@ -705,6 +701,8 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 };
 
 addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
+	if (!window.ID) { return; }
+	if (!window.Width || !window.Height) { return; }
 	if (globSettings.bDebugPaint) { extendGR(gr, { Repaint: true }); }
 	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {
@@ -858,6 +856,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 
 addEventListener('on_playback_new_track', (metadb) => {
 	if (background.coverMode.toLowerCase() !== 'none') { background.updateImageBg(); }
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!metadb) { return; }
 	repaint(true);
@@ -867,6 +866,7 @@ addEventListener('on_selection_changed', () => {
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
@@ -876,6 +876,7 @@ addEventListener('on_item_focus_change', () => {
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
@@ -885,6 +886,7 @@ addEventListener('on_playlist_switch', () => {
 	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
+	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	repaint();
 });
@@ -900,6 +902,7 @@ addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	if (reason !== 2) { // Invoked by user or Starting another track
 		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
 		if (worldMap.properties.panelMode[1] === 2) { return; }
+		if (!worldMap.properties.bEnabled[1]) { return false; }
 		repaint();
 	}
 });
@@ -912,6 +915,7 @@ addEventListener('on_playlists_changed', () => { // To show/hide loaded playlist
 
 addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return false; }
 	if (playlistIndex === plman.ActivePlaylist && newCount === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return; }

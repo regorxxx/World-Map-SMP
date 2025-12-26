@@ -59,6 +59,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Code cleanup and performance improvements if panel is disabled or during startup.
 ### Removed
 ### Fixed
 
