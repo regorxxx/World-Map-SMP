@@ -58,7 +58,10 @@
 
 ## [Unreleased][]
 ### Added
+- UI: added new setting to background for art crop: center (default), bottom, top.
+- UI: added new setting to background for art zoom, similar to the effect at Library-Tree-SMP (in that case is based on blur level).
 ### Changed
+- UI: reworked background submenu.
 - Code cleanup and performance improvements if panel is disabled or during startup.
 - Code cleanup and performance improvements for background code. In particular when art has been set to be invisible for exclusive art colors processing or set to none.
 ### Removed
