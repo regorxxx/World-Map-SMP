@@ -58,9 +58,11 @@
 
 ## [Unreleased][]
 ### Added
+- UI: added y-axis margin setting to background. It only applies when cropping is set to none. While using any other mode, it stretches the image instead. This setting can be directly changed using the mouse wheel + CTRL + ALT + SHIFT too. Note in all my scripts UI elements can be resized using the mouse wheel + CTRL + ALT. And background settings are always accessed also pressing SHIFT.
+- UI: added art mode cycling when using the mouse wheel + SHIFT. It will only cycle between art actually present for current track, omitting not found ones.
 - UI: added new setting to background for art crop: center (default), bottom, top.
 - UI: added new setting to background for art zoom, similar to the effect at Library-Tree-SMP (in that case is based on blur level).
-- UI: added new art mode 'Folder' to background which allows to display any image from a given folder path, like 'thumbs.js' SMP/JSplitter sample. Along this mode, added new cycle settings and file sorting (by name or date) to control how images are chosen.
+- UI: added new art mode 'Folder' to background which allows to display any image from a given folder path, like 'thumbs.js' SMP/JSplitter sample. Along this mode, added new cycle settings and file sorting (by name or date) to control how images are chosen. Images within folder can be cycled using the mouse wheel + SHIFT too. Note background settings are always accessed pressing SHIFT.
 ### Changed
 - UI: reworked background submenu.
 - UI: 'Folder' and 'Path' art modes on background now support TF expressions.

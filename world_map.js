@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/12/25
+//29/12/25
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -82,7 +82,7 @@ const worldMap_properties = {
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
 	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
-	flagPosition: ['Flag position', 'center', {func: (s) => ['left', 'right', 'center', 'both'].includes(s)}, 'center'],
+	flagPosition: ['Flag position', 'center', { func: (s) => ['left', 'right', 'center', 'both'].includes(s) }, 'center'],
 	headerPosition: ['Header position', 'top', { func: (s) => ['top', 'top-map', 'over-map', 'bottom', 'bottom-map', 'below-map'].includes(s) }, 'top'],
 	pointMode: ['Points (0), shapes (1) or both (2)', 2, { func: isInt, range: [[0, 2]] }, 2],
 	bShowSelModePopup: ['Show warning when selection mode changes', true, { func: isBoolean }, true],
@@ -291,7 +291,7 @@ const background = new _background({
 	callbacks: {
 		change: function (config, changeArgs, callbackArgs) {
 			if (callbackArgs && callbackArgs.bSaveProperties) {
-				['x', 'y', 'w', 'h', 'callbacks'].forEach((key) => delete config[key]);
+				['x', 'y', 'w', 'h'].forEach((key) => delete config[key]);
 				worldMap.properties.background[1] = JSON.stringify(config);
 				overwriteProperties(worldMap.properties);
 			}
@@ -764,7 +764,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		}
 		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
 			const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
-			const { infoX, infoW, posX, posY, w, h, textW, textH} = headerCoords(countryName);
+			const { infoX, infoW, posX, posY, w, h, textW, textH } = headerCoords(countryName);
 			// Header
 			const headerColor = worldMap.properties.headerColor[1] !== -1
 				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
@@ -794,7 +794,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 				mask.ReleaseGraphics(imgGr);
 				img.ApplyMask(mask);
 				if (posY !== 0) {
-					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2/5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
 				} else {
 					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
 				}
@@ -837,12 +837,12 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 						paintFlag(flag, ['left', 'right'][i]);
 					}
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10/9); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
 				} else {
 					const flag = loadFlag(0);
 					paintFlag(flag, flagPos);
 					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10/9); }
+					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
 				}
 			} else if (worldMap.properties.bShowLocale[1]) {
 				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
@@ -967,8 +967,9 @@ addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
 });
 
 addEventListener('on_mouse_move', (x, y, mask) => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
+	background.move(x, y, mask);
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.panelMode[1]) { // On track mode disable tooltip without selection
 		const sel = worldMap.getSelection();
 		if (!sel || !sel.Count) { return; }
@@ -992,8 +993,9 @@ addEventListener('on_key_up', (/** @type {number} */ vKey) => { // Repaint after
 });
 
 addEventListener('on_mouse_leave', () => {
-	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return; }
+	background.leave();
+	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.move(-1, -1);
 });
 
@@ -1175,10 +1177,13 @@ addEventListener('on_notify_data', (name, info) => {
 	}
 });
 
-addEventListener('on_mouse_wheel', (s) => {
+addEventListener('on_mouse_wheel', (step) => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (stats.bEnabled) { return; }
-	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) { wheelResize(s); }
+	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
+		if (utils.IsKeyPressed(VK_SHIFT)) { background.wheelResize(step,  void (0), { bSaveProperties: true }); }
+		else { wheelResize(step); }
+	} else if (utils.IsKeyPressed(VK_SHIFT)) { background.cycleArtAsync(step); }
 });
 
 stats.attachCallbacks();
