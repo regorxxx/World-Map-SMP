@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/12/25
+//01/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -223,7 +223,7 @@ worldMap.shareUiSettings = function (mode = 'popup') {
 
 worldMap.applyUiSettings = function (settings, bForce) {
 	window.highlight = true;
-	window.Repaint();
+	if (window.IsVisible) { window.Repaint(); }
 	const answer = bForce
 		? popup.yes
 		: WshShell.Popup('Apply current settings to highlighted panel?\nCheck UI.', 0, window.FullPanelName, popup.question + popup.yes_no);
@@ -258,7 +258,7 @@ worldMap.applyUiSettings = function (settings, bForce) {
 		repaint(void (0), true, true);
 	} else {
 		window.highlight = false;
-		window.Repaint();
+		if (window.IsVisible) { window.Repaint(); }
 	}
 };
 
@@ -395,6 +395,7 @@ function repaint(bPlayback = false, bImmediate = false, bForce = false) {
 	imgAsync.layers.bPaint = false;
 	imgAsync.layers.bStop = true;
 	imgAsync.layers.bCreated = false;
+	if (!window.IsVisible) { return false; }
 	const delay = bImmediate ? 0 : worldMap.properties.iRepaintDelay[1];
 	if (delay > 0) {
 		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
@@ -421,7 +422,7 @@ addEventListener('on_size', (width, height) => {
 
 addEventListener('on_colours_changed', () => {
 	worldMap.colorsChanged();
-	window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+	if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 });
 
 const imgAsync = {
@@ -567,7 +568,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 				if (grFullImg) {
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
-					window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 				}
 				if (bProfile) { profile.Print('Layers'); }
 			} else {
@@ -618,7 +619,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					if (bLowMemMode) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
-					window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 				}
 			}
 		}
@@ -695,7 +696,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 				}
 			}
 			if (bProfile) { profile.Print('Retrieve img layers'); }
-			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+			if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 		});
 	} else if (bProfile) { profile.Print('End'); }
 };
@@ -989,7 +990,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 
 addEventListener('on_key_up', (/** @type {number} */ vKey) => { // Repaint after pressing shift to reset
 	if (worldMap.properties.panelMode[1] === 2) { return; }
-	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1]) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
+	if (vKey === VK_SHIFT && !worldMap.properties.panelMode[1] && window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 });
 
 addEventListener('on_mouse_leave', () => {
@@ -1181,7 +1182,7 @@ addEventListener('on_mouse_wheel', (step) => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (stats.bEnabled) { return; }
 	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_ALT)) {
-		if (utils.IsKeyPressed(VK_SHIFT)) { background.wheelResize(step,  void (0), { bSaveProperties: true }); }
+		if (utils.IsKeyPressed(VK_SHIFT)) { background.wheelResize(step, void (0), { bSaveProperties: true }); }
 		else { wheelResize(step); }
 	} else if (utils.IsKeyPressed(VK_SHIFT)) { background.cycleArtAsync(step); }
 });
