@@ -1,9 +1,9 @@
 ﻿'use strict';
-//19/12/25
+//07/01/26
 
 /* exported settingsMenu, importSettingsMenu */
 
-/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, getPropertiesPairs:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
+/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -599,7 +599,7 @@ function settingsMenu() {
 									[worldMap.textColor, worldMap.defaultColor, bgColor] = preset.colors;
 									properties.customPointColorMode[1] = 1;
 									properties.customPointColor[1] = worldMap.defaultColor;
-									if (background.colorMode !== 'none') {
+									if (background.useColors) {
 										const gradient = [Chroma(bgColor).saturate(2).luminance(0.005).android(), bgColor];
 										bgColor = Chroma.scale(gradient).mode('lrgb').colors(background.colorModeOptions.color.length, 'android');
 										background.changeConfig({ config: { colorModeOptions: { color: bgColor } }, callbackArgs: { bSaveProperties: true } });
@@ -629,14 +629,11 @@ function settingsMenu() {
 									background.changeConfig({ config: { coverMode: 'front', coverModeOptions: { alpha: 0 } }, callbackArgs: { bSaveProperties: true } });
 								}
 								background.updateImageBg(true);
+								worldMap.colorsChanged();
+								repaint(void (0), true);
 							} else {
-								worldMap.properties = getPropertiesPairs(properties, '', 0);
-								worldMap.textColor = worldMap.properties.customLocaleColor[1];
-								worldMap.defaultColor = worldMap.properties.customPointColor[1];
-								background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+								background.callbacks.artColors(void(0), true);
 							}
-							worldMap.colorsChanged();
-							repaint(void (0), true);
 						}
 					});
 					menu.newCheckMenuLast(() => properties.bDynamicColors[1]);
@@ -666,6 +663,8 @@ function settingsMenu() {
 							if (properties.bOnNotifyColors[1]) {
 								window.NotifyOthers('Colors: ask color scheme', window.ScriptInfo.Name + ': set color scheme');
 								window.NotifyOthers('Colors: ask color', window.ScriptInfo.Name + ': set colors');
+							} else if (!properties.bDynamicColors[1]) {
+								background.callbacks.artColors(void(0), true);
 							}
 						}
 					});

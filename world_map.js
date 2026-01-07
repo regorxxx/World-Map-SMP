@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/01/26
+//07/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -302,7 +302,7 @@ const background = new _background({
 				const bChangeBg = worldMap.properties.bDynamicColorsBg[1];
 				const { main, sec, note, secAlt } = dynamicColors(
 					colArray,
-					bChangeBg ? RGB(122, 122, 122) : background.getColors()[0],
+					bChangeBg ? RGB(122, 122, 122) : background.getAvgPanelColor(),
 					true
 				);
 				if (worldMap.properties.bShowHeader[1]) {
@@ -313,7 +313,7 @@ const background = new _background({
 				}
 				worldMap.defaultColor = sec;
 				worldMap.properties.customShapeColor[1] = secAlt;
-				if (bChangeBg && background.colorMode !== 'none') {
+				if (bChangeBg && background.useColors) {
 					const gradient = [Chroma(note).saturate(2).luminance(0.005).android(), note];
 					const bgColor = Chroma.scale(gradient).mode('lrgb')
 						.colors(background.colorModeOptions.color.length, 'android')
@@ -736,7 +736,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
 		const bInvertMap = RegExp(/shapes/i).exec(worldMap.imageMapPath)
-			? Chroma.contrast(background.getColors()[0], RGB(0, 0, 0)) * worldMap.imageMapAlpha / 255 < 1.25
+			? Chroma.contrast(background.getAvgPanelColor(), RGB(0, 0, 0)) * worldMap.imageMapAlpha / 255 < 1.25
 			: false;
 		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length), bInvertMap });
 		if (sel.Count) {
@@ -856,7 +856,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 });
 
 addEventListener('on_playback_new_track', (metadb) => {
-	if (background.coverMode.toLowerCase() !== 'none') { background.updateImageBg(); }
+	if (background.useCover) { background.updateImageBg(); }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!metadb) { return; }
@@ -864,7 +864,7 @@ addEventListener('on_playback_new_track', (metadb) => {
 });
 
 addEventListener('on_selection_changed', () => {
-	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
@@ -874,7 +874,7 @@ addEventListener('on_selection_changed', () => {
 });
 
 addEventListener('on_item_focus_change', () => {
-	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
@@ -884,7 +884,7 @@ addEventListener('on_item_focus_change', () => {
 });
 
 addEventListener('on_playlist_switch', () => {
-	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
@@ -894,14 +894,14 @@ addEventListener('on_playlist_switch', () => {
 
 
 addEventListener('on_playlist_switch', () => {
-	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
 });
 
 addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	if (reason !== 2) { // Invoked by user or Starting another track
-		if (background.coverMode.toLowerCase() !== 'none' && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
+		if (background.useCover && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
 		if (worldMap.properties.panelMode[1] === 2) { return; }
 		if (!worldMap.properties.bEnabled[1]) { return false; }
 		repaint();
@@ -909,7 +909,7 @@ addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 });
 
 addEventListener('on_playlists_changed', () => { // To show/hide loaded playlist indicators...
-	if (background.coverMode.toLowerCase() !== 'none' && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
 		background.updateImageBg();
 	}
 });
@@ -1042,7 +1042,7 @@ addEventListener('on_notify_data', (name, info) => {
 				const colors = clone(info);
 				const getColor = (key) => Object.hasOwn(colors, key) ? colors.background : colors[['background', 'text', 'default', 'shape'].indexOf(key)];
 				const hasColor = (key) => typeof getColor(key) !== 'undefined';
-				if (background.colorMode !== 'none' && hasColor('background')) {
+				if (background.useColors && hasColor('background')) {
 					background.changeConfig({ config: { colorModeOptions: { color: getColor('background') } }, callbackArgs: { bSaveProperties: false } });
 				}
 				if (hasColor('text')) {

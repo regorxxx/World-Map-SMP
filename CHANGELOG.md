@@ -65,9 +65,11 @@
 - UI: added new background art mode 'Folder' which allows to display any image from a given folder path, like 'thumbs.js' SMP/JSplitter sample. Along this mode, added new cycle settings and file sorting (by name or date) to control how images are chosen. Images within folder can be cycled using the mouse wheel + SHIFT too. Note background settings are always accessed pressing SHIFT.
 - UI: added new background setting to prefer placement of dark colors at the outer edge of the panel in bigradient color mode.
 - UI: added new background setting for art reflection effects. Only available when crop setting is set to none.
+- UI: added new background setting for basic art manipulation.
 ### Changed
 - UI: reworked background submenu.
 - UI: 'Folder' and 'Path' art modes on background now support TF expressions.
+- UI: improvements on dynamic colors handling related to background color identification (mixing the art, color settings, etc.).
 - Code cleanup and performance improvements if panel is disabled or during startup.
 - Code cleanup and performance improvements for background code. In particular when art has been set to be invisible for exclusive art colors processing or set to none.
 ### Removed
