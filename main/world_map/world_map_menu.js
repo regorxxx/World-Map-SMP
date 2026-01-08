@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/01/26
+//08/01/26
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -618,25 +618,26 @@ function settingsMenu() {
 					const subMenu = menu.newMenu('Dynamic colors', menuName);
 					menu.newEntry({
 						menuName: subMenu, entryText: 'Dynamic (background art mode)', func: () => {
-							properties.bDynamicColors[1] = !properties.bDynamicColors[1];
+							properties.bDynamicColors[1] = !(properties.bDynamicColors[1] && background.useCoverColors);
 							if (properties.bDynamicColors[1] && properties.bOnNotifyColors[1]) { fb.ShowPopupMessage('Warning: Dynamic colors (background art mode) and Color-server listening are enabled at the same time.\n\nThis setting may probably produce glitches since 2 color sources are being used, while one tries to override the other.\n\nIt\'s recommended to only use one of these features, unless you know what you are doing.', window.ScriptInfo.Name + ': Dynamic colors'); }
 							overwriteProperties(properties);
 							if (properties.bDynamicColors[1]) {
 								// Ensure it's applied with compatible settings
-								background.coverModeOptions.bProcessColors = true;
-								background.changeConfig({ config: { coverModeOptions: { bProcessColors: true } }, callbackArgs: { bSaveProperties: true } });
-								if (background.coverMode === 'none') {
-									background.changeConfig({ config: { coverMode: 'front', coverModeOptions: { alpha: 0 } }, callbackArgs: { bSaveProperties: true } });
-								}
+								background.changeConfig({
+									bRepaint: false, callbackArgs: { bSaveProperties: true },
+									config: !background.useCover
+										? { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } }
+										: { coverModeOptions: { bProcessColors: true } },
+								});
 								background.updateImageBg(true);
 								worldMap.colorsChanged();
 								repaint(void (0), true);
 							} else {
 								background.callbacks.artColors(void (0), true);
 							}
-						}
+						},
+						checkFunc: () => properties.bDynamicColors[1] && background.useCoverColors,
 					});
-					menu.newCheckMenuLast(() => properties.bDynamicColors[1]);
 					menu.newEntry({
 						menuName: subMenu, entryText: 'Also apply to background color', func: () => {
 							properties.bDynamicColorsBg[1] = !properties.bDynamicColorsBg[1];
@@ -671,14 +672,22 @@ function settingsMenu() {
 					menu.newCheckMenuLast(() => properties.bOnNotifyColors[1]);
 					menu.newEntry({
 						menuName: subMenu, entryText: 'Act as color-server', func: () => {
-							properties.bNotifyColors[1] = !properties.bNotifyColors[1];
+							properties.bNotifyColors[1] = !(properties.bNotifyColors[1] && background.useCoverColors);
 							overwriteProperties(properties);
-							if (properties.bNotifyColors[1] && background.scheme) {
-								window.NotifyOthers('Colors: set color scheme', background.scheme);
+							if (properties.bNotifyColors[1]) {
+								if (background.scheme) { window.NotifyOthers('Colors: set color scheme', background.scheme); }
+								else if (!background.useCoverColors) {
+									background.changeConfig({
+										bRepaint: false, callbackArgs: { bSaveProperties: true },
+										config: !background.useCover
+											? { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } }
+											: { coverModeOptions: { bProcessColors: true } },
+									});
+								}
 							}
-						}
+						},
+						checkFunc: () => properties.bNotifyColors[1] && background.useCoverColors
 					});
-					menu.newCheckMenuLast(() => properties.bNotifyColors[1]);
 				}
 			}
 			{ // NOSONAR

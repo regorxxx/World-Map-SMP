@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/01/26
+//08/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -414,6 +414,29 @@ function repaint(bPlayback = false, bImmediate = false, bForce = false) {
 	return true;
 }
 globProfiler.Print('settings');
+
+{
+	const callback = () => {
+		if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
+			background.updateImageBg();
+		}
+	};
+	['on_item_focus_change', 'on_selection_changed', 'on_playlists_changed', 'on_playlist_items_added', 'on_playlist_items_removed', 'on_playlist_switch'].forEach((e) => addEventListener(e, callback));
+
+	addEventListener('on_playback_stop', (reason) => {
+		if (reason !== 2) { // Invoked by user or Starting another track
+			if (background.useCover && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
+		}
+	});
+
+	addEventListener('on_playback_new_track', () => {
+		if (background.useCover) { background.updateImageBg(); }
+	});
+
+	addEventListener('on_colours_changed', () => {
+		background.colorsChanged();
+	});
+}
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
@@ -856,7 +879,6 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 });
 
 addEventListener('on_playback_new_track', (metadb) => {
-	if (background.useCover) { background.updateImageBg(); }
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!metadb) { return; }
@@ -864,9 +886,6 @@ addEventListener('on_playback_new_track', (metadb) => {
 });
 
 addEventListener('on_selection_changed', () => {
-	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
-		background.updateImageBg();
-	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
@@ -874,9 +893,6 @@ addEventListener('on_selection_changed', () => {
 });
 
 addEventListener('on_item_focus_change', () => {
-	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
-		background.updateImageBg();
-	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
@@ -884,33 +900,16 @@ addEventListener('on_item_focus_change', () => {
 });
 
 addEventListener('on_playlist_switch', () => {
-	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
-		background.updateImageBg();
-	}
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	repaint();
 });
 
-
-addEventListener('on_playlist_switch', () => {
-	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
-		background.updateImageBg();
-	}
-});
-
 addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	if (reason !== 2) { // Invoked by user or Starting another track
-		if (background.useCover && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
 		if (worldMap.properties.panelMode[1] === 2) { return; }
 		if (!worldMap.properties.bEnabled[1]) { return false; }
 		repaint();
-	}
-});
-
-addEventListener('on_playlists_changed', () => { // To show/hide loaded playlist indicators...
-	if (background.useCover && (!background.coverModeOptions.bNowPlaying || !fb.IsPlaying)) {
-		background.updateImageBg();
 	}
 });
 
