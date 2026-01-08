@@ -89,7 +89,7 @@ function settingsMenu() {
 							properties.memMode[1] = 2;
 							properties.pointMode[1] = 0;
 							properties.iLimitSelection[1] = 2;
-							background.changeConfig({ config: { coverMode: 'none', transparency: 100 }, callbackArgs: { bSaveProperties: true } });
+							background.changeConfig({ config: { coverMode: 'none', coverModeOptions: { alpha: 255 } }, callbackArgs: { bSaveProperties: true } });
 							overwriteProperties(properties);
 							window.Reload();
 						}
@@ -385,7 +385,7 @@ function settingsMenu() {
 				}, options);
 				menu.newSeparator(menuName);
 				menu.newEntry({
-					menuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.imageMapAlpha[1] * 100 / 255) + ']', func: () => {
+					menuName, entryText: 'Set opacity...' + '\t[' + Math.round(properties.imageMapAlpha[1] * 100 / 255) + ']', func: () => {
 						const input = Input.number('int positive', Math.round(properties.imageMapAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
 						if (input === null) { return; }
 						properties.imageMapAlpha[1] = Math.round(input * 255 / 100);
@@ -536,7 +536,7 @@ function settingsMenu() {
 					}
 					menu.newSeparator(subMenuName);
 					menu.newEntry({
-						menuName: subMenuName, entryText: 'Set transparency...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
+						menuName: subMenuName, entryText: 'Set opacity...' + '\t[' + Math.round(properties.customShapeAlpha[1] * 100 / 255) + ']', func: () => {
 							const input = Input.number('int positive', Math.round(properties.customShapeAlpha[1] * 100 / 255), 'Enter value:\n(0 to 100)', 'Buttons bar', 50, [n => n <= 100]);
 							if (input === null) { return; }
 							properties.customShapeAlpha[1] = Math.round(input * 255 / 100);

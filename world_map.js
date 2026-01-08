@@ -57,7 +57,7 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 const worldMap_properties = {
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
-	imageMapAlpha: ['Map image transparency', 217, { func: isInt, range: [[0, 255]] }, 217],
+	imageMapAlpha: ['Map image opacity', 217, { func: isInt, range: [[0, 255]] }, 217],
 	bImageMapMask: ['Apply a gradient mask at borders', true, { func: isBoolean }, true],
 	iWriteTags: ['When used along Biography script, tags may be written to files (if not present)', 0, { func: isInt, range: [[0, 2]] }, 0],
 	writeToTag: ['Tag name to write artist\'s country', globTags.locale, { func: isString }, globTags.locale],
@@ -96,7 +96,7 @@ const worldMap_properties = {
 	bAutoUpdateCheck: ['Automatically check updates', globSettings.bAutoUpdateCheck, { func: isBoolean }, globSettings.bAutoUpdateCheck],
 	bShowHeader: ['Show header', true, { func: isBoolean }, true],
 	customShapeColor: ['Custom country layer color', RGB(0, 53, 89), { func: isInt }, RGB(0, 53, 89)],
-	customShapeAlpha: ['Country layer transparency', 191, { func: isInt, range: [[0, 255]] }, 191],
+	customShapeAlpha: ['Country layer opacity', 191, { func: isInt, range: [[0, 255]] }, 191],
 	bProfile: ['Enable profiler', false, { func: isBoolean }, false],
 	customGradientColor: ['Custom country layer gradient color', '', { func: isStringWeak }, ''],
 	memMode: ['Memory mode. High (0), normal (1), low (2)', 1, { func: isInt, range: [[0, 2]] }, 1],
@@ -621,7 +621,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					if (grFullImg) {
 						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
 					} else {
-						// Without masks, only transparency can be changed. It works fine except on library mode,
+						// Without masks, only opacity can be changed. It works fine except on library mode,
 						// since the background already has the layer painted...
 						if (worldMap.properties.panelMode[1] === 1 && bSel) { // NOSONAR
 							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
