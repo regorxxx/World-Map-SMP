@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/01/26
+//11/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -823,8 +823,12 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
 				}
 			} else {
-				gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-				gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				} else {
+					gr.FillSolidRect(posX, posY, w, textH, headerColor);
+				}
 			}
 			// Flag
 			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
