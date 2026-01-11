@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/12/25
+//11/01/26
 
 /* exported ImageMap */
 
@@ -11,7 +11,7 @@
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global debounce:readable, folders:readable, globTags:readable, globProfiler:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
-/* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable */
+/* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable, IDC_HAND:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -323,6 +323,7 @@ function ImageMap({
 					if (ttText && ttText.length) {
 						this.tooltip.SetValue(ttText, true);
 					}
+					window.SetCursor(IDC_HAND);
 				} else {
 					this.idSelected = 'none';
 					if (bPaint) { this.repaint(); }
@@ -350,6 +351,7 @@ function ImageMap({
 						if (ttText && ttText.length) {
 							this.tooltip.SetValue(ttText, true);
 						}
+						window.SetCursor(IDC_HAND);
 					} else { this.tooltip.SetValue(this.tooltipPanelText()); this.foundPoints = []; }
 				}
 			}

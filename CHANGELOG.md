@@ -68,6 +68,7 @@
 - UI: added new background settings for basic art manipulation.
 - UI: added DUI/CUI color settings for background, which are applied on the color mode used.
 - UI: added blend color mode which mimics [Library-Tree-SMP](https://github.com/regorxxx/Library-Tree-SMP/), Biography blend theme. Requires art enabled.
+- UI: added cursor effects over elements.
 ### Changed
 - UI: all settings mentioning transparency have been changed to opacity, some properties will be lost on update as result.
 - UI: cleanup and rework of background submenu and its integration with other settings.
