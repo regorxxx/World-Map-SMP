@@ -1,12 +1,12 @@
 ﻿'use strict';
-//11/01/26
+//12/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
 	Shows artist's country over a world map.
  */
 
-if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.4.0-beta', features: { drag_n_drop: false } }); }
+if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.4.1', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
