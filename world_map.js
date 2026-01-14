@@ -1,12 +1,12 @@
 ﻿'use strict';
-//12/01/26
+//14/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
 	Shows artist's country over a world map.
  */
 
-if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.4.1', features: { drag_n_drop: false } }); }
+if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '4.4.1-beta', features: { drag_n_drop: false } }); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
@@ -18,7 +18,7 @@ include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_prototypes_smp.js');
 /* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
-/* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable */
+/* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable, checkJsonProperties:readable */
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
@@ -159,6 +159,7 @@ const worldMap = new ImageMap({
 	bSkipInit: true,
 	splitExcludeId: globNoSplitArtist.list
 });
+checkJsonProperties(worldMap.properties);
 
 // Replace save/load code to ensure artist is always the id
 worldMap.save = function (path = this.jsonPath) {
