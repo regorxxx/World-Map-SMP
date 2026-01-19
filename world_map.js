@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/01/26
+//16/01/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -197,7 +197,7 @@ worldMap.loadData = function (path = this.jsonPath) {
 
 worldMap.shareUiSettings = function (mode = 'popup') {
 	const settings = Object.fromEntries(
-		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'pointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg']
+		['imageMapPath', 'imageMapAlpha', 'factorX', 'factorY', 'pointSize', 'customPointColorMode', 'customPointColor', 'bPointFill', 'customLocaleColor', 'fontSize', 'bShowFlag', 'pointMode', 'customShapeColor', 'customShapeAlpha', 'customGradientColor', 'layerFillMode', 'memMode', 'background', 'statsConfig', 'headerColor', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg', 'bOnNotifyColors', 'bNotifyColors']
 			.map((key) => [key, clone(this.properties[key].slice(0, 2))])
 	);
 	switch (mode.toLowerCase()) {
@@ -231,7 +231,7 @@ worldMap.applyUiSettings = function (settings, bForce) {
 	if (answer === popup.yes) {
 		const newBg = JSON.parse(String(settings.background[1]));
 		['x', 'y', 'w', 'h', 'callbacks'].forEach((key) => delete newBg[key]);
-		['bPointFill', 'bShowFlag', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg'].forEach((key) => {
+		['bPointFill', 'bShowFlag', 'bFullHeader', 'bDynamicColors', 'bDynamicColorsBg', 'bOnNotifyColors', 'bNotifyColors'].forEach((key) => {
 			this.properties[key][1] = !!settings[key][1];
 			if (Object.hasOwn(this, key)) { this[key] = this.properties[key][1]; }
 		});
@@ -300,7 +300,7 @@ const background = new _background({
 		artColors: (colArray, bForced) => {
 			if (!bForced && !worldMap.properties.bDynamicColors[1]) { return; }
 			else if (colArray) {
-				const bChangeBg = worldMap.properties.bDynamicColorsBg[1];
+				const bChangeBg = worldMap.properties.bDynamicColorsBg[1] && background.useColors && !background.useColorsBlend;
 				const { main, sec, note, secAlt } = dynamicColors(
 					colArray,
 					bChangeBg ? RGB(122, 122, 122) : background.getAvgPanelColor(),
@@ -314,7 +314,7 @@ const background = new _background({
 				}
 				worldMap.defaultColor = sec;
 				worldMap.properties.customShapeColor[1] = secAlt;
-				if (bChangeBg && background.useColors) {
+				if (bChangeBg) {
 					const gradient = [Chroma(note).saturate(2).luminance(0.005).android(), note];
 					const bgColor = Chroma.scale(gradient).mode('lrgb')
 						.colors(background.colorModeOptions.color.length, 'android')
