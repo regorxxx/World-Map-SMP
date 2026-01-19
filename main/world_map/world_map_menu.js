@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/01/26
+//16/01/26
 
 /* exported settingsMenu, importSettingsMenu */
 
@@ -503,13 +503,13 @@ function settingsMenu() {
 					}
 					menu.newSeparator(subMenuName);
 					{
-						const subMenuNameTwo = menu.newMenu('Statistics mode', subMenuName, worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
+						const subMenuNameTwo = menu.newMenu('Statistics mode', subMenuName, properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED);
 						menu.newEntry({
 							menuName: subMenuNameTwo, entryText: 'Gradient from color', func: () => {
 								properties.customGradientColor[1] = '';
 								overwriteProperties(properties);
 								repaint(void (0), true, true);
-							}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED
+							}, flags: properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED
 						});
 						menu.newCheckMenuLast(() => properties.customGradientColor[1].length === 0);
 						{
@@ -527,7 +527,7 @@ function settingsMenu() {
 											properties.customGradientColor[1] = scheme;
 											overwriteProperties(properties);
 											repaint(void (0), true, true);
-										}, flags: worldMap.properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED
+										}, flags: properties.panelMode[1] === 3 ? MF_STRING : MF_GRAYED
 									});
 								});
 								j++;
@@ -561,10 +561,10 @@ function settingsMenu() {
 				}
 				{
 					menu.newEntry({
-						menuName, entryText: 'Header...' + '\t' + _b(getColorName(worldMap.properties.headerColor[1])), func: () => {
-							worldMap.properties.headerColor[1] = utils.IsKeyPressed(VK_CONTROL)
+						menuName, entryText: 'Header...' + '\t' + _b(getColorName(properties.headerColor[1])), func: () => {
+							properties.headerColor[1] = utils.IsKeyPressed(VK_CONTROL)
 								? -1
-								: utils.ColourPicker(window.ID, worldMap.properties.headerColor[1]);
+								: utils.ColourPicker(window.ID, properties.headerColor[1]);
 							if (properties.headerColor[1] !== -1) { console.log(window.ScriptInfo.Name + ': Selected color ->\n\t Android: ' + properties.headerColor[1] + ' - RGB: ' + Chroma(properties.headerColor[1]).rgb()); }
 							// Update property to save between reloads
 							overwriteProperties(properties);
@@ -642,7 +642,7 @@ function settingsMenu() {
 						menuName: subMenu, entryText: 'Also apply to background color', func: () => {
 							properties.bDynamicColorsBg[1] = !properties.bDynamicColorsBg[1];
 							if (!properties.bDynamicColorsBg[1]) {
-								background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
+								background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
 							}
 							overwriteProperties(properties);
 							background.updateImageBg(true);
@@ -692,7 +692,7 @@ function settingsMenu() {
 			}
 			{ // NOSONAR
 				{	// Point size
-					const menuName = menu.newMenu('Points size', menuUI, properties.pointMode[1] === 1 && !worldMap.properties.panelMode[1] ? MF_GRAYED : MF_STRING);
+					const menuName = menu.newMenu('Points size', menuUI, properties.pointMode[1] === 1 && !properties.panelMode[1] ? MF_GRAYED : MF_STRING);
 					const options = [7, 10, 12, 14, 16, 20, 30, 'sep', 'Custom...\t' + _b(properties.pointSize[1])];
 					const optionsLength = options.length;
 					options.forEach((item, i) => {
@@ -1122,7 +1122,7 @@ function settingsMenu() {
 						fb.ShowPopupMessage('The statistics of artists per country from your tracked library have been updated (see console log for more info).\n\nThis data is then used on \'Library\' and \'Statistics\' display modes.' + (properties.iWriteTags[1] === 0 ? '\n\nWarning: when using tags/JSON sources on read-only mode, any artist with missing data will be indefinitely skipped unless you manually tag such tracks.' : ''), window.ScriptInfo.Name + ': Update JSON library database');
 						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 						console.log(window.ScriptInfo.Name + ': saving library database done. Switch panel mode to \'Library mode\' to use it.');
-						if (worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3) { repaint(void (0), true, true); }
+						if (properties.panelMode[1] == 1 || properties.panelMode[1] === 3) { repaint(void (0), true, true); }
 					}
 				});
 				menu.newSeparator();
