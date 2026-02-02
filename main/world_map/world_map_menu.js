@@ -1,7 +1,7 @@
 ﻿'use strict';
-//16/01/26
+//02/02/26
 
-/* exported settingsMenu, importSettingsMenu */
+/* exported settingsMenu, onRbtnUpImportSettings */
 
 /* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
 include('..\\..\\helpers\\menu_xxx.js');
@@ -1165,17 +1165,18 @@ function settingsMenu() {
 	return menu;
 }
 
-function importSettingsMenu() {
+function onRbtnUpImportSettings(properties = this.properties || {}) {
 	const menu = new _menu();
 	menu.newEntry({ entryText: 'Panel menu: ' + window.PanelName, flags: MF_GRAYED });
+	menu.newEntry({ entryText: 'Version: ' + window.ScriptInfo.Version, flags: MF_GRAYED });
 	menu.newSeparator();
 	menu.newEntry({
 		entryText: 'Export panel settings...', func: () => {
 			const bData = WshShell.Popup('Also export database files?', 0, window.ScriptInfo.Name + ': Export panel settings', popup.question + popup.yes_no);
 			exportSettings(
-				worldMap.properties,
+				properties,
 				bData
-					? [worldMap.properties.fileName[1], worldMap.properties.fileNameLibrary[1]]
+					? [properties.fileName[1], properties.fileNameLibrary[1]]
 					: [],
 				window.ScriptInfo.Name
 			);
@@ -1215,7 +1216,7 @@ function importSettingsMenu() {
 						return bDone;
 					}
 				},
-				worldMap.properties,
+				properties,
 				window.ScriptInfo.Name
 			);
 		}
@@ -1233,6 +1234,29 @@ function importSettingsMenu() {
 	menu.newEntry({
 		entryText: 'Panel properties...', func: () => window.ShowProperties()
 	});
+	menu.newSeparator();
+	{ // NOSONAR
+		const menuName = menu.newMenu('Updates');
+		menu.newEntry({
+			menuName, entryText: 'Automatically check for updates', func: () => {
+				properties.bAutoUpdateCheck[1] = !properties.bAutoUpdateCheck[1];
+				overwriteProperties(properties);
+				if (properties.bAutoUpdateCheck[1]) {
+					if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web_update.js'); }
+					setTimeout(checkUpdate, 1000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false });
+				}
+			}
+		});
+		menu.newCheckMenuLast(() => properties.bAutoUpdateCheck[1]);
+		menu.newSeparator(menuName);
+		menu.newEntry({
+			menuName, entryText: 'Check for updates...', func: () => {
+				if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web_update.js'); }
+				checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
+					.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.FullPanelName + ': Update check'));
+			}
+		});
+	}
 	menu.newSeparator();
 	menu.newEntry({
 		entryText: 'Reload panel', func: () => window.Reload()

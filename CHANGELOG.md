@@ -60,6 +60,7 @@
 ## [Unreleased][]
 ### Added
 ### Changed
+- Installation: panel menu, accessed through 'Ctrl + Win + R. Click' (which works globally on any script and panel, at any position), now also includes the script version number and a submenu to check and set auto-updates.
 ### Removed
 ### Fixed
 - UI: added some missing settings for 'Share UI settings' feature.

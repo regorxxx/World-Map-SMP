@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/01/26
+//02/02/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -28,7 +28,7 @@ include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable */
 include('main\\world_map\\world_map_menu.js');
-/* global settingsMenu:readable, importSettingsMenu:readable, WshShell:readable, Input:readable */
+/* global settingsMenu:readable, onRbtnUpImportSettings:readable, WshShell:readable, Input:readable */
 include('main\\world_map\\world_map_helpers.js');
 /* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, headerCountryName:readable, headerCoords:readable */
 include('main\\world_map\\world_map_flags.js');
@@ -1006,7 +1006,7 @@ addEventListener('on_mouse_leave', () => {
 
 addEventListener('on_mouse_rbtn_up', (x, y) => { // NOSONAR
 	if (utils.IsKeyPressed(VK_CONTROL) && utils.IsKeyPressed(VK_LWIN)) {
-		return importSettingsMenu().btn_up(x, y);
+		return onRbtnUpImportSettings.call(worldMap).btn_up(x, y);
 	}
 	if (worldMap.properties.panelMode[1] === 2) { return true; }
 	const menu = settingsMenu();
