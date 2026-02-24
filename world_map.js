@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/02/26
+//24/02/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -18,7 +18,7 @@ include('helpers\\helpers_xxx_prototypes.js');
 include('helpers\\helpers_xxx_prototypes_smp.js');
 /* global extendGR:readable */
 include('helpers\\helpers_xxx_properties.js');
-/* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable, checkJsonProperties:readable */
+/* global setProperties:readable, getPropertiesPairs:readable, overwriteProperties:readable, checkJsonProperties:readable, getPropertyByKey:readable */
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
@@ -54,7 +54,8 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 	{ mask: MK_SHIFT, tag: 'modSecondTag', description: 'Shift', val: globTags.style },
 	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: [globTags.genre, globTags.style].join(',') }
 ];
-const worldMap_properties = {
+const properties = {
+	drawMode: ['Draw mode: GDI (0), D2D (1)', 0, { func: isInt, range: [[0,1]] }],
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
 	imageMapAlpha: ['Map image opacity', 217, { func: isInt, range: [[0, 255]] }, 217],
@@ -109,12 +110,15 @@ const worldMap_properties = {
 	bOnNotifyColors: ['Adjust colors on panel notify', true, { func: isBoolean }],
 	bNotifyColors: ['Notify colors to other panels', false, { func: isBoolean }]
 };
-modifiers.forEach((mod) => { worldMap_properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
-worldMap_properties['fileName'].push({ portable: true }, worldMap_properties['fileName'][1]);
-worldMap_properties['fileNameLibrary'].push({ portable: true }, worldMap_properties['fileNameLibrary'][1]);
-worldMap_properties['statsConfig'].push({ func: isJSON }, worldMap_properties['statsConfig'][1]);
-worldMap_properties['background'].push({ func: isJSON, forceDefaults: true }, worldMap_properties['background'][1]);
-setProperties(worldMap_properties, '', 0);
+modifiers.forEach((mod) => { properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
+properties['fileName'].push({ portable: true }, properties['fileName'][1]);
+properties['fileNameLibrary'].push({ portable: true }, properties['fileNameLibrary'][1]);
+properties['statsConfig'].push({ func: isJSON }, properties['statsConfig'][1]);
+properties['background'].push({ func: isJSON, forceDefaults: true }, properties['background'][1]);
+setProperties(properties, '', 0);
+
+// GDI/D2D draw mode
+window.DrawMode = getPropertyByKey(properties, 'drawMode', '', 0);
 
 const worldMapImages = [
 	{ text: 'Full', path: 'MC_WorldMap.jpg', factorX: 100, factorY: 109 },
@@ -124,15 +128,15 @@ const worldMapImages = [
 ];
 // Build the image paths according to portable/low mem options and update current image
 {
-	const properties = getPropertiesPairs(worldMap_properties, '', 0);
-	const bLowMemMode = properties.memMode[1] > 0;
+	const prop = getPropertiesPairs(properties, '', 0);
+	const bLowMemMode = prop.memMode[1] > 0;
 	worldMapImages.forEach((img) => {
 		const prefix = folders.xxxRootName + 'images\\';
 		if (bLowMemMode) { img.path = prefix + img.path; }
 		else { img.path = prefix + 'hires\\' + img.path; }
-		if (_resolvePath(img.path).toLowerCase() === _resolvePath(properties.imageMapPath[1]).toLowerCase()) {
-			properties.imageMapPath[1] = img.path;
-			overwriteProperties(properties);
+		if (_resolvePath(img.path).toLowerCase() === _resolvePath(prop.imageMapPath[1]).toLowerCase()) {
+			prop.imageMapPath[1] = img.path;
+			overwriteProperties(prop);
 		}
 	});
 }
@@ -144,7 +148,7 @@ globProfiler.Print('init');
 */
 const worldMap = new ImageMap({
 	imagePath: worldMapImages.find((img) => img.bDefault).path,
-	properties: getPropertiesPairs(worldMap_properties, '', 0), // Sets font, sizes, bSplitIds and bSplitTags
+	properties: getPropertiesPairs(properties, '', 0), // Sets font, sizes, bSplitIds and bSplitTags
 	fontStyle: 2, // Italic font
 	jsonId: 'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc: findCountryCoords, // Function at helpers\world_map_tables.js
@@ -322,7 +326,7 @@ const background = new _background({
 					background.changeConfig({ config: { colorModeOptions: { color: bgColor } }, callbackArgs: { bSaveProperties: false } });
 				}
 			} else {
-				worldMap.properties = getPropertiesPairs(worldMap_properties, '', 0);
+				worldMap.properties = getPropertiesPairs(properties, '', 0);
 				worldMap.textColor = worldMap.properties.customLocaleColor[1];
 				worldMap.defaultColor = worldMap.properties.customPointColor[1];
 				background.changeConfig({ config: { colorModeOptions: { color: JSON.parse(worldMap.properties.background[1]).colorModeOptions.color } }, callbackArgs: { bSaveProperties: false } });
