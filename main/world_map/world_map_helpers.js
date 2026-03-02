@@ -1,9 +1,9 @@
 ﻿'use strict';
-//18/12/25
+//02/03/26
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords */
 
-/* global worldMap:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _gr:readable, overwriteProperties:readable */
+/* global worldMap:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _textWidth:readable, _textHeight:readable, overwriteProperties:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global MF_GRAYED:readable, WshShell:readable, popup:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
@@ -329,8 +329,8 @@ function headerCountryName() {
 }
 
 function headerCoords(countryName) {
-	const textW = _gr.CalcTextWidth(countryName, worldMap.gFont);
-	const textH = _gr.CalcTextHeight(countryName, worldMap.gFont);
+	const textW = _textWidth(countryName, worldMap.gFont);
+	const textH = _textHeight(countryName, worldMap.gFont);
 	const infoX = worldMap.posX;
 	const infoW = worldMap.imageMap.Width * worldMap.scale;
 	const posX = worldMap.properties.bFullHeader[1]

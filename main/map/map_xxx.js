@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/01/26
+//02/03/26
 
 /* exported ImageMap */
 
@@ -19,7 +19,7 @@ include('..\\..\\helpers\\helpers_xxx_tags.js');
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _bt:readable */
 include('..\\..\\helpers\\helpers_xxx_UI.js');
-/* global _tt:readable, _gdiFont:readable, _gr:readable, _scale:readable, */
+/* global _tt:readable, _gdiFont:readable, _textWidth:readable, _textHeight:readable, _scale:readable, */
 
 // Map object
 function ImageMap({
@@ -262,8 +262,8 @@ function ImageMap({
 					if (foundId.length) { return; }
 					const point = this.point[last.id];
 					if (!point || point.xScaled === -1 || point.yScaled === -1) { return; }
-					const xMax = point.xScaled + _gr.CalcTextWidth(point.id, this.gFont), xMin = point.xScaled;
-					const yMax = point.yScaled + _gr.CalcTextHeight(point.id, this.gFont), yMin = point.yScaled;
+					const xMax = point.xScaled + _textWidth(point.id, this.gFont), xMin = point.xScaled;
+					const yMax = point.yScaled + _textHeight(point.id, this.gFont), yMin = point.yScaled;
 					if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) { foundId = last.id; }  // On circle?
 				});
 				break;
