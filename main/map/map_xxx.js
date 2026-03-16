@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//16/03/26
 
 /* exported ImageMap */
 
@@ -9,7 +9,7 @@
  */
 
 include('..\\..\\helpers\\helpers_xxx.js');
-/* global debounce:readable, folders:readable, globTags:readable, globProfiler:readable */
+/* global debounce:readable, folders:readable, globTags:readable, globProfiler:readable, SmoothingMode:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
 /* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable, IDC_HAND:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
@@ -165,9 +165,9 @@ function ImageMap({
 							}
 							case 'circle':
 							default: {
-								gr.SetSmoothingMode(4);
+								gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 								gr.DrawEllipse(point.xScaled, point.yScaled, this.pointSize * this.scale, this.pointSize * this.scale, this.pointLineSize * this.scale, (this.idSelected === id ? selectionColor : color));
-								gr.SetSmoothingMode(0);
+								gr.SetSmoothingMode();
 								if (bShowSize && toPaint.val > 1) { // Show count on map?
 									gr.GdiDrawText(toPaint.val, this.gFont, this.textColor, point.xScaled - this.pointSize * this.scale, point.yScaled + this.pointLineSize * this.scale / 2, 40, 40);
 								}
