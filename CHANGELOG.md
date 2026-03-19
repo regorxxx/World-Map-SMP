@@ -64,6 +64,7 @@
 ### Changed
 - Installation: panel menu, accessed through 'Ctrl + Win + R. Click' (which works globally on any script and panel, at any position), now also includes the script version number and a submenu to check and set auto-updates.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
+- Readmes: general cleanup.
 ### Removed
 ### Fixed
 - UI: added some missing settings for 'Share UI settings' feature.
