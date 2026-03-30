@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/02/26
+//30/03/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -12,8 +12,8 @@ if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { autho
 window.DrawMode = Math.max(Math.min(window.GetProperty('Draw mode: GDI (0), D2D (1)', 0), 1), 0);
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, debounce:readable, globNoSplitArtist:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, InterpolationMode:readable, VK_SHIFT:readable, DT_CENTER:readable, DT_NOPREFIX:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable, DT_WORD_ELLIPSIS:readable */
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, globNoSplitArtist:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, VK_SHIFT:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
@@ -25,19 +25,17 @@ include('helpers\\helpers_xxx_properties.js');
 include('helpers\\helpers_xxx_tags.js');
 /* global checkQuery:readable, getHandleListTagsV2:readable */
 include('main\\map\\map_xxx.js');
-/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, invert:readable, _jsonParseFileCheck:readable, utf8:readable, RGBA:readable, toRGB:readable */
+/* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, _jsonParseFileCheck:readable, utf8:readable */
 include('helpers\\callbacks_xxx.js');
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable */
 include('main\\world_map\\world_map_menu.js');
 /* global settingsMenu:readable, onRbtnUpImportSettings:readable, WshShell:readable, Input:readable */
-include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, headerCountryName:readable, headerCoords:readable */
-include('main\\world_map\\world_map_flags.js');
-/* global loadFlagImage:readable */
 include('main\\world_map\\world_map_statistics.js');
 /* global Chroma:readable, _mapStatistics:readable */
+include('main\\world_map\\world_map_helpers.js');
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, drawHeader:readable, drawTaggingPoint:readable, paintLayers:readable, repaint:readable, debouncedRepaint:readable */
 include('main\\filter_and_query\\remove_duplicates.js');
 /* global removeDuplicates:readable */
 include('main\\window\\window_xxx_background.js');
@@ -58,7 +56,7 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: [globTags.genre, globTags.style].join(',') }
 ];
 const properties = {
-	drawMode: ['Draw mode: GDI (0), D2D (1)', 0, { func: isInt, range: [[0,1]] }],
+	drawMode: ['Draw mode: GDI (0), D2D (1)', 0, { func: isInt, range: [[0, 1]] }],
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
 	imageMapAlpha: ['Map image opacity', 217, { func: isInt, range: [[0, 255]] }, 217],
@@ -384,40 +382,6 @@ const stats = new _mapStatistics(0, 0, 0, 0, worldMap.properties.panelMode[1] ==
 /*
 	Callbacks for painting
 */
-const debouncedRepaint = {
-	'60': debounce(window.RepaintRect, 60, false, window),
-};
-function repaint(bPlayback = false, bImmediate = false, bForce = false) {
-	if (!worldMap.properties.bEnabled[1]) { return false; }
-	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
-	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying && !bForce) { return false; }
-	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying && !bForce) { return false; }
-	imgAsync.fullImg = null;
-	imgAsync.layers.imgs.length = 0;
-	imgAsync.layers.id.length = 0;
-	imgAsync.layers.iso.clear();
-	imgAsync.layers.processedIso.clear();
-	imgAsync.layers.bPaint = false;
-	imgAsync.layers.bStop = true;
-	imgAsync.layers.bCreated = false;
-	if (!window.IsVisible) { return false; }
-	const delay = bImmediate ? 0 : worldMap.properties.iRepaintDelay[1];
-	if (delay > 0) {
-		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
-		if (worldMap.properties.bFullHeader[1]) {
-			debouncedRepaint[delay](0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
-		} else {
-			debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
-		}
-	} else {
-		if (worldMap.properties.bFullHeader[1]) {
-			window.RepaintRect(0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
-		} else {
-			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
-		}
-	}
-	return true;
-}
 globProfiler.Print('settings');
 
 {
@@ -452,282 +416,6 @@ addEventListener('on_colours_changed', () => {
 	worldMap.colorsChanged();
 	if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
 });
-
-const imgAsync = {
-	layers: { bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set() },
-	masks: { sel: null, std: null },
-	lowMemMode: { maxSize: 1000 },
-	fullImg: null
-};
-const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / worldMap.imageMap.Width, imgAsync.layers.h / worldMap.imageMap.Height)) => {
-	if (!mode || !mode.length) { return; }
-	const flagSize = 64; const w = 40; const h = 30;
-	const flag = mode === 'flag'
-		? loadFlagImage(id)
-		: loadFlagImage(id).Clone((flagSize - w) / 2, (flagSize - h) / 2, (flagSize + w) / 2, (flagSize + h) / 2); // Extract center of flag
-	const layerGr = subLayer.GetGraphics();
-	const point = worldMap.point[id];
-	switch (mode) {
-		case 'color': {
-			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq)
-				.map((o) => o.col).filter((color) => {
-					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
-				});
-			const flagColor = flagColors[0] || RGB(255, 255, 255);
-			layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, flagColor);
-			break;
-		}
-		case 'gradient': {
-			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq).map((o) => o.col)
-				.filter((color) => {
-					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
-				});
-			if (flagColors.length === 0) { flagColors.push(RGB(0, 0, 0)); }
-			if (flagColors.length === 1) { flagColors.push(RGB(255, 255, 255)); }
-			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
-			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
-			layerGr.FillGradRect(x, y, w, h, 0, flagColors[0], flagColors[1], 0.25);
-			break;
-		}
-		case 'flag': {
-			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
-			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
-			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flag.Width, flag.Height);
-			break;
-		}
-	}
-	subLayer.ReleaseGraphics(layerGr);
-};
-
-/**
- * Paint country layers
- *
- * @function
- * @name paintLayers
- * @kind variable
- * @param {{ gr: GdiGraphics, color?: number, gradient?: number[] bProfile?: boolean }} { gr, color, gradient, bProfile }?
- * @returns {void}
- */
-const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false } = {}) => {
-	const profile = bProfile ? new FbProfiler('paintLayers') : null;
-	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
-	const idSel = worldMap.idSelected;
-	const bLowMemMode = worldMap.properties.memMode[1] > 0;
-	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
-		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
-		const bFullImg = bStatsModes && imgAsync.fullImg;
-		if (bFullImg) {
-			const offsetX = bLowMemMode ? 50 : 100;
-			const offsetY = bLowMemMode ? 50 : 100;
-			const offsetYAntarctic = bLowMemMode ? 310 : 620;
-			const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
-			const x = worldMap.posX - offsetX * worldMap.scale;
-			const y = worldMap.posY - offsetY * worldMap.scale;
-			gr.DrawImage(imgAsync.fullImg, x, y, w, h, 0, 0, imgAsync.fullImg.Width, imgAsync.fullImg.Height, 0, worldMap.properties.customShapeAlpha[1]);
-			imgAsync.layers.bStop = true;
-		} else if (bStatsModes && imgAsync.layers.imgs.length) {
-			imgAsync.fullImg = gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h);
-		}
-		if (bProfile) { profile.Print('background'); }
-		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) { repaint(); }
-		if (imgAsync.layers.imgs.length) {
-			const layerW = imgAsync.layers.w;
-			const layerH = imgAsync.layers.h;
-			if (bFullImg && !idSel && imgAsync.layers.bCreated) { return; }
-			if (bMask) {
-				const grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
-				let scheme = null;
-				if (gradient) {
-					const top = Math.round(Math.log(Math.max(...worldMap.lastPoint.map((p) => p.val))));
-					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
-				}
-				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
-				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = bLowMemMode ? 50 : 100;
-				const offsetY = bLowMemMode ? 50 : 100;
-				const offsetYAntarctic = bLowMemMode ? 310 : 620;
-				const w = grFullImg
-					? layerW
-					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg
-					? layerH
-					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
-				const x = grFullImg
-					? 0
-					: worldMap.posX - offsetX * worldMap.scale;
-				const y = grFullImg
-					? 0
-					: worldMap.posY - offsetY * worldMap.scale;
-				const layerFill = worldMap.properties.layerFillMode[1];
-				let i = 0;
-				for (const imgObj of imgAsync.layers.imgs) {
-					const id = imgAsync.layers.id[i++];
-					const bSel = idSel === id;
-					if (!bSel && bFullImg) { continue; }
-					const img = imgObj.img;
-					if (grFullImg) {
-						let subLayer = imgAsync.masks.std.Clone(0, 0, layerW, layerH);
-						if (layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
-						if (gradient) {
-							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
-							const layerGr = subLayer.GetGraphics();
-							layerGr.FillSolidRect(0, 0, layerW, layerH, scheme[count]);
-							subLayer.ReleaseGraphics(layerGr);
-						}
-						subLayer.ApplyMask(img);
-						grFullImg.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
-					} else {
-						let subLayer = imgAsync.masks[bSel && !gradient ? 'sel' : 'std'].Clone(0, 0, layerW, layerH);
-						if (!bSel && !gradient && layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
-						if (gradient) {
-							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
-							const layerGr = subLayer.GetGraphics();
-							layerGr.FillSolidRect(0, 0, layerW, layerH, bSel ? invert(scheme[count]) : scheme[count]);
-							subLayer.ReleaseGraphics(layerGr);
-						}
-						subLayer.ApplyMask(img);
-						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH, 0, worldMap.properties.customShapeAlpha[1]);
-					}
-					if (bProfile) { profile.Print('Sub-layer'); }
-					if (bSel && bFullImg) { break; }
-				}
-				if (grFullImg) {
-					imgAsync.fullImg.ReleaseGraphics(grFullImg);
-					imgAsync.layers.bCreated = true;
-					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
-				}
-				if (bProfile) { profile.Print('Layers'); }
-			} else {
-				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
-				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
-				const offsetX = bLowMemMode ? 50 : 100;
-				const offsetY = bLowMemMode ? 50 : 100;
-				const offsetYAntarcTic = bLowMemMode ? 310 : 620;
-				const w = grFullImg
-					? layerW
-					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
-				const h = grFullImg
-					? layerH
-					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarcTic : 0)) * worldMap.scale;
-				const x = grFullImg
-					? 0
-					: worldMap.posX - offsetX * worldMap.scale;
-				const y = grFullImg
-					? 0
-					: worldMap.posY - offsetY * worldMap.scale;
-				let i = 0;
-				for (const imgObj of imgAsync.layers.imgs) {
-					const id = imgAsync.layers.id[i++];
-					const bSel = idSel === id;
-					if (!bSel && bFullImg) { continue; }
-					const img = imgObj.img;
-					if (grFullImg) {
-						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
-					} else {
-						// Without masks, only opacity can be changed. It works fine except on library mode,
-						// since the background already has the layer painted...
-						if (worldMap.properties.panelMode[1] === 1 && bSel) { // NOSONAR
-							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
-						} else {
-							const alpha = bSel
-								? worldMap.properties.customShapeAlpha[1] > 200
-									? worldMap.properties.customShapeAlpha[1] - 50
-									: worldMap.properties.customShapeAlpha[1] > 100
-										? worldMap.properties.customShapeAlpha[1] + 50
-										: worldMap.properties.customShapeAlpha[1] + 100
-								: worldMap.properties.customShapeAlpha[1];
-							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, alpha);
-						}
-					}
-					if (bSel && bFullImg) { break; }
-				}
-				if (grFullImg) {
-					if (bLowMemMode) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
-					imgAsync.fullImg.ReleaseGraphics(grFullImg);
-					imgAsync.layers.bCreated = true;
-					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
-				}
-			}
-		}
-	}
-	const promises = [];
-	imgAsync.layers.bStop = false;
-	worldMap.lastPoint.forEach((point, i) => {
-		let id = point.id;
-		if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
-			const iso = id && id.length ? getCountryISO(id) : null;
-			if (iso) {
-				if (!imgAsync.layers.iso.has(iso)) {
-					imgAsync.layers.iso.add(iso);
-					const file = folders.xxx + 'helpers-external\\countries-mercator' + (bMask ? '-mask' : '') + '\\' + iso + '.png';
-					if (_isFile(file)) {
-						promises.push(new Promise((resolve) => {
-							setTimeout(() => {
-								if (imgAsync.layers.bStop) { resolve(); }
-								if (imgAsync.layers.processedIso.has(iso)) { resolve(); }
-								gdi.LoadImageAsyncV2(void (0), file).then((img) => {
-									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
-										if (bLowMemMode) {
-											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
-											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
-										}
-										imgAsync.layers.imgs.push({ img, iso });
-										imgAsync.layers.processedIso.add(iso);
-										imgAsync.layers.id.push(id);
-									}
-									resolve();
-								});
-							}, i * 250 + 25);
-						}));
-					}
-				}
-			}
-		}
-		if (worldMap.properties.pointMode[1] === 2) { // Both
-			let point = worldMap.point[id];
-			if (!point) {
-				const [xPos, yPos] = worldMap.findCoordinates({
-					id,
-					mapWidth: worldMap.imageMap.Width,
-					mapHeight: worldMap.imageMap.Height,
-					factorX: worldMap.factorX,
-					factorY: worldMap.factorY
-				});
-				if (xPos !== -1 && yPos !== -1) {
-					point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
-				}
-			}
-			if (point) {
-				gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, idSel === id ? worldMap.selectionColor : worldMap.defaultColor);
-			}
-		}
-	});
-	if (promises.length) {
-		Promise.all(promises).then(() => {
-			if (imgAsync.layers.bStop) { return; }
-			imgAsync.layers.bPaint = true;
-			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
-			imgAsync.layers.h = imgAsync.layers.imgs[0].img.Height;
-			if (bMask) {
-				imgAsync.masks = {
-					std: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
-					sel: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
-				};
-				if (!gradient) {
-					Object.keys(imgAsync.masks).forEach((type) => {
-						const layerGr = imgAsync.masks[type].GetGraphics();
-						layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, type === 'sel' ? invert(color) : color);
-						imgAsync.masks[type].ReleaseGraphics(layerGr);
-					});
-				}
-			}
-			if (bProfile) { profile.Print('Retrieve img layers'); }
-			if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
-		});
-	} else if (bProfile) { profile.Print('End'); }
-};
 
 addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 	if (!window.ID) { return; }
@@ -769,119 +457,13 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length), bInvertMap });
 		if (sel.Count) {
 			if (bPressShift && !bPressWin && worldMap.foundPoints.length) {
-				const id = formatCountry(worldMap.foundPoints[0].key || '');
-				let point = worldMap.point[id];
-				if (!point) {
-					const [xPos, yPos] = worldMap.findCoordinates({
-						id,
-						mapWidth: worldMap.imageMap.Width,
-						mapHeight: worldMap.imageMap.Height,
-						factorX: worldMap.factorX,
-						factorY: worldMap.factorY
-					});
-					if (xPos !== -1 && yPos !== -1) {
-						point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
-					}
-				}
-				if (point) {
-					gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
-				}
+				drawTaggingPoint(gr);
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
 				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : worldMap.properties.customShapeColor[3];
 				paintLayers({ gr, color, bProfile: worldMap.properties.bProfile[1] });
 			}
 		}
-		if (sel.Count && worldMap.properties.bShowHeader[1]) { // Header text
-			const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
-			const { infoX, infoW, posX, posY, w, h, textW, textH } = headerCoords(countryName);
-			// Header
-			const headerColor = worldMap.properties.headerColor[1] !== -1
-				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
-				: RGBA(...toRGB(worldMap.panelColor), 150);
-			if (!worldMap.properties.bFullHeader[1]) {
-				const offset = 0.1;
-				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
-				let imgGr = img.GetGraphics();
-				if (posY !== 0) {
-					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
-					if (posY !== window.Height - textH) {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
-						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-					}
-					else {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
-					}
-				} else {
-					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				}
-				img.ReleaseGraphics(imgGr);
-				const mask = gdi.CreateImage(img.Width, img.Height);
-				imgGr = mask.GetGraphics();
-				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				mask.ReleaseGraphics(imgGr);
-				img.ApplyMask(mask);
-				if (posY !== 0) {
-					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				} else {
-					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				}
-			} else {
-				if (posY !== window.Height - textH) {
-					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				} else {
-					gr.FillSolidRect(posX, posY, w, textH, headerColor);
-				}
-			}
-			// Flag
-			if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
-				const flagPos = worldMap.properties.flagPosition[1].toLowerCase() || 'center';
-				const loadFlag = (idx) => {
-					const id = worldMap.lastPoint[idx].id;
-					const flag = loadFlagImage(id);
-					const flagScale = flag.Height / textH;
-					return flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
-				};
-				const paintFlag = (img, align) => {
-					switch (align) {
-						case 'right':
-						case 'both':
-						case 'left':
-						default: {
-							if (align !== 'right') { gr.DrawImage(img, infoX + _scale(10), posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
-							if (align !== 'left') { gr.DrawImage(img, infoX + infoW - _scale(10) - img.Width, posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
-							break;
-						}
-						case 'center': {
-							gr.DrawImage(img, worldMap.properties.bShowLocale[1] ? infoX + (infoW - textW) / 2 - img.Width - _scale(10) : infoX + (infoW - img.Width) / 2, posY, img.Width, img.Height, 0, 0, img.Width, img.Height);
-							break;
-						}
-					}
-				};
-				const paintText = (flagsWidth) => {
-					gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX + flagsWidth, posY, infoW - flagsWidth * 2, h, DT_CENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
-				};
-				if (flagPos === 'both' && worldMap.lastPoint.length > 1) {
-					let flag;
-					for (let i = 0; i < 2; i++) {
-						flag = loadFlag(i);
-						paintFlag(flag, ['left', 'right'][i]);
-					}
-					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
-				} else {
-					const flag = loadFlag(0);
-					paintFlag(flag, flagPos);
-					// Text
-					if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
-				}
-			} else if (worldMap.properties.bShowLocale[1]) {
-				if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
-				else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
-			}
-		}
+		if (sel.Count && worldMap.properties.bShowHeader[1]) { drawHeader(gr, sel);	} // Header text
 	}
 	if (window.highlight) { extendGR(gr, { Highlight: true }); }
 	if (window.debugPainting) { window.drawDebugRectAreas(gr); }
