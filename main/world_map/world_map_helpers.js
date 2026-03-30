@@ -1,19 +1,30 @@
 ﻿'use strict';
-//02/03/26
+//30/03/26
 
-/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords */
+/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
 
-/* global worldMap:readable, getCountryISO:readable, getCountryName:readable, nameShortRev:readable, selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, _save:readable, repaint:readable, _textWidth:readable, _textHeight:readable, overwriteProperties:readable */
-include('..\\..\\helpers\\helpers_xxx.js');
-/* global MF_GRAYED:readable, WshShell:readable, popup:readable */
+/* global worldMap:readable,selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, overwriteProperties:readable */
+// include('..\\..\\helpers\\helpers_xxx_file.js');
+/* global _save:readable, _isFile:readable */
+// include('..\\..\\helpers\\helpers_xxx.js');
+/* global WshShell:readable, popup:readable, folders:readable, debounce:readable */
+/* global MF_GRAYED:readable, InterpolationMode:readable, DT_CENTER:readable, DT_NOPREFIX:readable, DT_WORD_ELLIPSIS:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
 /* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable, getHandleListTagsV2:readable */
+// include('..\\..\\helpers\\helpers_xxx_ui.js');
+/* global _scale:readable, RGB:readable, RGBA:readable, toRGB:readable, _textWidth:readable, _textHeight:readable, invert:readable, */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, */
+include('world_map_flags.js');
+/* global loadFlagImage:readable */
+// include('world_map_tables.js');
+/* global getCountryISO:readable, getCountryName:readable, nameShortRev:readable */
+// include('world_map_statistics.js');
+/* global Chroma:readable */
 
 /*
 	Map helpers
@@ -288,7 +299,7 @@ function saveLibraryTags(dataPath, jsonId, dataObj) { // dataPath = worldMap.pro
 function wheelResize(s) {
 	if (worldMap.mX !== -1 && worldMap.mY !== -1) {
 		const traceHeader = (x, y) => {
-			const {posX, posY, w, textH} = headerCoords(headerCountryName());
+			const { posX, posY, w, textH } = headerCoords(headerCountryName());
 			const offset = worldMap.properties.bFullHeader[1] ? 0.1 : 0;
 			const hx = posX - w * (offset / 2);
 			const hw = w * (1 + offset);
@@ -350,5 +361,473 @@ function headerCoords(countryName) {
 		? window.Width
 		: infoW;
 	const h = worldMap.imageMap.Height * worldMap.scale;
-	return { infoX, infoW, posX, posY, w, h, textW, textH};
+	return { infoX, infoW, posX, posY, w, h, textW, textH };
 }
+
+function drawHeader(gr) {
+	const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
+	const { infoX, infoW, posX, posY, w, h, textW, textH } = headerCoords(countryName);
+	// Header
+	const headerColor = worldMap.properties.headerColor[1] !== -1
+		? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
+		: RGBA(...toRGB(worldMap.panelColor), 150);
+	switch (worldMap.properties.headerStyle[1]) {
+		case 0: {
+			if (!worldMap.properties.bFullHeader[1]) {
+				const offset = 0.1;
+				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
+				let imgGr = img.GetGraphics();
+				if (posY !== 0) {
+					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
+					if (posY !== window.Height - textH) {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
+						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+					}
+					else {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+					}
+				} else {
+					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				}
+				img.ReleaseGraphics(imgGr);
+				const mask = gdi.CreateImage(img.Width, img.Height);
+				imgGr = mask.GetGraphics();
+				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				mask.ReleaseGraphics(imgGr);
+				img.ApplyMask(mask);
+				if (posY !== 0) {
+					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				} else {
+					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				}
+			} else {
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				} else {
+					gr.FillSolidRect(posX, posY, w, textH, headerColor);
+				}
+			}
+			break;
+		}
+		case 1:
+		default: {
+			if (!worldMap.properties.bFullHeader[1]) {
+				const offset = 0.1;
+				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
+				let imgGr = img.GetGraphics();
+				if (posY !== 0) {
+					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
+					if (posY !== window.Height - textH) {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
+						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+					}
+					else {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+					}
+				} else {
+					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				}
+				img.ReleaseGraphics(imgGr);
+				const mask = gdi.CreateImage(img.Width, img.Height);
+				imgGr = mask.GetGraphics();
+				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				mask.ReleaseGraphics(imgGr);
+				img.ApplyMask(mask);
+				if (posY !== 0) {
+					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				} else {
+					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				}
+			} else {
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				} else {
+					gr.FillSolidRect(posX, posY, w, textH, headerColor);
+				}
+			}
+		}
+	}
+	// Flag
+	if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
+		const flagPos = worldMap.properties.flagPosition[1].toLowerCase() || 'center';
+		const loadFlag = (idx) => {
+			const id = worldMap.lastPoint[idx].id;
+			const flag = loadFlagImage(id);
+			const flagScale = flag.Height / textH;
+			return flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
+		};
+		const paintFlag = (img, align) => {
+			switch (align) {
+				case 'right':
+				case 'both':
+				case 'left':
+				default: {
+					if (align !== 'right') { gr.DrawImage(img, infoX + _scale(10), posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
+					if (align !== 'left') { gr.DrawImage(img, infoX + infoW - _scale(10) - img.Width, posY, img.Width, img.Height, 0, 0, img.Width, img.Height); }
+					break;
+				}
+				case 'center': {
+					gr.DrawImage(img, worldMap.properties.bShowLocale[1] ? infoX + (infoW - textW) / 2 - img.Width - _scale(10) : infoX + (infoW - img.Width) / 2, posY, img.Width, img.Height, 0, 0, img.Width, img.Height);
+					break;
+				}
+			}
+		};
+		const paintText = (flagsWidth) => {
+			gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX + flagsWidth, posY, infoW - flagsWidth * 2, h, DT_CENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+		};
+		if (flagPos === 'both' && worldMap.lastPoint.length > 1) {
+			let flag;
+			for (let i = 0; i < 2; i++) {
+				flag = loadFlag(i);
+				paintFlag(flag, ['left', 'right'][i]);
+			}
+			// Text
+			if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
+		} else {
+			const flag = loadFlag(0);
+			paintFlag(flag, flagPos);
+			// Text
+			if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
+		}
+	} else if (worldMap.properties.bShowLocale[1]) {
+		if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+		else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+	}
+}
+
+function drawTaggingPoint(gr) {
+	const id = formatCountry(worldMap.foundPoints[0].key || '');
+	let point = worldMap.point[id];
+	if (!point) {
+		const [xPos, yPos] = worldMap.findCoordinates({
+			id,
+			mapWidth: worldMap.imageMap.Width,
+			mapHeight: worldMap.imageMap.Height,
+			factorX: worldMap.factorX,
+			factorY: worldMap.factorY
+		});
+		if (xPos !== -1 && yPos !== -1) {
+			point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
+		}
+	}
+	if (point) {
+		gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, worldMap.defaultColor);
+	}
+}
+
+const debouncedRepaint = {
+	'60': debounce(window.RepaintRect, 60, false, window),
+};
+function repaint(bPlayback = false, bImmediate = false, bForce = false) {
+	if (!worldMap.properties.bEnabled[1]) { return false; }
+	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
+	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying && !bForce) { return false; }
+	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying && !bForce) { return false; }
+	imgAsync.fullImg = null;
+	imgAsync.layers.imgs.length = 0;
+	imgAsync.layers.id.length = 0;
+	imgAsync.layers.iso.clear();
+	imgAsync.layers.processedIso.clear();
+	imgAsync.layers.bPaint = false;
+	imgAsync.layers.bStop = true;
+	imgAsync.layers.bCreated = false;
+	if (!window.IsVisible) { return false; }
+	const delay = bImmediate ? 0 : worldMap.properties.iRepaintDelay[1];
+	if (delay > 0) {
+		if (!Object.hasOwn(debouncedRepaint, delay)) { debouncedRepaint[delay] = debounce(window.RepaintRect, delay, false, window); }
+		if (worldMap.properties.bFullHeader[1]) {
+			debouncedRepaint[delay](0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
+		} else {
+			debouncedRepaint[delay](worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		}
+	} else {
+		if (worldMap.properties.bFullHeader[1]) {
+			window.RepaintRect(0, worldMap.posY, window.Width, worldMap.imageMap.Height * worldMap.scale);
+		} else {
+			window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+		}
+	}
+	return true;
+}
+
+const imgAsync = {
+	layers: { bPaint: false, bStop: false, imgs: [], id: [], iso: new Set(), processedIso: new Set() },
+	masks: { sel: null, std: null },
+	lowMemMode: { maxSize: 1000 },
+	fullImg: null
+};
+const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / worldMap.imageMap.Width, imgAsync.layers.h / worldMap.imageMap.Height)) => {
+	if (!mode || !mode.length) { return; }
+	const flagSize = 64; const w = 40; const h = 30;
+	const flag = mode === 'flag'
+		? loadFlagImage(id)
+		: loadFlagImage(id).Clone((flagSize - w) / 2, (flagSize - h) / 2, (flagSize + w) / 2, (flagSize + h) / 2); // Extract center of flag
+	const layerGr = subLayer.GetGraphics();
+	const point = worldMap.point[id];
+	switch (mode) {
+		case 'color': {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq)
+				.map((o) => o.col).filter((color) => {
+					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
+				});
+			const flagColor = flagColors[0] || RGB(255, 255, 255);
+			layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, flagColor);
+			break;
+		}
+		case 'gradient': {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq).map((o) => o.col)
+				.filter((color) => {
+					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
+				});
+			if (flagColors.length === 0) { flagColors.push(RGB(0, 0, 0)); }
+			if (flagColors.length === 1) { flagColors.push(RGB(255, 255, 255)); }
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			layerGr.FillGradRect(x, y, w, h, 0, flagColors[0], flagColors[1], 0.25);
+			break;
+		}
+		case 'flag': {
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flag.Width, flag.Height);
+			break;
+		}
+	}
+	subLayer.ReleaseGraphics(layerGr);
+};
+
+/**
+ * Paint country layers
+ *
+ * @function
+ * @name paintLayers
+ * @kind variable
+ * @param {{ gr: GdiGraphics, color?: number, gradient?: number[] bProfile?: boolean }} { gr, color, gradient, bProfile }?
+ * @returns {void}
+ */
+const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], gradient = null, bProfile = false } = {}) => {
+	const profile = bProfile ? new FbProfiler('paintLayers') : null;
+	const bMask = worldMap.properties.customShapeColor[1] !== -1 || worldMap.properties.panelMode[1] === 3;
+	const idSel = worldMap.idSelected;
+	const bLowMemMode = worldMap.properties.memMode[1] > 0;
+	if (imgAsync.layers.bPaint && worldMap.properties.customShapeAlpha[1] > 0) {
+		const bStatsModes = worldMap.properties.panelMode[1] == 1 || worldMap.properties.panelMode[1] === 3;
+		const bFullImg = bStatsModes && imgAsync.fullImg;
+		if (bFullImg) {
+			const offsetX = bLowMemMode ? 50 : 100;
+			const offsetY = bLowMemMode ? 50 : 100;
+			const offsetYAntarctic = bLowMemMode ? 310 : 620;
+			const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+			const w = (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+			const h = (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
+			const x = worldMap.posX - offsetX * worldMap.scale;
+			const y = worldMap.posY - offsetY * worldMap.scale;
+			gr.DrawImage(imgAsync.fullImg, x, y, w, h, 0, 0, imgAsync.fullImg.Width, imgAsync.fullImg.Height, 0, worldMap.properties.customShapeAlpha[1]);
+			imgAsync.layers.bStop = true;
+		} else if (bStatsModes && imgAsync.layers.imgs.length) {
+			imgAsync.fullImg = gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h);
+		}
+		if (bProfile) { profile.Print('background'); }
+		if (imgAsync.layers.imgs.length !== worldMap.lastPoint.length) { repaint(); }
+		if (imgAsync.layers.imgs.length) {
+			const layerW = imgAsync.layers.w;
+			const layerH = imgAsync.layers.h;
+			if (bFullImg && !idSel && imgAsync.layers.bCreated) { return; }
+			if (bMask) {
+				const grFullImg = bStatsModes && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
+				let scheme = null;
+				if (gradient) {
+					const top = Math.round(Math.log(Math.max(...worldMap.lastPoint.map((p) => p.val))));
+					scheme = Chroma.scale(gradient).mode('lrgb').colors(top + 1, 'android');
+				}
+				// Hardcoded values comparing Mercator map with Antarctica against python generated countries
+				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const offsetX = bLowMemMode ? 50 : 100;
+				const offsetY = bLowMemMode ? 50 : 100;
+				const offsetYAntarctic = bLowMemMode ? 310 : 620;
+				const w = grFullImg
+					? layerW
+					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg
+					? layerH
+					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarctic : 0)) * worldMap.scale;
+				const x = grFullImg
+					? 0
+					: worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg
+					? 0
+					: worldMap.posY - offsetY * worldMap.scale;
+				const layerFill = worldMap.properties.layerFillMode[1];
+				let i = 0;
+				for (const imgObj of imgAsync.layers.imgs) {
+					const id = imgAsync.layers.id[i++];
+					const bSel = idSel === id;
+					if (!bSel && bFullImg) { continue; }
+					const img = imgObj.img;
+					if (grFullImg) {
+						let subLayer = imgAsync.masks.std.Clone(0, 0, layerW, layerH);
+						if (layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
+						if (gradient) {
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
+							const layerGr = subLayer.GetGraphics();
+							layerGr.FillSolidRect(0, 0, layerW, layerH, scheme[count]);
+							subLayer.ReleaseGraphics(layerGr);
+						}
+						subLayer.ApplyMask(img);
+						grFullImg.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH);
+					} else {
+						let subLayer = imgAsync.masks[bSel && !gradient ? 'sel' : 'std'].Clone(0, 0, layerW, layerH);
+						if (!bSel && !gradient && layerFill.length) { fillSubLayer(subLayer, id, layerFill); }
+						if (gradient) {
+							const count = Math.round(Math.log(worldMap.lastPoint.find((last) => { return last.id === id; }).val));
+							const layerGr = subLayer.GetGraphics();
+							layerGr.FillSolidRect(0, 0, layerW, layerH, bSel ? invert(scheme[count]) : scheme[count]);
+							subLayer.ReleaseGraphics(layerGr);
+						}
+						subLayer.ApplyMask(img);
+						gr.DrawImage(subLayer, x, y, w, h, 0, 0, layerW, layerH, 0, worldMap.properties.customShapeAlpha[1]);
+					}
+					if (bProfile) { profile.Print('Sub-layer'); }
+					if (bSel && bFullImg) { break; }
+				}
+				if (grFullImg) {
+					imgAsync.fullImg.ReleaseGraphics(grFullImg);
+					imgAsync.layers.bCreated = true;
+					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
+				}
+				if (bProfile) { profile.Print('Layers'); }
+			} else {
+				const grFullImg = worldMap.properties.panelMode[1] === 1 && !bFullImg ? imgAsync.fullImg.GetGraphics() : null;
+				const bAntarctic = /(?:^|.*_)no_ant(?:_.*|\..*$)/i.test(worldMap.imageMapPath);
+				const offsetX = bLowMemMode ? 50 : 100;
+				const offsetY = bLowMemMode ? 50 : 100;
+				const offsetYAntarcTic = bLowMemMode ? 310 : 620;
+				const w = grFullImg
+					? layerW
+					: (worldMap.imageMap.Width + offsetX * 2) * worldMap.scale;
+				const h = grFullImg
+					? layerH
+					: (worldMap.imageMap.Height + offsetY * 2 + (bAntarctic ? offsetYAntarcTic : 0)) * worldMap.scale;
+				const x = grFullImg
+					? 0
+					: worldMap.posX - offsetX * worldMap.scale;
+				const y = grFullImg
+					? 0
+					: worldMap.posY - offsetY * worldMap.scale;
+				let i = 0;
+				for (const imgObj of imgAsync.layers.imgs) {
+					const id = imgAsync.layers.id[i++];
+					const bSel = idSel === id;
+					if (!bSel && bFullImg) { continue; }
+					const img = imgObj.img;
+					if (grFullImg) {
+						grFullImg.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h);
+					} else {
+						// Without masks, only opacity can be changed. It works fine except on library mode,
+						// since the background already has the layer painted...
+						if (worldMap.properties.panelMode[1] === 1 && bSel) { // NOSONAR
+							gr.DrawImage(img.InvertColours(), x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, worldMap.properties.customShapeAlpha[1]);
+						} else {
+							const alpha = bSel
+								? worldMap.properties.customShapeAlpha[1] > 200
+									? worldMap.properties.customShapeAlpha[1] - 50
+									: worldMap.properties.customShapeAlpha[1] > 100
+										? worldMap.properties.customShapeAlpha[1] + 50
+										: worldMap.properties.customShapeAlpha[1] + 100
+								: worldMap.properties.customShapeAlpha[1];
+							gr.DrawImage(img, x, y, w, h, 0, 0, imgAsync.layers.w, imgAsync.layers.h, 0, alpha);
+						}
+					}
+					if (bSel && bFullImg) { break; }
+				}
+				if (grFullImg) {
+					if (bLowMemMode) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
+					imgAsync.fullImg.ReleaseGraphics(grFullImg);
+					imgAsync.layers.bCreated = true;
+					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
+				}
+			}
+		}
+	}
+	const promises = [];
+	imgAsync.layers.bStop = false;
+	worldMap.lastPoint.forEach((point, i) => {
+		let id = point.id;
+		if (worldMap.properties.pointMode[1] >= 1) { // Shapes or both
+			const iso = id && id.length ? getCountryISO(id) : null;
+			if (iso) {
+				if (!imgAsync.layers.iso.has(iso)) {
+					imgAsync.layers.iso.add(iso);
+					const file = folders.xxx + 'helpers-external\\countries-mercator' + (bMask ? '-mask' : '') + '\\' + iso + '.png';
+					if (_isFile(file)) {
+						promises.push(new Promise((resolve) => {
+							setTimeout(() => {
+								if (imgAsync.layers.bStop) { resolve(); }
+								if (imgAsync.layers.processedIso.has(iso)) { resolve(); }
+								gdi.LoadImageAsyncV2(void (0), file).then((img) => {
+									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
+										if (bLowMemMode) {
+											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
+											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
+										}
+										imgAsync.layers.imgs.push({ img, iso });
+										imgAsync.layers.processedIso.add(iso);
+										imgAsync.layers.id.push(id);
+									}
+									resolve();
+								});
+							}, i * 250 + 25);
+						}));
+					}
+				}
+			}
+		}
+		if (worldMap.properties.pointMode[1] === 2) { // Both
+			let point = worldMap.point[id];
+			if (!point) {
+				const [xPos, yPos] = worldMap.findCoordinates({
+					id,
+					mapWidth: worldMap.imageMap.Width,
+					mapHeight: worldMap.imageMap.Height,
+					factorX: worldMap.factorX,
+					factorY: worldMap.factorY
+				});
+				if (xPos !== -1 && yPos !== -1) {
+					point = { x: xPos, y: yPos, xScaled: xPos * worldMap.scale + worldMap.posX, yScaled: yPos * worldMap.scale + worldMap.posY, id };
+				}
+			}
+			if (point) {
+				gr.DrawEllipse(point.xScaled, point.yScaled, worldMap.pointSize * worldMap.scale, worldMap.pointSize * worldMap.scale, worldMap.pointLineSize * worldMap.scale, idSel === id ? worldMap.selectionColor : worldMap.defaultColor);
+			}
+		}
+	});
+	if (promises.length) {
+		Promise.all(promises).then(() => {
+			if (imgAsync.layers.bStop) { return; }
+			imgAsync.layers.bPaint = true;
+			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
+			imgAsync.layers.h = imgAsync.layers.imgs[0].img.Height;
+			if (bMask) {
+				imgAsync.masks = {
+					std: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+					sel: gdi.CreateImage(imgAsync.layers.w, imgAsync.layers.h),
+				};
+				if (!gradient) {
+					Object.keys(imgAsync.masks).forEach((type) => {
+						const layerGr = imgAsync.masks[type].GetGraphics();
+						layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, type === 'sel' ? invert(color) : color);
+						imgAsync.masks[type].ReleaseGraphics(layerGr);
+					});
+				}
+			}
+			if (bProfile) { profile.Print('Retrieve img layers'); }
+			if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
+		});
+	} else if (bProfile) { profile.Print('End'); }
+};
