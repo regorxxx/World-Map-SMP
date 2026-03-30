@@ -702,7 +702,8 @@ addEventListener('on_notify_data', (name, info) => {
 						if (jsonId.length && info.artist === jsonId.toUpperCase()) {
 							// Set tag on map for drawing if found
 							if (sel && sel.Count && sel.Find(info.handle) !== -1) {
-								if (!worldMap.findTag(info.handle, jsonId)) {
+								const prevTag = worldMap.findTag(info.handle, jsonId);
+								if (!prevTag || !getCountryISO(prevTag)) {
 									worldMap.setTag(locale[len - 1], jsonId);
 									if (worldMap.lastPoint.length === 1 && worldMap.lastPoint[0].id !== locale[len - 1]) {
 										repaint();
@@ -716,8 +717,11 @@ addEventListener('on_notify_data', (name, info) => {
 									if (worldMap.properties.iWriteTags[1] === 1) {
 										new FbMetadbHandleList(info.handle).UpdateFileInfoFromJSON(JSON.stringify([{ [tagName]: locale }])); // Uses tagName var as key here
 									} else if (worldMap.properties.iWriteTags[1] === 2) {
-										const newData = { [worldMap.jsonId]: jsonId, val: locale };
-										if (!worldMap.hasDataById(jsonId)) { worldMap.saveData(newData); } // use path at properties
+										const prevData = worldMap.getDataById(jsonId);
+										if (!prevData) { worldMap.saveData({ [worldMap.jsonId]: jsonId, val: locale }); } // use path at properties
+										else if (!getCountryISO(prevData.val.slice(-1)[0])) {
+											worldMap.modifyData(jsonId, { [worldMap.jsonId]: jsonId, val: locale });
+										}
 									}
 								}
 							}

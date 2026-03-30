@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/03/26
+//30/03/26
 
 /* exported ImageMap */
 
@@ -408,15 +408,46 @@ function ImageMap({
 		}
 	};
 	this.saveData = (data, path = this.jsonPath) => { // Does not check for duplication!
-		if (Array.isArray(data)) {
+		let bDone;
+		if (Array.isArray(data) && data.length) {
 			data.forEach((val) => { this.jsonData.push(val); });
-		} else {
+			bDone = true;
+		} else if (data) {
 			this.jsonData.push(data);
+			bDone = true;
 		}
-		this.save(path);
+		return bDone
+			? this.save(path)
+			: false;
+	};
+	this.modifyData = (id, data, path = this.jsonPath) => {
+		let bDone;
+		if (Array.isArray(id)) {
+			const ids = new Set(id);
+			this.jsonData.forEach((obj) => {
+				if (ids.has(obj[this.jsonId])) {
+					const newData = data[id.indexOf(obj[this.jsonId])];
+					obj[this.jsonId] = data[this.jsonId];
+					obj.val.length = 0;
+					newData.val.forEach((v) => obj.val.push(v));
+					bDone = true;
+				}
+			});
+		} else {
+			const prev = this.jsonData.find((obj) => { return (obj[this.jsonId] === id); });
+			if (prev) {
+				prev[this.jsonId] = data[this.jsonId];
+				prev.val.length = 0;
+				data.val.forEach((v) => prev.val.push(v));
+				bDone = true;
+			}
+		}
+		return bDone
+			? this.save(path)
+			: false;
 	};
 	this.save = (path = this.jsonPath) => {
-		_save(path, JSON.stringify(this.jsonData, null, '\t').replace(/\n/g, '\r\n'));
+		return _save(path, JSON.stringify(this.jsonData, null, '\t').replace(/\n/g, '\r\n'));
 	};
 	this.hasData = (data, byKey = this.jsonId) => { // Duplicates by key
 		return (this.jsonData.length ? this.jsonData.some((obj) => { return (obj[byKey] === data[byKey]); }) : false);
