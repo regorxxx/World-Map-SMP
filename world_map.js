@@ -80,7 +80,7 @@ const properties = {
 	bPointFill: ['Draw a point (true) or a circular corona (false)', false, { func: isBoolean }, false],
 	customLocaleColor: ['Custom text color', 0xFF000000, { func: isInt }, 0xFF000000],
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
-	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isInt }, globFonts.standardSmall.size],
+	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isFinite }, globFonts.standardSmall.size],
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
 	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
@@ -463,7 +463,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 				paintLayers({ gr, color, bProfile: worldMap.properties.bProfile[1] });
 			}
 		}
-		if (sel.Count && worldMap.properties.bShowHeader[1]) { drawHeader(gr, sel);	} // Header text
+		if (sel.Count && worldMap.properties.bShowHeader[1]) { drawHeader(gr, sel); } // Header text
 	}
 	if (window.highlight) { extendGR(gr, { Highlight: true }); }
 	if (window.debugPainting) { window.drawDebugRectAreas(gr); }

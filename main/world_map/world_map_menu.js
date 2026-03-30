@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/02/26
+//30/03/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -726,10 +726,8 @@ function settingsMenu() {
 						menu.newEntry({
 							menuName, entryText: item, func: () => {
 								if (i === optionsLength - 1) {
-									let input = '';
-									try { input = Number(utils.InputBox(window.ID, 'Input size:', window.ScriptInfo.Name + ': Text size', properties.pointSize[1], true)); }
-									catch (e) { return; } // eslint-disable-line no-unused-vars
-									if (Number.isNaN(input)) { return; }
+									let input = Input.number('real', properties.fontSize[1], 'Input font size:\n(> 0)', window.ScriptInfo.Name + ': Text size', 4);
+									if (input === null) { return; }
 									properties.fontSize[1] = input;
 								} else { properties.fontSize[1] = item; }
 								if (properties.fontSize[1] === worldMap.fontSize) { return; }
