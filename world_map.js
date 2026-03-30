@@ -78,7 +78,7 @@ const properties = {
 	customPointColorMode: ['Custom point color mode', 0, { func: isInt, range: [[0, 1]] }, 0],
 	customPointColor: ['Custom point color for the panel', RGB(91, 165, 34), { func: isInt }, RGB(91, 165, 34)],
 	bPointFill: ['Draw a point (true) or a circular corona (false)', false, { func: isBoolean }, false],
-	customLocaleColor: ['Custom text color', 0xFF000000, { func: isInt }, 0xFF000000],
+	customLocaleColor: ['Custom text color', RGB(121, 194, 255), { func: isInt }, RGB(121, 194, 255)],
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
 	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isFinite }, globFonts.standardSmall.size],
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
@@ -105,7 +105,8 @@ const properties = {
 	layerFillMode: ['Country layer fill mode', '', { func: isStringWeak }, ''],
 	background: ['Background options', JSON.stringify(_background.defaults())],
 	headerColor: ['Custom header color', -1, { func: isInt }, -1],
-	bFullHeader: ['Header full panel size', true, { func: isBoolean }, true],
+	bFullHeader: ['Header full panel size', false, { func: isBoolean }, false],
+	headerStyle: ['Header style: block (0), modern (1)', 1, { func: isInt, range: [[0, 1]] }, 1],
 	bDynamicColors: ['Adjust colors to artwork', true, { func: isBoolean }],
 	bDynamicColorsBg: ['Adjust colors to artwork (bg)', false, { func: isBoolean }],
 	bOnNotifyColors: ['Adjust colors on panel notify', true, { func: isBoolean }],
@@ -148,6 +149,7 @@ const worldMap = new ImageMap({
 	imagePath: worldMapImages.find((img) => img.bDefault).path,
 	properties: getPropertiesPairs(properties, '', 0), // Sets font, sizes, bSplitIds and bSplitTags
 	fontStyle: 2, // Italic font
+	font: globFonts.alt.name,
 	jsonId: 'album artist', // id and tag used to identify different entries
 	findCoordinatesFunc: findCountryCoords, // Function at helpers\world_map_tables.js
 	findPointFunc: findCountry, // Function at helpers\world_map_tables.js
@@ -157,7 +159,6 @@ const worldMap = new ImageMap({
 	tooltipFunc: tooltipPoint, // What happens when mouse is over point, helpers\world_map_helpers.js
 	tooltipPanelFunc: tooltipPanel, // What happens when mouse is over panel, helpers\world_map_helpers.js
 	tooltipFindPointFunc: tooltipFindPoint, // What happens when mouse is over the map, if current track has no tags, helpers\world_map_helpers.js
-	font: globFonts.standard.name,
 	bSkipInit: true,
 	splitExcludeId: globNoSplitArtist.list
 });

@@ -784,6 +784,23 @@ function settingsMenu() {
 				menu.newCheckMenuLast(() => properties.bFullHeader[1]);
 				menu.newSeparator(menuName);
 				{
+					const subMenuName = menu.newMenu('Header style', menuName, properties.bShowHeader[1] ? MF_STRING : MF_GRAYED);
+					const options = [
+						{ val: 0, entryText: 'Block (gradient)' },
+						{ val: 1, entryText: 'Modern' }
+					];
+					options.forEach((opt) => {
+						menu.newEntry({
+							menuName: subMenuName, entryText: opt.entryText, func: () => {
+								properties.headerStyle[1] = opt.val;
+								window.Repaint();
+								overwriteProperties(properties);
+							}, flags: properties.bShowHeader[1] ? MF_STRING : MF_GRAYED
+						});
+					});
+					menu.newCheckMenuLast(() => options.findIndex((opt) => opt.val === properties.headerStyle[1]), options);
+				}
+				{
 					const subMenuName = menu.newMenu('Header position', menuName, properties.bShowHeader[1] ? MF_STRING : MF_GRAYED);
 					const options = [
 						{ val: 'top', entryText: 'Top (panel)' },

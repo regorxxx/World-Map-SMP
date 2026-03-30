@@ -8,7 +8,7 @@
 /* global _save:readable, _isFile:readable */
 // include('..\\..\\helpers\\helpers_xxx.js');
 /* global WshShell:readable, popup:readable, folders:readable, debounce:readable */
-/* global MF_GRAYED:readable, InterpolationMode:readable, DT_CENTER:readable, DT_NOPREFIX:readable, DT_WORD_ELLIPSIS:readable */
+/* global MF_GRAYED:readable, InterpolationMode:readable, TextRenderingHint:readable, DT_CENTER:readable, DT_NOPREFIX:readable, DT_WORD_ELLIPSIS:readable */
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
@@ -368,47 +368,63 @@ function drawHeader(gr) {
 	const countryName = worldMap.properties.bShowLocale[1] ? headerCountryName() : '- none -';
 	const { infoX, infoW, posX, posY, w, h, textW, textH } = headerCoords(countryName);
 	// Header
-	const headerColor = worldMap.properties.headerColor[1] !== -1
-		? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
-		: RGBA(...toRGB(worldMap.panelColor), 150);
-	if (!worldMap.properties.bFullHeader[1]) {
-		const offset = 0.1;
-		const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
-		let imgGr = img.GetGraphics();
-		if (posY !== 0) {
-			imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
-			if (posY !== window.Height - textH) {
-				imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
-				imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+	switch (worldMap.properties.headerStyle[1]) {
+		case 0: {
+			const headerColor = worldMap.properties.headerColor[1] !== -1
+				? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
+				: RGBA(...toRGB(worldMap.panelColor), 150);
+			if (!worldMap.properties.bFullHeader[1]) {
+				const offset = 0.1;
+				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
+				let imgGr = img.GetGraphics();
+				if (posY !== 0) {
+					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
+					if (posY !== window.Height - textH) {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
+						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+					}
+					else {
+						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+					}
+				} else {
+					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				}
+				img.ReleaseGraphics(imgGr);
+				const mask = gdi.CreateImage(img.Width, img.Height);
+				imgGr = mask.GetGraphics();
+				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
+				mask.ReleaseGraphics(imgGr);
+				img.ApplyMask(mask);
+				if (posY !== 0) {
+					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				} else {
+					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+				}
+			} else {
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+				} else {
+					gr.FillSolidRect(posX, posY, w, textH, headerColor);
+				}
 			}
-			else {
-				imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+			break;
+		}
+		case 1:
+		default: {
+			if (!worldMap.properties.bFullHeader[1]) {
+				gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
+			} else {
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
+				} else {
+					gr.FillSolidRect(posX, posY, w, _scale(1), worldMap.textColor);
+				}
 			}
-		} else {
-			imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-			imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-		}
-		img.ReleaseGraphics(imgGr);
-		const mask = gdi.CreateImage(img.Width, img.Height);
-		imgGr = mask.GetGraphics();
-		imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
-		imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
-		mask.ReleaseGraphics(imgGr);
-		img.ApplyMask(mask);
-		if (posY !== 0) {
-			gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-		} else {
-			gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-		}
-	} else {
-		if (posY !== window.Height - textH) {
-			gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-			gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-		} else {
-			gr.FillSolidRect(posX, posY, w, textH, headerColor);
 		}
 	}
-
 	// Flag
 	if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
 		const flagPos = worldMap.properties.flagPosition[1].toLowerCase() || 'center';
@@ -416,7 +432,7 @@ function drawHeader(gr) {
 			const id = worldMap.lastPoint[idx].id;
 			const flag = loadFlagImage(id);
 			const flagScale = flag.Height / textH;
-			return flag.Resize(flag.Width / flagScale, textH, InterpolationMode.HighQualityBicubic);
+			return flag.Resize(flag.Width / flagScale, textH, flagScale > 1.5 ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor );
 		};
 		const paintFlag = (img, align) => {
 			switch (align) {
@@ -435,7 +451,9 @@ function drawHeader(gr) {
 			}
 		};
 		const paintText = (flagsWidth) => {
+			gr.SetTextRenderingHint(TextRenderingHint.AntiAliasGridFit);
 			gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX + flagsWidth, posY, infoW - flagsWidth * 2, h, DT_CENTER | DT_NOPREFIX | DT_WORD_ELLIPSIS);
+			gr.SetTextRenderingHint();
 		};
 		if (flagPos === 'both' && worldMap.lastPoint.length > 1) {
 			let flag;
@@ -452,8 +470,10 @@ function drawHeader(gr) {
 			if (worldMap.properties.bShowLocale[1]) { paintText(_scale(10) + flag.Width * 10 / 9); }
 		}
 	} else if (worldMap.properties.bShowLocale[1]) {
+		gr.SetTextRenderingHint(TextRenderingHint.AntiAliasGridFit);
 		if (textW < w) { gr.GdiDrawText(countryName, worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
 		else { gr.GdiDrawText(countryName.slice(0, Math.floor(25 * 35 / worldMap.gFont.Size)) + '...', worldMap.gFont, worldMap.textColor, infoX, posY, infoW, h, DT_CENTER | DT_NOPREFIX); }
+		gr.SetTextRenderingHint();
 	}
 }
 
