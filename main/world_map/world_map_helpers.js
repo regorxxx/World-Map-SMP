@@ -415,7 +415,11 @@ function drawHeader(gr) {
 		case 1:
 		default: {
 			if (!worldMap.properties.bFullHeader[1]) {
-				gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
+				if (posY !== window.Height - textH) {
+					gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
+				} else {
+					gr.FillSolidRect(posX, posY, w, _scale(1), worldMap.textColor);
+				}
 			} else {
 				if (posY !== window.Height - textH) {
 					gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
