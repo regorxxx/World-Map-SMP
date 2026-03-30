@@ -371,88 +371,44 @@ function drawHeader(gr) {
 	const headerColor = worldMap.properties.headerColor[1] !== -1
 		? RGBA(...toRGB(worldMap.properties.headerColor[1]), 150)
 		: RGBA(...toRGB(worldMap.panelColor), 150);
-	switch (worldMap.properties.headerStyle[1]) {
-		case 0: {
-			if (!worldMap.properties.bFullHeader[1]) {
-				const offset = 0.1;
-				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
-				let imgGr = img.GetGraphics();
-				if (posY !== 0) {
-					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
-					if (posY !== window.Height - textH) {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
-						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-					}
-					else {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
-					}
-				} else {
-					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				}
-				img.ReleaseGraphics(imgGr);
-				const mask = gdi.CreateImage(img.Width, img.Height);
-				imgGr = mask.GetGraphics();
-				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				mask.ReleaseGraphics(imgGr);
-				img.ApplyMask(mask);
-				if (posY !== 0) {
-					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				} else {
-					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				}
-			} else {
-				if (posY !== window.Height - textH) {
-					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				} else {
-					gr.FillSolidRect(posX, posY, w, textH, headerColor);
-				}
+	if (!worldMap.properties.bFullHeader[1]) {
+		const offset = 0.1;
+		const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
+		let imgGr = img.GetGraphics();
+		if (posY !== 0) {
+			imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
+			if (posY !== window.Height - textH) {
+				imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
+				imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
 			}
-			break;
+			else {
+				imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
+			}
+		} else {
+			imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
+			imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
 		}
-		case 1:
-		default: {
-			if (!worldMap.properties.bFullHeader[1]) {
-				const offset = 0.1;
-				const img = gdi.CreateImage(w * (1 + offset), textH * (3 / 4 + (posY !== 0 ? 1 : 1 / 2)));
-				let imgGr = img.GetGraphics();
-				if (posY !== 0) {
-					imgGr.FillGradRect(0, 0, img.Width, textH / 2, 270.5, headerColor, RGBA(0, 0, 0, 0));
-					if (posY !== window.Height - textH) {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4, headerColor);
-						imgGr.FillGradRect(0, textH / 2 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-					}
-					else {
-						imgGr.FillSolidRect(0, textH / 2, img.Width, textH * 3 / 4 + textH / 2, headerColor);
-					}
-				} else {
-					imgGr.FillSolidRect(0, 0, img.Width, textH * 3 / 4, headerColor);
-					imgGr.FillGradRect(0, 0 + textH * 3 / 4, img.Width, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				}
-				img.ReleaseGraphics(imgGr);
-				const mask = gdi.CreateImage(img.Width, img.Height);
-				imgGr = mask.GetGraphics();
-				imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
-				mask.ReleaseGraphics(imgGr);
-				img.ApplyMask(mask);
-				if (posY !== 0) {
-					gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				} else {
-					gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
-				}
-			} else {
-				if (posY !== window.Height - textH) {
-					gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
-					gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
-				} else {
-					gr.FillSolidRect(posX, posY, w, textH, headerColor);
-				}
-			}
+		img.ReleaseGraphics(imgGr);
+		const mask = gdi.CreateImage(img.Width, img.Height);
+		imgGr = mask.GetGraphics();
+		imgGr.FillGradRect(0, 0, w * offset / 2, img.Height, 180.1, RGB(0, 0, 0), RGB(255, 255, 255));
+		imgGr.FillGradRect(img.Width - w * (offset / 2), 0, w * (offset / 2), img.Height, 0.1, RGB(0, 0, 0), RGB(255, 255, 255));
+		mask.ReleaseGraphics(imgGr);
+		img.ApplyMask(mask);
+		if (posY !== 0) {
+			gr.DrawImage(img, posX - w * (offset / 4), posY - textH * 2 / 5, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+		} else {
+			gr.DrawImage(img, posX - w * (offset / 4), posY, w + w * (offset / 2), img.Height, 0, 0, img.Width, img.Height);
+		}
+	} else {
+		if (posY !== window.Height - textH) {
+			gr.FillSolidRect(posX, posY, w, textH * 3 / 4, headerColor);
+			gr.FillGradRect(posX, posY + textH * 3 / 4, w, textH / 2, 90.1, headerColor, RGBA(0, 0, 0, 0));
+		} else {
+			gr.FillSolidRect(posX, posY, w, textH, headerColor);
 		}
 	}
+
 	// Flag
 	if (worldMap.properties.bShowFlag[1] && worldMap.lastPoint.length >= 1) {
 		const flagPos = worldMap.properties.flagPosition[1].toLowerCase() || 'center';
