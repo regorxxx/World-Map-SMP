@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//01/04/26
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
 
@@ -436,7 +436,7 @@ function drawHeader(gr) {
 			const id = worldMap.lastPoint[idx].id;
 			const flag = loadFlagImage(id);
 			const flagScale = flag.Height / textH;
-			return flag.Resize(flag.Width / flagScale, textH, flagScale > 1.5 ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor );
+			return flag.Resize(flag.Width / flagScale, textH, flagScale > 1.5 ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor);
 		};
 		const paintFlag = (img, align) => {
 			switch (align) {
@@ -552,8 +552,10 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 	const point = worldMap.point[id];
 	switch (mode) {
 		case 'color': {
-			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq)
-				.map((o) => o.col).filter((color) => {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSONV2 ? flag.GetColourSchemeJSONV2(4) : flag.GetColourSchemeJSON(4))
+				.sort((a, b) => a.freq - b.freq)
+				.map((o) => o.col)
+				.filter((color) => {
 					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
 				});
 			const flagColor = flagColors[0] || RGB(255, 255, 255);
@@ -561,7 +563,9 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 			break;
 		}
 		case 'gradient': {
-			const flagColors = JSON.parse(flag.GetColourSchemeJSON(4)).sort((a, b) => a.freq - b.freq).map((o) => o.col)
+			const flagColors = JSON.parse(flag.GetColourSchemeJSONV2 ? flag.GetColourSchemeJSONV2(4) : flag.GetColourSchemeJSON(4))
+				.sort((a, b) => a.freq - b.freq)
+				.map((o) => o.col)
 				.filter((color) => {
 					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
 				});
