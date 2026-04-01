@@ -44,7 +44,7 @@ Tags:
 
 	• May contain ISO values (ARG) or full names (Argentina).
 
-	• Non-case sensitive.
+	• Non-case-sensitive.
 
 	• Fetched any of these sources (by order):
 		◦ File tags.
