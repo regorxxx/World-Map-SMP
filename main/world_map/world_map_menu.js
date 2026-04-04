@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//04/04/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -489,6 +489,7 @@ function settingsMenu() {
 							{ name: 'Flag color', val: 'color' },
 							{ name: 'Flag gradient', val: 'gradient' },
 							{ name: 'Flag', val: 'flag' },
+							{ name: 'Flag blurred', val: 'blurflag' },
 						];
 						options.forEach((item) => {
 							menu.newEntry({

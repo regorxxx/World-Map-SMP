@@ -592,7 +592,15 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
 			const x = point.xCorr * scale - w / 2; const y = point.yCorr * scale - h / 2;
 			layerGr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
-			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flag.Width, flag.Height);
+			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flagSize, flagSize);
+			break;
+		}
+		case 'blurflag': {
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			const blend = flag.Resize(Math.max(Math.round(flag.Width / 10), 6), Math.max(Math.round(flag.Height / 10), 6), InterpolationMode.HighQuality)
+				.Resize(flagSize, flagSize, InterpolationMode.HighQuality);
+			layerGr.DrawImage(blend, x, y, w, h, 0, 0, flagSize, flagSize);
 			break;
 		}
 	}

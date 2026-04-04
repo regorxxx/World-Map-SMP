@@ -64,6 +64,7 @@
 - UI: added multiple new background art effects and image histogram while using D2D draw mode. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1079362.html#msg1079362).
 - UI: added new art mode 'By priority' which lets you set different art types by priority order to use if one is not available for current track. The submenu will show the list of art types set and the parent menu the actual one used. This feature also allows to specify between default, stub or embedded art (contrary to the other modes). Works like 'Album art' script bundled with JSP3 panel, see [here](https://hydrogenaudio.org/index.php/topic,116509.msg1079405.html#msg1079405).
 - UI: added new header art style (modern), which is now the default one. Improved header drawing code rewarding font and flag interpolation modes.
+- UI: added new country layers fill mode: blurred flag (based on Biography blend mode).
 ### Changed
 - Tagging: improved automatic tagging, checking if existing values are valid (and not only present), and overwriting them if needed. This is mainly a fix in conjunction with Biography-v1.4.2.mod.18+, since original Biography script did not always report locale tags with a country name, thus resulting in incomplete tags (which were never overwritten even if last.fm or wikipedia returned a country at a later point). The script will now overwrite values in such cases automatically.
 - UI: header font size now allows float numbers too.
