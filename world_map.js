@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//04/04/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -505,15 +505,24 @@ addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	}
 });
 
+let playlistClear;
 addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return false; }
 	if (playlistIndex === plman.ActivePlaylist && newCount === 0) {
 		worldMap.clearIdSelected(); // Always delete point selected if there is no items in playlist
 		if (worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying) { return; }
-		worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
-		repaint();
+		playlistClear = setTimeout(() => { // Workaround for library viewers selection update triggering a refresh without need
+			worldMap.clearLastPoint(); // Only delete last points when selMode follows playlist selection
+			repaint();
+		}, 60);
 	}
+});
+
+addEventListener('on_playlist_items_added', (playlistIndex, newCount) => {
+	if (worldMap.properties.panelMode[1] === 2) { return; }
+	if (!worldMap.properties.bEnabled[1]) { return false; }
+	if (playlistIndex === plman.ActivePlaylist && newCount !== 0) { clearTimeout(playlistClear); } // Workaround for library viewers selection update triggering a refresh without need
 });
 
 addEventListener('on_metadb_changed', (handleList, fromHook) => {

@@ -126,11 +126,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 	// Any track with same locale tag
 	const tagName = worldMap.properties.writeToTag[1];
 	if (tagName.length) {
-		const sel = worldMap.properties.selection[1] === selMode[1]
-			? (fb.IsPlaying
-				? new FbMetadbHandleList(fb.GetNowPlaying())
-				: plman.GetPlaylistSelectedItems(plman.ActivePlaylist)
-			) : plman.GetPlaylistSelectedItems(plman.ActivePlaylist);
+		const sel = worldMap.getSelection();
 		if (!sel && !sel.Count) { return bDone; }
 		const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId });
 		const jsonIdFlat = new Set(jsonId.flat(Infinity));
@@ -509,6 +505,11 @@ function repaint(bPlayback = false, bImmediate = false, bForce = false) {
 	if (worldMap.properties.panelMode[1] >= 1 && !bForce) { return false; }
 	if (!bPlayback && worldMap.properties.selection[1] === selMode[1] && fb.IsPlaying && !bForce) { return false; }
 	if (bPlayback && worldMap.properties.selection[1] === selMode[0] && fb.IsPlaying && !bForce) { return false; }
+	const sel = worldMap.getSelection();
+	const jsonId = getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null, splitExclude: worldMap.splitExcludeId });
+	const countries = jsonId.map((idArr, i) => idArr.map((val) => worldMap.findTag(sel[i], val).split(worldMap.bSplitTags ? '|' : void (0))))
+		.flat(Infinity).filter(Boolean);
+	if (new Set(countries).isEqual(new Set(worldMap.lastPoint.map((p) => p.id)))) { return false; }
 	imgAsync.fullImg = null;
 	imgAsync.layers.imgs.length = 0;
 	imgAsync.layers.id.length = 0;
