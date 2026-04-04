@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//04/04/26
 
 /* exported ImageMap */
 
@@ -136,7 +136,7 @@ function ImageMap({
 			if (id.length) {
 				// Is a new point? Calculate it
 				if (!this.bStaticCoord || !Object.hasOwn(this.point, id)) {
-					let [xPos, yPos] = this.findCoordinates({
+					let [xPos, yPos, xCorr, yCorr] = this.findCoordinates({
 						id,
 						mapWidth: this.imageMap.Width,
 						mapHeight: this.imageMap.Height,
@@ -145,7 +145,15 @@ function ImageMap({
 					});
 					if (xPos !== -1 && yPos !== -1) {
 						// Cache all points (position doesn't change), scaling is recalculated later if needed
-						this.point[id] = { x: xPos, y: yPos, xScaled: xPos * this.scale + this.posX, yScaled: yPos * this.scale + this.posY, id };
+						this.point[id] = {
+							x: xPos, y: yPos,
+							xScaled: xPos * this.scale + this.posX,
+							yScaled: yPos * this.scale + this.posY,
+							xCorr: xCorr || xPos, yCorr: yCorr || yPos,
+							xCorrScaled: xCorr * this.scale + this.posX,
+							yCorrScaled: yCorr * this.scale + this.posY,
+							id
+						};
 					}
 				}
 				// Draw points
@@ -553,9 +561,14 @@ function ImageMap({
 			}
 		}
 		// Sanity checks
-		if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet || JSON.stringify(this.findCoordinates()) !== JSON.stringify([-1, -1])) {
-			// function must exist, had been set and return [-1,-1] for arbitrary or null input to be considered valid
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.FullPanelName);
+		try { // function must exist, had been set and return [-1,-1] for arbitrary or null input to be considered valid
+			if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet) { throw new Error(); }
+			else {
+				const result = this.findCoordinates();
+				if (JSON.stringify(result) !== JSON.stringify([-1, -1, -1, -1]) && JSON.stringify(result) !== JSON.stringify([-1, -1])) { throw new Error(); }
+			}
+		} catch (e) { // eslint-disable-line no-unused-vars
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without valid \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.FullPanelName);
 		}
 		if (!this.mapTag.length) {
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.FullPanelName);
