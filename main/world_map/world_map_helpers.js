@@ -563,15 +563,19 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 	const layerGr = subLayer.GetGraphics();
 	const point = worldMap.point[id];
 	switch (mode) {
-		case 'color': {
-			const flagColors = JSON.parse(flag.GetColourSchemeJSONV2 ? flag.GetColourSchemeJSONV2(4) : flag.GetColourSchemeJSON(4))
-				.sort((a, b) => a.freq - b.freq)
-				.map((o) => o.col)
-				.filter((color) => {
-					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
-				});
-			const flagColor = flagColors[0] || RGB(255, 255, 255);
-			layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, flagColor);
+		case 'flag': {
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.xCorr * scale - w / 2; const y = point.yCorr * scale - h / 2;
+			layerGr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
+			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flagSize, flagSize);
+			break;
+		}
+		case 'blurflag': {
+			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
+			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
+			const blend = flag.Resize(Math.max(Math.round(flag.Width / 10), 6), Math.max(Math.round(flag.Height / 10), 6), InterpolationMode.HighQuality)
+				.Resize(flagSize, flagSize, InterpolationMode.HighQuality);
+			layerGr.DrawImage(blend, x, y, w, h, 0, 0, flagSize, flagSize);
 			break;
 		}
 		case 'gradient': {
@@ -588,19 +592,16 @@ const fillSubLayer = (subLayer, id, mode, scale = Math.min(imgAsync.layers.w / w
 			layerGr.FillGradRect(x, y, w, h, 0, flagColors[0], flagColors[1], 0.25);
 			break;
 		}
-		case 'flag': {
-			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
-			const x = point.xCorr * scale - w / 2; const y = point.yCorr * scale - h / 2;
-			layerGr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
-			layerGr.DrawImage(flag, x, y, w, h, 0, 0, flagSize, flagSize);
-			break;
-		}
-		case 'blurflag': {
-			const w = imgAsync.layers.w / 2; const h = imgAsync.layers.h / 2;
-			const x = point.x * scale - w / 2; const y = point.y * scale - h / 2;
-			const blend = flag.Resize(Math.max(Math.round(flag.Width / 10), 6), Math.max(Math.round(flag.Height / 10), 6), InterpolationMode.HighQuality)
-				.Resize(flagSize, flagSize, InterpolationMode.HighQuality);
-			layerGr.DrawImage(blend, x, y, w, h, 0, 0, flagSize, flagSize);
+		case 'color':
+		default: {
+			const flagColors = JSON.parse(flag.GetColourSchemeJSONV2 ? flag.GetColourSchemeJSONV2(4) : flag.GetColourSchemeJSON(4))
+				.sort((a, b) => a.freq - b.freq)
+				.map((o) => o.col)
+				.filter((color) => {
+					return Chroma.deltaE('#000000', color) > 20 && Chroma.deltaE('#ffffff', color) > 20;
+				});
+			const flagColor = flagColors[0] || RGB(255, 255, 255);
+			layerGr.FillSolidRect(0, 0, imgAsync.layers.w, imgAsync.layers.h, flagColor);
 			break;
 		}
 	}
