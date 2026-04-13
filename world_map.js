@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//13/04/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -80,7 +80,7 @@ const properties = {
 	bPointFill: ['Draw a point (true) or a circular corona (false)', false, { func: isBoolean }, false],
 	customLocaleColor: ['Custom text color', RGB(121, 194, 255), { func: isInt }, RGB(121, 194, 255)],
 	bShowLocale: ['Show current locale tag', true, { func: isBoolean }, true],
-	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: isFinite }, globFonts.standardSmall.size],
+	fontSize: ['Size of header text', globFonts.standardSmall.size, { func: Number.isFinite }, globFonts.standardSmall.size],
 	panelMode: ['Selection (0), library (1), stats (2), gradient (3)', 0, { func: isInt, range: [[0, 3]] }, 0],
 	fileNameLibrary: ['JSON filename (for library tags)', _foldPath(folders.data + 'worldMap_library.json')],
 	bShowFlag: ['Show flag on header', true, { func: isBoolean }, true],
@@ -440,7 +440,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		}
 		worldMap.paint({ gr, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 });
 		if (worldMap.properties.pointMode[1] >= 1) {
-			const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : worldMap.properties.customShapeColor[3];
+			const color = worldMap.properties.customShapeColor[1] === -1 ? worldMap.properties.customShapeColor[3] : worldMap.properties.customShapeColor[1];
 			const gradient = worldMap.properties.panelMode[1] === 3
 				? worldMap.properties.customGradientColor[1] || [Chroma(color).saturate(2).luminance(0.8).android(), Chroma(color).saturate(2).luminance(0.4).android()]
 				: null;
@@ -452,7 +452,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 		if (sel.Count > worldMap.properties.iLimitSelection[1]) { sel.RemoveRange(worldMap.properties.iLimitSelection[1], sel.Count - 1); }
 		const bPressWin = utils.IsKeyPressed(VK_RWIN) || utils.IsKeyPressed(VK_LWIN);
 		const bPressShift = utils.IsKeyPressed(VK_SHIFT);
-		const bInvertMap = RegExp(/shapes/i).exec(worldMap.imageMapPath)
+		const bInvertMap = new RegExp(/shapes/i).exec(worldMap.imageMapPath)
 			? Chroma.contrast(background.getAvgPanelColor(), RGB(0, 0, 0)) * worldMap.imageMapAlpha / 255 < 1.25
 			: false;
 		worldMap.paint({ gr, sel, bOverridePaintSel: worldMap.properties.pointMode[1] >= 1 || (bPressShift && !bPressWin && worldMap.foundPoints.length), bInvertMap });
@@ -460,7 +460,7 @@ addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 			if (bPressShift && !bPressWin && worldMap.foundPoints.length) {
 				drawTaggingPoint(gr);
 			} else if (worldMap.lastPoint.length >= 1 && worldMap.properties.pointMode[1] >= 1) {
-				const color = worldMap.properties.customShapeColor[1] !== -1 ? worldMap.properties.customShapeColor[1] : worldMap.properties.customShapeColor[3];
+				const color = worldMap.properties.customShapeColor[1] === -1 ? worldMap.properties.customShapeColor[3] : worldMap.properties.customShapeColor[1];
 				paintLayers({ gr, color, bProfile: worldMap.properties.bProfile[1] });
 			}
 		}
