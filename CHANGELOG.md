@@ -83,6 +83,7 @@
 - UI: small fixes for background blend color mode.
 - UI: fixed art cycling glitch on background folder mode after using the mouse wheel.
 - UI: fix default shown value at 'Text size\Custom...' input box.
+- Data: fix crash overwriting values while merging file tags to JSON database.
 
 ## [4.5.0] - 2026-01-12
 ### Added
