@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//14/04/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -238,10 +238,19 @@ function settingsMenu() {
 						const folderPath = utils.SplitFilePath(file)[0];
 						console.log(window.ScriptInfo.Name + ': Editing file\n\t ' + file);
 						if (selected.ver === '1.1.X') { // Biography 1.1.X
-							if (!properties.bInstalledBiography[1]) {
-								if (!_isFile(file + backupExt)) {
+							if (properties.bInstalledBiography[1]) {
+								let bDone = false;
+								if (_isFile(file + backupExt)) {
+									bDone = _recycleFile(file, true);
+								} else { fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
+								if (bDone) {
+									bDone = _renameFile(file + backupExt, file);
+								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
+								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
+							} else {
+								if (_isFile(file + backupExt)) { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; } else {
 									bDone = _copyFile(file, file + backupExt);
-								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
+								}
 								if (bDone) {
 									bDone = _copyFile(folders.xxx + 'main\\world_map\\' + file1_1_X, folderPath + file1_1_X);
 								} else { fb.ShowPopupMessage('Error creating a backup.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
@@ -251,21 +260,12 @@ function settingsMenu() {
 									bDone = fileText.length && _save(file, fileText);
 								} else { fb.ShowPopupMessage('Error copying mod file.\n' + folderPath + file1_1_X, window.ScriptInfo.Name + ': Biography integration'); return; }
 								if (!bDone) { fb.ShowPopupMessage('Error editing the file.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
-							} else {
-								let bDone = false;
-								if (_isFile(file + backupExt)) {
-									bDone = _recycleFile(file, true);
-								} else { fb.ShowPopupMessage('Selected file does not have a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
-								if (bDone) {
-									bDone = _renameFile(file + backupExt, file);
-								} else { fb.ShowPopupMessage('Error deleting the modified file.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
-								if (!bDone) { fb.ShowPopupMessage('Error renaming the backup.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
 							}
 						} else { // Biography 1.2.0 Beta 1 & 2
 							if (!properties.bInstalledBiography[1]) { // NOSONAR
-								if (!_isFile(file + backupExt)) {
+								if (_isFile(file + backupExt)) { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; } else {
 									bDone = _copyFile(file, file + backupExt);
-								} else { bDone = false; fb.ShowPopupMessage('Selected file already has a backup. Edit aborted.\n' + file, window.ScriptInfo.Name + ': Biography integration'); return; }
+								}
 								if (bDone) {
 									bDone = _copyFile(folders.xxx + 'main\\world_map\\' + file1_2_0_beta, folderPath + file1_2_0_beta);
 								} else { fb.ShowPopupMessage('Error creating a backup.\n' + packageFile, window.ScriptInfo.Name + ': Biography integration'); return; }
@@ -381,7 +381,7 @@ function settingsMenu() {
 				});
 				menu.newCheckMenuLast((o, len) => {
 					const idx = o.findIndex((opt) => _resolvePath(opt.path || '').toLowerCase() === _resolvePath(worldMap.imageMapPath).toLowerCase());
-					return idx !== -1 ? idx : len - 1;
+					return idx === -1 ? len - 1 : idx;
 				}, options);
 				menu.newSeparator(menuName);
 				menu.newEntry({
@@ -483,7 +483,7 @@ function settingsMenu() {
 					}
 					menu.newSeparator(subMenuName);
 					{
-						const subMenuNameTwo = menu.newMenu('Layer fill' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] !== -1 ? MF_STRING : MF_GRAYED);
+						const subMenuNameTwo = menu.newMenu('Layer fill' + (properties.customShapeColor[1] === -1 ? '\t(Only custom color)' : ''), subMenuName, properties.customShapeColor[1] === -1 ? MF_GRAYED : MF_STRING);
 						const options = [
 							{ name: 'None', val: '' },
 							{ name: 'Flag color', val: 'color' },
@@ -626,9 +626,9 @@ function settingsMenu() {
 								// Ensure it's applied with compatible settings
 								background.changeConfig({
 									bRepaint: false, callbackArgs: { bSaveProperties: true },
-									config: !background.useCover
-										? { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } }
-										: { coverModeOptions: { bProcessColors: true } },
+									config: background.useCover
+										? { coverModeOptions: { bProcessColors: true } }
+										: { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } },
 								});
 								background.updateImageBg(true);
 								worldMap.colorsChanged();
@@ -680,9 +680,9 @@ function settingsMenu() {
 								else if (!background.useCoverColors) {
 									background.changeConfig({
 										bRepaint: false, callbackArgs: { bSaveProperties: true },
-										config: !background.useCover
-											? { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } }
-											: { coverModeOptions: { bProcessColors: true } },
+										config: background.useCover
+											? { coverModeOptions: { bProcessColors: true } }
+											: { coverMode: background.getDefaultCoverMode(), coverModeOptions: { alpha: 0, bProcessColors: true } },
 									});
 								}
 							}
@@ -716,7 +716,7 @@ function settingsMenu() {
 					});
 					menu.newCheckMenuLast((o, len) => {
 						const idx = o.indexOf(worldMap.pointSize);
-						return (idx !== -1 ? idx : len - 1);
+						return (idx === -1 ? len - 1 : idx);
 					}, options);
 				}
 				{	// Text size
@@ -741,7 +741,7 @@ function settingsMenu() {
 					});
 					menu.newCheckMenuLast((o, len) => {
 						const idx = o.indexOf(properties.fontSize[1]);
-						return (idx !== -1 ? idx : len - 1);
+						return (idx === -1 ? len - 1 : idx);
 					}, options);
 				}
 			}
@@ -1035,7 +1035,7 @@ function settingsMenu() {
 						try { input = utils.InputBox(window.ID, 'Enter path to JSON file:', window.ScriptInfo.Name + ': Merge JSON database', folders.data + 'worldMap.json', true); }
 						catch (e) { return; } // eslint-disable-line no-unused-vars
 						if (!input.length) { return; }
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.ScriptInfo.Name + ': Merge JSON database', popup.question + popup.yes_no);
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?\nLibrary database will be updated too in any case.\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Merge JSON database', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const newData = _jsonParseFileCheck(input, 'Database json', window.ScriptInfo.Name + ': Merge JSON database', utf8);
@@ -1060,7 +1060,7 @@ function settingsMenu() {
 				});
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.ScriptInfo.Name + ': Merge tags into database', popup.question + popup.yes_no);
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?\nLibrary database will be updated too in any case.\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Merge tags into JSON database', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
@@ -1074,7 +1074,7 @@ function settingsMenu() {
 										if (!worldMap.hasDataById(id)) {
 											worldMap.saveData(data);
 											countN++;
-										} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(jsonId[i]).val, tag[i])) {
+										} else if (answer === popup.yes && !isArrayEqual(worldMap.getDataById(id).val, tag[i])) {
 											worldMap.deleteDataById(id);
 											worldMap.saveData(data);
 											countO++;
@@ -1088,11 +1088,12 @@ function settingsMenu() {
 							repaint(void (0), true);
 						}
 						console.log(window.ScriptInfo.Name + ': writing file tags to database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+						if (worldMap.properties.panelMode[1] > 0) { window.Reload(); }
 					}
 				});
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Write JSON tags to tracks...', func: () => {
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no);
+						const answer = WshShell.Popup('Do you want to overwrite duplicated entries?\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
@@ -1135,6 +1136,10 @@ function settingsMenu() {
 				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Update library database...', func: () => {
+						const answer = WshShell.Popup('Do you want to also merge file tags with JSON?\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Update JSON library database', popup.question + popup.yes_no);
+						if (answer === popup.yes) {
+							return menu.btn_up(void (0), void (0), void (0), 'Database\\Merge file tags with JSON...');
+						}
 						fb.ShowPopupMessage('The statistics of artists per country from your tracked library have been updated (see console log for more info).\n\nThis data is then used on \'Library\' and \'Statistics\' display modes.' + (properties.iWriteTags[1] === 0 ? '\n\nWarning: when using tags/JSON sources on read-only mode, any artist with missing data will be indefinitely skipped unless you manually tag such tracks.' : ''), window.ScriptInfo.Name + ': Update JSON library database');
 						saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap);
 						console.log(window.ScriptInfo.Name + ': saving library database done. Switch panel mode to \'Library mode\' to use it.');

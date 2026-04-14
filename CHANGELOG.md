@@ -73,6 +73,7 @@
 - UI: improvements on flag colors handling. See above.
 - UI: improvements on country layers fill with flags. Better interpolation for resized image and positioning for some countries.
 - UI: improvements on panel repainting in some cases during selection/playback change or library viewers selection change.
+- Data: updating the Library database now also asks to first read and merge track tags too. Other minor improvements regarding popups and info related to JSON database handling.
 - Installation: panel menu, accessed through 'Ctrl + Win + R. Click' (which works globally on any script and panel, at any position), now also includes the script version number and a submenu to check and set auto-updates.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 - Readmes: general cleanup.
