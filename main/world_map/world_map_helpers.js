@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//15/04/26
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
 
@@ -124,7 +124,7 @@ function selFindPoint(foundPoints, mask, x, y, bForce = false) {
 	if (!foundPoints.length) { return bDone; }
 	if (!worldMap.jsonId.length) { return bDone; }
 	// Any track with same locale tag
-	const tagName = worldMap.properties.writeToTag[1];
+	const tagName = worldMap.properties.writeToTag[1] || globTags.locale;
 	if (tagName.length) {
 		const sel = worldMap.getSelection();
 		if (!sel && !sel.Count) { return bDone; }
