@@ -66,6 +66,7 @@
 - UI: added new header art style (modern), which is now the default one. Improved header drawing code rewarding font and flag interpolation modes.
 - UI: added new country layers fill mode: blurred flag (based on Biography blend mode).
 ### Changed
+- Tagging: multiple improvements to tag to JSON and JSON to tag tagging menu entries, along database handling. In particular at popups (now giving much cleared info about the input/output and expected settings) and handling of some corner cases.
 - Tagging: improved automatic tagging, checking if existing values are valid (and not only present), and overwriting them if needed. This is mainly a fix in conjunction with Biography-v1.4.2.mod.18+, since original Biography script did not always report locale tags with a country name, thus resulting in incomplete tags (which were never overwritten even if last.fm or wikipedia returned a country at a later point). The script will now overwrite values in such cases automatically.
 - UI: header font size now allows float numbers too.
 - UI: improvements on dynamic colors handling for almost B&W art or with a lightly tinted by a single color.

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/04/26
+//15/04/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -34,6 +34,7 @@ function settingsMenu() {
 	const selJsonId = sel
 		? new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: null }).flat(Infinity))
 		: new Set();
+	const writeTag =  properties.writeToTag[1] || globTags.locale;
 	{ // NOSONAR
 		menu.newEntry({
 			entryText: 'Enable panel', func: () => {
@@ -879,23 +880,23 @@ function settingsMenu() {
 		{	// Tags
 			const menuName = menu.newMenu('Tags');
 			menu.newEntry({
-				menuName, entryText: 'Read country\'s data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
-					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:', window.ScriptInfo.Name + ': Locale tag reading', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))');
+				menuName, entryText: 'Read country data from...' + '\t' + _b(properties.mapTag[1].cut(10)), func: () => {
+					let input = Input.string('string', properties.mapTag[1], 'Enter Tag name or TF expression:\n\nResult is expected to be a single string matching a country name or ISO 3166 country code (alpha-2 and alpha-3 supported).\n\nMultiple countries may be separated by \'|\' if the respective setting is enabled, e.g. \'ESP|DEU|Portugal\'\n\nIt should usually point to the configured [write] tag, e.g.\n$meta(' + writeTag + ',$sub($meta_num(' + writeTag + '),1))', window.ScriptInfo.Name + ': Locale tag reading', '$meta(' + writeTag + ',$sub($meta_num(' + writeTag + '),1))');
 					if (input === null) { return; }
 					properties.mapTag[1] = input;
 					overwriteProperties(properties);
 				}
 			});
 			menu.newEntry({
-				menuName, entryText: 'Write country\'s data to...' + '\t' + _b(properties.writeToTag[1]), func: () => {
-					let input = Input.string('string', properties.writeToTag[1], 'Enter Tag name:', window.ScriptInfo.Name + ': Locale tag writing', globTags.locale);
+				menuName, entryText: 'Write country data to...' + '\t' + _b(writeTag), func: () => {
+					const input = Input.string('string', properties.writeToTag[1] || globTags.locale, 'Enter Tag name:\n\nOutput wil be a multi-value tag whose last value is the country name, e.g. \'Boston, Suffolk County, Massachusetts, United States\'\n\nNote in any case automatic tag writing will output only a single country, but never multiple ones. e.g. \'ESP|DEU|Portugal\'\n\nThis tag is also used to match Biography provided data. Leaving it empty will use the default value.', window.ScriptInfo.Name + ': Locale tag writing', globTags.locale);
 					if (input === null) { return; }
 					properties.writeToTag[1] = input;
 					overwriteProperties(properties);
 				}
 			});
 			menu.newEntry({
-				menuName, entryText: 'Split multi-value country tag by \'|\'', func: () => {
+				menuName, entryText: 'Split country multi-value by \'|\'', func: () => {
 					properties.bSplitTags[1] = !properties.bSplitTags[1];
 					overwriteProperties(properties);
 					worldMap.bSplitTags = properties.bSplitTags[1];
@@ -1060,12 +1061,12 @@ function settingsMenu() {
 				});
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Merge file tags with JSON...', func: () => {
-						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?\nLibrary database will be updated too in any case.\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Merge tags into JSON database', popup.question + popup.yes_no);
+						let answer = WshShell.Popup('Do you want to overwrite duplicated entries?\nLibrary database will be updated too in any case.\n\nWill retrieve all values (and not only the last one associated to countries) found within the configured [write] tag:\n' + writeTag + '\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Merge tags into JSON database', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
 						const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
-						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
+						const tag = getHandleListTags(handleList, [writeTag], { bMerged: true }); // locale
 						handleList.Convert().forEach((handle, i) => {
 							if (jsonId[i].length) {
 								jsonId[i].forEach((id) => {
@@ -1087,13 +1088,13 @@ function settingsMenu() {
 							saveLibraryTags(properties.fileNameLibrary[1], worldMap.jsonId, worldMap); // Also update library mode
 							repaint(void (0), true);
 						}
-						console.log(window.ScriptInfo.Name + ': writing file tags to database done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+						console.log(window.ScriptInfo.Name + ': writing file tags to database done\n\tFrom tag: ' + writeTag + '\n\t' + countN + ' new entries - ' + countO + ' overwritten entries');
 						if (worldMap.properties.panelMode[1] > 0) { window.Reload(); }
 					}
 				});
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Write JSON tags to tracks...', func: () => {
-						const answer = WshShell.Popup('Do you want to overwrite duplicated entries?\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no);
+						const answer = WshShell.Popup('Do you want to overwrite duplicated entries?\n\nValues will be saved at configured [write] tag:\n' + writeTag + '\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no);
 						let countN = 0;
 						let countO = 0;
 						const handleList = fb.GetLibraryItems();
@@ -1101,7 +1102,7 @@ function settingsMenu() {
 						const toTagValues = [];
 						// worldMap.jsonId = artist
 						const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
-						const tag = getHandleListTags(handleList, [properties.writeToTag[1]], { bMerged: true }); // locale
+						const tag = getHandleListTags(handleList, [writeTag], { bMerged: true }); // locale
 						const newData = worldMap.getData();
 						if (newData && newData.length) {
 							handleList.Convert().forEach((handle, i) => {
@@ -1120,7 +1121,7 @@ function settingsMenu() {
 												}
 												if (bDone) {
 													toTagList.Add(handle);
-													toTagValues.push({ [properties.writeToTag[1]]: data.val });
+													toTagValues.push({ [writeTag]: data.val });
 												}
 											}
 										});
@@ -1130,13 +1131,13 @@ function settingsMenu() {
 						}
 						if (toTagList.Count) { toTagList.UpdateFileInfoFromJSON(JSON.stringify(toTagValues)); }
 						if (countN || countO) { repaint(void (0), true); }
-						console.log(window.ScriptInfo.Name + ': writing back database tags to files done (' + countN + ' new entries - ' + countO + ' overwritten entries)');
+						console.log(window.ScriptInfo.Name + ': writing back database tags to files done\n\tTo tag: ' + writeTag + '\n\t' + countN + ' new file tags - ' + countO + ' overwritten tags');
 					}
 				});
 				menu.newSeparator(menuDatabase);
 				menu.newEntry({
 					menuName: menuDatabase, entryText: 'Update library database...', func: () => {
-						const answer = WshShell.Popup('Do you want to also merge file tags with JSON?\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Update JSON library database', popup.question + popup.yes_no);
+						const answer = WshShell.Popup('Do you want to also merge [write] file tags with JSON?\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Update JSON library database', popup.question + popup.yes_no);
 						if (answer === popup.yes) {
 							return menu.btn_up(void (0), void (0), void (0), 'Database\\Merge file tags with JSON...');
 						}

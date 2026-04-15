@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/04/26
+//15/04/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -687,7 +687,7 @@ addEventListener('on_notify_data', (name, info) => {
 				// Find the biography track on the entire selection, since it may not be just the first track of the sel list
 				const sel = worldMap.getSelection();
 				// Get Tags
-				const tagName = worldMap.properties.writeToTag[1];
+				const tagName = worldMap.properties.writeToTag[1] || globTags.locale;
 				if (tagName.length) {
 					let locale = [];
 					if (Array.isArray(info.tags)) { // Biography 1.1.3
