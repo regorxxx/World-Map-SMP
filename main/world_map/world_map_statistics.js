@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/25
+//17/04/26
 
 /* exported _mapStatistics */
 
@@ -192,7 +192,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			].forEach(createMenuOption(parent.bAsync ? 'dataAsync' : 'data', null, subMenu, true, (option) => {
 				option.newValue = parent.bAsync
 					? () => parent.getDataAsync(option.args.data.source, option.args.data.arg)
-					: Array(1).fill(...parent.getData(option.args.data.source, option.args.data.arg));
+					: new Array(1).fill(...parent.getData(option.args.data.source, option.args.data.arg));
 				[parent.source, parent.arg] = [option.args.data.source, option.args.data.arg];
 				this.changeConfig(
 					{
@@ -348,8 +348,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								if (isoCode) {
 									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
 									if (!id) { return; }
-									if (!tagCount.has(id)) { tagCount.set(id, point.val); }
-									else { tagCount.set(id, tagCount.get(id) + point.val); }
+									if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + point.val); }
+									else { tagCount.set(id, point.val); }
 								}
 							});
 							data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
@@ -380,8 +380,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 												: idData.val[idData.val.length - 1]
 											: null;
 										if (!id) { return; }
-										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+										if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+										else { tagCount.set(id, Number(playCount[i])); }
 									}
 								}
 							});
@@ -409,10 +409,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 												: idData.val[idData.val.length - 1]
 											: null;
 										if (!id) { return; }
-										if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-										else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
-										if (!keyCount.has(id)) { keyCount.set(id, 1); }
-										else { keyCount.set(id, keyCount.get(id) + 1); }
+										if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+										else { tagCount.set(id, Number(playCount[i])); }
+										if (keyCount.has(id)) { keyCount.set(id, keyCount.get(id) + 1); }
+										else { keyCount.set(id, 1); }
 									}
 								}
 							});
@@ -452,8 +452,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 								if (isoCode) {
 									const id = music_graph_descriptors_countries.getFirstNodeRegion(isoCode);
 									if (!id) { return; }
-									if (!tagCount.has(id)) { tagCount.set(id, point.val); }
-									else { tagCount.set(id, tagCount.get(id) + point.val); }
+									if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + point.val); }
+									else { tagCount.set(id, point.val); }
 								}
 							});
 							data = [Array.from(tagCount, (point) => { return { x: point[0], y: point[1] }; })];
@@ -484,8 +484,8 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
 												: country;
 											if (!id) { return; }
-											if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-											else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+											if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+											else { tagCount.set(id, Number(playCount[i])); }
 										}
 									}
 								});
@@ -514,10 +514,10 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 												? music_graph_descriptors_countries.getFirstNodeRegion(isoCode)
 												: country;
 											if (!id) { console.log(isoCode, id); return; }
-											if (!tagCount.has(id)) { tagCount.set(id, Number(playCount[i])); }
-											else { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
-											if (!keyCount.has(id)) { keyCount.set(id, 1); }
-											else { keyCount.set(id, keyCount.get(id) + 1); }
+											if (tagCount.has(id)) { tagCount.set(id, tagCount.get(id) + Number(playCount[i])); }
+											else { tagCount.set(id, Number(playCount[i])); }
+											if (keyCount.has(id)) { keyCount.set(id, keyCount.get(id) + 1); }
+											else { keyCount.set(id, 1); }
 										}
 									}
 								});
@@ -533,7 +533,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				break;
 			}
 		}
-		return Promise.resolve(data);
+		return data;
 	};
 
 	this.defaultConfig = () => {
@@ -587,7 +587,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 				{
 					...this.config, ...(this.bAsync
 						? { dataAsync: () => this.getDataAsync(this.source, this.arg) }
-						: { data: Array(1).fill(...this.getData(this.source, this.arg)) }
+						: { data: new Array(1).fill(...this.getData(this.source, this.arg)) }
 					)
 				}
 			]
