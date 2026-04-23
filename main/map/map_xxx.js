@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//22/04/26
 
 /* exported ImageMap */
 
@@ -562,10 +562,10 @@ function ImageMap({
 		}
 		// Sanity checks
 		try { // function must exist, had been set and return [-1,-1] for arbitrary or null input to be considered valid
-			if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet) { throw new Error(); }
+			if (typeof this.findCoordinates === 'undefined' || !this.findCoordinates || !bFuncSet) { throw new Error('findCoordinates not set'); }
 			else {
 				const result = this.findCoordinates();
-				if (JSON.stringify(result) !== JSON.stringify([-1, -1, -1, -1]) && JSON.stringify(result) !== JSON.stringify([-1, -1])) { throw new Error(); }
+				if (JSON.stringify(result) !== JSON.stringify([-1, -1, -1, -1]) && JSON.stringify(result) !== JSON.stringify([-1, -1])) { throw new Error('invalid findCoordinates'); }
 			}
 		} catch (e) { // eslint-disable-line no-unused-vars
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without valid \'findCoordinatesFunc\' set. Map will not be updated on playback!', window.FullPanelName);
@@ -573,13 +573,7 @@ function ImageMap({
 		if (!this.mapTag.length) {
 			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'mapTag\' set. Map will not be updated on playback!', window.FullPanelName);
 		}
-		if (!this.imageMapPath.length) {
-			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.FullPanelName);
-			this.trace = () => { };
-			this.calcScale = () => { };
-			this.paint = () => { };
-			this.paintBg = () => { };
-		} else { // Avoids crash
+		if (this.imageMapPath.length) { // Avoids crash
 			const maxSize = Math.min(window.Width, window.Height);
 			const maxWidth = Math.floor(maxSize * 1.25);
 			if (this.imageMapPath === 'background') {
@@ -604,6 +598,12 @@ function ImageMap({
 				}
 			}
 			this.calcScale(window.Width, window.Height);
+		} else {
+			fb.ShowPopupMessage('map_xxx.js: imageMap was created without \'imageMapPath\' set. Map will not be displayed!', window.FullPanelName);
+			this.trace = () => { };
+			this.calcScale = () => { };
+			this.paint = () => { };
+			this.paintBg = () => { };
 		}
 		const jsonFolder = utils.SplitFilePath(this.jsonPath)[0];
 		_createFolder(jsonFolder);
@@ -633,9 +633,9 @@ function ImageMap({
 	this.point = {}; // {id: {x: -1, y: -1, id: id}};
 	this.lastPoint = []; // [{id: id, val: 1, jsonId: jsonId}]
 	this.foundPoints = []; // [{id: id, val: 1, jsonId: jsonId}]
-	this.fontStyle = (typeof this.properties.fontStyle !== 'undefined' ? this.properties.fontStyle[1] : fontStyle) || 0;
-	this.fontSize = typeof this.properties.fontSize !== 'undefined' ? this.properties.fontSize[1] : fontSize;
-	this.font = typeof this.properties.font !== 'undefined' ? this.properties.font[1] : font;
+	this.fontStyle = (typeof this.properties.fontStyle === 'undefined' ? fontStyle : this.properties.fontStyle[1]) || 0;
+	this.fontSize = typeof this.properties.fontSize === 'undefined' ? fontSize : this.properties.fontSize[1];
+	this.font = typeof this.properties.font === 'undefined' ? font : this.properties.font[1];
 	this.gFont = _gdiFont(this.font, _scale(this.fontSize), this.fontStyle);
 	this.defaultColor = 0xFF00FFFF;
 	this.selectionColor = 0xFFFAEBD7;
@@ -643,7 +643,7 @@ function ImageMap({
 	this.backgroundTagColor1 = 0xFFF5F5F5;
 	this.backgroundTagColor2 = 0xFFA9A9A9;
 	this.textColor = 0xFF000000;
-	this.customPanelColorMode = typeof this.properties.customPanelColorMode !== 'undefined' ? this.properties.customPanelColorMode[1] : 1;
+	this.customPanelColorMode = typeof this.properties.customPanelColorMode === 'undefined' ? 1 : this.properties.customPanelColorMode[1];
 	this.panelColor = null;
 	this.idSelected = '';
 	this.mX = -1;
@@ -652,9 +652,9 @@ function ImageMap({
 	this.pointShape = pointShape;
 	this.pointSize = pointSize;
 	this.pointLineSize = pointLineSize;
-	this.bSplitTags = typeof this.properties.bSplitTags !== 'undefined' ? this.properties.bSplitTags[1] : bSplitTags;
-	this.bSplitIds = typeof this.properties.bSplitIds !== 'undefined' ? this.properties.bSplitIds[1] : bSplitIds;
-	this.splitExcludeId = typeof this.properties.splitExcludeId !== 'undefined' ? this.properties.splitExcludeId[1] : splitExcludeId;
+	this.bSplitTags = typeof this.properties.bSplitTags === 'undefined' ? bSplitTags : this.properties.bSplitTags[1];
+	this.bSplitIds = typeof this.properties.bSplitIds === 'undefined' ? bSplitIds : this.properties.bSplitIds[1];
+	this.splitExcludeId = typeof this.properties.splitExcludeId === 'undefined' ? splitExcludeId : this.properties.splitExcludeId[1];
 	this.delay = 30;
 	if (!bSkipInit) { this.init(); }
 }
