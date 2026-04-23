@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/04/26
+//22/04/26
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
 
@@ -430,8 +430,8 @@ function drawHeader(gr) {
 		const loadFlag = (idx) => {
 			const id = worldMap.lastPoint[idx].id;
 			const flag = loadFlagImage(id);
-			const flagScale = flag.Height / textH;
-			return flag.Resize(flag.Width / flagScale, textH, flagScale > 1.5 ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor);
+			const flagScale = flag.Height / (textH || 1);
+			return flag.Resize(Math.max(flag.Width / flagScale, 1), Math.max(textH, 1), flagScale > 1.5 ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor);
 		};
 		const paintFlag = (img, align) => {
 			switch (align) {
@@ -753,7 +753,9 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 					if (bSel && bFullImg) { break; }
 				}
 				if (grFullImg) {
-					if (bLowMemMode) { imgAsync.fullImg = imgAsync.fullImg.Resize(worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale, InterpolationMode.HighQualityBicubic); }
+					if (bLowMemMode) {
+						imgAsync.fullImg = imgAsync.fullImg.Resize(Math.max(worldMap.imageMap.Width * worldMap.scale, 1), Math.max(worldMap.imageMap.Height * worldMap.scale, 1), InterpolationMode.HighQualityBicubic);
+					}
 					imgAsync.fullImg.ReleaseGraphics(grFullImg);
 					imgAsync.layers.bCreated = true;
 					if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
@@ -780,7 +782,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 									if (img && !imgAsync.layers.bStop && !imgAsync.layers.processedIso.has(iso)) {
 										if (bLowMemMode) {
 											const lowScale = Math.max(imgAsync.lowMemMode.maxSize / img.Width, imgAsync.lowMemMode.maxSize / img.Height);
-											img = img.Resize(img.Width * lowScale, img.Height * lowScale, InterpolationMode.HighQualityBicubic);
+											img = img.Resize(Math.max(img.Width * lowScale, 1), Math.max(img.Height * lowScale, 1), InterpolationMode.HighQualityBicubic);
 										}
 										imgAsync.layers.imgs.push({ img, iso });
 										imgAsync.layers.processedIso.add(iso);
