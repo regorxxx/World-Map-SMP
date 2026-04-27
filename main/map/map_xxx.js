@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/04/26
+//27/04/26
 
 /* exported ImageMap */
 
@@ -11,7 +11,7 @@
 include('..\\..\\helpers\\helpers_xxx.js');
 /* global debounce:readable, folders:readable, globTags:readable, globProfiler:readable, SmoothingMode:readable */
 include('..\\..\\helpers\\helpers_xxx_flags.js');
-/* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable, IDC_HAND:readable */
+/* global DT_NOPREFIX:readable, MK_SHIFT:readable, VK_RWIN:readable, VK_LWIN:readable, IDC_ARROW:readable, IDC_HAND:readable, TTDT_AUTOMATIC:readable */
 include('..\\..\\helpers\\helpers_xxx_file.js');
 /* global _isFile:readable, _jsonParseFileCheck:readable, utf8:readable, _save:readable, _createFolder:readable, _resolvePath:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
@@ -40,6 +40,7 @@ function ImageMap({
 	const bShowSize = false;
 	// Global tooltip
 	this.tooltip = new _tt(null);
+	this.tooltip.SetDelayTime(TTDT_AUTOMATIC, 1500);
 
 	// Paint
 	const debouncedRepaint = {};
@@ -360,7 +361,10 @@ function ImageMap({
 							this.tooltip.SetValue(ttText, true);
 						}
 						window.SetCursor(IDC_HAND);
-					} else { this.tooltip.SetValue(this.tooltipPanelText()); this.foundPoints = []; }
+					} else {
+						if (!this.idSelected.length) { this.tooltip.SetValue(this.tooltipPanelText()); }
+						this.foundPoints = [];
+					}
 				}
 			}
 		} else if (this.idSelected.length && this.idSelected !== 'none') {
