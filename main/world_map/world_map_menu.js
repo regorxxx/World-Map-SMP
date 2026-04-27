@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/04/26
+//27/04/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -1176,7 +1176,7 @@ function settingsMenu() {
 		{	// Readmes
 			const readmePath = folders.xxx + 'helpers\\readme\\world_map.txt';
 			menu.newEntry({
-				entryText: 'Open readme...', func: () => {
+				entryText: 'Open help...', func: () => {
 					const readme = _open(readmePath, utf8); // Executed on script load
 					if (readme.length) { fb.ShowPopupMessage(readme, window.ScriptInfo.Name); }
 					else { console.log(window.ScriptInfo.Name + ': Readme not found\n\t ' + readmePath); }
