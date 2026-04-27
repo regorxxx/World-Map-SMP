@@ -835,7 +835,10 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 				}
 			}
 			if (bProfile) { profile.Print('Retrieve img layers'); }
-			if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
+			if (window.IsVisible) {
+				on_mouse_move(worldMap.mX, worldMap.my);
+				window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale);
+			}
 		});
 	} else if (bProfile) { profile.Print('End'); }
 };

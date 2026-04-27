@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/04/26
+//27/04/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -13,7 +13,7 @@ window.DrawMode = Math.max(Math.min(window.GetProperty('Draw mode: GDI (0), D2D 
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, globNoSplitArtist:readable */
-/* global MK_CONTROL:readable, MK_SHIFT:readable, VK_SHIFT:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable */
+/* global MK_CONTROL:readable, MK_SHIFT:readable, VK_SHIFT:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable, IDC_APPSTARTING:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
 include('helpers\\helpers_xxx_prototypes.js');
@@ -581,6 +581,7 @@ addEventListener('on_mouse_move', (x, y, mask) => {
 	};
 	// Disable shift on library mode and override painting when using layers
 	worldMap.move(x, y, worldMap.properties.panelMode[1] ? null : mask, worldMap.properties.pointMode[1] === 0);
+	if (worldMap.properties.pointMode[1] >= 1 && !imgAsync.layers.bPaint) { window.SetCursor(IDC_APPSTARTING); }
 	const bSel = worldMap.idSelected && worldMap.idSelected !== cache.idSelected;
 	const bFound = !!cache.foundPoint && worldMap.foundPoints.length !== 0 && worldMap.foundPoints[0] !== cache.foundPoint;
 	if (bSel || bFound) {
