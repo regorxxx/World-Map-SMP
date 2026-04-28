@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//28/04/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -12,7 +12,7 @@ if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { autho
 window.DrawMode = Math.max(Math.min(window.GetProperty('Draw mode: GDI (0), D2D (1)', 0), 1), 0);
 
 include('helpers\\helpers_xxx.js');
-/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, checkUpdate:readable, globNoSplitArtist:readable */
+/* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globNoSplitArtist:readable */
 /* global MK_CONTROL:readable, MK_SHIFT:readable, VK_SHIFT:readable, globTags:readable, globProfiler:readable, MF_GRAYED:readable , VK_CONTROL:readable, popup:readable, VK_ALT:readable, IDC_APPSTARTING:readable */
 include('helpers\\helpers_xxx_flags.js');
 /* global VK_LWIN:readable, VK_RWIN:readable */
@@ -35,7 +35,7 @@ include('main\\world_map\\world_map_menu.js');
 include('main\\world_map\\world_map_statistics.js');
 /* global Chroma:readable, _mapStatistics:readable */
 include('main\\world_map\\world_map_helpers.js');
-/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, drawHeader:readable, drawTaggingPoint:readable, paintLayers:readable, repaint:readable, debouncedRepaint:readable */
+/* global selPoint:readable, selFindPoint:readable, tooltipPoint:readable, tooltipFindPoint:readable, formatCountry:readable, biographyCheck:readable, saveLibraryTags:readable, tooltipPanel:readable, wheelResize:readable, drawHeader:readable, drawTaggingPoint:readable, paintLayers:readable, repaint:readable, debouncedRepaint:readable, imgAsync:readable */
 include('main\\filter_and_query\\remove_duplicates.js');
 /* global removeDuplicates:readable */
 include('main\\window\\window_xxx_background.js');
@@ -355,6 +355,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 // Update check
 if (worldMap.properties.bAutoUpdateCheck[1]) {
 	include('helpers\\helpers_xxx_web_update.js');
+	/* global checkUpdate:readable */
 	setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 }
 
