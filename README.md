@@ -5,11 +5,11 @@
 ![GitHub](https://img.shields.io/github/license/regorxxx/World-Map-SMP)  
 A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel)/[JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://github.com/Wil-B/Biography). 
 
-![Animation4](https://user-images.githubusercontent.com/83307074/116752367-002d9100-a9f5-11eb-8a03-0ee323634742.gif)
+<img width="1448" height="251" alt="{F57CE352-6303-4CFE-9219-A8A993F05104}" src="https://github.com/user-attachments/assets/6c61ec5a-0ebe-4885-a120-f0535b440a05" />
 
 # Features
 
-![Animation5](https://user-images.githubusercontent.com/83307074/116752374-01f75480-a9f5-11eb-9d30-a9958079b1ee.gif)
+<img width="1453" height="347" alt="worldmap" src="https://github.com/user-attachments/assets/0e815774-e606-4aae-b9dd-d53bc505091e" />
 
 * Map image configurable:
   * Full.
@@ -24,6 +24,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
   * Track's tags.
   * Json database.
   * WilB's Biography panel.
+* D2D support (requires JSplitter).
 * WilB's Biography integration (1.1.X or 1.2.0+):
   * [1.1.X](https://hydrogenaud.io/index.php?topic=112913.msg977224#msg977224): Done via script. There is a menu option to install the mod (it looks for the original file, edits the relevant lines and creates a backup). Is done step by step and can be reverted back.
   * [1.2.0+](https://hydrogenaud.io/index.php?topic=112913.msg1001097#msg1001097): Works automatically without requiring further action.
@@ -34,7 +35,7 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
    * On click over a point, an autoplaylist is created with any artist on your library from the selected country.
    * Ctrl modifier: forces an autoplaylist  with artist from selected country AND same tags (2 configurable). Currently set to style and genre.
 
-![Animation6](https://user-images.githubusercontent.com/83307074/116752378-03c11800-a9f5-11eb-9971-b3eff6e8d0fa.gif)
+<img width="1453" height="347" alt="worldmap2" src="https://github.com/user-attachments/assets/e6fd1efa-7c5b-43a0-99a2-1eaab28b5526" />
 
 ## Requirements (only one host component required)
  1. [Spider Monkey Panel or JSplitter](../../wiki/SMP-vs-JSplitter-notes): JavaScript host component required to install this. Available in x86 and x64.
