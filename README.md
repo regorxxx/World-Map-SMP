@@ -14,22 +14,25 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
 * Map image configurable:
   * Full.
   * No Antarctica.
+  * Shapes
   * Custom. (coordinates may need a transformation to work)
 * Configurable X and Y factors for transformation (along custom image maps).
-* 2 modes:
-  * Standard: Follow now playing track or selection.
-  * Library: display statistics of entire library (independtly of the selection/playback).
+* 4 modes:
+  * Standard: follow now playing track or selection.
+  * Library: display countries present on library (independtly of the selection/playback).
+  * Statistics: display configurable library statistics using charts.
+  * Gradient map: display statistics of entire library as a graadient map.
 * Works with multiple selected tracks (draws all points on the map), allowing to show statistics of an entire playlist or library.
 * On playback the panel fetches tags from (by order of preference):
   * Track's tags.
   * Json database.
   * WilB's Biography panel.
 * D2D support (requires JSplitter).
-* [WilB's Biography integration (1.2.0+)](https://hydrogenaudio.org/index.php/topic,112914.msg1081021.html#msg1081021)::
+* [WilB's Biography integration (1.2.0+)](https://hydrogenaudio.org/index.php/topic,112914.msg1081021.html#msg1081021):
   * Selection mode changes automatically when changing it on Biography panel, syncing the changes.
   * Biography lets you write tags on demand and World-Map-SPM as soon as the panel gets refreshed with new data.
 * Tool-tip shows multiple info about the points and tracks selected.
-* AutoPlaylist creation:
+* AutoPlaylist and Playlist creation:
    * On click over a point, an autoplaylist is created with any artist on your library from the selected country.
    * Ctrl modifier: forces an autoplaylist  with artist from selected country AND same tags (2 configurable). Currently set to style and genre.
 
