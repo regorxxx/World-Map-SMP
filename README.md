@@ -1,8 +1,6 @@
 # World-Map-SMP
 [![version][version_badge]][changelog]
-[![CodeFactor][codefactor_badge]](https://www.codefactor.io/repository/github/regorxxx/world-map-smp/overview/main)
-[![Codacy Badge][codacy_badge]](https://www.codacy.com/gh/regorxxx/World-Map-SMP/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=regorxxx/World-Map-SMP&amp;utm_campaign=Badge_Grade)
-![GitHub](https://img.shields.io/github/license/regorxxx/World-Map-SMP)  
+![GitHub](https://img.shields.io/badge/license-NON--AI_AGPL--3.0-blue)  
 A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel)/[JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378) which displays current artist's country on the world map and lets you generate autoplaylists based on selection and locale tag saving when integrated along [WilB's Biography Script](https://github.com/Wil-B/Biography). 
 
 <img width="1448" height="251" alt="{F57CE352-6303-4CFE-9219-A8A993F05104}" src="https://github.com/user-attachments/assets/6c61ec5a-0ebe-4885-a120-f0535b440a05" />
