@@ -25,11 +25,9 @@ A [foobar2000](https://www.foobar2000.org) UI [Spider Monkey Panel](https://theq
   * Json database.
   * WilB's Biography panel.
 * D2D support (requires JSplitter).
-* WilB's Biography integration (1.1.X or 1.2.0+):
-  * [1.1.X](https://hydrogenaud.io/index.php?topic=112913.msg977224#msg977224): Done via script. There is a menu option to install the mod (it looks for the original file, edits the relevant lines and creates a backup). Is done step by step and can be reverted back.
-  * [1.2.0+](https://hydrogenaud.io/index.php?topic=112913.msg1001097#msg1001097): Works automatically without requiring further action.
-  * Selection mode changes automatically when changing it on Biography panel, therefore syncing the changes.
-  * Biography lets you write tags on demand, this lets you write tags as soon as the panel gets refreshed with new data.
+* [WilB's Biography integration (1.2.0+)](https://hydrogenaudio.org/index.php/topic,112914.msg1081021.html#msg1081021)::
+  * Selection mode changes automatically when changing it on Biography panel, syncing the changes.
+  * Biography lets you write tags on demand and World-Map-SPM as soon as the panel gets refreshed with new data.
 * Tool-tip shows multiple info about the points and tracks selected.
 * AutoPlaylist creation:
    * On click over a point, an autoplaylist is created with any artist on your library from the selected country.
