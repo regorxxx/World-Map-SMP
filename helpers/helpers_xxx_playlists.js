@@ -1,7 +1,7 @@
-﻿'use strict';
-//13/05/26
+'use strict';
+//18/05/26
 
-/* exported playlistCountLocked, removeNotSelectedTracks, getPlaylistNames, removePlaylistByName, clearPlaylistByName, arePlaylistNamesDuplicated, findPlaylistNamesDuplicated, sendToPlaylist, getHandlesFromUIPlaylists, getLocks, setLocks, getPlaylistSelectedIndexes, getPlaylistSelectedIndexFirst, getPlaylistSelectedIndexLast, getSource, MAX_QUEUE_ITEMS, focusOnItem */
+/* exported playlistCountLocked, removeNotSelectedTracks, getPlaylistNames, removePlaylistByName, clearPlaylistByName, arePlaylistNamesDuplicated, findPlaylistNamesDuplicated, sendToPlaylist, getHandlesFromUIPlaylists, getLocks, setLocks, getPlaylistSelectedIndexes, getPlaylistSelectedIndexFirst, getPlaylistSelectedIndexLast, getSource, MAX_QUEUE_ITEMS, focusOnItem, findTracksAtPlaylist, hasAnyLocks */
 
 include('helpers_xxx_prototypes.js');
 /* global range:readable, isArrayNumbers:readable */
@@ -37,6 +37,21 @@ function removeNotSelectedTracks(playlistIndex, nTracks, start = 0) {
 	const selection = range(start, start + sign * (Math.abs(nTracks) - 1), sign);
 	plman.SetPlaylistSelection(playlistIndex, selection, true);
 	plman.RemovePlaylistSelection(playlistIndex, true);
+}
+
+function findTracksAtPlaylist(plsIdx, handleList, findTrack) {
+	const selItems = [];
+	const list = plman.GetPlaylistItems(plsIdx).Convert();
+	const reference = { idx: -1, found: false };
+	handleList.forEach((h) => { // Select duplicates handles
+		let i = 0;
+		for (const handle of list) {
+			if (handle.Compare(h)) { selItems.push(i); }
+			if (!reference.found && findTrack && handle.Compare(findTrack)) { reference.idx = i; reference.found = true; }
+			i++;
+		}
+	});
+	return { selection: { idx: selItems, count: selItems.length, focus: selItems[0] }, plsIdx, reference };
 }
 
 // Outputs names of all playlists
@@ -173,6 +188,7 @@ function getHandlesFromUIPlaylists(names = [], bSort = true) {
  * @returns {{ isLocked: boolean, isSMPLock: boolean, name: string, types: ('AddItems'|'RemoveItems'|'ReorderItems'|'ReplaceItems'|'RenamePlaylist'|'RemovePlaylist'|'ExecuteDefaultAction')[], index: number }}
  */
 function getLocks(plsNameOrIdx) {
+	if (plsNameOrIdx === -1 ) { return { isLocked : false, isSMPLock: true, name: null, types: [], index: -1 }; }
 	const index = typeof plsNameOrIdx === 'string'
 		? plman.FindPlaylist(plsNameOrIdx)
 		: plsNameOrIdx;
@@ -181,6 +197,24 @@ function getLocks(plsNameOrIdx) {
 	const isSMPLock = name === window.Parent || !name;
 	const isLocked = !!types.length;
 	return { isLocked, isSMPLock, name, types, index };
+}
+
+/**
+ * Checks if playlist has specific locked actions
+ *
+ * @function
+ * @name hasAnyLocks
+ * @kind function
+ * @param {number|string} plsNameOrIdx
+ * @param {('AddItems'|'RemoveItems'|'ReorderItems'|'ReplaceItems'|'RenamePlaylist'|'RemovePlaylist'|'ExecuteDefaultAction')[]|Set<('AddItems'|'RemoveItems'|'ReorderItems'|'ReplaceItems'|'RenamePlaylist'|'RemovePlaylist'|'ExecuteDefaultAction')>} actions
+ * @returns {boolean}
+ */
+function hasAnyLocks(plsNameOrIdx, actions) {
+	const index = typeof plsNameOrIdx === 'string'
+		? plman.FindPlaylist(plsNameOrIdx)
+		: plsNameOrIdx;
+	const types = new Set(index === -1 ? [] : plman.GetPlaylistLockedActions(index));
+	return types.intersectionSize(new Set(actions)) > 0;
 }
 
 /**
