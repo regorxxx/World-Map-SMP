@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/04/26
+//22/05/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -44,7 +44,7 @@ include('main\\window\\window_xxx_dynamic_colors.js');
 /* global dynamicColors:readable, mostContrastColor:readable */
 
 globProfiler.Print('helpers');
-checkCompatible('1.6.1', 'smp');
+checkCompatible();
 
 /*
 	Properties
