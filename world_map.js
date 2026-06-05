@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/05/26
+//05/06/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -636,11 +636,15 @@ addEventListener('on_notify_data', (name, info) => {
 	if (name === 'bio_imgChange' || name === 'bio_chkTrackRev' || name === 'xxx-scripts: panel name reply') { return; }
 	switch (name) {
 		case window.ScriptInfo.Name + ': share UI settings': {
-			if (info) { worldMap.applyUiSettings(clone(info)); }
+			if (info) {
+				if (info.window && !info.window.includes(window.Name)) { break; }
+				worldMap.applyUiSettings(clone(info));
+			}
 			break;
 		}
 		case window.ScriptInfo.Name + ': set colors': {  // Needs an array of 4 colors or an object {background, text, default, shape}
 			if (info && worldMap.properties.bOnNotifyColors[1]) {
+				if (info.window && !info.window.includes(window.Name)) { break; }
 				const colors = clone(info);
 				const getColor = (key) => Object.hasOwn(colors, key) ? colors.background : colors[['background', 'text', 'default', 'shape'].indexOf(key)];
 				const hasColor = (key) => typeof getColor(key) !== 'undefined';
@@ -664,13 +668,28 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 		case 'Colors: set color scheme': // Needs an array of at least 6 colors to automatically adjust dynamic colors
 		case window.ScriptInfo.Name + ': set color scheme': {
-			if (info && worldMap.properties.bOnNotifyColors[1]) { background.callbacks.artColors(clone(info), true); }
+			if (info && worldMap.properties.bOnNotifyColors[1]) {
+				if (info.window && !info.window.includes(window.Name)) { break; }
+				background.callbacks.artColors(clone(info), true);
+			}
 			break;
 		}
 		case 'Colors: ask color scheme': {
 			if (info && worldMap.properties.bNotifyColors[1] && background.scheme) {
+				if (info.window && !info.window.includes(window.Name)) { break; }
 				window.NotifyOthers(String(info), background.scheme);
 			}
+			break;
+		}
+		case window.ScriptInfo.Name + ': switch enable panel':
+		case window.ScriptInfo.Name + ': disable panel':
+		case window.ScriptInfo.Name + ': enable panel': {
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
+			worldMap.properties.bEnabled[1] = name === (window.ScriptInfo.Name + ': switch enable panel')
+				? !worldMap.properties.bEnabled[1]
+				: name === (window.ScriptInfo.Name + ': enable panel');
+			overwriteProperties(worldMap.properties);
+			repaint(false, true, true) || window.Repaint();
 			break;
 		}
 	}
