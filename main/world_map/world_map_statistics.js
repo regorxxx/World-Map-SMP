@@ -18,7 +18,7 @@ include('..\\filter_and_query\\remove_duplicates.js');
 
 
 function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
-	const parent = this;
+	const parent = this; // NOSONAR
 	let rows = 0;
 	let columns = 0;
 	let nCharts = [];

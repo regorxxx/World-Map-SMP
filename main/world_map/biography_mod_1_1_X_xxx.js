@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/11/25
+//29/05/26
 
 /*
 	Biography Mod v 1.1.X
@@ -12,17 +12,19 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 } else { // Where t = new Text, tag = new Tagger
 	// Rewrite entire function
 	/* eslint-disable no-undef */
-	tag.notifyCountry = function(handles) { // tags
+	tag.notifyCountry = function (handles) { // tags
 		// This 2 variables are private within tag object... so we need to define them again
-		const kww = 'Founded In: |Born In: |Gegründet: |Formado en: |Fondé en: |Luogo di fondazione: |出身地: |Założono w: |Local de fundação: |Место основания: |Grundat år: |Kurulduğu tarih: |创建于: |Geboren in: |Lugar de nacimiento: |Né\\(e\\) en: |Luogo di nascita: |出身地: |Urodzony w: |Local de nascimento: |Место рождения: |Född: |Doğum yeri: |生于: ';
+		const kww = 'Founded In: |Born In: |Gegründet: |Formado en: |Fondé en: |Luogo di fondazione: |出身地: |Założono w: |Local de fundação: |Место основания: |Grundat år: |Kurulduğu tarih: |创建于: |Geboren in: |Lugar de nacimiento: |Né\\(e\\) en: |Luogo di nascita: |出身地: |Urodzony w: |Local de nascimento: |Место рождения: |Född: |Doğum yeri: |生于: '; // NOSONAR
 		let ix = -1;
 		// Up to here
-		if (!handles) {return;}
+		if (!handles) { return; }
 		let a_o = '####';
 		let locale = [], tags = [];
 		const tf_a = FbTitleFormat(p.tf.a), tf_l = FbTitleFormat(p.tf.l);
-		tags.push({name: 'artist', val: tf_a.EvalWithMetadb(handles)});
-		tags.push({name: 'album', val: tf_l.EvalWithMetadb(handles)});
+		tags.push(
+			{ name: 'artist', val: tf_a.EvalWithMetadb(handles) },
+			{ name: 'album', val: tf_l.EvalWithMetadb(handles) }
+		);
 		const artist = tags[0].val.toUpperCase();
 		if (artist !== a_o) {
 			a_o = artist; // NOSONAR
@@ -30,9 +32,9 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 				const lfmBio = p.cleanPth(p.pth.lfmBio, handles, 'tag') + artist.clean() + '.txt';
 				if (s.file(lfmBio)) {
 					const lfm_a = s.open(lfmBio);
-					if (p.tag[6].enabled) {ix = lfm_a.lastIndexOf('Top Tags: ');}
+					if (p.tag[6].enabled) { ix = lfm_a.lastIndexOf('Top Tags: '); }
 					if (p.tag[7].enabled) {
-						let loc = lfm_a.match(RegExp(kww, 'i')); if (loc) {
+						let loc = lfm_a.match(new RegExp(kww, 'i')); if (loc) {
 							loc = loc.toString();
 							ix = lfm_a.lastIndexOf(loc);
 							if (ix !== -1) {
@@ -44,14 +46,14 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 				}
 			}
 		}
-		tags.push({name: 'locale', val: locale});
-		window.NotifyOthers(window.Name + ' notifyCountry', {handle: handles, tags}); // tags
+		tags.push({ name: 'locale', val: locale });
+		window.NotifyOthers(window.Name + ' notifyCountry', { handle: handles, tags }); // tags
 	};
 	// Just rewrap
 	const old_t_draw = t.draw;
-	t.draw = function() {
+	t.draw = function () {
 		tag.notifyCountry(s.handle(ppt.focus)); // tags
-		window.NotifyOthers('Biography notifySelectionProperty', {property: 'focus', val: ppt.focus}); // selection property
+		window.NotifyOthers('Biography notifySelectionProperty', { property: 'focus', val: ppt.focus }); // selection property
 		return old_t_draw.apply(old_t_draw, arguments);
 	};
 	/* eslint-enable no-undef */
@@ -59,16 +61,17 @@ if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB
 
 // Retrieve data from other panels
 function onNotifyData(name, info) {
-	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') {return;}
+	if (window.ScriptInfo.Name !== 'Biography' || window.ScriptInfo.Author !== 'WilB') { return; }
 	if (name === 'World-Map-SMP notifySelectionProperty') {
 		ppt.focus = info; p.changed(); t.on_playback_new_track(); img.on_playback_new_track(); // eslint-disable-line no-undef
 	}
 }
-if (typeof on_notify_data !== 'undefined') {
+if (typeof on_notify_data === 'undefined') { // eslint-disable-next-line no-redeclare
+	var on_notify_data = onNotifyData; // NOSONAR
+} else {
 	const oldFunc = on_notify_data;
-	on_notify_data = function(name, info) {
+	on_notify_data = function (name, info) {
 		oldFunc(name, info);
 		onNotifyData(name, info);
 	};
-	// eslint-disable-next-line no-redeclare
-} else {var on_notify_data = onNotifyData;} // NOSONAR
+}

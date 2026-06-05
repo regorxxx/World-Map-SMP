@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//29/05/26
 
 /* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
 
@@ -409,18 +409,10 @@ function drawHeader(gr) {
 		}
 		case 1:
 		default: {
-			if (worldMap.properties.bFullHeader[1]) {
-				if (posY === window.Height - textH) {
-					gr.FillSolidRect(posX, posY, w, _scale(1), worldMap.textColor);
-				} else {
-					gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
-				}
+			if (posY === window.Height - textH) {
+				gr.FillSolidRect(posX, posY, w, _scale(1), worldMap.textColor);
 			} else {
-				if (posY === window.Height - textH) {
-					gr.FillSolidRect(posX, posY, w, _scale(1), worldMap.textColor);
-				} else {
-					gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
-				}
+				gr.FillSolidRect(posX, posY + textH, w, _scale(1), worldMap.textColor);
 			}
 		}
 	}
