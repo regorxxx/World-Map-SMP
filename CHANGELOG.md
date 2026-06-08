@@ -60,9 +60,15 @@
 
 ## [Unreleased][]
 ### Added
+- External integration: new callbacks.
+	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
+	* 'World-Map-SMP: enable panel'				-> { window: string[] }
+	* 'World-Map-SMP: disable panel'			-> { window: string[] }
 ### Changed
 - UI: support for dark themed popups if JS host allows it.
 - UI: improved blend color mode to use a mix of CUI/DUI colors when no art is available (like Biograhpy and Library-Tree-SMP do).
+- Helpers: updated curl.exe to v8.20.0-slim. See [here](https://github.com/lordmulder/cURL-build-win32).
+- Helpers: updated 7za.exe to v26.01. See [here](https://www.7-zip.org/download.html).
 ### Removed
 ### Fixed
 
@@ -75,10 +81,6 @@
 - UI: added new header art style (modern), which is now the default one. Improved header drawing code rewarding font and flag interpolation modes.
 - UI: added new country layers fill mode: blurred flag (based on Biography blend mode).
 - UI: added multiple mouse cursor effects.
-- External integration: new callbacks.
-	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
-	* 'World-Map-SMP: enable panel'				-> { window: string[] }
-	* 'World-Map-SMP: disable panel'			-> { window: string[] }
 ### Changed
 - Tagging: multiple improvements to tag to JSON and JSON to tag tagging menu entries, along database handling. In particular at popups (now giving much cleared info about the input/output and expected settings) and handling of some corner cases.
 - Tagging: improved automatic tagging, checking if existing values are valid (and not only present), and overwriting them if needed. This is mainly a fix in conjunction with Biography-v1.4.2.mod.18+, since original Biography script did not always report locale tags with a country name, thus resulting in incomplete tags (which were never overwritten even if last.fm or wikipedia returned a country at a later point). The script will now overwrite values in such cases automatically.
