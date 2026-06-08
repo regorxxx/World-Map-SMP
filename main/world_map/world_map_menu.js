@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//06/06/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -916,7 +916,7 @@ function settingsMenu() {
 			menu.newCheckMenuLast(() => properties.bSplitIds[1]);
 			menu.newEntry({
 				menuName, entryText: 'Don\'t split currently displayed artist', func: () => {
-					if (worldMap.splitExcludeId.isSuperset(selJsonId)) {
+					if (worldMap.splitExcludeId.isSupersetOf(selJsonId)) {
 						selJsonId.forEach((id) => worldMap.splitExcludeId.delete(id));
 					} else {
 						selJsonId.forEach((id) => worldMap.splitExcludeId.add(id));
@@ -924,7 +924,7 @@ function settingsMenu() {
 					saveUserDefFile(globNoSplitArtist);
 				}, flags: worldMap.lastPoint.length === 1 && selJsonId.size === 1 ? MF_STRING : MF_GRAYED
 			});
-			menu.newCheckMenuLast(() => selJsonId.size === 1 && worldMap.splitExcludeId.isSuperset(selJsonId));
+			menu.newCheckMenuLast(() => selJsonId.size === 1 && worldMap.splitExcludeId.isSupersetOf(selJsonId));
 			menu.newSeparator(menuName);
 			{	// Modifier tags
 				const subMenuName = menu.newMenu('Modifier tags for playlists', menuName);
