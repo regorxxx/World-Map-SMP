@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/06/26
+//15/06/26
 
 /* exported loadUserDefFile, addGlobValues, globFonts, globSettings, globNoSplitArtist */
 
@@ -339,7 +339,7 @@ const globSettings = {
 	bLogToFile: false,
 	instanceManager: 'v1',
 	binariesPath: _foldPath(folders.binaries),
-	userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36',
+	userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36',
 	curlImpersonate: 'curl_chrome146.bat'
 };
 
