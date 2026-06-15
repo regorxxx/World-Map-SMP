@@ -64,11 +64,14 @@
 	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
 	* 'World-Map-SMP: enable panel'				-> { window: string[] }
 	* 'World-Map-SMP: disable panel'			-> { window: string[] }
+- Settings: added new "userAgent" (Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36) and "curlImpersonate" (curl_chrome146.bat) global settings for arbitrary downloads using curl and/or JS-host methods.
+- Helpers: added curl-impersonate.exe v1.5.6. See [here](https://github.com/lexiforest/curl-impersonate).
 ### Changed
 - UI: support for dark themed popups if JS host allows it.
 - UI: improved blend color mode to use a mix of CUI/DUI colors when no art is available (like Biograhpy and Library-Tree-SMP do).
 - Helpers: updated curl.exe to v8.20.0-slim. See [here](https://github.com/lordmulder/cURL-build-win32).
 - Helpers: updated 7za.exe to v26.01. See [here](https://www.7-zip.org/download.html).
+- Helpers: code cleanup.
 ### Removed
 ### Fixed
 

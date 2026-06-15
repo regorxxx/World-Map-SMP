@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/06/26
+//12/06/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -354,7 +354,7 @@ if (!worldMap.properties['firstPopup'][1]) {
 
 // Update check
 if (worldMap.properties.bAutoUpdateCheck[1]) {
-	include('helpers\\helpers_xxx_web_update.js');
+	include('helpers\\helpers_xxx_web.js');
 	/* global checkUpdate:readable */
 	setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 }
