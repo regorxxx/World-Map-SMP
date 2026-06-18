@@ -60,6 +60,7 @@
 
 ## [Unreleased][]
 ### Added
+- UI: added fallback to front art setting for Art by TF, if no file was found.
 - External integration: new callbacks.
 	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
 	* 'World-Map-SMP: enable panel'				-> { window: string[] }
