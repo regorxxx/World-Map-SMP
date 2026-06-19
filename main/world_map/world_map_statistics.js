@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/04/26
+//19/06/26
 
 /* exported _mapStatistics */
 
@@ -92,7 +92,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 			if (option.isEq && option.key === option.value || !option.isEq && option.key !== option.value || option.isEq === null) {
 				menu.newEntry({
 					menuName, entryText: option.entryText, func: () => {
-						if (addFunc) { addFunc(option); }
+						if (addFunc && !addFunc(option)) { return; }
 						if (subKey) {
 							if (Array.isArray(subKey)) {
 								const len = subKey.length - 1;
@@ -203,6 +203,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 						title: window.PanelName + ' - ' + option.entryText
 					}
 				);
+				return true;
 			}, (option) => { // eslint-disable-line no-unused-vars
 				this.changeConfig({ dataManipulation: { slice } });
 			}));
