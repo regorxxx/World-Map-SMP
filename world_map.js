@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/06/26
+//29/06/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -27,6 +27,7 @@ include('helpers\\helpers_xxx_tags.js');
 include('main\\map\\map_xxx.js');
 /* global _isFile:readable, _resolvePath:readable, _foldPath:readable, _scale:readable, RGB:readable, _save:readable, ImageMap:readable, _open:readable, _copyFile:readable, _jsonParseFileCheck:readable, utf8:readable */
 include('helpers\\callbacks_xxx.js');
+/* global runDelayedEventListeners:readable*/
 include('main\\music_graph\\music_graph_descriptors_xxx_countries.js');
 include('main\\world_map\\world_map_tables.js');
 /* global findCountryCoords:readable, findCountry:readable, isNearCountry:readable, nameReplacers:readable, getCountryISO:readable */
@@ -110,7 +111,8 @@ const properties = {
 	bDynamicColors: ['Adjust colors to artwork', true, { func: isBoolean }],
 	bDynamicColorsBg: ['Adjust colors to artwork (bg)', false, { func: isBoolean }],
 	bOnNotifyColors: ['Adjust colors on panel notify', true, { func: isBoolean }],
-	bNotifyColors: ['Notify colors to other panels', false, { func: isBoolean }]
+	bNotifyColors: ['Notify colors to other panels', false, { func: isBoolean }],
+	bProcessNotVisible: ['Process panel while not visible', true, { func: isBoolean }]
 };
 modifiers.forEach((mod) => { properties[mod.tag] = ['Force tag matching when clicking + ' + mod.description + ' on point', mod.val, { func: isStringWeak }, mod.val]; });
 properties['fileName'].push({ portable: true }, properties['fileName'][1]);
@@ -392,36 +394,37 @@ globProfiler.Print('settings');
 			background.updateImageBg();
 		}
 	};
-	['on_item_focus_change', 'on_selection_changed', 'on_playlists_changed', 'on_playlist_items_added', 'on_playlist_items_removed', 'on_playlist_switch'].forEach((e) => addEventListener(e, callback));
+	['on_item_focus_change', 'on_selection_changed', 'on_playlists_changed', 'on_playlist_items_added', 'on_playlist_items_removed', 'on_playlist_switch'].forEach((e) => addEventListener(e, callback, true, !worldMap.properties.bProcessNotVisible[1]));
 
 	addEventListener('on_playback_stop', (reason) => {
 		if (reason !== 2) { // Invoked by user or Starting another track
 			if (background.useCover && background.coverModeOptions.bNowPlaying) { background.updateImageBg(); }
 		}
-	});
+	}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 	addEventListener('on_playback_new_track', () => {
 		if (background.useCover) { background.updateImageBg(); }
-	});
+	}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 	addEventListener('on_colours_changed', () => {
 		background.colorsChanged();
-	});
+	}, true, !worldMap.properties.bProcessNotVisible[1]);
 }
 
 addEventListener('on_size', (width, height) => {
 	worldMap.calcScale(width, height);
 	background.resize({ w: window.Width, h: window.Height, bPaint: false });
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_colours_changed', () => {
 	worldMap.colorsChanged();
 	if (window.IsVisible) { window.RepaintRect(worldMap.posX, worldMap.posY, worldMap.imageMap.Width * worldMap.scale, worldMap.imageMap.Height * worldMap.scale); }
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_paint', (/** @type {GdiGraphics} */ gr) => {
 	if (!window.ID) { return; }
 	if (!window.Width || !window.Height) { return; }
+	if (!worldMap.properties.bProcessNotVisible[1]) { runDelayedEventListeners(); }
 	if (globSettings.bDebugPaint) { extendGR(gr, { Repaint: true }); }
 	background.paint(gr);
 	if (!worldMap.properties.bEnabled[1]) {
@@ -476,27 +479,27 @@ addEventListener('on_playback_new_track', (metadb) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!metadb) { return; }
 	repaint(true);
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_selection_changed', () => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_item_focus_change', () => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	worldMap.clearIdSelected();
 	repaint();
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_playlist_switch', () => {
 	if (!worldMap.properties.bEnabled[1]) { return; }
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	repaint();
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 	if (reason !== 2) { // Invoked by user or Starting another track
@@ -504,7 +507,7 @@ addEventListener('on_playback_stop', (/** @type {number} */ reason) => {
 		if (!worldMap.properties.bEnabled[1]) { return false; }
 		repaint();
 	}
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 let playlistClear;
 addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
@@ -518,13 +521,13 @@ addEventListener('on_playlist_items_removed', (playlistIndex, newCount) => {
 			repaint();
 		}, 60);
 	}
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_playlist_items_added', (playlistIndex, newCount) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
 	if (!worldMap.properties.bEnabled[1]) { return false; }
 	if (playlistIndex === plman.ActivePlaylist && newCount !== 0) { clearTimeout(playlistClear); } // Workaround for library viewers selection update triggering a refresh without need
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_metadb_changed', (handleList, fromHook) => {
 	if (worldMap.properties.panelMode[1] === 2) { return; }
@@ -544,7 +547,7 @@ addEventListener('on_metadb_changed', (handleList, fromHook) => {
 			repaint();
 		}
 	}
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 /*
 	Callbacks for move and click
@@ -801,7 +804,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 	}
-});
+}, true, !worldMap.properties.bProcessNotVisible[1]);
 
 addEventListener('on_mouse_wheel', (step) => {
 	if (!worldMap.properties.bEnabled[1]) { return; }

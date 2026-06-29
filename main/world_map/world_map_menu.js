@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/06/26
+//29/06/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
@@ -47,7 +47,14 @@ function settingsMenu() {
 		menu.newSeparator();
 		{
 			const menuName = menu.newMenu('Panel settings');
-			menu.newSeparator(menuName);
+			menu.newEntry({
+				menuName, entryText: 'Proces panel while not visible', func: () => {
+					properties.bProcessNotVisible[1] = !properties.bProcessNotVisible[1];
+					overwriteProperties(properties);
+					window.Reload();
+				}
+			});
+			menu.newCheckMenuLast(() => properties.bProcessNotVisible[1]);
 			menu.newEntry({
 				menuName, entryText: 'Refresh changes after... (ms)\t' + _b(properties.iRepaintDelay[1]), func: () => {
 					let input = Input.number('int positive', Number(properties.iRepaintDelay[1]), 'Enter ms to refresh panel on track changes:', window.ScriptInfo.Name + ': Refresh rate', 1000);

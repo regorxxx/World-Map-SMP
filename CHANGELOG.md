@@ -60,6 +60,7 @@
 
 ## [Unreleased][]
 ### Added
+- UI: added new setting to control panel processing when panel is not visible (true by default), so changes are immediately displayed on panel visibility switching, without delays. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1083496.html#msg1083496).
 - UI: added fallback to front art setting for Art by TF, if no file was found.
 - External integration: new callbacks.
 	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
