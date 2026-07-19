@@ -61,7 +61,8 @@
 ## [Unreleased][]
 ### Added
 - UI: added new setting to control panel processing when panel is not visible (true by default), so changes are immediately displayed on panel visibility switching, without delays. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1083496.html#msg1083496).
-- UI: added fallback to front art setting for Art by TF, if no file was found.
+- UI: added fallback to front art setting for Art by TF (background setting), if no file was found.
+- UI: added new mask effect setting to background. See [here](https://hydrogenaudio.org/index.php/topic,112914.msg1084108.html#msg1084108).
 - External integration: new callbacks.
 	* 'World-Map-SMP: switch enable panel'		-> { window: string[] }
 	* 'World-Map-SMP: enable panel'				-> { window: string[] }
@@ -74,6 +75,7 @@
 - Helpers: updated curl.exe to v8.20.0-slim. See [here](https://github.com/lordmulder/cURL-build-win32).
 - Helpers: updated 7za.exe to v26.01. See [here](https://www.7-zip.org/download.html).
 - Helpers: code cleanup.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 
