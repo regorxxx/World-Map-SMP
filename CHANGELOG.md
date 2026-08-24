@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [5.1.0](#500---2026-08-24)
 - [5.0.0](#500---2026-04-28)
 - [4.5.0](#450---2026-01-12)
 - [4.4.0](#440---2025-12-23)
@@ -59,6 +60,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [5.1.0] - 2026-08-24
 ### Added
 - UI: added new setting to control panel processing when panel is not visible (true by default), so changes are immediately displayed on panel visibility switching, without delays. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1083496.html#msg1083496).
 - UI: added fallback to front art setting for Art by TF (background setting), if no file was found.
@@ -786,7 +793,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: ../../compare/v5.0.0...HEAD
+[Unreleased]: ../../compare/v5.1.0...HEAD
+[5.1.0]: ../../compare/v5.0.0...v5.1.0
 [5.0.0]: ../../compare/v4.5.0...v5.0.0
 [4.5.0]: ../../compare/v4.4.0...v4.5.0
 [4.4.0]: ../../compare/v4.3.1...v4.4.0
