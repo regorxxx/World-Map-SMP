@@ -48,7 +48,7 @@ function settingsMenu() {
 		{
 			const menuName = menu.newMenu('Panel settings');
 			menu.newEntry({
-				menuName, entryText: 'Proces panel while not visible', func: () => {
+				menuName, entryText: 'Process panel while not visible', func: () => {
 					properties.bProcessNotVisible[1] = !properties.bProcessNotVisible[1];
 					overwriteProperties(properties);
 					window.Reload();
