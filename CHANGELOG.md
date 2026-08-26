@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [5.1.1](#511---2026-08-26)
 - [5.1.0](#510---2026-08-24)
 - [5.0.0](#500---2026-04-28)
 - [4.5.0](#450---2026-01-12)
@@ -64,7 +65,14 @@
 ### Changed
 ### Removed
 ### Fixed
+
+## [5.1.1] - 2026-08-26
+### Added
+### Changed
+### Removed
+### Fixed
 - UI: menu typo fixes.
+- Fixed wrong files on last update [1.0.0-beta.10](#100-beta10---2026-08-24) due to github glitch.
 
 ## [5.1.0] - 2026-08-24
 ### Added
@@ -794,7 +802,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: ../../compare/v5.1.0...HEAD
+[Unreleased]: ../../compare/v5.1.1...HEAD
+[5.1.1]: ../../compare/v5.1.0...v5.1.1
 [5.1.0]: ../../compare/v5.0.0...v5.1.0
 [5.0.0]: ../../compare/v4.5.0...v5.0.0
 [4.5.0]: ../../compare/v4.4.0...v4.5.0
