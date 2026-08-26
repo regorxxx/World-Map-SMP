@@ -72,7 +72,7 @@
 ### Removed
 ### Fixed
 - UI: menu typo fixes.
-- Fixed wrong files on last update [1.0.0-beta.10](#100-beta10---2026-08-24) due to github glitch.
+- Fixed wrong files on last update [5.1.0](#510---2026-08-24) due to github glitch.
 
 ## [5.1.0] - 2026-08-24
 ### Added
