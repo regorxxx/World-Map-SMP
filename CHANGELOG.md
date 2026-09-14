@@ -2,6 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [5.2.0](#520---2026-09-14)
 - [5.1.1](#511---2026-08-26)
 - [5.1.0](#510---2026-08-24)
 - [5.0.0](#500---2026-04-28)
@@ -61,6 +62,12 @@
 - [1.0.0](#100---2021-05-01)
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [5.2.0] - 2026-09-14
 ### Added
 - UI: new 'Lines (high quality)' chart type. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1086993.html#msg1086993), uses DrawLines + PushClip method.
 ### Changed
@@ -808,7 +815,8 @@
 ### Removed
 ### Fixed
 
-[Unreleased]: ../../compare/v5.1.1...HEAD
+[Unreleased]: ../../compare/v5.2.0...HEAD
+[5.2.0]: ../../compare/v5.1.1...v5.2.0
 [5.1.1]: ../../compare/v5.1.0...v5.1.1
 [5.1.0]: ../../compare/v5.0.0...v5.1.0
 [5.0.0]: ../../compare/v4.5.0...v5.0.0
