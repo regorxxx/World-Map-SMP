@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/08/26
+//14/09/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -9,7 +9,7 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '5.1.1', features: { drag_n_drop: false } }); }
 
 // GDI/D2D draw mode
-window.DrawMode = Math.max(Math.min(window.GetProperty('Draw mode: GDI (0), D2D (1)', 0), 1), 0);
+if (typeof window.DrawMode !== 'undefined') { window.DrawMode = Math.max(Math.min(window.GetProperty('- Draw mode: GDI (0), D2D (1)', 0), 1), 0); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globNoSplitArtist:readable */
@@ -57,7 +57,7 @@ const modifiers = [ // Easily expandable. Used at helpers and menu too
 	{ mask: MK_SHIFT + MK_CONTROL, tag: 'modThirdTag', description: 'Shift + Control', val: [globTags.genre, globTags.style].join(',') }
 ];
 const properties = {
-	drawMode: ['Draw mode: GDI (0), D2D (1)', 0, { func: isInt, range: [[0, 1]] }],
+	drawMode: ['- Draw mode: GDI (0), D2D (1)', 0, { func: isInt, range: [[0, 1]] }],
 	mapTag: ['Tag name or TF expression to read artist\'s country', '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))', { func: isString }, '$meta(' + globTags.locale + ',$sub($meta_num(' + globTags.locale + '),1))'],
 	imageMapPath: ['Path to your own world map (mercator projection)', '', { func: isStringWeak }, ''],
 	imageMapAlpha: ['Map image opacity', 217, { func: isInt, range: [[0, 255]] }, 217],
