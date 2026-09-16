@@ -67,6 +67,7 @@
 - Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
 ### Changed
 - Statistics: minor improvements to menu entries display.
+- Helpers: updated helpers.
 ### Removed
 ### Fixed
 - Statistics: fixed vertical labels position on Horizontal bars charts when using multiple series (for ex. using 3 axis).
