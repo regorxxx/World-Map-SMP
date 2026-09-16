@@ -63,7 +63,8 @@
 
 ## [Unreleased][]
 ### Added
-- Statistics: support for line styles: solid, dot, dash, ... They work with most chart types, either as filling or border. Requires JSplitter.
+- Statistics: support for line styles: solid, dot, dash, ...  They work with most chart types, either as filling or border. Requires JSplitter.
+- Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
 ### Changed
 - Statistics: minor improvements to menu entries display.
 ### Removed
