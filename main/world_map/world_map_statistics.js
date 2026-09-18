@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/09/26
+//17/09/26
 
 /* exported _mapStatistics */
 
@@ -159,7 +159,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		// helper
 		const createMenuOption = createMenuOptionParent.bind(this, menu);
 		// Header
-		menu.newEntry({ entryText: this.title, flags: MF_GRAYED });
+		menu.newEntry({ entryText: this.title.key.cut(50), flags: MF_GRAYED });
 		menu.newSeparator();
 		{	// Data
 			const subMenu = menu.newMenu('Data');
@@ -285,7 +285,7 @@ function _mapStatistics(x, y, w, h, bEnabled = false, config = {}) {
 		// Constants
 		const menu = new _menu();
 		// Header
-		menu.newEntry({ entryText: this.title, flags: MF_GRAYED });
+		menu.newEntry({ entryText: this.title.key.cut(50), flags: MF_GRAYED });
 		menu.newSeparator();
 		// Menus
 		menu.newEntry({

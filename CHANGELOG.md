@@ -63,8 +63,12 @@
 
 ## [Unreleased][]
 ### Added
+- Statistics: new setting to modify the degree of point filling for bar-based charts. i.e. Instead of using the entire available width, it will leave blank spaces between points if using any value below 100%.
+- Statistics: new setting to modify and control how chart title is shown (previously on menus).
+- Statistics: new setting to control X-Y grids opacity.
 - Statistics: support for line styles: solid, dot, dash, ...  They work with most chart types, either as filling or border. Requires JSplitter.
 - Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
+- Statistics: new chart type 'Lines (with markers)'.
 ### Changed
 - Statistics: minor improvements to menu entries display.
 - Helpers: updated helpers.
@@ -83,6 +87,9 @@
 - Statistics: chart types not being changed when using menu settings on statistics mode. See [here](https://hydrogenaudio.org/index.php/topic,125040.msg1086767.html#msg1086767).
 - Statistics: minor color errors on gradient charts when values were zero in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
+- Statistics: minor fixes on focused point highlighting in some cases.
+- Statistics: fix Y-Tittle being shown even if it was disabled.
+- Statistics: fix horizontal grid width in some chart types.
 
 ## [5.1.1] - 2026-08-26
 ### Added
