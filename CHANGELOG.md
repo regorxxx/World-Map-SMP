@@ -75,6 +75,9 @@
 ### Removed
 ### Fixed
 - Statistics: fixed vertical labels position on Horizontal bars charts when using multiple series (for ex. using 3 axis).
+- Statistics: minor fixes on focused point highlighting in some cases.
+- Statistics: fix Y-Tittle being shown even if it was disabled.
+- Statistics: fix horizontal grid width in some chart types.
 
 ## [5.2.0] - 2026-09-14
 ### Added
@@ -87,9 +90,6 @@
 - Statistics: chart types not being changed when using menu settings on statistics mode. See [here](https://hydrogenaudio.org/index.php/topic,125040.msg1086767.html#msg1086767).
 - Statistics: minor color errors on gradient charts when values were zero in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
-- Statistics: minor fixes on focused point highlighting in some cases.
-- Statistics: fix Y-Tittle being shown even if it was disabled.
-- Statistics: fix horizontal grid width in some chart types.
 
 ## [5.1.1] - 2026-08-26
 ### Added
