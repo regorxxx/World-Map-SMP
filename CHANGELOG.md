@@ -73,6 +73,7 @@
 - Statistics: minor improvements to menu entries display.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
+- Installation: required fonts are now loaded on the fly when using JSplitter instead of requiring being installed system-wide.
 ### Removed
 ### Fixed
 - Statistics: fixed vertical labels position on Horizontal bars charts when using multiple series (for ex. using 3 axis).
@@ -588,7 +589,7 @@
 - UI: improved compatibility with some fonts under Unix systems (using Wine). Sometimes weird chars appeared on menu entries.
 ### Removed
 ### Fixed
-- Helpers: fix path of helper (error introduced on  [2.4.0](#240---2023-02-15)).
+- Helpers: fix path of helper (error introduced on [2.4.0](#240---2023-02-15)).
 
 ## [2.4.1] - 2023-02-19
 ### Added
