@@ -872,9 +872,7 @@ function addLocaleTags(handleList, tagName, bOverwrite) {
 	if (toTagList.Count) {
 		const chunks = toTagList.Convert().chunk(1000).map((c) => { return { handleList: new FbMetadbHandleList(c) }; });
 		toTagValues.chunk(1000).forEach((c, i) => chunks[i].tags = c);
-		Promise.serial(chunks, (chunk) => {
-			chunk.handleList.UpdateFileInfoFromJSON(JSON.stringify(chunk.tags));
-		}, 25);
+		Promise.serial(chunks, (chunk) => chunk.handleList.UpdateFileInfoFromJSON(JSON.stringify(chunk.tags)), 25);
 	}
 	if (countN || countO) { repaint(void (0), true); }
 	console.log(window.ScriptInfo.Name + ': writing back database tags to files done\n\tTo tag: ' + tagName + '\n\t' + countN + ' new file tags - ' + countO + ' overwritten tags');
