@@ -71,7 +71,7 @@
 - Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
 - Statistics: new chart type 'Lines (with markers)'.
 ### Changed
-- Tagging: new menu entry to tag only selected items instead of entire library.
+- Tagging: reworked menu entries to tag items with more clear popups and displaying the actual number of tracks to be tagged.
 - Statistics: minor improvements to menu entries display.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
