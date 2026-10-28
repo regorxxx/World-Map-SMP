@@ -82,6 +82,7 @@
 - Statistics: minor fixes on focused point highlighting in some cases.
 - Statistics: fix Y-Tittle being shown even if it was disabled.
 - Statistics: fix horizontal grid width in some chart types.
+- Biography Integration: fixed crash on some situations with delayed data processing on callbacks.
 
 ## [5.2.0] - 2026-09-14
 ### Added
