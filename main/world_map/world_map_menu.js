@@ -1,9 +1,9 @@
 ﻿'use strict';
-//29/06/26
+//28/10/26
 
 /* exported settingsMenu, onRbtnUpImportSettings */
 
-/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable */
+/* global worldMap:readable, selMode:readable, modifiers:readable, repaint:readable, popup:readable, saveLibraryTags:readable, overwriteProperties:readable, background:readable, Chroma:readable, RGB:readable, colorBlind:readable, colorbrewer:readable, imgAsync:readable, stats:readable , worldMapImages:readable, addLocaleTags:readable */
 include('..\\..\\helpers\\menu_xxx.js');
 /* global _menu:readable, MF_STRING:readable, MF_GRAYED:readable, MF_MENUBARBREAK:readable */
 include('..\\..\\helpers\\helpers_xxx.js');
@@ -34,7 +34,7 @@ function settingsMenu() {
 	const selJsonId = sel
 		? new Set(getHandleListTagsV2(sel, [worldMap.jsonId], { bMerged: true, splitBy: null }).flat(Infinity))
 		: new Set();
-	const writeTag =  properties.writeToTag[1] || globTags.locale;
+	const writeTag = properties.writeToTag[1] || globTags.locale;
 	{ // NOSONAR
 		menu.newEntry({
 			entryText: 'Enable panel', func: () => {
@@ -981,6 +981,15 @@ function settingsMenu() {
 					}, flags: () => { return _isFile(properties.fileName[1]) ? MF_STRING : MF_GRAYED; }
 				});
 			}
+			menu.newEntry({
+				menuName, entryText: 'Write JSON tags to selection...', func: () => {
+					const handleList = fb.GetSelections();
+					if (WshShell.Popup(handleList.Count + ' items selected. Do you want to continue?\n\nValues will be saved at configured [write] tag:\n' + writeTag + '\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.ok_cancel) !== popup.okr) { return; }
+					const answer = WshShell.Popup('Do you want to overwrite already existing tags?', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no_cancel);
+					if (answer === popup.cancel) { return; }
+					addLocaleTags(handleList, writeTag, answer === popup.yes);
+				}
+			});
 		}
 		{	// Database
 			const menuDatabase = menu.newMenu(
@@ -1100,45 +1109,12 @@ function settingsMenu() {
 					}
 				});
 				menu.newEntry({
-					menuName: menuDatabase, entryText: 'Write JSON tags to tracks...', func: () => {
-						const answer = WshShell.Popup('Do you want to overwrite duplicated entries?\n\nValues will be saved at configured [write] tag:\n' + writeTag + '\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no);
-						let countN = 0;
-						let countO = 0;
+					menuName: menuDatabase, entryText: 'Write JSON tags to Library...', func: () => {
 						const handleList = fb.GetLibraryItems();
-						const toTagList = new FbMetadbHandleList();
-						const toTagValues = [];
-						// worldMap.jsonId = artist
-						const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
-						const tag = getHandleListTags(handleList, [writeTag], { bMerged: true }); // locale
-						const newData = worldMap.getData();
-						if (newData && newData.length) {
-							handleList.Convert().forEach((handle, i) => {
-								if (jsonId[i].length) {
-									jsonId[i].forEach((id) => {
-										newData.forEach((data) => {
-											if (data[worldMap.jsonId] === id && data.val && data.val.length && data.val.filter(Boolean).length) {
-												const iTag = tag[i];
-												let bDone;
-												if (!iTag || !iTag.length || !iTag.filter(Boolean).length) {
-													bDone = true;
-													countN++;
-												} else if (answer === popup.yes && !isArrayEqual(data.val, iTag)) {
-													bDone = true;
-													countO++;
-												}
-												if (bDone) {
-													toTagList.Add(handle);
-													toTagValues.push({ [writeTag]: data.val });
-												}
-											}
-										});
-									});
-								}
-							});
-						}
-						if (toTagList.Count) { toTagList.UpdateFileInfoFromJSON(JSON.stringify(toTagValues)); }
-						if (countN || countO) { repaint(void (0), true); }
-						console.log(window.ScriptInfo.Name + ': writing back database tags to files done\n\tTo tag: ' + writeTag + '\n\t' + countN + ' new file tags - ' + countO + ' overwritten tags');
+						if (WshShell.Popup(handleList.Count + ' items on Library. Do you want to continue?\n\nValues will be saved at configured [write] tag:\n' + writeTag + '\n\nCheck console log for output.', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.ok_cancel) !== popup.okr) { return; }
+						const answer = WshShell.Popup('Do you want to overwrite already existing tags?', 0, window.ScriptInfo.Name + ': Write tags to tracks', popup.question + popup.yes_no_cancel);
+						if (answer === popup.cancel) { return; }
+						addLocaleTags(handleList, writeTag, answer === popup.yes);
 					}
 				});
 				menu.newSeparator(menuDatabase);

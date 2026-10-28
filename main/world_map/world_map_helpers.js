@@ -1,7 +1,7 @@
 ﻿'use strict';
-//29/05/26
+//28/10/26
 
-/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers */
+/* exported selPoint, tooltipPoint, tooltipPanel, selFindPoint, tooltipFindPoint, biographyCheck, saveLibraryTags, wheelResize, headerCountryName, headerCoords, drawHeader, drawTaggingPoint, paintLayers, addLocaleTags */
 
 /* global worldMap:readable,selMode:readable, modifiers:readable, music_graph_descriptors_countries:readable, overwriteProperties:readable */
 // '..\\..\\helpers\\helpers_xxx_file.js';
@@ -12,7 +12,7 @@
 include('..\\..\\helpers\\helpers_xxx_playlists.js');
 /* global removePlaylistByName:readable, getPlaylistIndexArray:readable */
 include('..\\..\\helpers\\helpers_xxx_prototypes.js');
-/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable */
+/* global _t:readable, capitalize:readable, capitalizeAll:readable, _bt:readable, _p:readable, _qCond:readable, isArrayEqual:readable */
 include('..\\..\\helpers\\helpers_xxx_tags.js');
 /* global queryCombinations:readable, queryJoin:readable, checkQuery:readable, getHandleListTags:readable, getHandleListTagsV2:readable */
 // '..\\..\\helpers\\helpers_xxx_ui.js';
@@ -808,7 +808,7 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 		}
 	});
 	if (promises.length) {
-		Promise.all(promises).then(() => {
+		void Promise.all(promises).then(() => {
 			if (imgAsync.layers.bStop) { return; }
 			imgAsync.layers.bPaint = true;
 			imgAsync.layers.w = imgAsync.layers.imgs[0].img.Width;
@@ -834,3 +834,48 @@ const paintLayers = ({ gr, color = worldMap.properties.customShapeColor[1], grad
 		});
 	} else if (bProfile) { profile.Print('End'); }
 };
+
+function addLocaleTags(handleList, tagName, bOverwrite) {
+	let countN = 0;
+	let countO = 0;
+	const toTagList = new FbMetadbHandleList();
+	const toTagValues = [];
+	// worldMap.jsonId = artist
+	const jsonId = getHandleListTagsV2(handleList, [worldMap.jsonId], { bMerged: true, splitBy: worldMap.bSplitIds ? ', ' : null });
+	const tag = getHandleListTags(handleList, [tagName], { bMerged: true }); // locale
+	const newData = worldMap.getData();
+	if (newData && newData.length) {
+		handleList.Convert().forEach((handle, i) => {
+			if (jsonId[i].length) {
+				jsonId[i].forEach((id) => {
+					newData.forEach((data) => {
+						if (data[worldMap.jsonId] === id && data.val && data.val.length && data.val.filter(Boolean).length) {
+							const iTag = tag[i];
+							let bDone;
+							if (!iTag || !iTag.length || !iTag.filter(Boolean).length) {
+								bDone = true;
+								countN++;
+							} else if (bOverwrite && !isArrayEqual(data.val, iTag)) {
+								bDone = true;
+								countO++;
+							}
+							if (bDone) {
+								toTagList.Add(handle);
+								toTagValues.push({ [tagName]: data.val });
+							}
+						}
+					});
+				});
+			}
+		});
+	}
+	if (toTagList.Count) {
+		const chunks = toTagList.Convert().chunk(1000).map((c) => { return { handleList: new FbMetadbHandleList(c) }; });
+		toTagValues.chunk(1000).forEach((c, i) => chunks[i].tags = c);
+		Promise.serial(chunks, (chunk) => {
+			chunk.handleList.UpdateFileInfoFromJSON(JSON.stringify(chunk.tags));
+		}, 25);
+	}
+	if (countN || countO) { repaint(void (0), true); }
+	console.log(window.ScriptInfo.Name + ': writing back database tags to files done\n\tTo tag: ' + tagName + '\n\t' + countN + ' new file tags - ' + countO + ' overwritten tags');
+}

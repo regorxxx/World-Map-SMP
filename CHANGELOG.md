@@ -63,6 +63,7 @@
 
 ## [Unreleased][]
 ### Added
+- Tagging: new menu entry to tag only selected items instead of entire library.
 - Statistics: new setting to modify the degree of point filling for bar-based charts. i.e. Instead of using the entire available width, it will leave blank spaces between points if using any value below 100%.
 - Statistics: new setting to modify and control how chart title is shown (previously on menus).
 - Statistics: new setting to control X-Y grids opacity.
@@ -70,6 +71,7 @@
 - Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
 - Statistics: new chart type 'Lines (with markers)'.
 ### Changed
+- Tagging: new menu entry to tag only selected items instead of entire library.
 - Statistics: minor improvements to menu entries display.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
