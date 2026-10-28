@@ -70,6 +70,7 @@
 - Statistics: support for line styles: solid, dot, dash, ...  They work with most chart types, either as filling or border. Requires JSplitter.
 - Statistics: support for line join styles: miter, round,... It works with Lines (high quality)' chart type. Requires JSplitter.
 - Statistics: new chart type 'Lines (with markers)'.
+- Installation: added support for [foo_component_update_checker](https://github.com/p2ashiura/foo_component_update_checker). Those who use that component, will get automatic notifications about package updates from now on (not nightlies).
 ### Changed
 - Tagging: reworked menu entries to tag items with more clear popups and displaying the actual number of tracks to be tagged.
 - Statistics: minor improvements to menu entries display.
