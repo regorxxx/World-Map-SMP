@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/10/26
+//30/10/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -705,7 +705,6 @@ addEventListener('on_notify_data', (name, info) => {
 		// If both panels don't have the same selection mode, it will not work
 		case 'Biography notifyCountry':
 		case 'biographyTags': {
-			info = clone(info);
 			if (Object.hasOwn(info, 'handle') && Object.hasOwn(info, 'tags') && (info.handle.RawPath !== bioCache.rawPath || info.handle.SubSong !== bioCache.subSong)) {
 				bioCache.handleRawPath = info.handle.RawPath;
 				bioCache.subSong = info.handle.SubSong;
