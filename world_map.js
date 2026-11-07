@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/10/26
+//06/11/26
 
 /*
 	World Map 		(REQUIRES WilB's Biography Mod script for online tags!!!)
@@ -9,7 +9,7 @@
 if (!window.ScriptInfo.PackageId) { window.DefineScript('World-Map-SMP', { author: 'regorxxx', version: '5.2.0', features: { drag_n_drop: false } }); }
 
 // GDI/D2D draw mode
-if (typeof window.DrawMode !== 'undefined') { window.DrawMode = Math.max(Math.min(window.GetProperty('- Draw mode: GDI (0), D2D (1)', 0), 1), 0); }
+if (typeof window.DrawMode !== 'undefined') { window.DrawMode = Math.max(Math.min(window.GetProperty('- Draw mode: GDI (0), D2D (1)', 1), 1), 0); }
 
 include('helpers\\helpers_xxx.js');
 /* global checkCompatible:readable, globQuery:readable, folders:readable, globFonts:readable, globSettings:readable, clone:readable, globNoSplitArtist:readable */
